@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "שמור",
+    "cancel": "ביטול",
+    "delete": "מחק",
+    "edit": "ערוך",
+    "loading": "טוען...",
+    "search": "חפש",
+    "actions": "פעולות",
+    "create": "צור",
+    "filter": "סנן",
+    "back": "חזור",
+    "next": "הבא",
+    "confirm": "אשר",
+    "close": "סגור",
+    "yes": "כן",
+    "no": "לא",
+    "submit": "שלח",
+    "success": "הצלחה!",
+    "error": "אירעה שגיאה",
+    "status": "סטטוס"
+  },
+  "Navigation": {
+    "dashboard": "לוח בקרה",
+    "bookings": "הזמנות",
+    "calendar": "לוח שנה",
+    "clients": "לקוחות",
+    "staff": "צוות",
+    "services": "שירותים",
+    "settings": "הגדרות",
+    "billing": "חיוב",
+    "notifications": "התראות",
+    "profile": "פרופיל",
+    "marketingAutomation": "אוטומציית בינה מלאכותית",
+    "auditLogs": "יומני ביקורת"
+  },
+  "Authentication": {
+    "login": "התחבר",
+    "logout": "התנתק",
+    "register": "הרשמה",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "forgotPassword": "שכחת סיסמה?",
+    "biometric": "כניסה ביומטרית"
+  },
+  "Dashboard": {
+    "welcome": "ברוך הבא, {name}",
+    "todayBookings": "הזמנות היום",
+    "totalRevenue": "סך הכנסות"
+  },
+  "Bookings": {
+    "title": "הזמנות",
+    "newBooking": "הזמנה חדשה",
+    "status": {
+      "confirmed": "מאושר",
+      "pending": "בהמתנה",
+      "cancelled": "מבוטל",
+      "completed": "הושלם"
+    }
+  }
+}

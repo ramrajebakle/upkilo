@@ -1,0 +1,66 @@
+{
+  "Common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "delete": "डिलीट",
+    "edit": "संपादन",
+    "loading": "लोड हो रहा है...",
+    "search": "खोजें",
+    "actions": "कार्रवाई",
+    "create": "बनाएँ",
+    "filter": "फ़िल्टर",
+    "export": "निर्यात",
+    "back": "वापस",
+    "next": "अगला",
+    "confirm": "पुष्टि करें",
+    "close": "बंद करें",
+    "yes": "हाँ",
+    "no": "नहीं",
+    "submit": "जमा करें",
+    "success": "सफल!",
+    "error": "एक त्रुटि हुई",
+    "status": "स्थिति"
+  },
+  "Navigation": {
+    "dashboard": "डैशबोर्ड",
+    "bookings": "बुकिंग",
+    "calendar": "कैलेंडर",
+    "clients": "ग्राहक",
+    "staff": "स्टाफ",
+    "services": "सेवाएं",
+    "marketing": "मार्केटिंग",
+    "analytics": "एनालिटिक्स",
+    "settings": "सेटिंग्स",
+    "billing": "बिलिंग",
+    "notifications": "सूचनाएं",
+    "profile": "प्रोफ़ाइल",
+    "marketingAutomation": "एआई स्वचालन",
+    "auditLogs": "ऑडिट लॉग"
+  },
+  "Authentication": {
+    "login": "लॉग इन",
+    "logout": "लॉग आउट",
+    "register": "खाता बनाएँ",
+    "email": "ईमेल पता",
+    "password": "पासवर्ड",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "biometric": "बायोमेट्रिक लॉगिन का उपयोग करें"
+  },
+  "Dashboard": {
+    "welcome": "{name}, आपका स्वागत है",
+    "overview": "अवलोकन",
+    "recentActivity": "हाल की गतिविधि",
+    "todayBookings": "आज की बुकिंग",
+    "totalRevenue": "कुल राजस्व"
+  },
+  "Bookings": {
+    "title": "बुकिंग",
+    "newBooking": "नई बुकिंग",
+    "status": {
+      "confirmed": "पुष्ट",
+      "pending": "लंबित",
+      "cancelled": "रद्द",
+      "completed": "पूर्ण"
+    }
+  }
+}

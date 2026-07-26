@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "loading": "جارٍ التحميل...",
+    "search": "بحث",
+    "actions": "جراءات",
+    "create": "إنشاء",
+    "filter": "تصفية",
+    "back": "رجوع",
+    "next": "التالي",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "yes": "نعم",
+    "no": "لا",
+    "submit": "إرسال",
+    "success": "نجاح!",
+    "error": "حدث خطأ",
+    "status": "الحالة"
+  },
+  "Navigation": {
+    "dashboard": "لوحة التحكم",
+    "bookings": "الحجوزات",
+    "calendar": "التقويم",
+    "clients": "العملاء",
+    "staff": "الموظفون",
+    "services": "الخدمات",
+    "settings": "الإعدادات",
+    "billing": "الفواتير",
+    "notifications": "الإشعارات",
+    "profile": "الملف الشخصي",
+    "marketingAutomation": "أتمتة الذكاء الاصطناعي",
+    "auditLogs": "سجلات التدقيق"
+  },
+  "Authentication": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "register": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "biometric": "بيومتري"
+  },
+  "Dashboard": {
+    "welcome": "مرحباً بعودتك، {name}",
+    "todayBookings": "حجوزات اليوم",
+    "totalRevenue": "إجمالي الإيرادات"
+  },
+  "Bookings": {
+    "title": "الحجوزات",
+    "newBooking": "حجز جديد",
+    "status": {
+      "confirmed": "مؤكد",
+      "pending": "قيد الانتظار",
+      "cancelled": "ملغى",
+      "completed": "مكتمل"
+    }
+  }
+}

@@ -1,0 +1,336 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Upkilo.Core.Interfaces;
+using Upkilo.Core.Entities;
+using Upkilo.Infrastructure.Data;
+
+namespace Upkilo.API.Controllers;
+
+/// <summary>
+/// Clients controller
+/// </summary>
+[ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize]
+public class ClientsController : ControllerBase
+{
+    private readonly ILogger<ClientsController> _logger;
+    private readonly IEventService _eventService;
+    private readonly AppDbContext _context;
+    private readonly ITenantProvider _tenantProvider;
+    private readonly ILoyaltyService _loyaltyService;
+
+    public ClientsController(ILogger<ClientsController> logger, IEventService eventService, AppDbContext context, ITenantProvider tenantProvider, ILoyaltyService loyaltyService)
+    {
+        _logger = logger;
+        _eventService = eventService;
+        _context = context;
+        _tenantProvider = tenantProvider;
+        _loyaltyService = loyaltyService;
+    }
+
+    /// <summary>
+    /// Get all clients
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetClients(
+        [FromQuery] int page = 1,
+        [FromQuery] int limit = 20,
+        [FromQuery] string? search = null)
+    {
+        var query = _context.Clients.AsQueryable();
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            query = query.Where(c => c.FirstName.Contains(search) || c.LastName.Contains(search) || c.Email.Contains(search));
+        }
+
+        var total = await query.CountAsync();
+        var clients = await query
+            .OrderByDescending(c => c.CreatedAt)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
+
+        return Ok(new
+        {
+            data = clients,
+            page,
+            limit,
+            total
+        });
+    }
+
+    /// <summary>
+    /// Filter clients by segment criteria
+    /// </summary>
+    [HttpPost("segment")]
+    public async Task<IActionResult> SegmentClients([FromBody] ClientSegmentRequest request)
+    {
+        var query = _context.Clients.AsQueryable();
+
+        // 1. Min Spend (Lifetime Value)
+        if (request.MinSpend.HasValue)
+        {
+            query = query.Where(c => c.LifetimeValue >= request.MinSpend.Value);
+        }
+
+        // 2. Last Visit (Days Ago)
+        if (request.MaxDaysSinceLastVisit.HasValue)
+        {
+            var cutoffDate = DateTime.UtcNow.AddDays(-request.MaxDaysSinceLastVisit.Value);
+            query = query.Where(c => c.LastBookingAt >= cutoffDate);
+        }
+        else if (request.MinDaysSinceLastVisit.HasValue)
+        {
+            var cutoffDate = DateTime.UtcNow.AddDays(-request.MinDaysSinceLastVisit.Value);
+            query = query.Where(c => c.LastBookingAt <= cutoffDate);
+        }
+
+        // 3. Tags
+        if (request.Tags != null && request.Tags.Any())
+        {
+            // Note: EF Core translation for List<string> contains might be provider specific or require specific setup
+            // For now assuming PostgreSQL array operations or client-side eval if dataset is small (but we want server-side)
+            // Ideally: query.Where(c => c.Tags.Any(t => request.Tags.Contains(t))); 
+            // Better for PostgreSQL text[]: 
+            foreach(var tag in request.Tags)
+            {
+                query = query.Where(c => c.Tags.Contains(tag));
+            }
+        }
+
+        // 4. Loyalty Tier
+        if (!string.IsNullOrEmpty(request.LoyaltyTier))
+        {
+            query = query.Where(c => c.LoyaltyTier == request.LoyaltyTier);
+        }
+
+        var total = await query.CountAsync();
+        var clients = await query
+            .OrderByDescending(c => c.LifetimeValue)
+            .Take(100) // Safety limit
+            .ToListAsync();
+
+        return Ok(new { data = clients, total });
+    }
+
+    /// <summary>
+    /// Get client by ID
+    /// </summary>
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetClient(Guid id)
+    {
+        var client = await _context.Clients.FirstOrDefaultAsync(x => x.Id == id);
+        if (client == null) return NotFound();
+
+        return Ok(client);
+    }
+
+    /// <summary>
+    /// Create client
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CreateClient([FromBody] CreateClientRequest request)
+    {
+        var client = new Client
+        {
+            Id = Guid.NewGuid(),
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email ?? string.Empty,
+            Phone = request.Phone,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Clients.Add(client);
+        await _context.SaveChangesAsync();
+        
+        _logger.LogInformation("Client created: {ClientId}", client.Id);
+
+        // Publish Event for Workflow Engine
+        await _eventService.PublishAsync("client.created", client, _tenantProvider.GetTenantId() ?? Guid.Empty);
+
+        return CreatedAtAction(nameof(GetClient), new { id = client.Id }, client);
+    }
+
+    /// <summary>
+    /// Update client
+    /// </summary>
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateClient(Guid id, [FromBody] UpdateClientRequest request)
+    {
+        var client = await _context.Clients.FirstOrDefaultAsync(x => x.Id == id);
+        if (client == null) return NotFound();
+
+        if (request.FirstName != null) client.FirstName = request.FirstName;
+        if (request.LastName != null) client.LastName = request.LastName;
+        if (request.Email != null) client.Email = request.Email;
+        if (request.Phone != null) client.Phone = request.Phone;
+
+        await _context.SaveChangesAsync();
+        
+        await _eventService.PublishAsync("client.updated", client, _tenantProvider.GetTenantId() ?? Guid.Empty);
+
+        _logger.LogInformation("Client updated: {ClientId}", id);
+
+        return Ok(client);
+    }
+
+    /// <summary>
+    /// Delete client
+    /// </summary>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteClient(Guid id)
+    {
+        var client = await _context.Clients.FirstOrDefaultAsync(x => x.Id == id);
+        if (client == null) return NotFound();
+
+        _context.Clients.Remove(client);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Client deleted: {ClientId}", id);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Get client booking history
+    /// </summary>
+    [HttpGet("{id}/bookings")]
+    public async Task<IActionResult> GetClientBookings(Guid id, [FromQuery] int page = 1, [FromQuery] int limit = 10)
+    {
+        var query = _context.Bookings.Where(b => b.ClientId == id);
+        var total = await query.CountAsync();
+        var bookings = await query
+            .OrderByDescending(b => b.StartTime)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
+
+        return Ok(new { data = bookings, page, limit, total });
+    }
+
+    /// <summary>
+    /// Get client notes
+    /// </summary>
+    [HttpGet("{id}/notes")]
+    public async Task<IActionResult> GetClientNotes(Guid id)
+    {
+        var notes = await _context.ClientNotes
+            .Where(n => n.ClientId == id)
+            .OrderByDescending(n => n.CreatedAt)
+            .ToListAsync();
+
+        return Ok(new { data = notes });
+    }
+
+    /// <summary>
+    /// Add note to client
+    /// </summary>
+    [HttpPost("{id}/notes")]
+    public async Task<IActionResult> CreateNote(Guid id, [FromBody] AddClientNoteRequest request)
+    {
+        var note = new ClientNote
+        {
+            Id = Guid.NewGuid(),
+            ClientId = id,
+            AuthorId = Guid.Parse(User.FindFirst("id")?.Value ?? Guid.Empty.ToString()),
+            Content = request.Content,
+            IsPrivate = request.IsPrivate,
+            Category = request.Category,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.ClientNotes.Add(note);
+        await _context.SaveChangesAsync();
+
+        return Ok(note);
+    }
+
+    /// <summary>
+    /// Get client communication logs
+    /// </summary>
+    [HttpGet("{id}/communications")]
+    public async Task<IActionResult> GetCommunications(Guid id)
+    {
+        var logs = await _context.CommunicationLogs
+            .Where(l => l.ClientId == id)
+            .OrderByDescending(l => l.CreatedAt)
+            .ToListAsync();
+
+        return Ok(new { data = logs });
+    }
+
+    /// <summary>
+    /// Get client loyalty history
+    /// </summary>
+    [HttpGet("{id}/loyalty")]
+    public async Task<IActionResult> GetLoyalty(Guid id)
+    {
+        var client = await _context.Clients.FirstOrDefaultAsync(x => x.Id == id);
+        if (client == null) return NotFound();
+
+        var history = await _loyaltyService.GetHistoryAsync(id);
+        
+        return Ok(new 
+        { 
+            points = client.LoyaltyPoints,
+            tier = client.LoyaltyTier,
+            history
+        });
+    }
+
+    /// <summary>
+    /// Adjust client points
+    /// </summary>
+    [HttpPost("{id}/loyalty/adjust")]
+    public async Task<IActionResult> AdjustLoyalty(Guid id, [FromBody] AdjustPointsRequest request)
+    {
+        if (request.Points > 0)
+        {
+            await _loyaltyService.AwardPointsAsync(id, request.Points, request.Reason);
+        }
+        else
+        {
+            await _loyaltyService.RedeemPointsAsync(id, Math.Abs(request.Points), request.Reason);
+        }
+
+        return Ok();
+    }
+}
+
+public record ClientSegmentRequest(
+    decimal? MinSpend,
+    int? MinDaysSinceLastVisit,
+    int? MaxDaysSinceLastVisit,
+    List<string>? Tags,
+    string? LoyaltyTier
+);
+
+public record AdjustPointsRequest(int Points, string Reason);
+
+public record AddClientNoteRequest(string Content, bool IsPrivate, string? Category);
+
+public record CreateClientRequest(
+    string FirstName,
+    string LastName,
+    string? Email,
+    string? Phone,
+    string? Notes,
+    bool MarketingConsent,
+    bool SmsConsent
+);
+
+public record UpdateClientRequest(
+    string? FirstName,
+    string? LastName,
+    string? Email,
+    string? Phone,
+    string? Notes,
+    List<string>? Tags
+);
+
+public record AddNoteRequest(string Content, bool IsPinned);
+

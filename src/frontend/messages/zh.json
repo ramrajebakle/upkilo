@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "loading": "加载中...",
+    "search": "搜索",
+    "actions": "操作",
+    "create": "创建",
+    "filter": "筛选",
+    "back": "返回",
+    "next": "下一步",
+    "confirm": "确认",
+    "close": "关闭",
+    "yes": "是",
+    "no": "否",
+    "submit": "提交",
+    "success": "成功！",
+    "error": "发生错误",
+    "status": "状态"
+  },
+  "Navigation": {
+    "dashboard": "仪表板",
+    "bookings": "预约",
+    "calendar": "日历",
+    "clients": "客户",
+    "staff": "员工",
+    "services": "服务",
+    "settings": "设置",
+    "billing": "账单",
+    "notifications": "通知",
+    "profile": "个人资料",
+    "marketingAutomation": "AI 自动化",
+    "auditLogs": "审计日志"
+  },
+  "Authentication": {
+    "login": "登录",
+    "logout": "退出",
+    "register": "注册",
+    "email": "电子邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "biometric": "生物识别登录"
+  },
+  "Dashboard": {
+    "welcome": "欢迎回来，{name}",
+    "todayBookings": "今日预约",
+    "totalRevenue": "总收入"
+  },
+  "Bookings": {
+    "title": "预约",
+    "newBooking": "新建预约",
+    "status": {
+      "confirmed": "已确认",
+      "pending": "待处理",
+      "cancelled": "已取消",
+      "completed": "已完成"
+    }
+  }
+}

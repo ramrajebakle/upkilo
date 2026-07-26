@@ -1,0 +1,355 @@
+@import "tailwindcss";
+
+/* ===========================================
+   UPKILO DESIGN SYSTEM TOKENS
+   Version: 1.0.0
+   =========================================== */
+
+@theme {
+  --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* Typography */
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-lg: 17px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 38px;
+  --text-5xl: 48px;
+
+  /* Neutral Base */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f8f8fa;
+  --color-neutral-100: #f0f0f4;
+  --color-neutral-200: #e4e4eb;
+  --color-neutral-300: #ccccd8;
+  --color-neutral-400: #9999b0;
+  --color-neutral-500: #66667a;
+  --color-neutral-600: #4d4d5e;
+  --color-neutral-700: #333344;
+  --color-neutral-800: #1f1f2e;
+  --color-neutral-900: #111120;
+  --color-neutral-950: #080812;
+
+  /* Platform Accent (Billing A) */
+  --color-platform-50: #eef0ff;
+  --color-platform-100: #dde1ff;
+  --color-platform-400: #8b7cf8;
+  --color-platform-500: #5b4cf5;
+  --color-platform-600: #4535d4;
+  --color-platform-900: #1c1568;
+
+  /* Tenant Accent (Billing B) */
+  --color-tenant-50: #fffbeb;
+  --color-tenant-100: #fef3c7;
+  --color-tenant-400: #fbbf24;
+  --color-tenant-500: #f59e0b;
+  --color-tenant-600: #d97706;
+  --color-tenant-900: #78350f;
+
+  /* AI Accent */
+  --color-ai-100: #ede9fe;
+  --color-ai-500: #7c3aed;
+
+  /* Semantic */
+  --color-success-500: #16a34a;
+  --color-warning-500: #f59e0b;
+  --color-danger-500: #dc2626;
+  --color-info-500: #2563eb;
+
+  /* Spacing */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+  --shadow-ai: 0 0 0 1px rgba(124,58,237,0.125), 0 8px 24px rgba(124,58,237,0.125);
+
+  /* Z-Index Scale */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-orbit: 300;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-copilot: 600;
+  --z-pulse-bar: 700;
+  --z-command: 800;
+  --z-toast: 900;
+}
+
+/* ===========================================
+   ANIMATION KEYFRAMES
+   Used by animate-* utility classes below
+   =========================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@theme {
+  /* Custom animation tokens — enables animate-* Tailwind utilities */
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-fade-in-up: fade-in-up 0.35s ease-out both;
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+  --animate-scale-in: scale-in 0.2s ease-out both;
+  --animate-slide-in: slide-in 0.25s ease-out both;
+  --animate-modal-in: modal-in 0.2s ease-out both;
+  --animate-shake: shake 0.4s ease-in-out;
+  --animate-spin-slow: spin-slow 3s linear infinite;
+}
+
+@layer base {
+  :root {
+    --surface-base: var(--color-neutral-0);
+    --surface-raised: var(--color-neutral-50);
+    --surface-overlay: var(--color-neutral-100);
+    --surface-sunken: var(--color-neutral-100);
+
+    --text-primary: var(--color-neutral-900);
+    --text-secondary: var(--color-neutral-500);
+    --text-tertiary: var(--color-neutral-400);
+    --text-inverse: var(--color-neutral-0);
+    
+    background-color: var(--surface-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+  }
+
+  .dark {
+    --surface-base: var(--color-neutral-950);
+    --surface-raised: var(--color-neutral-900);
+    --surface-overlay: var(--color-neutral-800);
+    --surface-sunken: #060610;
+
+    --text-primary: var(--color-neutral-50);
+    --text-secondary: var(--color-neutral-400);
+    --text-tertiary: var(--color-neutral-600);
+    --text-inverse: var(--color-neutral-900);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ===========================================
+   DESIGN SYSTEM COMPONENTS
+   Canonical definitions for .btn, .card-elevated, etc.
+   L2: documents custom class system
+   L3: animations defined above via @theme
+   L6: .btn/.btn-primary/.btn-secondary are the component tokens
+   =========================================== */
+
+@layer components {
+  /* ---- Buttons ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.5;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--color-ai-500);
+    outline-offset: 2px;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .btn-primary {
+    background-color: var(--color-ai-500);
+    color: #ffffff;
+    border-color: var(--color-ai-500);
+  }
+
+  .btn-primary:hover {
+    background-color: #6d28d9;
+    border-color: #6d28d9;
+  }
+
+  .btn-primary:active {
+    background-color: #5b21b6;
+  }
+
+  .btn-secondary {
+    background-color: #ffffff;
+    color: var(--color-neutral-700);
+    border-color: var(--color-neutral-200);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-neutral-50);
+    border-color: var(--color-neutral-300);
+  }
+
+  .dark .btn-secondary {
+    background-color: var(--color-neutral-800);
+    color: var(--color-neutral-100);
+    border-color: var(--color-neutral-700);
+  }
+
+  .dark .btn-secondary:hover {
+    background-color: var(--color-neutral-700);
+  }
+
+  /* ---- Cards ---- */
+  .card-elevated {
+    background-color: #ffffff;
+    border: 1px solid var(--color-neutral-200);
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .stat-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-neutral-200);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    display: block;
+  }
+
+  .stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  /* ---- Glass effects ---- */
+  .glass-dark {
+    background-color: rgba(15, 15, 30, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  /* ---- Text effects ---- */
+  .gradient-text {
+    background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ---- Texture overlay ---- */
+  .grain {
+    position: relative;
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.35;
+  }
+
+  /* ---- Stat value typography ---- */
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+}

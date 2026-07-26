@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "loading": "Laden...",
+    "search": "Zoeken",
+    "actions": "Acties",
+    "create": "Maken",
+    "filter": "Filter",
+    "back": "Terug",
+    "next": "Volgende",
+    "confirm": "Bevestigen",
+    "close": "Sluiten",
+    "yes": "Ja",
+    "no": "Nee",
+    "submit": "Indienen",
+    "success": "Succes!",
+    "error": "Fout",
+    "status": "Status"
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "bookings": "Boekingen",
+    "calendar": "Kalender",
+    "clients": "Klanten",
+    "staff": "Personeel",
+    "services": "Diensten",
+    "settings": "Instellingen",
+    "billing": "Facturering",
+    "notifications": "Meldingen",
+    "profile": "Profiel",
+    "marketingAutomation": "AI-automatisering",
+    "auditLogs": "Auditlogboeken"
+  },
+  "Authentication": {
+    "login": "Inloggen",
+    "logout": "Uitloggen",
+    "register": "Registreren",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "biometric": "Biometrisch"
+  },
+  "Dashboard": {
+    "welcome": "Welkom terug, {name}",
+    "todayBookings": "Boekingen vandaag",
+    "totalRevenue": "Totale omzet"
+  },
+  "Bookings": {
+    "title": "Boekingen",
+    "newBooking": "Nieuwe boeking",
+    "status": {
+      "confirmed": "Bevestigd",
+      "pending": "In afwachting",
+      "cancelled": "Geannuleerd",
+      "completed": "Voltooid"
+    }
+  }
+}

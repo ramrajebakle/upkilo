@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <Include>[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Scheduling*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Booking*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Auth*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Subscription*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Tenant*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Session*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Cache*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.RedisCache*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Workflow*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Notification*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Webhook*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.TwoFactor*,[Upkilo.Application]*</Include>
+    <Exclude>[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.WebhookV2*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.BookingReminder*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.SubscriptionDowngrade*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.SubscriptionPlan*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.Upsell*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Services.NotificationFallback*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Migrations.*,[Upkilo.Infrastructure]Upkilo.Infrastructure.Data.AppDbContextModelSnapshot</Exclude>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.3.0" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="3.8.0" />
+    <PackageReference Include="xunit" Version="2.6.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Upkilo.Core\Upkilo.Core.csproj" />
+    <ProjectReference Include="..\..\Upkilo.Infrastructure\Upkilo.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Upkilo.API\Upkilo.API.csproj" />
+  </ItemGroup>
+
+</Project>

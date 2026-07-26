@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["REPLACE_WITH_TEAM_ID.com.upkilo.app"],
+        "components": [
+          { "/": "/booking/*", "comment": "Public booking widget deep link" },
+          { "/": "/dashboard/*", "comment": "Dashboard deep links" },
+          { "/": "/auth/*", "comment": "Auth deep links (email verify, password reset)" },
+          { "/": "/checkout/*", "comment": "Checkout deep links" },
+          { "/": "/", "comment": "Root" }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["REPLACE_WITH_TEAM_ID.com.upkilo.app"]
+  },
+  "activitycontinuation": {
+    "apps": ["REPLACE_WITH_TEAM_ID.com.upkilo.app"]
+  }
+}

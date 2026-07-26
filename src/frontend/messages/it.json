@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "loading": "Caricamento...",
+    "search": "Cerca",
+    "actions": "Azioni",
+    "create": "Crea",
+    "filter": "Filtra",
+    "back": "Indietro",
+    "next": "Avanti",
+    "confirm": "Conferma",
+    "close": "Chiudi",
+    "yes": "Sì",
+    "no": "No",
+    "submit": "Invia",
+    "success": "Successo!",
+    "error": "Errore",
+    "status": "Stato"
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "bookings": "Prenotazioni",
+    "calendar": "Calendario",
+    "clients": "Clienti",
+    "staff": "Staff",
+    "services": "Servizi",
+    "settings": "Impostazioni",
+    "billing": "Fatturazione",
+    "notifications": "Notifiche",
+    "profile": "Profilo",
+    "marketingAutomation": "Automazione IA",
+    "auditLogs": "Registri di audit"
+  },
+  "Authentication": {
+    "login": "Accedi",
+    "logout": "Esci",
+    "register": "Crea account",
+    "email": "E-mail",
+    "password": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "biometric": "Login biometrico"
+  },
+  "Dashboard": {
+    "welcome": "Bentornato, {name}",
+    "todayBookings": "Prenotazioni di oggi",
+    "totalRevenue": "Entrate totali"
+  },
+  "Bookings": {
+    "title": "Prenotazioni",
+    "newBooking": "Nuova prenotazione",
+    "status": {
+      "confirmed": "Confermato",
+      "pending": "In attesa",
+      "cancelled": "Annullato",
+      "completed": "Completato"
+    }
+  }
+}

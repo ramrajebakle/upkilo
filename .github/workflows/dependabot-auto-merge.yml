@@ -1,0 +1,55 @@
+name: Dependabot Auto-Merge
+
+# The Security & Dependency Agent's autonomy boundary (see
+# "_archive/planning/pre-launch-research-and-audits/autonomous_production_agents_plan.md" section 1).
+# .github/dependabot.yml already opens weekly PRs for nuget + npm; this workflow
+# is what actually removes the human from merging the safe ones. It only ever
+# auto-merges patch/minor version bumps, and only after this repo's full ci.yml
+# suite has passed on the PR — a major bump always waits for a human.
+
+on:
+  pull_request_target:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Evaluate Dependabot PR
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Wait for CI (ci.yml) to report success on this PR
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 20
+          running-workflow-name: "Evaluate Dependabot PR"
+          allowed-conclusions: success
+
+      - name: Auto-approve and auto-merge patch/minor bumps
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: |
+          gh pr review "$PR_URL" --approve -b "Auto-approved: ${{ steps.metadata.outputs.update-type }} bump, ci.yml passed."
+          gh pr merge "$PR_URL" --auto --squash
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Flag major bumps for human review
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr comment "$PR_URL" --body "🔒 Major version bump — outside the Security Agent's auto-merge scope. Needs human review (see autonomous_production_agents_plan.md, section 3: scope fence)."
+          gh pr edit "$PR_URL" --add-label "needs-human-review"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

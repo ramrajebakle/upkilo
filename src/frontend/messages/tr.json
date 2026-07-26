@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "loading": "Yükleniyor...",
+    "search": "Ara",
+    "actions": "Eylemler",
+    "create": "Oluştur",
+    "filter": "Filtrele",
+    "back": "Geri",
+    "next": "İleri",
+    "confirm": "Onayla",
+    "close": "Kapat",
+    "yes": "Evet",
+    "no": "Hayır",
+    "submit": "Gönder",
+    "success": "Başarılı!",
+    "error": "Hata",
+    "status": "Durum"
+  },
+  "Navigation": {
+    "dashboard": "Panel",
+    "bookings": "Randevular",
+    "calendar": "Takvim",
+    "clients": "Müşteriler",
+    "staff": "Personel",
+    "services": "Hizmetler",
+    "settings": "Ayarlar",
+    "billing": "Faturalandırma",
+    "notifications": "Bildirimler",
+    "profile": "Profil",
+    "marketingAutomation": "Yapay Zeka Otomasyonu",
+    "auditLogs": "Denetim Kayıtları"
+  },
+  "Authentication": {
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "register": "Hesap Oluştur",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotPassword": "Şifremi Unuttum?",
+    "biometric": "Biyometrik"
+  },
+  "Dashboard": {
+    "welcome": "Tekrar hoş geldiniz, {name}",
+    "todayBookings": "Bugünkü Randevular",
+    "totalRevenue": "Toplam Gelir"
+  },
+  "Bookings": {
+    "title": "Randevular",
+    "newBooking": "Yeni Randevu",
+    "status": {
+      "confirmed": "Onaylandı",
+      "pending": "Beklemede",
+      "cancelled": "İptal Edildi",
+      "completed": "Tamamlandı"
+    }
+  }
+}

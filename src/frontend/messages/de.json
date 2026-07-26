@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "loading": "Laden...",
+    "search": "Suchen",
+    "actions": "Aktionen",
+    "create": "Erstellen",
+    "filter": "Filtern",
+    "back": "Zurück",
+    "next": "Weiter",
+    "confirm": "Bestätigen",
+    "close": "Schließen",
+    "yes": "Ja",
+    "no": "Nein",
+    "submit": "Absenden",
+    "success": "Erfolg!",
+    "error": "Ein Fehler ist aufgetreten",
+    "status": "Status"
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "bookings": "Buchungen",
+    "calendar": "Kalender",
+    "clients": "Kunden",
+    "staff": "Mitarbeiter",
+    "services": "Dienstleistungen",
+    "settings": "Einstellungen",
+    "billing": "Abrechnung",
+    "notifications": "Benachrichtigungen",
+    "profile": "Profil",
+    "marketingAutomation": "KI-Automatisierung",
+    "auditLogs": "Audit-Protokolle"
+  },
+  "Authentication": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "register": "Konto erstellen",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "biometric": "Biometrische Anmeldung"
+  },
+  "Dashboard": {
+    "welcome": "Willkommen zurück, {name}",
+    "todayBookings": "Heutige Buchungen",
+    "totalRevenue": "Gesamtumsatz"
+  },
+  "Bookings": {
+    "title": "Buchungen",
+    "newBooking": "Neue Buchung",
+    "status": {
+      "confirmed": "Bestätigt",
+      "pending": "Ausstehend",
+      "cancelled": "Storniert",
+      "completed": "Abgeschlossen"
+    }
+  }
+}

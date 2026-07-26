@@ -1,0 +1,456 @@
+name: Upkilo Production Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options: [staging, production]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  NODE_VERSION: '20.x'
+  REGISTRY: upkiloprod.azurecr.io
+
+jobs:
+  # ── Build Docker Images & Push to ACR ─────────────────────────────
+  build-and-push:
+    name: Build & Push Images
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & Push API Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/upkilo-api:${{ github.sha }}
+            ${{ env.REGISTRY }}/upkilo-api:latest
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/upkilo-api:latest
+          cache-to: type=inline
+
+      - name: Build & Push Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./src/frontend
+          file: ./src/frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }}
+            ${{ env.REGISTRY }}/upkilo-frontend:latest
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/upkilo-frontend:latest
+          cache-to: type=inline
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://api.upkilo.com
+            NEXT_PUBLIC_SIGNALR_URL=https://api.upkilo.com/hubs/notifications
+            NEXT_PUBLIC_APP_NAME=Upkilo
+            NEXT_PUBLIC_SITE_URL=https://app.upkilo.com
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            NEXT_PUBLIC_VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
+
+      # NEXT_PUBLIC_* values are inlined into the client bundle at build time, and Docker
+      # silently drops --build-arg values the Dockerfile does not declare with ARG. When that
+      # happened the build fell back to next.config.js's http://localhost:5000 default and
+      # every browser called its own machine — while CI stayed green, because the frontend
+      # health probe hits a server route that never uses the API base URL. Assert on the
+      # built artifact so the failure can never be silent again.
+      - name: Guard — no localhost API URL baked into production bundle
+        run: |
+          if docker run --rm --entrypoint sh \
+               ${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }} \
+               -c "grep -rq 'localhost:5000' .next/static" 2>/dev/null; then
+            echo "::error::localhost:5000 was baked into the production client bundle. Check that src/frontend/Dockerfile declares ARG NEXT_PUBLIC_API_URL in the builder stage before 'RUN npm run build'."
+            exit 1
+          fi
+          echo "✅ No localhost API URL in the production bundle"
+
+  # ── Database Migration (with backup first) ────────────────────────
+  migrate-database:
+    name: Database Migration
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+
+      # CRITICAL-06: Backup database BEFORE every migration
+      - name: Backup database before migration
+        uses: azure/CLI@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az postgres flexible-server backup create \
+              --resource-group upkilo-prod-rg \
+              --name upkilo-prod-db \
+              --backup-name "pre-deploy-${{ github.sha }}"
+            echo "✅ Database backup created: pre-deploy-${{ github.sha }}"
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # CRITICAL-06: Generate idempotent SQL script for review/audit
+      - name: Generate migration SQL script
+        run: |
+          dotnet ef migrations script --idempotent \
+            --project src/backend/Upkilo.Infrastructure/Upkilo.Infrastructure.csproj \
+            --startup-project src/backend/Upkilo.API/Upkilo.API.csproj \
+            --output migration-${{ github.sha }}.sql
+          echo "=== Migration SQL Preview (first 50 lines) ==="
+          head -50 migration-${{ github.sha }}.sql
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_PROD_DB_CONNECTION }}
+          AzureKeyVault__VaultUri: ""
+
+      - name: Upload migration script as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-sql-${{ github.sha }}
+          path: migration-${{ github.sha }}.sql
+          retention-days: 90
+
+      - name: Apply migrations
+        run: |
+          dotnet ef database update \
+            --project src/backend/Upkilo.Infrastructure/Upkilo.Infrastructure.csproj \
+            --startup-project src/backend/Upkilo.API/Upkilo.API.csproj \
+            --verbose
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_PROD_DB_CONNECTION }}
+          AzureKeyVault__VaultUri: ""
+          Jwt__Secret: "migration-placeholder-min-32-chars-not-used-for-auth-xxxxxxxxxx"
+          Jwt__Issuer: "https://api.upkilo.com"
+          Jwt__Audience: "https://app.upkilo.com"
+
+  # ── Deploy to Staging ─────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy → Staging
+    needs: [build-and-push, migrate-database]   # wait for migration before deploying new code
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_STAGING }}
+
+      - name: Deploy API to Staging App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: upkilo-api-staging
+          images: ${{ env.REGISTRY }}/upkilo-api:${{ github.sha }}
+
+      - name: Deploy Frontend to Staging App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: upkilo-frontend-staging
+          images: ${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }}
+
+      - name: Smoke test staging — await readiness
+        # Poll /ready (DB + Redis + Hangfire) instead of sleeping a fixed 45s.
+        # /ready must pass before we consider staging healthy; /health (liveness) alone
+        # only checks memory/uptime and does not verify dependency connectivity.
+        run: |
+          echo "Polling staging /ready (max 120s)..."
+          deadline=$((SECONDS + 120))
+          until curl -sf https://api-staging.upkilo.com/ready \
+                | jq -e '.status == "Healthy"' > /dev/null 2>&1; do
+            if [ $SECONDS -ge $deadline ]; then
+              echo "❌ Staging readiness check timed out"
+              curl -s https://api-staging.upkilo.com/ready | jq . || true
+              exit 1
+            fi
+            sleep 5
+          done
+          echo "✅ Staging readiness OK (DB + Redis + Hangfire all green)"
+
+  # ── Deploy to Production (requires manual approval + staging pass) ─
+  deploy-production:
+    name: Deploy → Production
+    needs: [migrate-database, deploy-staging]
+    runs-on: ubuntu-latest
+    environment: production    # ← GitHub environment with required reviewers
+
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Inject secrets as App Service application settings before deploying the image.
+      # Without this step, APPLICATIONINSIGHTS_CONNECTION_STRING and PAGERDUTY_INTEGRATION_KEY
+      # never reach the running container — AppInsights and PagerDuty silently do nothing.
+      - name: Configure App Service application settings
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az webapp config appsettings set \
+              --name upkilo-api-prod \
+              --resource-group upkilo-prod-rg \
+              --slot staging \
+              --settings \
+                APPLICATIONINSIGHTS_CONNECTION_STRING="${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}" \
+                PagerDuty__IntegrationKey="${{ secrets.PAGERDUTY_INTEGRATION_KEY }}" \
+                REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}" \
+                SENTRY_DSN="${{ secrets.SENTRY_DSN }}" \
+                ConnectionStrings__Redis="redis:6379,password=${{ secrets.REDIS_PASSWORD }},abortConnect=false" \
+                ConnectionStrings__DefaultConnection="${{ secrets.AZURE_PROD_DB_CONNECTION }}" \
+                ConnectionStrings__ReplicaConnection="${{ secrets.AZURE_PROD_DB_REPLICA_CONNECTION || secrets.AZURE_PROD_DB_CONNECTION }}"
+            echo "✅ App Service settings configured"
+
+      # appsettings.Production.json declares the DB connection strings as "${DATABASE_URL}"
+      # placeholders, but .NET does NOT expand ${...} and no Key Vault *configuration provider*
+      # is registered — only a runtime ISecretProvider used for the JWT signing key. Without the
+      # two ConnectionStrings__* settings above, the container boots with the literal text and
+      # dies immediately:
+      #   System.ArgumentException: Couldn't set ${database_url};ssl mode
+      # Fail fast here rather than discovering it from a crash-looping container.
+      - name: Verify DB connection settings reached App Service
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            VALUE=$(az webapp config appsettings list \
+              --name upkilo-api-prod \
+              --resource-group upkilo-prod-rg \
+              --slot staging \
+              --query "[?name=='ConnectionStrings__DefaultConnection'].value | [0]" -o tsv)
+            if [ -z "$VALUE" ]; then
+              echo "::error::ConnectionStrings__DefaultConnection is not set on the App Service. Set the AZURE_PROD_DB_CONNECTION secret."
+              exit 1
+            fi
+            if echo "$VALUE" | grep -q '\${'; then
+              echo "::error::ConnectionStrings__DefaultConnection still contains an unexpanded \${...} placeholder."
+              exit 1
+            fi
+            echo "✅ DB connection string present and expanded"
+
+      # CRITICAL-05: Use Azure App Service slot swap for zero-downtime deploy
+      - name: Deploy API to Production staging slot
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: upkilo-api-prod
+          slot-name: staging
+          images: ${{ env.REGISTRY }}/upkilo-api:${{ github.sha }}
+
+      - name: Wait for staging slot to become ready
+        run: |
+          echo "Polling /ready on staging slot (max 90s)..."
+          deadline=$((SECONDS + 90))
+          until curl -sf https://upkilo-api-prod-staging.azurewebsites.net/ready \
+                | jq -e '.status == "Healthy"' > /dev/null 2>&1; do
+            if [ $SECONDS -ge $deadline ]; then
+              echo "❌ Staging slot readiness timed out" && exit 1
+            fi
+            sleep 5
+          done
+
+      # Use /ready (readiness) not /health (liveness). /health only checks memory/uptime;
+      # /ready verifies DB connection, Redis, and Hangfire — required before serving traffic.
+      - name: Validate staging slot READINESS before swap
+        run: |
+          echo "Polling /ready until DB+Redis+Hangfire are green (max 2 min)..."
+          deadline=$((SECONDS + 120))
+          until curl -sf https://upkilo-api-prod-staging.azurewebsites.net/ready \
+                | jq -e '.status == "Healthy"' > /dev/null 2>&1; do
+            if [ $SECONDS -ge $deadline ]; then
+              echo "❌ Readiness check timed out after 2 min — ABORT SWAP"
+              curl -s https://upkilo-api-prod-staging.azurewebsites.net/ready | jq .
+              exit 1
+            fi
+            echo "  Not ready yet, retrying in 10s..."
+            sleep 10
+          done
+          echo "✅ API staging slot is READY (DB + Redis + Hangfire green)"
+
+      # Deploy and validate frontend BEFORE swapping either slot.
+      # This ensures both new API and new frontend are warm and validated before
+      # either goes live — eliminating the API-new / frontend-old version mismatch window.
+      - name: Deploy Frontend to Production staging slot
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: upkilo-frontend-prod
+          slot-name: staging
+          images: ${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }}
+
+      - name: Validate frontend staging slot
+        run: |
+          echo "Polling frontend /api/health (max 90s)..."
+          deadline=$((SECONDS + 90))
+          until curl -sf https://upkilo-frontend-prod-staging.azurewebsites.net/api/health \
+                > /dev/null 2>&1; do
+            if [ $SECONDS -ge $deadline ]; then
+              echo "❌ Frontend staging slot health check timed out — ABORT"
+              exit 1
+            fi
+            sleep 5
+          done
+          echo "✅ Frontend staging slot is healthy"
+
+      # Both slots validated — swap them simultaneously to minimise version-mismatch window.
+      - name: Swap API slot (zero-downtime blue/green)
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az webapp deployment slot swap \
+              --name upkilo-api-prod \
+              --resource-group upkilo-prod-rg \
+              --slot staging \
+              --target-slot production
+            echo "✅ API slot swap complete — production now serving ${{ github.sha }}"
+
+      - name: Swap frontend slots (zero-downtime)
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az webapp deployment slot swap \
+              --name upkilo-frontend-prod \
+              --resource-group upkilo-prod-rg \
+              --slot staging \
+              --target-slot production
+            echo "✅ Frontend slot swap complete — production now serving ${{ github.sha }}"
+
+      - name: Purge Azure Front Door CDN cache
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az afd endpoint purge \
+              --profile-name upkilo-fd \
+              --endpoint-name upkilo-fd-endpoint \
+              --resource-group upkilo-prod-rg \
+              --domains app.upkilo.com api.upkilo.com \
+              --content-paths "/*"
+            echo "✅ CDN cache purged"
+
+      - name: Post-deploy production smoke test
+        run: |
+          sleep 30
+          curl -f https://api.upkilo.com/health \
+            --retry 5 --retry-delay 10 \
+            || (echo "❌ Production health check FAILED" && exit 1)
+          curl -f https://api.upkilo.com/ready \
+            --retry 5 --retry-delay 10 \
+            || (echo "❌ Production readiness FAILED" && exit 1)
+          echo "✅ Production deployment verified — ${{ github.sha }}"
+
+      # §5.5: Non-fatal Elasticsearch check — ES down should not block deploy
+      # (core booking/payment/CRM works without it; search degrades gracefully)
+      - name: Verify Elasticsearch via readiness endpoint (non-fatal)
+        run: |
+          READY=$(curl -sf https://api.upkilo.com/ready | jq -r '.checks[] | select(.name=="elasticsearch") | .status' 2>/dev/null || echo "unknown")
+          if [ "$READY" = "Healthy" ]; then
+            echo "✅ Elasticsearch: Healthy"
+          else
+            echo "⚠️ Elasticsearch status: $READY — search features may be degraded. Non-blocking."
+          fi
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "🚀 Deploy SUCCESS: ${{ github.sha }} → production at $(date -u)"
+
+  # ── Rollback (automatic on deploy-production failure) ────────────────
+  rollback:
+    name: Rollback Production
+    runs-on: ubuntu-latest
+    if: failure() && needs.deploy-production.result == 'failure'
+    needs: [deploy-production, migrate-database]
+    # DO NOT add `environment: production` here — environment protection gates
+    # (required reviewers) block jobs triggered by failure(), making the rollback
+    # impossible to execute automatically during an incident.
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Rollback API slots
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az webapp deployment slot swap \
+              --name upkilo-api-prod \
+              --resource-group upkilo-prod-rg \
+              --slot production \
+              --target-slot staging
+            echo "⏪ API ROLLBACK complete — API production restored to previous version"
+
+      - name: Rollback frontend slots
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az webapp deployment slot swap \
+              --name upkilo-frontend-prod \
+              --resource-group upkilo-prod-rg \
+              --slot production \
+              --target-slot staging
+            echo "⏪ Frontend ROLLBACK complete — frontend production restored to previous version"
+
+      # Schema rollback: revert to the migration that was current before this deploy.
+      # Without this, old code runs against a schema that may have dropped columns it reads.
+      - name: Setup .NET for schema rollback
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Rollback database schema to pre-deploy snapshot
+        run: |
+          # Revert to the migration immediately before this deploy's first new migration.
+          # ROLLBACK_TARGET_MIGRATION must be set as a repository variable pointing to
+          # the last migration applied on the previous successful deploy (e.g. "20260623021555_SC2_HashPartitioning").
+          # If not set, schema rollback is skipped and a manual DBA review is required.
+          TARGET="${{ vars.ROLLBACK_TARGET_MIGRATION }}"
+          if [ -z "$TARGET" ]; then
+            echo "⚠️ ROLLBACK_TARGET_MIGRATION not set — skipping schema rollback."
+            echo "   Manually run: dotnet ef database update <previous-migration-name>"
+          else
+            echo "Rolling schema back to: $TARGET"
+            dotnet ef database update "$TARGET" \
+              --project src/backend/Upkilo.Infrastructure/Upkilo.Infrastructure.csproj \
+              --startup-project src/backend/Upkilo.API/Upkilo.API.csproj \
+              --verbose
+            echo "⏪ Schema rollback complete to $TARGET"
+          fi
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_PROD_DB_CONNECTION }}
+          AzureKeyVault__VaultUri: ""
+          Jwt__Secret: "rollback-placeholder-min-32-chars-not-used-for-auth-xxxxxxxxxx"
+          Jwt__Issuer: "https://api.upkilo.com"
+          Jwt__Audience: "https://app.upkilo.com"
+
+      - name: Notify on rollback
+        run: |
+          echo "🚨 ROLLBACK TRIGGERED for ${{ github.sha }} at $(date -u). Check deploy logs and PagerDuty."

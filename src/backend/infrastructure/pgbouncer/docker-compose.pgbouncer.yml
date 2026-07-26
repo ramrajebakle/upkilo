@@ -1,0 +1,46 @@
+version: "3.9"
+
+# SC6: PgBouncer connection pool — deploy alongside the main docker-compose.yml
+# to reduce P99 DB connection-wait latency on high-tenant-count workloads.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f infrastructure/pgbouncer/docker-compose.pgbouncer.yml up
+#
+# After deployment, update ConnectionStrings__DefaultConnection in the API to point
+# to pgbouncer:5433 instead of postgres:5432.
+
+services:
+  pgbouncer:
+    image: bitnami/pgbouncer:1.22.1
+    restart: unless-stopped
+    ports:
+      - "5433:5433"
+    environment:
+      PGBOUNCER_DATABASE: upkilo_prod
+      PGBOUNCER_HOST: postgres
+      PGBOUNCER_PORT: 5432
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: "500"
+      PGBOUNCER_DEFAULT_POOL_SIZE: "25"
+      PGBOUNCER_RESERVE_POOL_SIZE: "10"
+      PGBOUNCER_SERVER_IDLE_TIMEOUT: "600"
+      POSTGRESQL_USERNAME: ${POSTGRES_USER:-upkilo}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_DATABASE: ${POSTGRES_DB:-upkilo_prod}
+    volumes:
+      - ./pgbouncer.ini:/bitnami/pgbouncer/conf/pgbouncer.ini:ro
+    networks:
+      - upkilo_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5433"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  upkilo_network:
+    external: true

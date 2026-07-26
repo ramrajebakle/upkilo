@@ -1,0 +1,83 @@
+# .gitignore for Upkilo Project
+
+# ================================================================
+# SECURITY: Never commit secrets or credentials
+# ================================================================
+
+# Environment files — use .env.example as the template
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+src/frontend/.env.local
+
+# Backend — local / Development overrides contain real secrets
+src/backend/Upkilo.API/appsettings.Development.json
+src/backend/Upkilo.API/appsettings.Local.json
+
+# Azure publish profiles contain deployment credentials
+*.PublishSettings
+*.publishsettings
+
+# Migration SQL scripts may contain connection-string fragments
+migration-*.sql
+
+# ================================================================
+# IDE & System
+# ================================================================
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+.idea/
+.DS_Store
+Thumbs.db
+graphify-out/
+
+# ================================================================
+# .NET / Backend
+# ================================================================
+bin/
+obj/
+publish/
+*.log
+*.txt
+!api_errors_final.txt
+!api_errors_final_utf8.txt
+
+# ================================================================
+# Node.js / Frontend
+# ================================================================
+node_modules/
+.next/
+out/
+build/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ================================================================
+# Databases
+# ================================================================
+*.db
+*.sqlite
+
+# ================================================================
+# Terraform / Infrastructure state
+# ================================================================
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# ================================================================
+# Temporary Files
+# ================================================================
+tmp/
+temp/
+
+# Vendored k6 binary (auto-downloaded by run-all.ps1 if missing)
+infrastructure/load-testing/.tools/

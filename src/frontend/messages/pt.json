@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "loading": "Carregando...",
+    "search": "Buscar",
+    "actions": "Ações",
+    "create": "Criar",
+    "filter": "Filtrar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "confirm": "Confirmar",
+    "close": "Fechar",
+    "yes": "Sim",
+    "no": "Não",
+    "submit": "Enviar",
+    "success": "Sucesso!",
+    "error": "Ocorreu um erro",
+    "status": "Estado"
+  },
+  "Navigation": {
+    "dashboard": "Painel",
+    "bookings": "Reservas",
+    "calendar": "Calendário",
+    "clients": "Clientes",
+    "staff": "Equipe",
+    "services": "Serviços",
+    "settings": "Configurações",
+    "billing": "Faturamento",
+    "notifications": "Notificações",
+    "profile": "Perfil",
+    "marketingAutomation": "Automação de IA",
+    "auditLogs": "Registros de Auditoria"
+  },
+  "Authentication": {
+    "login": "Entrar",
+    "logout": "Sair",
+    "register": "Criar conta",
+    "email": "E-mail",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "biometric": "Login biométrico"
+  },
+  "Dashboard": {
+    "welcome": "Bem-vindo de volta, {name}",
+    "todayBookings": "Reservas de hoje",
+    "totalRevenue": "Receita total"
+  },
+  "Bookings": {
+    "title": "Reservas",
+    "newBooking": "Nova reserva",
+    "status": {
+      "confirmed": "Confirmada",
+      "pending": "Pendente",
+      "cancelled": "Cancelada",
+      "completed": "Concluída"
+    }
+  }
+}

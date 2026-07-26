@@ -1,0 +1,19 @@
+{
+  "name": "@upkilo/sdk",
+  "version": "1.0.0",
+  "description": "The official JavaScript/TypeScript SDK for the Upkilo SaaS platform.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "@types/node": "^20.8.2",
+    "jest": "^29.7.0"
+  }
+}

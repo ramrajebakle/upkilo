@@ -1,0 +1,102 @@
+version: '3.8'
+
+# ────────────────────────────────────────────────────────
+# Upkilo Development Environment
+# Usage: docker compose up -d
+# Starts: PostgreSQL 16, Redis 7, Hangfire Dashboard
+# ────────────────────────────────────────────────────────
+
+services:
+  # ── PostgreSQL ─────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: upkilo-postgres
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.max=10000 -c pg_stat_statements.track=all -c autovacuum_vacuum_scale_factor=0.05 -c autovacuum_analyze_scale_factor=0.02
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: upkilo_dev
+      POSTGRES_USER: upkilo
+      POSTGRES_PASSWORD: upkilo_dev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init-perf.sql:/docker-entrypoint-initdb.d/init-perf.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U upkilo -d upkilo_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── PgBouncer Connection Pooler ──────────────────────────
+  pgbouncer:
+    image: edoburu/pgbouncer:1.23.1
+    container_name: upkilo-pgbouncer
+    environment:
+      - DATABASE_URL=postgres://upkilo:upkilo_dev_password@postgres:5432/upkilo_dev
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=200
+      - DEFAULT_POOL_SIZE=100
+      - MIN_POOL_SIZE=20
+    ports:
+      - "6432:5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+
+  # ── Redis ──────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: upkilo-redis
+    ports:
+      - "6379:6379"
+    # REDIS_PASSWORD defaults to a dev-only value; override in .env for shared environments.
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass ${REDIS_PASSWORD:-upkilo_dev_redis_local}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-upkilo_dev_redis_local}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── pgAdmin (Database UI) ─────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: upkilo-pgadmin
+    ports:
+      # Bind to 127.0.0.1 only — pgAdmin should never be reachable from outside localhost.
+      - "127.0.0.1:5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@upkilo.com
+      # Override PGADMIN_PASSWORD in .env — do not leave as the default in shared/CI envs.
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-change_me_dev_only}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ── Redis Commander (Cache UI) ─────────────────────────
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: upkilo-redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:${REDIS_PASSWORD:-upkilo_dev_redis_local}
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+
+# ────────────────────────────────────────────────────────
+# Connection strings for appsettings.Development.json:
+#   DefaultConnection: "Host=localhost;Port=6432;Database=upkilo_dev;Username=upkilo;Password=upkilo_dev_password"
+#   Redis: "localhost:6379,password=upkilo_dev_redis_local"
+#
+# Access:
+#   pgAdmin:  http://localhost:5050 (admin@upkilo.com / change_me_dev_only)
+#   Redis UI: http://localhost:8081
+# ────────────────────────────────────────────────────────

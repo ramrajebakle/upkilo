@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "loading": "로딩 중...",
+    "search": "검색",
+    "actions": "작업",
+    "create": "만들기",
+    "filter": "필터",
+    "back": "뒤로",
+    "next": "다음",
+    "confirm": "확인",
+    "close": "닫기",
+    "yes": "예",
+    "no": "아니요",
+    "submit": "제출",
+    "success": "성공!",
+    "error": "오류",
+    "status": "상태"
+  },
+  "Navigation": {
+    "dashboard": "대시보드",
+    "bookings": "예약",
+    "calendar": "캘린더",
+    "clients": "고객",
+    "staff": "직원",
+    "services": "서비스",
+    "settings": "설정",
+    "billing": "청구",
+    "notifications": "알림",
+    "profile": "프로필",
+    "marketingAutomation": "AI 자동화",
+    "auditLogs": "감사 로그"
+  },
+  "Authentication": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "register": "가입하기",
+    "email": "이메일",
+    "password": "비밀번호",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "biometric": "생체 인증 로그인"
+  },
+  "Dashboard": {
+    "welcome": "다시 오신 것을 환영합니다, {name}",
+    "todayBookings": "오늘의 예약",
+    "totalRevenue": "총 수익"
+  },
+  "Bookings": {
+    "title": "예약",
+    "newBooking": "새 예약",
+    "status": {
+      "confirmed": "확인됨",
+      "pending": "대기 중",
+      "cancelled": "취소됨",
+      "completed": "완료됨"
+    }
+  }
+}

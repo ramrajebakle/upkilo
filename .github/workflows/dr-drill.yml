@@ -1,0 +1,64 @@
+name: DR Restore Drill
+
+# The Database Ops Agent's recurring job (see autonomous_production_agents_plan.md,
+# section 1). docs/DisasterRecovery.md documents the PITR procedure but nothing
+# previously exercised it — an untested backup is not a backup. This drill restores
+# the latest backup to a scratch instance monthly, verifies it, then tears it down.
+# It never touches the primary/replica cluster.
+
+on:
+  schedule:
+    - cron: "0 4 1 * *"  # 04:00 UTC on the 1st of every month
+  workflow_dispatch: {}
+
+jobs:
+  restore-drill:
+    name: Restore latest backup to scratch instance
+    runs-on: ubuntu-latest
+    environment: production-readonly  # scoped credentials: create/read/delete scratch resources only
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_DR_DRILL }}
+
+      - name: Create scratch server from latest backup (PITR)
+        id: restore
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            SCRATCH_NAME="upkilo-dr-drill-$(date +%Y%m%d)"
+            echo "scratch_name=$SCRATCH_NAME" >> "$GITHUB_OUTPUT"
+            az postgres flexible-server restore \
+              --resource-group upkilo-prod-rg \
+              --name "$SCRATCH_NAME" \
+              --source-server upkilo-prod-db \
+              --restore-time "$(date -u -d '10 minutes ago' +%Y-%m-%dT%H:%M:%SZ)"
+
+      - name: Verify restored data integrity
+        run: |
+          psql "${{ secrets.DR_DRILL_CONNECTION_PREFIX }}${{ steps.restore.outputs.scratch_name }}${{ secrets.DR_DRILL_CONNECTION_SUFFIX }}" \
+            -c "SELECT count(*) FROM tenants;" \
+            -c "SELECT count(*) FROM bookings WHERE created_at > now() - interval '7 days';" \
+            -c "SELECT max(created_at) FROM audit_entries;"
+
+      - name: Tear down scratch instance
+        if: always()
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az postgres flexible-server delete \
+              --resource-group upkilo-prod-rg \
+              --name "${{ steps.restore.outputs.scratch_name }}" \
+              --yes
+
+      - name: Report drill result
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ DR drill passed $(date -u). RTO/RPO targets in docs/DisasterRecovery.md hold."
+          else
+            echo "::error::❌ DR drill FAILED $(date -u) — restore integrity could not be verified. Escalate to a human per the Database Ops Agent's escalation rule (autonomous_production_agents_plan.md)."
+          fi

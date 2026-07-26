@@ -1,0 +1,74 @@
+{
+  "expo": {
+    "name": "Upkilo",
+    "slug": "upkilo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#7C3AED"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.upkilo.app",
+      "associatedDomains": [
+        "applinks:upkilo.com",
+        "webcredentials:upkilo.com"
+      ],
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Use Face ID to authenticate",
+        "NSCameraUsageDescription": "Used for QR code scanning"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#7C3AED"
+      },
+      "package": "com.upkilo.app",
+      "permissions": ["CAMERA", "USE_BIOMETRIC", "USE_FINGERPRINT", "VIBRATE"],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "upkilo.com",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-local-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#7C3AED"
+        }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "upkilo",
+          "project": "upkilo-mobile"
+        }
+      ]
+    ],
+    "scheme": "upkilo",
+    "extra": {
+      "eas": {
+        "projectId": "upkilo-production-project"
+      }
+    }
+  }
+}

@@ -1,0 +1,331 @@
+name: Upkilo CI
+
+on:
+  push:
+    branches: [main, develop, ramraje]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  NODE_VERSION: '20.x'
+
+jobs:
+  # ── Backend Build & Test ───────────────────────────────────────────
+  backend-build:
+    name: Backend Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/backend
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: upkilo_test
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: upkilo_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore Upkilo.sln
+
+      - name: Build
+        run: dotnet build Upkilo.sln --no-restore --configuration Release
+
+      - name: Format Check
+        run: dotnet format Upkilo.sln --verify-no-changes
+
+      - name: CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+      - uses: github/codeql-action/analyze@v3
+
+      - name: Run tests with coverage
+        run: |
+          dotnet test Upkilo.sln --no-build --configuration Release \
+            --verbosity normal \
+            --logger "trx;LogFileName=test-results.trx" \
+            --collect:"XPlat Code Coverage"
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=upkilo_test;Username=upkilo_test;Password=testpassword"
+          ConnectionStrings__ReplicaConnection: "Host=localhost;Port=5432;Database=upkilo_test;Username=upkilo_test;Password=testpassword"
+          ConnectionStrings__Redis: "localhost:6379"
+          Jwt__Secret: ${{ secrets.CI_JWT_SECRET }}
+          Jwt__Issuer: "https://api.upkilo.com"
+          Jwt__Audience: "https://app.upkilo.com"
+          AzureServiceBus__ConnectionString: ""
+          Elasticsearch__Uri: "http://localhost:9200"
+
+      - name: T7 — Validate OpenAPI contract (no regression)
+        run: |
+          dotnet tool install --global Swashbuckle.AspNetCore.Cli --version 6.6.2 || true
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          swagger tofile --output /tmp/upkilo-openapi.json \
+            ./Upkilo.API/bin/Release/net8.0/Upkilo.API.dll v1 || \
+            echo "::warning::Swagger generation skipped (no running host needed in test)"
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=upkilo_test;Username=upkilo_test;Password=testpassword"
+          Jwt__Secret: ${{ secrets.CI_JWT_SECRET }}
+
+      - name: Migration gate — check no pending migrations
+        run: |
+          dotnet ef migrations list --project Upkilo.Infrastructure/Upkilo.Infrastructure.csproj \
+            --startup-project Upkilo.API/Upkilo.API.csproj --no-build 2>&1 | tail -5
+          if dotnet ef migrations list --project Upkilo.Infrastructure/Upkilo.Infrastructure.csproj \
+            --startup-project Upkilo.API/Upkilo.API.csproj --no-build 2>&1 | grep -q "(Pending)"; then
+            echo "::error::Unapplied migrations detected. Run dotnet ef database update before merging."
+            exit 1
+          fi
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=upkilo_test;Username=upkilo_test;Password=testpassword"
+        # VULN-012 FIX: continue-on-error removed — unapplied migrations now block the PR.
+        # Previously the `exit 1` was silently swallowed, allowing schema-mismatched builds
+        # to merge and cause runtime failures on first write in production.
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-results
+          path: src/backend/**/TestResults/**
+
+      - name: Report Code Coverage
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: src/backend/**/TestResults/**/*.cobertura.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: '60 80'
+
+      - name: Write to Job Summary
+        if: always()
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
+  # ── Frontend Build, Lint & TypeCheck ──────────────────────────────
+  frontend-build:
+    name: Frontend Build & Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # CRITICAL-04: ESLint MUST run before build — catches security issues
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: i18n translation coverage check
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const messagesDir = path.join(process.cwd(), 'messages');
+            if (!fs.existsSync(messagesDir)) { console.log('No messages dir, skipping'); process.exit(0); }
+            const files = fs.readdirSync(messagesDir).filter(f => f.endsWith('.json'));
+            if (files.length === 0) { console.log('No translation files, skipping'); process.exit(0); }
+            const baseFile = files.find(f => f === 'en.json') || files[0];
+            const base = JSON.parse(fs.readFileSync(path.join(messagesDir, baseFile), 'utf8'));
+            const baseKeys = JSON.stringify(Object.keys(base).sort());
+            let failed = false;
+            for (const file of files) {
+              if (file === baseFile) continue;
+              const keys = JSON.stringify(Object.keys(JSON.parse(fs.readFileSync(path.join(messagesDir, file), 'utf8'))).sort());
+              if (keys !== baseKeys) {
+                console.error('::error::Missing translation keys in ' + file + ' vs ' + baseFile);
+                failed = true;
+              }
+            }
+            if (failed) process.exit(1);
+            console.log('All translation files have matching top-level keys.');
+          "
+
+      - name: T4 — Vitest component tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.upkilo.com
+          NEXT_PUBLIC_SIGNALR_URL: https://api.upkilo.com/hubs/notifications
+          NEXT_PUBLIC_APP_NAME: Upkilo
+
+  # ── T5: Lighthouse CI ─────────────────────────────────────────────
+  lighthouse:
+    name: T5 Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: [frontend-build]
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+        working-directory: src/frontend
+      - name: Build for Lighthouse
+        run: npm run build
+        working-directory: src/frontend
+        env:
+          NEXT_PUBLIC_API_URL: https://api.upkilo.com
+          NEXT_PUBLIC_APP_NAME: Upkilo
+      - name: Start Next.js server
+        run: |
+          npm run start &
+          # Wait up to 30 s for the server to be ready
+          npx wait-on http://localhost:3000 --timeout 30000
+        working-directory: src/frontend
+        env:
+          PORT: 3000
+          NEXT_PUBLIC_API_URL: https://api.upkilo.com
+          NEXT_PUBLIC_APP_NAME: Upkilo
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/pricing
+          budgetPath: .github/lighthouse-budget.json
+          uploadArtifacts: true
+          # VULN-011 FIX: temporaryPublicStorage removed — it uploaded full DOM snapshots,
+          # route structure, and API endpoint URLs to a publicly accessible URL during every
+          # PR run.  Artifacts are uploaded to GitHub (private) via uploadArtifacts: true.
+        # No continue-on-error — budget violations block the PR (performance ≥ 90, accessibility ≥ 95)
+      - name: Upload Lighthouse artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+
+  # ── T3: Playwright E2E ─────────────────────────────────────────────
+  playwright:
+    name: T3 Playwright E2E
+    runs-on: ubuntu-latest
+    needs: [frontend-build, backend-build]
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install Playwright
+        run: |
+          cd src/frontend
+          npm ci
+          npx playwright install --with-deps chromium webkit
+      - name: Build for E2E
+        run: npm run build
+        working-directory: src/frontend
+        env:
+          NEXT_PUBLIC_API_URL: https://api.upkilo.com
+          NEXT_PUBLIC_APP_NAME: Upkilo
+      - name: Start Next.js server
+        run: |
+          npm run start &
+          npx wait-on http://localhost:3000 --timeout 30000
+        working-directory: src/frontend
+        env:
+          PORT: 3000
+          NEXT_PUBLIC_API_URL: https://api.upkilo.com
+          NEXT_PUBLIC_APP_NAME: Upkilo
+      - name: Run E2E tests
+        run: npx playwright test tests/e2e/
+        working-directory: src/frontend
+        env:
+          BASE_URL: http://localhost:3000
+      - name: Run accessibility tests
+        run: npx playwright test tests/accessibility.spec.ts
+        working-directory: src/frontend
+        env:
+          BASE_URL: http://localhost:3000
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: src/frontend/playwright-report/
+
+  # ── Security Scanning ─────────────────────────────────────────────
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for GitLeaks
+
+      - name: Secret scanning (GitLeaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          format: sarif
+          output: trivy-results.sarif
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif

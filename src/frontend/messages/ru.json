@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Изменить",
+    "loading": "Загрузка...",
+    "search": "Поиск",
+    "actions": "Действия",
+    "create": "Создать",
+    "filter": "Фильтр",
+    "back": "Назад",
+    "next": "Далее",
+    "confirm": "Подтвердить",
+    "close": "Закрыть",
+    "yes": "Да",
+    "no": "Нет",
+    "submit": "Отправить",
+    "success": "Успешно!",
+    "error": "Ошибка",
+    "status": "Статус"
+  },
+  "Navigation": {
+    "dashboard": "Дашборд",
+    "bookings": "Бронирования",
+    "calendar": "Календарь",
+    "clients": "Клиенты",
+    "staff": "Сотрудники",
+    "services": "Услуги",
+    "settings": "Настройки",
+    "billing": "Биллинг",
+    "notifications": "Уведомления",
+    "profile": "Профиль",
+    "marketingAutomation": "ИИ-автоматизация",
+    "auditLogs": "Журналы аудита"
+  },
+  "Authentication": {
+    "login": "Войти",
+    "logout": "Выйти",
+    "register": "Регистрация",
+    "email": "E-mail",
+    "password": "Пароль",
+    "forgotPassword": "Забыли пароль?",
+    "biometric": "Биометрия"
+  },
+  "Dashboard": {
+    "welcome": "С возвращением, {name}",
+    "todayBookings": "Бронирования на сегодня",
+    "totalRevenue": "Выручка"
+  },
+  "Bookings": {
+    "title": "Бронирования",
+    "newBooking": "Новое бронирование",
+    "status": {
+      "confirmed": "Подтверждено",
+      "pending": "Ожидание",
+      "cancelled": "Отменено",
+      "completed": "Завершено"
+    }
+  }
+}
