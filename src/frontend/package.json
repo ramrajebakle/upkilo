@@ -83,6 +83,6 @@
         "tailwindcss": "^4.3.1",
         "typescript": "^5.3.0",
         "vitest": "^4.1.9",
-        "wait-on": "^9.0.10"
+        "wait-on": "^9.1.0"
     }
 }
