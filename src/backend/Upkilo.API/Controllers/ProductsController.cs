@@ -53,7 +53,7 @@ public class ProductsController : ControllerBase
 
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
     }
 }

@@ -398,7 +398,9 @@ public class IntelligenceController : ControllerBase
             .Take(10)
             .Select(t => new
             {
-                t.Name, t.AverageRating, t.ReviewCount,
+                t.Name,
+                t.AverageRating,
+                t.ReviewCount,
                 isVerified = t.Settings.ContainsKey("verifiedBadge"),
                 t.Industry
             })

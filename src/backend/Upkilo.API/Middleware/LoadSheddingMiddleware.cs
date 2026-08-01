@@ -26,7 +26,7 @@ public class LoadSheddingMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         var path = context.Request.Path.Value?.ToLower() ?? "";
-        
+
         // Always allow critical endpoints
         if (path.Contains("/health") || path.Contains("/webhooks") || path.Contains("/billing/stripe-webhook"))
         {

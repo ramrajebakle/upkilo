@@ -80,7 +80,7 @@ public class ApiKeysController : ControllerBase
         }
         var randomString = Convert.ToBase64String(randomBytes)
             .Replace("+", "").Replace("/", "").Replace("=", "");
-        
+
         var prefix = $"upk_{env}_";
         var fullKey = $"{prefix}{randomString}";
         var lastFour = fullKey.Substring(fullKey.Length - 4);
@@ -202,7 +202,7 @@ public class ApiKeysController : ControllerBase
         if (oldKey == null) return NotFound();
 
         // 1. Generate new key
-        var env = "live"; 
+        var env = "live";
         var randomBytes = new byte[24];
         using (var rng = RandomNumberGenerator.Create())
         {
@@ -210,7 +210,7 @@ public class ApiKeysController : ControllerBase
         }
         var randomString = Convert.ToBase64String(randomBytes)
             .Replace("+", "").Replace("/", "").Replace("=", "");
-        
+
         var prefix = $"upk_{env}_";
         var fullKey = $"{prefix}{randomString}";
         var lastFour = fullKey.Substring(fullKey.Length - 4);

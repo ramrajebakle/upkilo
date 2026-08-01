@@ -21,7 +21,7 @@ public class MarketingAutomationService : IMarketingAutomationService
     private readonly ILoggerFactory _loggerFactory;
 
     public MarketingAutomationService(
-        AppDbContext context, 
+        AppDbContext context,
         Microsoft.Extensions.Logging.ILogger<MarketingAutomationService> logger,
         IAIService aiService,
         IMarketingIntegrationService integrationService,
@@ -82,7 +82,7 @@ public class MarketingAutomationService : IMarketingAutomationService
         var convRate = stats.Any() ? stats.Average(s => s.ConversionRate) : 0;
 
         var performanceContext = $"Current Page Performance (Last 30d): {totalViews} views, {avgTime:F1}s avg time, {convRate:F2}% conversion rate.";
-        
+
         var prompt = $"Analyze the SEO for the page: {pageUrl}. {performanceContext} " +
                      "Suggest an optimized Title (max 60 chars), Meta Description (max 160 chars), and JSON-LD structured data. " +
                      "Identify content gaps and internal linking suggestions. " +
@@ -96,20 +96,21 @@ public class MarketingAutomationService : IMarketingAutomationService
         }
 
         SeoData aiData;
-        try 
+        try
         {
             aiData = System.Text.Json.JsonSerializer.Deserialize<SeoData>(aiResult.Content, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "AI SEO Analysis failed. Using professional fallback for {PageUrl}", pageUrl);
-            aiData = new SeoData { 
-                SuggestedTitle = $"{ExtractDomain(pageUrl)} | Professional Services", 
-                SuggestedMetaDescription = $"Welcome to {ExtractDomain(pageUrl)}. Industry-leading services tailored to your needs.", 
-                StructuredDataJson = GenerateJsonLd(pageUrl), 
-                InternalLinkSuggestions = new[] { "Home", "Services", "Contact" }, 
-                ContentGaps = new[] { "Technical SEO optimization needed" }, 
-                Score = 70 
+            aiData = new SeoData
+            {
+                SuggestedTitle = $"{ExtractDomain(pageUrl)} | Professional Services",
+                SuggestedMetaDescription = $"Welcome to {ExtractDomain(pageUrl)}. Industry-leading services tailored to your needs.",
+                StructuredDataJson = GenerateJsonLd(pageUrl),
+                InternalLinkSuggestions = new[] { "Home", "Services", "Contact" },
+                ContentGaps = new[] { "Technical SEO optimization needed" },
+                Score = 70
             };
         }
 
@@ -151,7 +152,7 @@ public class MarketingAutomationService : IMarketingAutomationService
         // 1. Semantic Duplicate Content Prevention
         var topicHash = ComputeHash(topic);
         var isSemanticDuplicate = await _context.GeneratedContents
-            .AnyAsync(c => c.TenantId == tenantId && 
+            .AnyAsync(c => c.TenantId == tenantId &&
                           (c.DuplicateCheckHash == topicHash || c.Title.Contains(topic)));
 
         if (isSemanticDuplicate)
@@ -202,7 +203,7 @@ public class MarketingAutomationService : IMarketingAutomationService
 
         _context.ContentCalendars.Add(calendarEntry);
         _context.GeneratedContents.Add(content);
-        
+
         await LogAgentActionAsync(tenantId, "Content Agent", "Generated", $"Blog post: {content.Title} ({content.WordCount} words)", GetRiskLevel("Content"), true);
         await _context.SaveChangesAsync();
         return content;
@@ -262,7 +263,7 @@ public class MarketingAutomationService : IMarketingAutomationService
         }
 
         SocialPostData aiData;
-        try 
+        try
         {
             aiData = System.Text.Json.JsonSerializer.Deserialize<SocialPostData>(aiResult.Content, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
         }
@@ -287,9 +288,9 @@ public class MarketingAutomationService : IMarketingAutomationService
 
         _context.SocialPosts.Add(post);
         await LogAgentActionAsync(tenantId, "Distribution", "Generated", $"{platform} post on: {topic}", "Low", true);
-        
+
         // 4. Post to Social Media Platform (Phase 5.4.4)
-        try 
+        try
         {
             var externalId = await _integrationService.PostSocialContentAsync(tenantId, platform, post.Content);
             post.Status = "Posted";
@@ -329,7 +330,7 @@ public class MarketingAutomationService : IMarketingAutomationService
         var currentTraffic = await _context.PageAnalyticsRecords
             .Where(a => a.TenantId == tenantId && a.Timestamp >= monthStart)
             .CountAsync();
-            
+
         var prevTraffic = await _context.PageAnalyticsRecords
             .Where(a => a.TenantId == tenantId && a.Timestamp >= prevMonthStart && a.Timestamp < monthStart)
             .CountAsync();
@@ -414,7 +415,7 @@ public class MarketingAutomationService : IMarketingAutomationService
     private async Task<List<string>> GenerateInsightsAsync(Guid tenantId, int traffic, int leads, decimal conversionRate)
     {
         var insights = new List<string>();
-        
+
         // 1. Core Performance Insights
         if (traffic > 0)
         {
@@ -442,7 +443,7 @@ public class MarketingAutomationService : IMarketingAutomationService
         {
             insights.Add("🛑 Traffic is reaching the site but no leads are being captured. Review your CTA placement.");
         }
-        
+
         // 3. Forecast Integration
         var nextForecast = await _context.MarketingForecasts
             .Where(f => f.TenantId == tenantId)
@@ -505,7 +506,7 @@ public class MarketingAutomationService : IMarketingAutomationService
         if (tenant == null) throw new Exception("Tenant not found");
 
         _logger.LogInformation("PerformDiscoveryScanAsync started for tenant {TenantId}.", tenantId);
-        
+
         // 1. Run the AI Discovery Job logic
         var job = new Upkilo.Infrastructure.Jobs.DiscoveryAgentJob(_context, _aiService, _loggerFactory.CreateLogger<Upkilo.Infrastructure.Jobs.DiscoveryAgentJob>());
         await job.ProcessTenantDiscovery(tenant);
@@ -541,7 +542,7 @@ public class MarketingAutomationService : IMarketingAutomationService
 
         await LogAgentActionAsync(tenantId, "Discovery Agent", "Indexing", $"Submitted {businessUrl} to Search Engines.", GetRiskLevel("Discovery"), true);
         await _context.SaveChangesAsync();
-        
+
         return report;
     }
 
@@ -583,7 +584,7 @@ public class MarketingAutomationService : IMarketingAutomationService
 
             // Linear Projection
             decimal predictedValue = currentValue * (1 + (growthRate * (horizonDays / 30m)));
-            
+
             // Add some "AI variance" (simulated)
             predictedValue *= (decimal)(0.95 + (Random.Shared.NextDouble() * 0.1));
 
@@ -640,9 +641,9 @@ public class MarketingAutomationService : IMarketingAutomationService
     {
         var now = DateTime.UtcNow;
         var start = now.AddDays(-1); // Sync last 24 hours
-        
+
         var success = await _integrationService.SyncAnalyticsAsync(tenantId, start, now);
-        
+
         if (success)
         {
             await LogAgentActionAsync(tenantId, "Analytics Agent", "Data Sync", "Successfully synchronized GA4 analytics for self-learning and forecasting.", "Low", true);

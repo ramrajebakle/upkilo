@@ -27,7 +27,7 @@ namespace Upkilo.Infrastructure.Services
         public async Task<bool> AnonymizeClientDataAsync(Guid clientId)
         {
             _logger.LogInformation("GDPR: Anonymizing client {ClientId}", clientId);
-            
+
             var client = await _context.Clients.FindAsync(clientId);
             if (client == null) return false;
 
@@ -47,7 +47,7 @@ namespace Upkilo.Infrastructure.Services
         public async Task<bool> AnonymizeTenantDataAsync(Guid tenantId)
         {
             _logger.LogInformation("GDPR: Bulk anonymizing all clients for tenant {TenantId}", tenantId);
-            
+
             var clients = await _context.Clients.Where(c => c.TenantId == tenantId).ToListAsync();
             foreach (var client in clients)
             {
@@ -60,7 +60,7 @@ namespace Upkilo.Infrastructure.Services
         public async Task<string> ExportClientDataAsync(Guid clientId)
         {
             _logger.LogInformation("GDPR: Exporting data for client {ClientId}", clientId);
-            
+
             var clientData = await _context.Clients
                 .Where(c => c.Id == clientId)
                 .Include(c => c.DetailedNotes)

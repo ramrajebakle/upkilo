@@ -50,7 +50,7 @@ public class DomainController : ControllerBase
         var existing = await _context.CustomDomains
             .IgnoreQueryFilters()
             .AnyAsync(d => d.Hostname == request.Hostname);
-        
+
         if (existing)
         {
             return BadRequest("This domain is already registered in our system.");
@@ -103,8 +103,9 @@ public class DomainController : ControllerBase
             catch (System.Net.Sockets.SocketException)
             {
                 // DNS resolution failed entirely
-                return BadRequest(new { 
-                    error = "DNS verification failed", 
+                return BadRequest(new
+                {
+                    error = "DNS verification failed",
                     message = $"Could not resolve DNS for '{domain.Hostname}'. Please add a CNAME record pointing to 'app.upkilo.com' or a TXT record '_upkilo-verify.{domain.Hostname}' with value '{domain.VerificationToken}'."
                 });
             }

@@ -166,7 +166,7 @@ namespace Upkilo.Infrastructure.Services
             // Implementation for webhook updates
             var payout = await _context.Set<StripePayout>()
                 .FirstOrDefaultAsync(p => p.StripePayoutId == stripePayoutId || p.StripeTransferId == stripePayoutId);
-            
+
             if (payout != null)
             {
                 // Update based on Stripe API call or webhook payload

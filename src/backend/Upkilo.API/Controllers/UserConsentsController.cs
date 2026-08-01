@@ -90,7 +90,7 @@ public class UserConsentsController : ControllerBase
             existingConsent.IsGranted = false;
             existingConsent.UpdatedAt = DateTime.UtcNow;
             existingConsent.IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            
+
             // Log security event for consent withdrawal
             var securityEvent = new Upkilo.Core.Entities.SecurityEvent
             {
@@ -102,7 +102,7 @@ public class UserConsentsController : ControllerBase
                 Timestamp = DateTime.UtcNow,
                 Details = $"{request.ConsentType} consent withdrawn."
             };
-            
+
             _context.Set<Upkilo.Core.Entities.SecurityEvent>().Add(securityEvent);
             await _context.SaveChangesAsync();
         }
@@ -121,8 +121,8 @@ public class UserConsentsController : ControllerBase
 
         // Fetch security events related to consent for this user
         var history = await _context.Set<Upkilo.Core.Entities.SecurityEvent>()
-            .Where(e => e.TenantId == tenantId && e.UserId == userId && 
-                       (e.EventType == SecurityEventTypes.PrivacyConsentGranted || 
+            .Where(e => e.TenantId == tenantId && e.UserId == userId &&
+                       (e.EventType == SecurityEventTypes.PrivacyConsentGranted ||
                         e.EventType == SecurityEventTypes.PrivacyConsentWithdrawn))
             .OrderByDescending(e => e.Timestamp)
             .ToListAsync();

@@ -56,7 +56,7 @@ public class DealsController : ControllerBase
 
         _context.Deals.Add(deal);
         await _context.SaveChangesAsync();
-        
+
         // In a real scenario, this would publish a DealCreated Domain Event
         return CreatedAtAction(nameof(GetDeals), new { id = deal.Id }, deal);
     }
@@ -68,13 +68,13 @@ public class DealsController : ControllerBase
         if (deal == null) return NotFound();
 
         deal.StageId = request.StageId;
-        
+
         if (request.Status != null)
             deal.Status = Enum.Parse<DealStatus>(request.Status, true);
 
         await _context.SaveChangesAsync();
         // Domain event: DealStageChanged (useful for workflow triggers)
-        
+
         return Ok(deal);
     }
 }

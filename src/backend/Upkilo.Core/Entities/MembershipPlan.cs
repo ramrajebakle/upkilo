@@ -10,10 +10,10 @@ public class MembershipPlan : TenantEntity
     public int DiscountPercent { get; set; }
     public string? FeaturesJson { get; set; } // JSON list of features
     public bool IsActive { get; set; } = true;
-    
+
     // Stripe Integration
     public string? StripeProductId { get; set; }
     public string? StripePriceId { get; set; }
-    
+
     public ICollection<ClientMembership> Subscriptions { get; set; } = new List<ClientMembership>();
 }

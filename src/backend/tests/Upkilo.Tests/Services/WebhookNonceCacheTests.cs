@@ -68,7 +68,7 @@ public class WebhookNonceCacheTests
     public void CleanupExpired_RemovesExpiredNonces()
     {
         var sut = CreateSut();
-        
+
         // Use reflection to add an expired nonce and modify _lastCleanup
         var noncesField = typeof(WebhookNonceCache).GetField("_nonces", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var nonces = (System.Collections.Concurrent.ConcurrentDictionary<string, DateTime>)noncesField!.GetValue(sut)!;

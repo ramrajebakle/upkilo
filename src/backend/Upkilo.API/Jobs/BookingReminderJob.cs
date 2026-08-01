@@ -103,9 +103,9 @@ public class BookingReminderJob
                     booking.Price ?? 0,
                     booking.Id.ToString().Substring(0, 8).ToUpper(),
                     booking.Tenant!.Name,
-                    "See website", 
+                    "See website",
                     "",
-                    null, 
+                    null,
                     null
                 );
 
@@ -147,7 +147,7 @@ public class BookingReminderJob
 
                 booking.ReminderSent = true;
                 booking.ReminderSentAt = DateTime.UtcNow;
-                
+
                 // Save incrementally or in batch? Batch is better but individual failure handling is needed.
                 // For simplicity saving in loop but efficiently tracked by context.
             }

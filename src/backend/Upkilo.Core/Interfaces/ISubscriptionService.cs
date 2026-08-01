@@ -17,7 +17,7 @@ public interface ISubscriptionService
     Task<SubscriptionResult> CancelSubscriptionAsync(Guid tenantId, bool immediate = false);
     Task<SubscriptionResult> PauseSubscriptionAsync(Guid tenantId, DateTime? resumeAt = null);
     Task<SubscriptionResult> ResumeSubscriptionAsync(Guid tenantId);
-    
+
     // Usage and limits
     Task<UsageSummary> GetUsageAsync(Guid tenantId);
     Task<bool> CheckFeatureAccessAsync(Guid tenantId, string featureName);
@@ -25,20 +25,20 @@ public interface ISubscriptionService
     Task IncrementUsageAsync(Guid tenantId, UsageType usageType, int amount = 1);
     Task<bool> TryReserveUsageAsync(Guid tenantId, UsageType usageType, int amount = 1);
     Task RefundUsageAsync(Guid tenantId, UsageType usageType, int amount = 1);
-    
+
     // Promotion codes
     Task<Upkilo.Core.Entities.PromoCode?> ValidatePromoCodeAsync(string code, Guid tenantId);
     Task<Upkilo.Core.Entities.PromoRedemption?> RedeemPromoCodeAsync(string code, Guid tenantId);
-    
+
     // Billing
     Task<decimal> CalculateProratedAmountAsync(Guid tenantId, Guid newPlanId);
     Task SyncWithStripeAsync(Guid tenantId);
     Task<string> GetPortalSessionUrlAsync(Guid tenantId, string returnUrl);
-    
+
     // Expansion billing
     Task<SubscriptionResult> AddExtraStaffAsync(Guid tenantId, int count);
     Task<SubscriptionResult> AddExtraLocationAsync(Guid tenantId, int count);
-    
+
     // AI Governance
     Task<SubscriptionResult> UpdateAiBudgetAsync(Guid tenantId, decimal budget);
     Task ReportUsageAsync(Guid tenantId, string stripePriceId, long quantity);

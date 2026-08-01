@@ -53,8 +53,8 @@ public class TwoFactorController : ControllerBase
         // Generate and return backup codes immediately upon enabling
         var backupCodes = await _twoFactorService.GenerateBackupCodesAsync(userId);
 
-        return Ok(new 
-        { 
+        return Ok(new
+        {
             message = "Two-factor authentication has been enabled",
             backupCodes = backupCodes,
             backupCodesMessage = "Save these backup codes securely. Each code can only be used once."
@@ -133,15 +133,15 @@ public class TwoFactorController : ControllerBase
     public async Task<IActionResult> ResetTwoFactor([FromBody] TwoFactorVerifyRequest request)
     {
         var userId = GetUserId();
-        var verified = await _twoFactorService.VerifyTotpAsync(userId, request.Code) || 
+        var verified = await _twoFactorService.VerifyTotpAsync(userId, request.Code) ||
                        await _twoFactorService.VerifyBackupCodeAsync(userId, request.Code);
-        
+
         if (!verified)
             return BadRequest(new { error = "Invalid code. Please provide a valid TOTP or backup code to reset 2FA." });
 
         await _twoFactorService.DisableTwoFactorAsync(userId);
         _logger.LogWarning("Two-factor authentication reset for user: {UserId}", userId);
-        
+
         return Ok(new { message = "Two-factor authentication has been reset. You can now set it up again." });
     }
 }

@@ -75,7 +75,7 @@ namespace Upkilo.Infrastructure.Services
                 var response = await _httpClient.SendAsync(request);
                 statusCode = (int)response.StatusCode;
                 responseBody = await response.Content.ReadAsStringAsync();
-                
+
                 if (responseBody.Length > 1000) responseBody = responseBody.Substring(0, 1000);
 
                 if (response.IsSuccessStatusCode)
@@ -112,7 +112,7 @@ namespace Upkilo.Infrastructure.Services
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     };
-                    
+
                     // Note: since this runs in fire-and-forget, it would normally write to DbContext via a scoped factory.
                     // For now, doing simple log to prevent lifetime exceptions if context is closed.
                     _logger.LogInformation("Webhook Delivery logged: Success={Success}, Status={Status}", success, statusCode);

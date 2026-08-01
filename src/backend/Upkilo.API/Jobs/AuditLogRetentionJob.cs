@@ -43,7 +43,7 @@ public class AuditLogRetentionJob
 
             if (deletedCount > 0)
             {
-                _logger.LogInformation("Deleted {Count} old audit logs for tenant {TenantId} (Retention: {Days} days)", 
+                _logger.LogInformation("Deleted {Count} old audit logs for tenant {TenantId} (Retention: {Days} days)",
                     deletedCount, sub.TenantId, retentionDays);
                 totalDeleted += deletedCount;
             }
@@ -64,7 +64,7 @@ public class AuditLogRetentionJob
 
             if (deletedCount > 0)
             {
-                _logger.LogInformation("Deleted {Count} old audit logs for orphan tenant {TenantId} (Default: {Days} days)", 
+                _logger.LogInformation("Deleted {Count} old audit logs for orphan tenant {TenantId} (Default: {Days} days)",
                     deletedCount, tenantId, DefaultRetentionDays);
                 totalDeleted += deletedCount;
             }

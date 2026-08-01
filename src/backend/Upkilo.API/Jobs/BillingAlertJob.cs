@@ -58,7 +58,7 @@ public class BillingAlertJob
     private async Task CheckAndAlertTenantAsync(Subscription sub)
     {
         var usage = await _subscriptionService.GetUsageAsync(sub.TenantId);
-        
+
         // Calculate max usage percentage across all tracked resources
         double maxPercentage = 0;
         string criticalResource = "";
@@ -151,7 +151,7 @@ public class BillingAlertJob
                 esc.ResolutionNotes = note;
             }
 
-            _logger.LogInformation("Auto-resolved {Count} billing escalations for tenant {TenantId} due to credit restoration.", 
+            _logger.LogInformation("Auto-resolved {Count} billing escalations for tenant {TenantId} due to credit restoration.",
                 activeEscalations.Count, tenantId);
         }
     }
@@ -160,17 +160,18 @@ public class BillingAlertJob
     {
         string title = threshold == 100 ? "🚨 Quota Reached!" : "⚠️ Usage Warning";
         string type = threshold == 100 ? "error" : "warning";
-        
-        string actionableAdvice = threshold == 100 
+
+        string actionableAdvice = threshold == 100
             ? "Please UPGRADE your plan or TOP-UP your credits immediately to restore service."
             : "We recommend adding a top-up or upgrading your plan to avoid any disruption.";
 
-        string message = threshold == 100 
+        string message = threshold == 100
             ? $"You have reached 100% of your {resource} limit. {actionableAdvice}"
             : $"Your {resource} usage is at {percentage}%. {actionableAdvice}";
 
         // Send in-app notification
-        await _notificationService.SendToTenantAsync(tenantId.ToString(), "SystemNotification", new {
+        await _notificationService.SendToTenantAsync(tenantId.ToString(), "SystemNotification", new
+        {
             Title = title,
             Message = message,
             Type = type,
@@ -178,7 +179,8 @@ public class BillingAlertJob
         });
 
         // Also send a toast to any active users
-        await _notificationService.SendToTenantAsync(tenantId.ToString(), "ToastMessage", new {
+        await _notificationService.SendToTenantAsync(tenantId.ToString(), "ToastMessage", new
+        {
             Title = title,
             Message = message,
             Type = type
@@ -188,12 +190,12 @@ public class BillingAlertJob
         if (threshold >= 90)
         {
             string severity = threshold == 100 ? "Critical" : "High";
-            await _notificationService.EscalateAsync(tenantId, "Billing", 
-                $"{resource} usage is {threshold}%. Please top-up or upgrade to avoid service interruption.", 
+            await _notificationService.EscalateAsync(tenantId, "Billing",
+                $"{resource} usage is {threshold}%. Please top-up or upgrade to avoid service interruption.",
                 severity, new { Resource = resource, Percentage = percentage }, false);
         }
 
-        _logger.LogInformation("Sent {Threshold}% billing alert to tenant {TenantId} (Resource: {Resource})", 
+        _logger.LogInformation("Sent {Threshold}% billing alert to tenant {TenantId} (Resource: {Resource})",
             threshold, tenantId, resource);
     }
 }

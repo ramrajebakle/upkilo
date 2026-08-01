@@ -74,7 +74,7 @@ public class MigrationService : IMigrationService
         }
 
         _logger.LogWarning("Provider '{Provider}' migration overview not yet implemented. API key validation only.", provider);
-        
+
         if (apiKey.Length < 10)
         {
             throw new ArgumentException("API key appears to be invalid (too short)");
@@ -97,7 +97,7 @@ public class MigrationService : IMigrationService
     {
         using var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
-        
+
         // 1. Get User/Organization info
         var userResponse = await client.GetAsync("https://api.calendly.com/users/me");
         if (!userResponse.IsSuccessStatusCode) throw new InvalidOperationException("Invalid Calendly API key or permissions.");
@@ -129,7 +129,7 @@ public class MigrationService : IMigrationService
     {
         using var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
-        
+
         // 1. Get Team Members
         var teamRes = await client.GetAsync("https://connect.squareup.com/v2/team-members/search");
         var teamContent = await teamRes.Content.ReadAsStringAsync();
@@ -212,7 +212,7 @@ public class MigrationService : IMigrationService
         await _context.SaveChangesAsync();
 
         var errors = new List<object>();
-        
+
         try
         {
             if (request.Provider.ToLower() == "calendly")
@@ -290,14 +290,14 @@ public class MigrationService : IMigrationService
         var collections = eventsDoc.RootElement.GetProperty("collection");
 
         job.TotalRows = collections.GetArrayLength();
-        
+
         foreach (var ev in collections.EnumerateArray())
         {
-            try 
+            try
             {
                 var startTime = ev.GetProperty("start_time").GetDateTime();
                 var endTime = ev.GetProperty("end_time").GetDateTime();
-                
+
                 // Get Invitee info (Client)
                 var inviteeUri = ev.GetProperty("uri").GetString() + "/invitees";
                 var inviteeRes = await client.GetAsync(inviteeUri);
@@ -342,7 +342,7 @@ public class MigrationService : IMigrationService
             {
                 _logger.LogError(ex, "Error migrating Calendly event");
             }
-            
+
             job.ProcessedRows++;
             await _context.SaveChangesAsync();
         }

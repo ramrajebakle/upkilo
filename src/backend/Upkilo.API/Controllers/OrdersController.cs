@@ -31,7 +31,7 @@ public class OrdersController : ControllerBase
             .Include(o => o.Items)
             .OrderByDescending(o => o.IssueDate)
             .ToListAsync();
-            
+
         return Ok(orders);
     }
 
@@ -52,7 +52,7 @@ public class OrdersController : ControllerBase
             TotalAmount = request.Items.Sum(i => i.Quantity * i.UnitPrice)
         };
 
-        foreach(var item in request.Items)
+        foreach (var item in request.Items)
         {
             order.Items.Add(new InvoiceItem
             {
@@ -66,7 +66,7 @@ public class OrdersController : ControllerBase
 
         _context.Invoices.Add(order);
         await _context.SaveChangesAsync();
-        
+
         // Next step: initiate payment via Stripe, raise OrderCreated domain event
         return Ok(order);
     }

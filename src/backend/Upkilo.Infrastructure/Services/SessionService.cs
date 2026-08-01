@@ -60,7 +60,7 @@ public class SessionService : ISessionService
     {
         var session = _context.Set<UserSession>()
             .FirstOrDefault(s => s.Id == sessionId && s.UserId == userId);
-        
+
         if (session == null) return false;
 
         session.IsRevoked = true;

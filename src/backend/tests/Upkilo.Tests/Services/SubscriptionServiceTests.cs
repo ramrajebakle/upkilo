@@ -46,15 +46,21 @@ public class SubscriptionServiceTests : IDisposable
 
         context.Tenants.Add(new Tenant
         {
-            Id = _tenantId, Name = "Test Salon", Slug = "test-salon",
-            Status = TenantStatus.Active, StripeCustomerId = "cus_test_123",
+            Id = _tenantId,
+            Name = "Test Salon",
+            Slug = "test-salon",
+            Status = TenantStatus.Active,
+            StripeCustomerId = "cus_test_123",
             Email = "test-salon@example.com",
             CreatedAt = DateTime.UtcNow
         });
 
         var plan = new PricingPlan
         {
-            Id = _planId, Name = "Professional", IsActive = true, TrialDays = 14,
+            Id = _planId,
+            Name = "Professional",
+            IsActive = true,
+            TrialDays = 14,
             StripeExtraStaffPriceId = "price_staff",
             StripeExtraLocationPriceId = "price_location",
             Prices = new List<PlanPrice>
@@ -67,12 +73,18 @@ public class SubscriptionServiceTests : IDisposable
 
         context.Subscriptions.Add(new Upkilo.Core.Entities.Subscription
         {
-            TenantId = _tenantId, PricingPlanId = _planId, PricingPlan = plan,
-            Status = SubscriptionStatus.Active, BillingInterval = BillingInterval.Monthly,
+            TenantId = _tenantId,
+            PricingPlanId = _planId,
+            PricingPlan = plan,
+            Status = SubscriptionStatus.Active,
+            BillingInterval = BillingInterval.Monthly,
             StripeSubscriptionId = "sub_test_123",
             CurrentPeriodStart = DateTime.UtcNow.Date.AddDays(-15),
             CurrentPeriodEnd = DateTime.UtcNow.Date.AddDays(16),
-            BookingsUsed = 50, SmsUsed = 10, AiCreditsUsed = 5, AiMonthlyBudget = 25m
+            BookingsUsed = 50,
+            SmsUsed = 10,
+            AiCreditsUsed = 5,
+            AiMonthlyBudget = 25m
         });
         context.SaveChanges();
 
@@ -276,7 +288,7 @@ public class SubscriptionServiceTests : IDisposable
     {
         // Arrange
         var stripeSub = new Stripe.Subscription { Id = "sub_test_123" };
-        
+
         _stripeClientMock.Setup(c => c.RequestAsync<Stripe.Subscription>(
             HttpMethod.Post,
             It.Is<string>(path => path.Contains("subscriptions/sub_test_123")),
@@ -418,7 +430,7 @@ public class SubscriptionServiceTests : IDisposable
         // Assert
         resultStaff.Success.Should().BeTrue();
         resultLocation.Success.Should().BeTrue();
-        
+
         var sub = await _sut.GetSubscriptionAsync(_tenantId);
         sub!.ExtraStaffCount.Should().Be(2);
         sub!.ExtraLocationCount.Should().Be(1);

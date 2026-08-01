@@ -17,7 +17,7 @@ public static class Ulid
         RandomNumberGenerator.Fill(random);
 
         var chars = new char[26];
-        
+
         // Timestamp (48 bits -> 10 chars)
         for (int i = 9; i >= 0; i--)
         {

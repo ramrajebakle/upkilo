@@ -19,7 +19,7 @@ public interface IInvoiceService
     Task UpdateInvoiceSettingsAsync(Guid tenantId, string prefix, long nextNumber);
     Task HandlePaymentFailureAsync(string stripeInvoiceId, string reason, long attemptCount, DateTime? nextPaymentAttempt);
     Task HandleDisputeAsync(string stripeChargeId, decimal amount, string reason);
-    
+
     // Stripe Sync
     Task SyncStripeInvoiceAsync(string stripeInvoiceId);
 

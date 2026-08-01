@@ -20,7 +20,7 @@ namespace Upkilo.Infrastructure.Services
         public async Task<decimal> PredictRevenueAsync(Guid tenantId, int monthsAhead)
         {
             _logger.LogInformation("Predicting revenue for tenant {TenantId} for {Months} months ahead", tenantId, monthsAhead);
-            
+
             // Fetch last 6 months of revenue
             var sixMonthsAgo = DateTime.UtcNow.AddMonths(-6);
             var historicalRevenueList = await _context.Invoices
@@ -40,10 +40,10 @@ namespace Upkilo.Infrastructure.Services
         public async Task<IEnumerable<ChurnRisk>> PredictChurnRiskAsync(Guid tenantId)
         {
             _logger.LogInformation("Analyzing churn risk for tenant {TenantId}", tenantId);
-            
+
             // Logic: Identify clients who haven't booked in 60 days but used to book frequently
             var thresholdDate = DateTime.UtcNow.AddDays(-60);
-            
+
             var atRiskClients = await _context.Clients
                 .Where(c => c.TenantId == tenantId)
                 .Select(c => new
@@ -70,7 +70,7 @@ namespace Upkilo.Infrastructure.Services
         public async Task<CashflowForecast> GetCashflowForecastAsync(Guid tenantId)
         {
             _logger.LogInformation("Generating cashflow forecast for tenant {TenantId}", tenantId);
-            
+
             var forecast = new CashflowForecast
             {
                 TenantId = tenantId,
@@ -115,9 +115,9 @@ namespace Upkilo.Infrastructure.Services
                 var projectedRevenue = Math.Max(0, avgDailyRevenue + (slope * (i + 1)));
                 forecast.ForecastPoints.Add(new ForecastPoint
                 {
-                    Date               = start.AddDays(i),
-                    ProjectedRevenue   = Math.Round(projectedRevenue, 2),
-                    ProjectedExpenses  = Math.Round(avgDailyExpenses, 2),
+                    Date = start.AddDays(i),
+                    ProjectedRevenue = Math.Round(projectedRevenue, 2),
+                    ProjectedExpenses = Math.Round(avgDailyExpenses, 2),
                     ConfidenceInterval = Math.Max(0.50, 0.95 - (i * 0.015))
                 });
             }

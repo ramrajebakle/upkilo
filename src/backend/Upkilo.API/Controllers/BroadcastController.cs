@@ -71,16 +71,16 @@ public class BroadcastController : ControllerBase
             .Take(pageSize)
             .Select(c => new CampaignSummaryDto
             {
-                Id            = c.Id,
-                Name          = c.Name,
-                Channel       = c.Type,
-                Subject       = c.Subject,
-                Status        = c.Status,
+                Id = c.Id,
+                Name = c.Name,
+                Channel = c.Type,
+                Subject = c.Subject,
+                Status = c.Status,
                 TargetSegment = c.TargetSegment ?? "all",
-                ScheduledAt   = c.ScheduledAt,
-                SentAt        = c.SentAt,
-                SentCount     = c.SentCount,
-                CreatedAt     = c.CreatedAt,
+                ScheduledAt = c.ScheduledAt,
+                SentAt = c.SentAt,
+                SentCount = c.SentCount,
+                CreatedAt = c.CreatedAt,
             })
             .ToListAsync();
 
@@ -95,11 +95,11 @@ public class BroadcastController : ControllerBase
         foreach (var c in campaigns.Where(c => analytics.ContainsKey(c.Id)))
         {
             var a = analytics[c.Id];
-            c.Delivered    = a.DeliveredCount;
-            c.Opened       = a.OpenedCount;
-            c.Clicked      = a.ClickedCount;
+            c.Delivered = a.DeliveredCount;
+            c.Opened = a.OpenedCount;
+            c.Clicked = a.ClickedCount;
             c.Unsubscribed = a.UnsubscribedCount;
-            c.Revenue      = a.RevenueGenerated;
+            c.Revenue = a.RevenueGenerated;
         }
 
         return Ok(ApiResponse<object>.Ok(new { data = campaigns, total, page, pageSize }));
@@ -138,20 +138,20 @@ public class BroadcastController : ControllerBase
 
         var campaign = new Campaign
         {
-            Id             = Guid.NewGuid(),
-            TenantId       = tenantId.Value,
-            Name           = request.Name,
-            Type           = request.Channel,
-            Subject        = request.Subject,
-            Content        = request.Channel == "email" ? request.Body : null,
-            MessageBody    = request.Channel == "sms"   ? request.Body : null,
-            Status         = "draft",
-            TargetSegment  = request.TargetSegment ?? "all",
+            Id = Guid.NewGuid(),
+            TenantId = tenantId.Value,
+            Name = request.Name,
+            Type = request.Channel,
+            Subject = request.Subject,
+            Content = request.Channel == "email" ? request.Body : null,
+            MessageBody = request.Channel == "sms" ? request.Body : null,
+            Status = "draft",
+            TargetSegment = request.TargetSegment ?? "all",
             AudienceFilters = request.SmartFilter is not null
                 ? JsonSerializer.Serialize(request.SmartFilter)
                 : null,
-            ScheduledAt    = request.ScheduledAt,
-            CreatedAt      = DateTime.UtcNow,
+            ScheduledAt = request.ScheduledAt,
+            CreatedAt = DateTime.UtcNow,
         };
 
         _db.Campaigns.Add(campaign);
@@ -175,12 +175,12 @@ public class BroadcastController : ControllerBase
         if (campaign.Status is "sent" or "sending")
             return BadRequest(ApiResponse.Fail("Cannot edit a campaign that has been sent."));
 
-        if (!string.IsNullOrWhiteSpace(request.Name))    campaign.Name    = request.Name;
+        if (!string.IsNullOrWhiteSpace(request.Name)) campaign.Name = request.Name;
         if (!string.IsNullOrWhiteSpace(request.Subject)) campaign.Subject = request.Subject;
         if (request.Body is not null)
         {
-            if (campaign.Type == "email") campaign.Content    = request.Body;
-            else                          campaign.MessageBody = request.Body;
+            if (campaign.Type == "email") campaign.Content = request.Body;
+            else campaign.MessageBody = request.Body;
         }
         if (!string.IsNullOrWhiteSpace(request.TargetSegment)) campaign.TargetSegment = request.TargetSegment;
         if (request.ScheduledAt.HasValue) campaign.ScheduledAt = request.ScheduledAt;
@@ -211,7 +211,7 @@ public class BroadcastController : ControllerBase
         var scheduledAt = request?.ScheduledAt ?? campaign.ScheduledAt;
         if (scheduledAt.HasValue && scheduledAt.Value > DateTime.UtcNow)
         {
-            campaign.Status     = "scheduled";
+            campaign.Status = "scheduled";
             campaign.ScheduledAt = scheduledAt;
             await _db.SaveChangesAsync();
             return Ok(ApiResponse<object>.Ok(new { scheduled = true, scheduledAt }, "Campaign scheduled."));
@@ -230,7 +230,7 @@ public class BroadcastController : ControllerBase
             if (campaign.Type == "email")
             {
                 var subject = campaign.Subject ?? campaign.Name;
-                var body    = campaign.Content ?? string.Empty;
+                var body = campaign.Content ?? string.Empty;
 
                 foreach (var client in clients)
                 {
@@ -267,8 +267,8 @@ public class BroadcastController : ControllerBase
             }
 
             campaign.SentCount = clients.Count;
-            campaign.Status    = "sent";
-            campaign.SentAt    = DateTime.UtcNow;
+            campaign.Status = "sent";
+            campaign.SentAt = DateTime.UtcNow;
 
             // Upsert analytics record
             var analytics = await _db.CampaignAnalytics
@@ -280,8 +280,8 @@ public class BroadcastController : ControllerBase
                 _db.CampaignAnalytics.Add(analytics);
             }
 
-            analytics.SentCount       = clients.Count;
-            analytics.DeliveredCount  = delivered;
+            analytics.SentCount = clients.Count;
+            analytics.DeliveredCount = delivered;
 
             await _db.SaveChangesAsync();
 
@@ -289,9 +289,9 @@ public class BroadcastController : ControllerBase
 
             return Ok(ApiResponse<object>.Ok(new
             {
-                sent       = true,
-                sentAt     = campaign.SentAt,
-                total      = clients.Count,
+                sent = true,
+                sentAt = campaign.SentAt,
+                total = clients.Count,
                 delivered,
                 failed,
             }, "Campaign sent successfully."));
@@ -429,20 +429,20 @@ public class BroadcastController : ControllerBase
             .FirstOrDefaultAsync(a => a.CampaignId == id && a.TenantId == tenantId.Value);
         if (analytics is not null)
         {
-            analytics.ConversionCount  = bookings;
+            analytics.ConversionCount = bookings;
             analytics.RevenueGenerated = totalRevenue;
             await _db.SaveChangesAsync();
         }
 
         return Ok(ApiResponse<object>.Ok(new
         {
-            campaignId       = id,
-            sentAt           = campaign.SentAt,
+            campaignId = id,
+            sentAt = campaign.SentAt,
             attributionDays,
             attributionWindow = window,
-            totalRecipients  = recipientIds.Count,
-            bookingsCreated  = bookings,
-            paymentsCount    = paymentCount,
+            totalRecipients = recipientIds.Count,
+            bookingsCreated = bookings,
+            paymentsCount = paymentCount,
             totalRevenue,
             conversionRate,
             revenuePerRecipient = recipientIds.Count > 0
@@ -468,11 +468,11 @@ public class BroadcastController : ControllerBase
             .Select(g => new { Status = g.Key, Count = g.Count() })
             .ToListAsync();
 
-        int totalSent       = analytics.Sum(a => a.SentCount);
-        int totalDelivered  = analytics.Sum(a => a.DeliveredCount);
-        int totalOpened     = analytics.Sum(a => a.OpenedCount);
-        int totalClicked    = analytics.Sum(a => a.ClickedCount);
-        int totalUnsub      = analytics.Sum(a => a.UnsubscribedCount);
+        int totalSent = analytics.Sum(a => a.SentCount);
+        int totalDelivered = analytics.Sum(a => a.DeliveredCount);
+        int totalOpened = analytics.Sum(a => a.OpenedCount);
+        int totalClicked = analytics.Sum(a => a.ClickedCount);
+        int totalUnsub = analytics.Sum(a => a.UnsubscribedCount);
         decimal totalRevenue = analytics.Sum(a => a.RevenueGenerated);
 
         return Ok(ApiResponse<object>.Ok(new
@@ -484,9 +484,9 @@ public class BroadcastController : ControllerBase
             totalClicked,
             totalUnsubscribed = totalUnsub,
             totalRevenue,
-            openRate      = totalSent > 0 ? Math.Round((double)totalOpened  / totalSent * 100, 2) : 0,
-            clickRate     = totalSent > 0 ? Math.Round((double)totalClicked / totalSent * 100, 2) : 0,
-            deliveryRate  = totalSent > 0 ? Math.Round((double)totalDelivered / totalSent * 100, 2) : 0,
+            openRate = totalSent > 0 ? Math.Round((double)totalOpened / totalSent * 100, 2) : 0,
+            clickRate = totalSent > 0 ? Math.Round((double)totalClicked / totalSent * 100, 2) : 0,
+            deliveryRate = totalSent > 0 ? Math.Round((double)totalDelivered / totalSent * 100, 2) : 0,
         }));
     }
 
@@ -501,7 +501,7 @@ public class BroadcastController : ControllerBase
         if (tenantId is null) return Unauthorized();
 
         var baseQuery = _db.Clients.Where(c => c.TenantId == tenantId.Value && c.MarketingConsent);
-        var now       = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
 
         var segments = new[]
         {
@@ -549,20 +549,20 @@ public class BroadcastController : ControllerBase
 
     private IQueryable<Client> BuildAudienceQuery(Guid tenantId, Campaign campaign)
     {
-        var now   = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         var query = _db.Clients.Where(c => c.TenantId == tenantId && c.MarketingConsent);
 
         query = campaign.TargetSegment switch
         {
-            "active"         => query.Where(c => c.LastVisitAt >= now.AddDays(-90)),
-            "inactive"       => query.Where(c => c.LastVisitAt == null || c.LastVisitAt < now.AddDays(-90)),
-            "win_back"       => query.Where(c => c.LastVisitAt < now.AddDays(-60) && c.LastVisitAt >= now.AddDays(-180)),
-            "vip"            => query.Where(c => c.LifetimeValue >= 1000),
-            "high_spenders"  => query.Where(c => c.LifetimeValue >= 500),
-            "new_clients"    => query.Where(c => c.LastVisitAt >= now.AddDays(-30)),
+            "active" => query.Where(c => c.LastVisitAt >= now.AddDays(-90)),
+            "inactive" => query.Where(c => c.LastVisitAt == null || c.LastVisitAt < now.AddDays(-90)),
+            "win_back" => query.Where(c => c.LastVisitAt < now.AddDays(-60) && c.LastVisitAt >= now.AddDays(-180)),
+            "vip" => query.Where(c => c.LifetimeValue >= 1000),
+            "high_spenders" => query.Where(c => c.LifetimeValue >= 500),
+            "new_clients" => query.Where(c => c.LastVisitAt >= now.AddDays(-30)),
             "never_returned" => query.Where(c => _db.Bookings.Count(b => b.TenantId == tenantId && b.ClientId == c.Id) == 1 && c.LastVisitAt < now.AddDays(-30)),
             "birthday_month" => query.Where(c => c.DateOfBirth.HasValue && c.DateOfBirth.Value.Month == now.Month),
-            _                => query, // "all"
+            _ => query, // "all"
         };
 
         // Apply smart JSON filters if present (minLifetimeValue, lastVisitDays)
@@ -592,54 +592,54 @@ public class BroadcastController : ControllerBase
 
 public class CampaignSummaryDto
 {
-    public Guid      Id            { get; set; }
-    public string    Name          { get; set; } = string.Empty;
-    public string    Channel       { get; set; } = "email";
-    public string?   Subject       { get; set; }
-    public string    Status        { get; set; } = "draft";
-    public string    TargetSegment { get; set; } = "all";
-    public DateTime? ScheduledAt   { get; set; }
-    public DateTime? SentAt        { get; set; }
-    public int       SentCount     { get; set; }
-    public int       Delivered     { get; set; }
-    public int       Opened        { get; set; }
-    public int       Clicked       { get; set; }
-    public int       Unsubscribed  { get; set; }
-    public decimal   Revenue       { get; set; }
-    public DateTime  CreatedAt     { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Channel { get; set; } = "email";
+    public string? Subject { get; set; }
+    public string Status { get; set; } = "draft";
+    public string TargetSegment { get; set; } = "all";
+    public DateTime? ScheduledAt { get; set; }
+    public DateTime? SentAt { get; set; }
+    public int SentCount { get; set; }
+    public int Delivered { get; set; }
+    public int Opened { get; set; }
+    public int Clicked { get; set; }
+    public int Unsubscribed { get; set; }
+    public decimal Revenue { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class SmartAudienceFilter
 {
-    public decimal?  MinLifetimeValue  { get; set; }
-    public int?      LastVisitDays     { get; set; }  // active within N days
-    public int?      MaxLastVisitDays  { get; set; }  // not visited in N days
+    public decimal? MinLifetimeValue { get; set; }
+    public int? LastVisitDays { get; set; }  // active within N days
+    public int? MaxLastVisitDays { get; set; }  // not visited in N days
 }
 
 public record CreateBroadcastRequest(
-    string           Name,
-    string           Channel,
-    string?          Subject       = null,
-    string?          Body          = null,
-    string?          TargetSegment = null,
-    DateTime?        ScheduledAt   = null,
+    string Name,
+    string Channel,
+    string? Subject = null,
+    string? Body = null,
+    string? TargetSegment = null,
+    DateTime? ScheduledAt = null,
     SmartAudienceFilter? SmartFilter = null
 );
 
 public record UpdateBroadcastRequest(
-    string?          Name          = null,
-    string?          Subject       = null,
-    string?          Body          = null,
-    string?          TargetSegment = null,
-    DateTime?        ScheduledAt   = null,
+    string? Name = null,
+    string? Subject = null,
+    string? Body = null,
+    string? TargetSegment = null,
+    DateTime? ScheduledAt = null,
     SmartAudienceFilter? SmartFilter = null
 );
 
 public record SendBroadcastRequest(DateTime? ScheduledAt = null);
 
 public record BroadcastTestSendRequest(
-    string  To,
-    string  Channel = "email",
+    string To,
+    string Channel = "email",
     string? Subject = null,
-    string? Body    = null
+    string? Body = null
 );

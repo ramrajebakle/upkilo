@@ -345,7 +345,7 @@ public class CampaignTrackingController : ControllerBase
     // This static overload accepts an explicit secret for backward compatibility.
     public static string GenerateToken(string campaignId, string recipientEmail, string secret)
     {
-        var payload   = $"{campaignId}|{recipientEmail}|{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+        var payload = $"{campaignId}|{recipientEmail}|{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
         var payloadB64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(payload))
             .TrimEnd('=').Replace('+', '-').Replace('/', '_');
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
@@ -374,7 +374,7 @@ public class CampaignTrackingController : ControllerBase
             // Decode payload
             var padded = parts[0].Replace('-', '+').Replace('_', '/');
             padded += new string('=', (4 - padded.Length % 4) % 4);
-            var raw   = Encoding.UTF8.GetString(Convert.FromBase64String(padded));
+            var raw = Encoding.UTF8.GetString(Convert.FromBase64String(padded));
             var fields = raw.Split('|', 3);
             if (fields.Length < 2) return null;
 
@@ -413,10 +413,10 @@ public class CampaignTrackingController : ControllerBase
 
             switch (eventType)
             {
-                case "open":        analytics.OpenedCount++;        break;
-                case "click":       analytics.ClickedCount++;       break;
-                case "unsubscribe": analytics.UnsubscribedCount++;  break;
-                case "reply":       break; // tracked in-memory only for now
+                case "open": analytics.OpenedCount++; break;
+                case "click": analytics.ClickedCount++; break;
+                case "unsubscribe": analytics.UnsubscribedCount++; break;
+                case "reply": break; // tracked in-memory only for now
             }
 
             await _db.SaveChangesAsync();

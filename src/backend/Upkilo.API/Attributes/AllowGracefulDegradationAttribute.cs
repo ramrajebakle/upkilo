@@ -15,10 +15,10 @@ public class AllowGracefulDegradationAttribute : ActionFilterAttribute
         var monitor = context.HttpContext.RequestServices.GetService<ISystemLoadMonitorService>();
         if (monitor != null && monitor.IsSystemDegraded())
         {
-            context.Result = new ObjectResult(new 
-            { 
-                error = "service_unavailable", 
-                message = "The system is currently experiencing high load. This non-critical request has been temporarily dropped to preserve essential scheduling functions. Please try again later." 
+            context.Result = new ObjectResult(new
+            {
+                error = "service_unavailable",
+                message = "The system is currently experiencing high load. This non-critical request has been temporarily dropped to preserve essential scheduling functions. Please try again later."
             })
             {
                 StatusCode = StatusCodes.Status503ServiceUnavailable

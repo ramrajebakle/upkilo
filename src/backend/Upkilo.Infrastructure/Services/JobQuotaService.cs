@@ -32,10 +32,10 @@ public class JobQuotaService
 
         // Count jobs that are currently processing or enqueued for this tenant.
         // Hangfire doesn't natively filter by tenant, so we inspect job parameters.
-        var processing   = api.ProcessingJobs(0, int.MaxValue);
-        var enqueued     = api.EnqueuedJobs("default", 0, int.MaxValue);
+        var processing = api.ProcessingJobs(0, int.MaxValue);
+        var enqueued = api.EnqueuedJobs("default", 0, int.MaxValue);
 
-        var tenantIdStr  = tenantId.ToString();
+        var tenantIdStr = tenantId.ToString();
 
         var activeForTenant = processing.Count(j =>
             j.Value?.Job?.Args?.Any(a => a?.ToString() == tenantIdStr) == true);
@@ -50,11 +50,11 @@ public class JobQuotaService
 
     private static int GetQuotaForTier(SubscriptionTier tier) => tier switch
     {
-        SubscriptionTier.Free         => 1,
-        SubscriptionTier.Starter      => 5,
+        SubscriptionTier.Free => 1,
+        SubscriptionTier.Starter => 5,
         SubscriptionTier.Professional => 20,
-        SubscriptionTier.Business     => 100,
-        SubscriptionTier.Enterprise   => int.MaxValue,
-        _                             => 1
+        SubscriptionTier.Business => 100,
+        SubscriptionTier.Enterprise => int.MaxValue,
+        _ => 1
     };
 }

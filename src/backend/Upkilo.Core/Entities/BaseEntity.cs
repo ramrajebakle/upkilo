@@ -11,7 +11,7 @@ public abstract class BaseEntity
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    
+
     // Concurrency tracking
     public byte[]? RowVersion { get; set; }
     public int Version { get; set; } = 1;
@@ -22,7 +22,7 @@ public abstract class BaseEntity
     public string? DeletedBy { get; set; }
 
     private readonly List<DomainEvent> _domainEvents = new();
-    
+
     [System.ComponentModel.DataAnnotations.Schema.NotMapped]
     public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 

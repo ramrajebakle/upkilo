@@ -54,7 +54,7 @@ public class RedisHealthCheck : IHealthCheck
             // not verify Redis is ready (it may be loading RDB or in AOF rewrite).
             var opts = ConfigurationOptions.Parse(redisConnection, ignoreUnknown: true);
             opts.ConnectTimeout = 2000;
-            opts.SyncTimeout    = 2000;
+            opts.SyncTimeout = 2000;
             opts.AbortOnConnectFail = false;
             using var conn = await ConnectionMultiplexer.ConnectAsync(opts);
             var pong = await conn.GetDatabase().PingAsync();
@@ -121,11 +121,11 @@ public class HangfireHealthCheck : IHealthCheck
 
             var data = new Dictionary<string, object>
             {
-                ["enqueued"]   = stats.Enqueued,
+                ["enqueued"] = stats.Enqueued,
                 ["processing"] = stats.Processing,
-                ["failed"]     = stats.Failed,
-                ["scheduled"]  = stats.Scheduled,
-                ["succeeded"]  = stats.Succeeded
+                ["failed"] = stats.Failed,
+                ["scheduled"] = stats.Scheduled,
+                ["succeeded"] = stats.Succeeded
             };
 
             if (stats.Enqueued > 5000)

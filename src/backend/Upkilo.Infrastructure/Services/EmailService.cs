@@ -61,7 +61,7 @@ public class EmailService : IEmailService
         var body = BuildBookingReminderBody(data);
 
         await SendEmailWithTenantAsync(data.ClientEmail, subject, body, data.TenantId);
-        
+
         _logger.LogInformation(
             "Booking reminder email sent to {Email} for booking {ConfirmationCode}",
             data.ClientEmail, data.ConfirmationCode);
@@ -75,7 +75,7 @@ public class EmailService : IEmailService
         var body = BuildBookingCancellationBody(data);
 
         await SendEmailWithTenantAsync(data.ClientEmail, subject, body, data.TenantId);
-        
+
         _logger.LogInformation(
             "Booking cancellation email sent to {Email} for booking {ConfirmationCode}",
             data.ClientEmail, data.ConfirmationCode);
@@ -186,7 +186,7 @@ public class EmailService : IEmailService
     public async Task SendPaymentFailureEmailAsync(InvoiceEmailData data)
     {
         // Reusing SendEmailAsync but without attachment requirement handled inside
-        await SendEmailAsync(data.ToEmail, data.Subject, data.Body); 
+        await SendEmailAsync(data.ToEmail, data.Subject, data.Body);
         _logger.LogInformation("Payment failure email sent to {Email}", data.ToEmail);
     }
 
@@ -441,7 +441,7 @@ public class EmailService : IEmailService
                 Status = CommunicationStatus.Sent,
                 CreatedAt = DateTime.UtcNow
             };
-            
+
             _context.CommunicationLogs.Add(log);
             await _context.SaveChangesAsync();
         }

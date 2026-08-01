@@ -43,7 +43,11 @@ public class MembershipContentController : ControllerBase
             .OrderByDescending(c => c.CreatedAt)
             .Select(c => new
             {
-                c.Id, c.Title, c.Description, c.Type, c.IsPublished,
+                c.Id,
+                c.Title,
+                c.Description,
+                c.Type,
+                c.IsPublished,
                 RequiredPlanIds = JsonSerializer.Deserialize<List<Guid>>(c.RequiredPlanIds, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
                 modulesCount = c.Modules.Count,
                 lessonsCount = c.Modules.SelectMany(m => m.Lessons).Count()
@@ -157,14 +161,18 @@ public class MembershipContentController : ControllerBase
 
         // Get progress for these courses
         var lessonIds = accessibleCourses.SelectMany(c => c.Modules.SelectMany(m => m.Lessons.Select(l => l.Id))).ToList();
-        
+
         var progress = await _context.ClientContentProgresses
             .Where(p => p.ClientId == clientId && lessonIds.Contains(p.MembershipLessonId))
             .ToListAsync();
 
         var result = accessibleCourses.Select(c => new
         {
-            c.Id, c.Title, c.Description, c.ThumbnailUrl, c.Type,
+            c.Id,
+            c.Title,
+            c.Description,
+            c.ThumbnailUrl,
+            c.Type,
             totalLessons = c.Modules.SelectMany(m => m.Lessons).Count(),
             completedLessons = c.Modules.SelectMany(m => m.Lessons).Count(l => progress.Any(p => p.MembershipLessonId == l.Id && p.IsCompleted))
         });
@@ -205,12 +213,17 @@ public class MembershipContentController : ControllerBase
 
         var modules = course.Modules.Select(m => new
         {
-            m.Id, m.Title, m.Description,
+            m.Id,
+            m.Title,
+            m.Description,
             isLocked = m.DripDaysDelay > daysSinceEnrollment, // Drip content check
             unlocksInDays = m.DripDaysDelay > daysSinceEnrollment ? Math.Ceiling(m.DripDaysDelay - daysSinceEnrollment) : 0,
             lessons = m.Lessons.Select(l => new
             {
-                l.Id, l.Title, l.DurationMinutes, l.VideoUrl,
+                l.Id,
+                l.Title,
+                l.DurationMinutes,
+                l.VideoUrl,
                 isCompleted = progressDict.TryGetValue(l.Id, out var p) && p.IsCompleted,
                 lastPosition = progressDict.TryGetValue(l.Id, out var p2) ? p2.LastPositionSeconds : 0
             })

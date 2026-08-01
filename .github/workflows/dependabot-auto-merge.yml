@@ -7,9 +7,21 @@ name: Dependabot Auto-Merge
 # auto-merges patch/minor version bumps, and only after this repo's full ci.yml
 # suite has passed on the PR — a major bump always waits for a human.
 
+# ⚠️ AUTO-MERGE DISABLED — manual-only for now.
+#
+# The safety argument above depends on "only after this repo's full ci.yml suite has
+# passed". That premise does not currently hold: ci.yml has been failing, and a single
+# maintainer means nobody reviews what merges. Combined with `pull_request_target` +
+# `contents: write`, this would merge dependency bumps into `main` unread — and `main`
+# builds the production images.
+#
+# Dependabot still opens its weekly PRs (.github/dependabot.yml); they simply wait for a
+# human. RE-ENABLE by restoring the trigger below once ci.yml is reliably green.
+#
+#  pull_request_target:
+#    branches: [main]
 on:
-  pull_request_target:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write

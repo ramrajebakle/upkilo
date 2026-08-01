@@ -48,7 +48,8 @@ public class BookingService : IBookingService
             // L-8 FIX: Ensure time is always treated as UTC internally to prevent offset bugs
             if (model.StartTime.Kind != DateTimeKind.Utc)
             {
-                model = model with { 
+                model = model with
+                {
                     StartTime = DateTime.SpecifyKind(model.StartTime, DateTimeKind.Utc),
                     EndTime = DateTime.SpecifyKind(model.EndTime, DateTimeKind.Utc)
                 };
@@ -96,66 +97,66 @@ public class BookingService : IBookingService
                         throw new InvalidOperationException("This time slot is currently being booked by someone else. Please try again or select another slot.");
                     }
                 }
-                
+
                 if (!await _schedulingService.IsSlotAvailableAsync(tenantId, model.ServiceId, model.StaffId, model.StartTime, service.DurationMinutes))
                 {
                     throw new InvalidOperationException("The requested time slot is no longer available.");
                 }
             }
 
-        var booking = new Booking
-        {
-            Id = Guid.NewGuid(),
-            TenantId = tenantId,
-            ClientId = model.ClientId,
-            ServiceId = model.ServiceId,
-            StaffId = model.StaffId,
-            StartTime = model.StartTime,
-            EndTime = model.EndTime,
-            Status = BookingStatus.Confirmed,
-            Price = service.Price,
-            Notes = model.Notes,
-            GroupSize = model.GroupSize,
-            IsWalkIn = model.IsWalkIn,
-            RecurringPatternId = model.RecurringPatternId,
-            CreatedAt = DateTime.UtcNow
-        };
+            var booking = new Booking
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                ClientId = model.ClientId,
+                ServiceId = model.ServiceId,
+                StaffId = model.StaffId,
+                StartTime = model.StartTime,
+                EndTime = model.EndTime,
+                Status = BookingStatus.Confirmed,
+                Price = service.Price,
+                Notes = model.Notes,
+                GroupSize = model.GroupSize,
+                IsWalkIn = model.IsWalkIn,
+                RecurringPatternId = model.RecurringPatternId,
+                CreatedAt = DateTime.UtcNow
+            };
 
-        // H-07 FIX: Generate cryptographically secure confirmation code
-        booking.Metadata["ConfirmationCode"] = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(4));
+            // H-07 FIX: Generate cryptographically secure confirmation code
+            booking.Metadata["ConfirmationCode"] = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(4));
 
-        if (model.IsWalkIn)
-        {
-            booking.CheckedInAt = DateTime.UtcNow;
-        }
+            if (model.IsWalkIn)
+            {
+                booking.CheckedInAt = DateTime.UtcNow;
+            }
 
-        _context.Bookings.Add(booking);
-        await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
 
-        // 3. Update Availability Cache
-        await _schedulingService.UpdateAvailabilityCacheAsync(tenantId, booking.StaffId ?? Guid.Empty, DateOnly.FromDateTime(booking.StartTime));
+            // 3. Update Availability Cache
+            await _schedulingService.UpdateAvailabilityCacheAsync(tenantId, booking.StaffId ?? Guid.Empty, DateOnly.FromDateTime(booking.StartTime));
 
-        _logger.LogInformation("Booking created via service: {BookingId}", booking.Id);
+            _logger.LogInformation("Booking created via service: {BookingId}", booking.Id);
 
-        // Publish Events
-        await _eventService.PublishAsync(model.IsWalkIn ? "booking.walkin" : "booking.created", booking, tenantId);
+            // Publish Events
+            await _eventService.PublishAsync(model.IsWalkIn ? "booking.walkin" : "booking.created", booking, tenantId);
 
-        var domainEvent = new BookingCreated
-        {
-            BookingId = booking.Id,
-            ClientId = booking.ClientId ?? Guid.Empty,
-            ServiceId = booking.ServiceId ?? Guid.Empty,
-            StaffId = booking.StaffId ?? Guid.Empty,
-            StartTime = booking.StartTime,
-            EndTime = booking.EndTime,
-            Price = booking.Price ?? 0m,
-            IsWalkIn = model.IsWalkIn,
-            TenantId = tenantId
-        };
-        await _mediator.Publish(new BookingCreatedNotification(domainEvent));
+            var domainEvent = new BookingCreated
+            {
+                BookingId = booking.Id,
+                ClientId = booking.ClientId ?? Guid.Empty,
+                ServiceId = booking.ServiceId ?? Guid.Empty,
+                StaffId = booking.StaffId ?? Guid.Empty,
+                StartTime = booking.StartTime,
+                EndTime = booking.EndTime,
+                Price = booking.Price ?? 0m,
+                IsWalkIn = model.IsWalkIn,
+                TenantId = tenantId
+            };
+            await _mediator.Publish(new BookingCreatedNotification(domainEvent));
 
-        return booking;
+            return booking;
         }
         catch (Exception)
         {
@@ -175,7 +176,7 @@ public class BookingService : IBookingService
         {
             throw new InvalidOperationException("Concurrency token (RowVersion) is required to update a booking.");
         }
-        
+
         _context.Entry(booking).Property(b => b.RowVersion).OriginalValue = rowVersion;
 
         var oldStatus = booking.Status;
@@ -248,7 +249,7 @@ public class BookingService : IBookingService
         {
             throw new InvalidOperationException("Concurrency token (RowVersion) is required to reschedule a booking.");
         }
-        
+
         _context.Entry(booking).Property(b => b.RowVersion).OriginalValue = rowVersion;
 
         // L-8 FIX: Ensure new time is treated as UTC
@@ -306,7 +307,7 @@ public class BookingService : IBookingService
         // Update Booking
         var oldStartTime = booking.StartTime;
         var oldEndTime = booking.EndTime;
-        
+
         booking.StartTime = newStartTime;
         booking.EndTime = newStartTime.AddMinutes(service.DurationMinutes);
         booking.RescheduleCount++;
@@ -328,7 +329,8 @@ public class BookingService : IBookingService
         await _schedulingService.UpdateAvailabilityCacheAsync(tenantId, booking.StaffId ?? Guid.Empty, DateOnly.FromDateTime(newStartTime));
 
         // Publish Events
-        await _eventService.PublishAsync("booking.rescheduled", new {
+        await _eventService.PublishAsync("booking.rescheduled", new
+        {
             BookingId = booking.Id,
             OldStartTime = oldStartTime,
             NewStartTime = booking.StartTime,
@@ -438,7 +440,7 @@ public class BookingService : IBookingService
                     RecurringPatternId = pattern.Id,
                     CreatedAt = DateTime.UtcNow
                 };
-                
+
                 bookings.Add(booking);
                 _context.Bookings.Add(booking);
 
@@ -473,7 +475,8 @@ public class BookingService : IBookingService
             }
 
             // Fire event for the series
-            await _eventService.PublishAsync("booking.recurring_created", new {
+            await _eventService.PublishAsync("booking.recurring_created", new
+            {
                 PatternId = pattern.Id,
                 BookingIds = bookings.Select(b => b.Id).ToList()
             }, tenantId);

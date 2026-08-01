@@ -258,7 +258,7 @@ public class AIController : ControllerBase
         string model = request.Model ?? "gpt-4";
         int inputTokens = request.Prompt.Length / 4;
         int outputTokens = fullContent.Length / 4;
-        
+
         decimal inputRate = 0.03m / 1000;
         decimal outputRate = 0.06m / 1000;
         if (model.Contains("gpt-3.5"))
@@ -366,11 +366,11 @@ public class AIController : ControllerBase
                                     : "Below confidence threshold — review recommended";
 
             await _notificationService.EscalateAsync(
-                tenantId, 
-                "AI", 
-                reason, 
-                severity, 
-                new { Prompt = request.Prompt, Content = content, Score = score }, 
+                tenantId,
+                "AI",
+                reason,
+                severity,
+                new { Prompt = request.Prompt, Content = content, Score = score },
                 true);
         }
 
@@ -620,11 +620,11 @@ public class AIController : ControllerBase
 
         var atRiskClient = new AtRiskClient
         {
-            ClientId          = request.ClientId,
-            FullName          = request.ClientFullName,
-            Phone             = request.ClientPhone,
-            LifetimeValue     = request.LifetimeValue,
-            TotalBookings     = request.TotalBookings,
+            ClientId = request.ClientId,
+            FullName = request.ClientFullName,
+            Phone = request.ClientPhone,
+            LifetimeValue = request.LifetimeValue,
+            TotalBookings = request.TotalBookings,
             DaysSinceLastVisit = request.DaysSinceLastVisit
         };
 

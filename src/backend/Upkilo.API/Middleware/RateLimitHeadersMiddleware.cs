@@ -19,16 +19,16 @@ public class RateLimitHeadersMiddleware
     {
         // Capture rate limit metadata before proceeding
         var rateLimitingFeature = context.Features.Get<IRateLimitMetadata>();
-        
+
         await _next(context);
-        
+
         // Add standard rate limit headers
         if (rateLimitingFeature != null)
         {
             // These are custom headers we'll set based on our rate limiter configuration
             // In production, integrate with the actual rate limiter's lease info
         }
-        
+
         // If rate limited, ensure Retry-After header is set
         if (context.Response.StatusCode == 429)
         {
@@ -58,26 +58,26 @@ public class RateLimitHeadersResponseMiddleware
     {
         // Track request timing for rate limiting
         var requestStart = DateTimeOffset.UtcNow;
-        
+
         // Get user identifier for rate limiting
-        var userId = context.User?.FindFirst("sub")?.Value 
-            ?? context.Connection.RemoteIpAddress?.ToString() 
+        var userId = context.User?.FindFirst("sub")?.Value
+            ?? context.Connection.RemoteIpAddress?.ToString()
             ?? "anonymous";
-        
+
         // Get current usage from the rate limiter
         var usage = _config.GetUsage(userId);
-        
+
         await _next(context);
-        
+
         // Add rate limit headers to all API responses
         if (context.Request.Path.StartsWithSegments("/api"))
         {
             var resetTime = requestStart.AddSeconds(_config.WindowSeconds);
-            
+
             context.Response.Headers.Append("X-RateLimit-Limit", _config.RequestsPerWindow.ToString());
             context.Response.Headers.Append("X-RateLimit-Remaining", Math.Max(0, _config.RequestsPerWindow - usage - 1).ToString());
             context.Response.Headers.Append("X-RateLimit-Reset", resetTime.ToUnixTimeSeconds().ToString());
-            
+
             // If rate limited
             if (context.Response.StatusCode == 429)
             {
@@ -95,10 +95,10 @@ public class RateLimitConfiguration
 {
     public int RequestsPerWindow { get; set; } = 100;
     public int WindowSeconds { get; set; } = 60;
-    
+
     private readonly Dictionary<string, (int count, DateTimeOffset windowStart)> _usage = new();
     private readonly object _lock = new();
-    
+
     public int GetUsage(string userId)
     {
         lock (_lock)
@@ -111,7 +111,7 @@ public class RateLimitConfiguration
                     return entry.count + 1;
                 }
             }
-            
+
             _usage[userId] = (1, DateTimeOffset.UtcNow);
             return 1;
         }
@@ -140,7 +140,7 @@ public static class RateLimitHeadersExtensions
         services.AddSingleton(config);
         return services;
     }
-    
+
     public static IApplicationBuilder UseRateLimitHeaders(this IApplicationBuilder app)
     {
         return app.UseMiddleware<RateLimitHeadersResponseMiddleware>();

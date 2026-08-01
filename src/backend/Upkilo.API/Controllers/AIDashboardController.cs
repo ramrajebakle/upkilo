@@ -120,35 +120,35 @@ public class AIDashboardController : ControllerBase
         // $50/hr is the freelancer rate for admin / copywriting work
         const double HourlyRate = 50.0;
 
-        var totalMinutesSaved   = totalActions * MinutesPerAction;
-        var totalHoursSaved     = Math.Round(totalMinutesSaved / 60.0, 1);
+        var totalMinutesSaved = totalActions * MinutesPerAction;
+        var totalHoursSaved = Math.Round(totalMinutesSaved / 60.0, 1);
         var totalCostEquivalent = Math.Round(totalHoursSaved * HourlyRate, 2);
 
-        var monthMinutesSaved   = actionsThisMonth * MinutesPerAction;
-        var monthHoursSaved     = Math.Round(monthMinutesSaved / 60.0, 1);
+        var monthMinutesSaved = actionsThisMonth * MinutesPerAction;
+        var monthHoursSaved = Math.Round(monthMinutesSaved / 60.0, 1);
         var monthCostEquivalent = Math.Round(monthHoursSaved * HourlyRate, 2);
 
         return Ok(new
         {
             allTime = new
             {
-                actionsCount      = totalActions,
-                hoursSaved        = totalHoursSaved,
+                actionsCount = totalActions,
+                hoursSaved = totalHoursSaved,
                 costEquivalentUsd = totalCostEquivalent,
-                headline          = $"Saved {totalHoursSaved:F1} hours total — equivalent to ${totalCostEquivalent:F0} of freelance work"
+                headline = $"Saved {totalHoursSaved:F1} hours total — equivalent to ${totalCostEquivalent:F0} of freelance work"
             },
             thisMonth = new
             {
-                actionsCount      = actionsThisMonth,
-                hoursSaved        = monthHoursSaved,
+                actionsCount = actionsThisMonth,
+                hoursSaved = monthHoursSaved,
                 costEquivalentUsd = monthCostEquivalent,
-                headline          = $"This month: {actionsThisMonth} AI actions saved {monthHoursSaved:F1} hrs"
+                headline = $"This month: {actionsThisMonth} AI actions saved {monthHoursSaved:F1} hrs"
             },
             assumptions = new
             {
-                minutesPerAction  = MinutesPerAction,
-                hourlyRateUsd     = HourlyRate,
-                methodology       = "7 min/action based on admin tasks (drafting, summarizing, scheduling). $50/hr freelancer equivalent."
+                minutesPerAction = MinutesPerAction,
+                hourlyRateUsd = HourlyRate,
+                methodology = "7 min/action based on admin tasks (drafting, summarizing, scheduling). $50/hr freelancer equivalent."
             },
             generatedAt = now
         });

@@ -17,12 +17,12 @@ public class GiftCertificate : TenantEntity
     public string Currency { get; set; } = "USD";
     public DateTime? ExpiryDate { get; set; }
     public GiftCertificateStatus Status { get; set; } = GiftCertificateStatus.Active;
-    
+
     // Optional contact info
     public string? RecipientEmail { get; set; }
     public string? SenderName { get; set; }
     public string? Message { get; set; }
-    
+
     // Link to purchaser if applicable
     public Guid? ClientId { get; set; }
     public Client? Client { get; set; }

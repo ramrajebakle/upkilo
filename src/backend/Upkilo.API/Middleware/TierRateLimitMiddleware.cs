@@ -64,15 +64,15 @@ public class TierRateLimitMiddleware
         // SubscriptionEnforcerMiddleware sets context.Items["TenantTier"] to the SubscriptionTier enum value
         var tierObj = context.Items["TenantTier"];
         var tierName = tierObj?.ToString() ?? "Free";
-        
+
         // Normalize: map 'Business' tier to 'Professional' rate limits (Business is a legacy tier)
         if (tierName == "Business") tierName = "Professional";
 
         var limitPerMin = TierLimits.GetValueOrDefault(tierName, 100);
-        
+
         var isAllowed = await rateLimitService.IsAllowedAsync(
-            $"tenant:{tenantId}", 
-            limitPerMin, 
+            $"tenant:{tenantId}",
+            limitPerMin,
             TimeSpan.FromMinutes(1));
 
         if (!isAllowed)
@@ -93,7 +93,7 @@ public class TierRateLimitMiddleware
 
         // Set rate limit headers
         context.Response.Headers["X-RateLimit-Limit"] = limitPerMin.ToString();
-        
+
         await _next(context);
     }
 }

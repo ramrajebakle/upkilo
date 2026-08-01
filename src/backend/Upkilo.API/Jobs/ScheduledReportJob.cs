@@ -65,9 +65,10 @@ public class ScheduledReportJob
                     .Include(b => b.Service)
                     .OrderByDescending(b => b.CreatedAt)
                     .Take(500)
-                    .Select(b => new { 
-                        b.Id, 
-                        b.StartTime, 
+                    .Select(b => new
+                    {
+                        b.Id,
+                        b.StartTime,
                         Client = b.Client != null ? $"{b.Client.FirstName} {b.Client.LastName}" : "Unknown",
                         Service = b.Service != null ? b.Service.Name : "Unknown",
                         b.Status,

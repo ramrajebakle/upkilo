@@ -51,7 +51,7 @@ public class GdprDataScrubberJob
 
             // Mark as scrubbed
             client.UpdatedAt = DateTime.UtcNow;
-            
+
             scrubCount++;
         }
 
@@ -70,7 +70,7 @@ public class GdprDataScrubberJob
         if (scrubCount > 0 || consentsToScrub.Any())
         {
             await _context.SaveChangesAsync();
-            _logger.LogWarning("GDPR Scrubber Job anonymized {ClientCount} clients and {ConsentCount} consent records.", 
+            _logger.LogWarning("GDPR Scrubber Job anonymized {ClientCount} clients and {ConsentCount} consent records.",
                 scrubCount, consentsToScrub.Count);
         }
         else

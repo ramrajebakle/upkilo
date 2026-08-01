@@ -61,7 +61,7 @@ public class StaffController : ControllerBase
                     s.IsActive
                 })
                 .ToListAsync();
-            
+
             staff = staffEntries.Cast<object>().ToList();
             _cache.Set(cacheKey, staff, TimeSpan.FromMinutes(10));
         }
@@ -99,10 +99,11 @@ public class StaffController : ControllerBase
 
         var slots = await _schedulingService.GetAvailableSlotsAsync(tenantId.Value, serviceId, id, date);
 
-        return Ok(new { 
-            staffId = id, 
-            date = date.Date, 
-            slots = slots.Select(s => new { time = s.ToString("HH:mm"), available = true }) 
+        return Ok(new
+        {
+            staffId = id,
+            date = date.Date,
+            slots = slots.Select(s => new { time = s.ToString("HH:mm"), available = true })
         });
     }
 
@@ -145,7 +146,7 @@ public class StaffController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
-        
+
         _logger.LogInformation("Staff member created: {StaffId}", staff.Id);
 
         return CreatedAtAction(nameof(GetStaffMember), new { id = staff.Id }, staff);
@@ -237,7 +238,7 @@ public class StaffController : ControllerBase
 
         await _context.SaveChangesAsync();
         await _schedulingService.InvalidateStaffCacheAsync(tenantId.Value, id);
-        
+
         await _eventService.PublishAsync("staff.schedule_updated", new { StaffId = id, TenantId = tenantId.Value }, tenantId.Value);
 
         _logger.LogInformation("Staff schedule updated: {StaffId}", id);
@@ -347,7 +348,7 @@ public class StaffController : ControllerBase
 
         var active = await _context.StaffClockIns
             .FirstOrDefaultAsync(c => c.StaffId == id && c.ClockOutTime == null);
-        
+
         if (active != null) return BadRequest("Already clocked in.");
 
         var clockIn = new StaffClockIn
@@ -377,7 +378,7 @@ public class StaffController : ControllerBase
         var active = await _context.StaffClockIns
             .OrderByDescending(c => c.ClockInTime)
             .FirstOrDefaultAsync(c => c.StaffId == id && c.ClockOutTime == null);
-        
+
         if (active == null) return NotFound("No active clock-in found.");
 
         active.ClockOutTime = DateTime.UtcNow;
@@ -561,8 +562,8 @@ public class StaffController : ControllerBase
             m.LastName,
             TotalClockedMinutes = Math.Round(m.TotalClockedMinutes, 2),
             TotalBookingMinutes = Math.Round(m.TotalBookingMinutes, 2),
-            UtilizationPercentage = m.TotalClockedMinutes > 0 
-                ? Math.Round((m.TotalBookingMinutes / m.TotalClockedMinutes) * 100, 2) 
+            UtilizationPercentage = m.TotalClockedMinutes > 0
+                ? Math.Round((m.TotalBookingMinutes / m.TotalClockedMinutes) * 100, 2)
                 : 0
         });
 
@@ -580,7 +581,7 @@ public class StaffController : ControllerBase
 
         var shift = await _context.StaffShifts
             .FirstOrDefaultAsync(s => s.Id == request.ShiftId && s.TenantId == tenantId);
-        
+
         if (shift == null) return NotFound("Shift not found");
 
         var swapRequest = new StaffShiftSwap
@@ -639,7 +640,7 @@ public class StaffController : ControllerBase
         if (swap.Status != SwapStatus.Accepted) return BadRequest("Only accepted swaps can be approved");
 
         var reqShift = await _context.StaffShifts.FindAsync(swap.RequestingShiftId);
-        
+
         if (swap.TargetShiftId.HasValue && swap.TargetStaffId.HasValue)
         {
             var tarShift = await _context.StaffShifts.FindAsync(swap.TargetShiftId.Value);
@@ -662,7 +663,7 @@ public class StaffController : ControllerBase
         swap.Status = SwapStatus.Approved;
         swap.ActionedAt = DateTime.UtcNow;
         swap.UpdatedAt = DateTime.UtcNow;
-        
+
         await _context.SaveChangesAsync();
 
         await _eventService.PublishAsync("staff.shift_updated", new { StaffId = swap.TargetStaffId ?? swap.RequestingStaffId, TenantId = tenantId.Value }, tenantId.Value);
@@ -679,9 +680,9 @@ public record StaffClockInRequest(Guid? ShiftId, string? LatLong);
 
 
 public record RequestSwapRequest(
-    Guid ShiftId, 
-    Guid? TargetStaffId = null, 
-    Guid? TargetShiftId = null, 
+    Guid ShiftId,
+    Guid? TargetStaffId = null,
+    Guid? TargetShiftId = null,
     string? Reason = null
 );
 

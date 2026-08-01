@@ -49,7 +49,7 @@ public class ClientCreatedWorkflowHandler : INotificationHandler<ClientCreatedNo
 
             // Trigger "client.created" workflow which kicks off Auto-Onboarding
             await _triggerDispatcher.DispatchAsync("client.created", data, evt.TenantId);
-            
+
             _logger.LogInformation("Successfully dispatched client.created trigger for {ClientId}", evt.ClientId);
         }
         catch (Exception ex)

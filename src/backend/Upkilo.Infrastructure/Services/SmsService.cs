@@ -24,11 +24,11 @@ public class SmsService : ISmsService
         _logger = logger;
         _context = context;
         _secretProvider = secretProvider;
-        
+
         _accountSid = _secretProvider.GetSecret("Twilio:AccountSid") ?? configuration["Twilio:AccountSid"] ?? string.Empty;
         _authToken = _secretProvider.GetSecret("Twilio:AuthToken") ?? configuration["Twilio:AuthToken"] ?? string.Empty;
         _fromNumber = _secretProvider.GetSecret("Twilio:FromNumber") ?? configuration["Twilio:FromNumber"] ?? string.Empty;
-        
+
         _isEnabled = !string.IsNullOrEmpty(_accountSid) && !string.IsNullOrEmpty(_authToken);
 
         if (_isEnabled)
@@ -87,8 +87,8 @@ public class SmsService : ISmsService
     public async Task<SmsResult> SendBookingConfirmationAsync(Booking booking)
     {
         var client = await _context.Clients.FindAsync(booking.ClientId);
-        if (client == null || string.IsNullOrEmpty(client.Phone)) 
-             return new SmsResult(false, null, "Client phone not found");
+        if (client == null || string.IsNullOrEmpty(client.Phone))
+            return new SmsResult(false, null, "Client phone not found");
 
         var template = await GetTemplateAsync(booking.TenantId, NotificationCategory.BookingConfirmation);
         var message = RenderTemplate(template?.SmsBody ?? "Booking confirmed for {{date}} at {{time}}", booking, client);
@@ -98,7 +98,7 @@ public class SmsService : ISmsService
 
     public async Task<SmsResult> SendBookingReminderAsync(Booking booking)
     {
-         var client = await _context.Clients.FindAsync(booking.ClientId);
+        var client = await _context.Clients.FindAsync(booking.ClientId);
         if (client == null || string.IsNullOrEmpty(client.Phone))
             return new SmsResult(false, null, "Client phone not found");
 

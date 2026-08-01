@@ -114,7 +114,7 @@ public class AuditService : IAuditService
             .ToListAsync();
 
         var sb = new StringBuilder();
-        
+
         // CSV Header
         sb.AppendLine("Id,Timestamp,EntityType,EntityId,Action,UserId,IpAddress,UserAgent,OldValues,NewValues");
 
@@ -148,7 +148,7 @@ public class AuditService : IAuditService
             query = query.Where(a => a.Timestamp <= to.Value);
 
         var totalLogs = await query.CountAsync();
-        
+
         var actions = await query
             .GroupBy(a => a.Action)
             .Select(g => new { Action = g.Key, Count = g.Count() })
@@ -166,7 +166,7 @@ public class AuditService : IAuditService
             .ToListAsync();
 
         var dates = await query.Select(a => a.Timestamp).ToListAsync();
-        
+
         return new AuditSummary
         {
             TotalLogs = totalLogs,
@@ -199,7 +199,7 @@ public class AuditService : IAuditService
     private static string EscapeCsv(string value)
     {
         if (string.IsNullOrEmpty(value)) return "\"\"";
-        
+
         // Escape quotes and wrap in quotes if contains special characters
         var escaped = value.Replace("\"", "\"\"");
         if (escaped.Contains(',') || escaped.Contains('"') || escaped.Contains('\n') || escaped.Contains('\r'))

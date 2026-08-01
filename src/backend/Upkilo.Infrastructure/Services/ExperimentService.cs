@@ -23,7 +23,7 @@ public class ExperimentService
     public string GetVariant(Guid tenantId, string experimentKey, Guid userId)
     {
         var key = $"{tenantId}:{experimentKey}:{userId}";
-        return _assignedVariants.GetOrAdd(key, k => 
+        return _assignedVariants.GetOrAdd(key, k =>
         {
             var hash = k.GetHashCode();
             return hash % 2 == 0 ? "A" : "B";
@@ -33,7 +33,7 @@ public class ExperimentService
     public async Task SimulateChaosAsync(string component)
     {
         _logger.LogWarning("Task 1365: Injecting Chaos Engineering into {Component}...", component);
-        
+
         // Simulating random failure for testing (5% chance)
         if (Random.Shared.Next(1, 100) <= 5)
         {

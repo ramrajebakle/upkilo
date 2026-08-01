@@ -47,7 +47,7 @@ public class GoogleCalendarSyncJob
                 if (token.SyncDirection == "TwoWay" || token.SyncDirection == "OneWayUp")
                 {
                     var lastSync = token.LastSyncAt ?? DateTime.UtcNow.AddDays(-7);
-                    
+
                     // Find recently updated Bookings for this Staff member and Push to Google
                     var modifiedBookings = await _context.Set<Booking>()
                         .Include(b => b.Client)
@@ -78,7 +78,7 @@ public class GoogleCalendarSyncJob
                 if (token.SyncDirection == "TwoWay" || token.SyncDirection == "OneWayDown")
                 {
                     var from = DateTime.UtcNow;
-                    var to   = DateTime.UtcNow.AddDays(30);
+                    var to = DateTime.UtcNow.AddDays(30);
 
                     var pulledEvents = (await _googleCalendarService.PullEventsAsync(token.AccessToken, from, to)).ToList();
 
@@ -98,25 +98,25 @@ public class GoogleCalendarSyncJob
 
                         // Skip if an identical block already exists for this staff + time slot
                         var alreadyExists = await _context.ScheduleBlocks.AnyAsync(
-                            b => b.StaffId   == token.StaffId &&
-                                 b.StartDate  == evt.StartTime.Date &&
-                                 b.StartTime  == evt.StartTime.TimeOfDay, cancellationToken);
+                            b => b.StaffId == token.StaffId &&
+                                 b.StartDate == evt.StartTime.Date &&
+                                 b.StartTime == evt.StartTime.TimeOfDay, cancellationToken);
 
                         if (!alreadyExists)
                         {
                             _context.ScheduleBlocks.Add(new ScheduleBlock
                             {
-                                Id        = Guid.NewGuid(),
-                                TenantId  = token.TenantId,
-                                StaffId   = token.StaffId,
-                                Type      = "external",
-                                Title     = evt.Title,
+                                Id = Guid.NewGuid(),
+                                TenantId = token.TenantId,
+                                StaffId = token.StaffId,
+                                Type = "external",
+                                Title = evt.Title,
                                 StartDate = evt.StartTime.Date,
-                                EndDate   = evt.EndTime.Date,
-                                AllDay    = evt.StartTime.TimeOfDay == TimeSpan.Zero && evt.EndTime.TimeOfDay == TimeSpan.Zero,
+                                EndDate = evt.EndTime.Date,
+                                AllDay = evt.StartTime.TimeOfDay == TimeSpan.Zero && evt.EndTime.TimeOfDay == TimeSpan.Zero,
                                 StartTime = evt.StartTime.TimeOfDay,
-                                EndTime   = evt.EndTime.TimeOfDay,
-                                Status    = "approved"
+                                EndTime = evt.EndTime.TimeOfDay,
+                                Status = "approved"
                             });
                         }
                     }

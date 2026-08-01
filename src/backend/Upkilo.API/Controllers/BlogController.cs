@@ -34,10 +34,20 @@ public class BlogController : ControllerBase
         var query = _context.Set<BlogPost>().Where(p => p.TenantId == tenantId);
         if (!string.IsNullOrEmpty(status)) query = query.Where(p => p.Status == status);
         var posts = await query.OrderByDescending(p => p.PublishedAt)
-            .Select(p => new {
-                p.Id, p.Title, p.Slug, p.Status, p.Excerpt,
-                p.PublishedAt, p.ViewCount, p.Tags, p.FeaturedImageUrl,
-                p.MetaTitle, p.MetaDescription, p.Author,
+            .Select(p => new
+            {
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Status,
+                p.Excerpt,
+                p.PublishedAt,
+                p.ViewCount,
+                p.Tags,
+                p.FeaturedImageUrl,
+                p.MetaTitle,
+                p.MetaDescription,
+                p.Author,
             }).ToListAsync();
         return Ok(posts);
     }
@@ -60,13 +70,20 @@ public class BlogController : ControllerBase
             .AnyAsync(p => p.Slug == req.Slug && p.TenantId == tenantId);
         if (slugTaken) return Conflict(new { error = "Slug already in use" });
 
-        var post = new BlogPost {
-            Id = Guid.NewGuid(), TenantId = tenantId ?? Guid.Empty,
-            Title = req.Title, Slug = req.Slug.ToLower().Trim(),
-            MetaTitle = req.MetaTitle, MetaDescription = req.MetaDescription,
-            Content = req.Content ?? string.Empty, Excerpt = req.Excerpt,
-            FeaturedImageUrl = req.FeaturedImageUrl, Tags = req.Tags,
-            Status = req.Status ?? "Draft", Author = req.Author,
+        var post = new BlogPost
+        {
+            Id = Guid.NewGuid(),
+            TenantId = tenantId ?? Guid.Empty,
+            Title = req.Title,
+            Slug = req.Slug.ToLower().Trim(),
+            MetaTitle = req.MetaTitle,
+            MetaDescription = req.MetaDescription,
+            Content = req.Content ?? string.Empty,
+            Excerpt = req.Excerpt,
+            FeaturedImageUrl = req.FeaturedImageUrl,
+            Tags = req.Tags,
+            Status = req.Status ?? "Draft",
+            Author = req.Author,
             PublishedAt = req.Status == "Published" ? DateTime.UtcNow : null,
         };
         _context.Set<BlogPost>().Add(post);

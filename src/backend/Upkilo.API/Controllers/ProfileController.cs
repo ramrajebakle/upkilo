@@ -119,13 +119,14 @@ public class ProfileController : ControllerBase
         {
             return BadRequest(new { error = "Invalid file type. Only JPG, PNG, and WebP are allowed." });
         }
-        
+
         using var readStream = file.OpenReadStream();
         var headerBytes = new byte[4];
         await readStream.ReadAsync(headerBytes, 0, 4);
         var hex = BitConverter.ToString(headerBytes).Replace("-", "");
-        
-        bool isImage = ext switch {
+
+        bool isImage = ext switch
+        {
             ".jpg" or ".jpeg" => hex.StartsWith("FFD8"),
             ".png" => hex.StartsWith("89504E47"),
             ".webp" => hex.StartsWith("52494646"), // RIFF
@@ -136,7 +137,7 @@ public class ProfileController : ControllerBase
         {
             return BadRequest(new { error = "Invalid image content." });
         }
-        
+
         // Reset stream position for the actual copy
         readStream.Position = 0;
 
@@ -224,8 +225,8 @@ public class ProfileController : ControllerBase
         var secret = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         // Temporarily store secret in user preferences or dedicated field? 
         // User entity has `TwoFactorSecret`.
-        user.TwoFactorSecret = secret; 
-        
+        user.TwoFactorSecret = secret;
+
         // Generate cryptographically secure backup codes
         var backupCodes = Enumerable.Range(0, 8)
             .Select(_ =>
@@ -272,7 +273,7 @@ public class ProfileController : ControllerBase
 
         user.TwoFactorEnabled = true;
         await _context.SaveChangesAsync();
-        
+
         await _authService.ProcessTwoFactorStateChangeAsync(user.Id, true);
 
         return Ok(new { success = true });
@@ -295,7 +296,7 @@ public class ProfileController : ControllerBase
         var verification = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
         if (verification == PasswordVerificationResult.Failed)
         {
-             return BadRequest(new { error = "Incorrect password" });
+            return BadRequest(new { error = "Incorrect password" });
         }
 
         user.TwoFactorEnabled = false;

@@ -41,11 +41,11 @@ public class DeadLetterRetryJob
             };
 
             _context.OutboxMessages.Add(outboxMessage);
-            
+
             dlq.IsResolved = true;
             dlq.ResolvedAt = DateTime.UtcNow;
             dlq.ResolutionNotes = $"Automatically re-queued as OutboxMessage {outboxMessage.Id}";
-            
+
             _logger.LogInformation("Re-queued DLQ message {DlqId} as Outbox message {OutboxId}", dlq.Id, outboxMessage.Id);
         }
 

@@ -93,7 +93,7 @@ public class CampaignAnalyticsService : ICampaignAnalyticsService
             timeline.Add(new TimelinePoint { Timestamp = currentHour, Type = eventType, Count = 1 });
         else
             point.Count++;
-        
+
         analytics.TimelineData = JsonSerializer.Serialize(timeline);
 
         // --- Real Device Data Aggregation ---
@@ -105,7 +105,7 @@ public class CampaignAnalyticsService : ICampaignAnalyticsService
                 try { devices = JsonSerializer.Deserialize<Dictionary<string, int>>(analytics.DeviceData) ?? new Dictionary<string, int>(); }
                 catch (JsonException ex) { _logger.LogWarning(ex, "Malformed DeviceData for campaign {CampaignId}; treating as empty", campaignId); }
             }
-            var deviceName = metadata; 
+            var deviceName = metadata;
             if (devices.ContainsKey(deviceName))
                 devices[deviceName]++;
             else

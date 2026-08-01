@@ -53,12 +53,12 @@ public class ConversionTrackingService : IConversionTrackingService
             .GroupBy(_ => 1)
             .Select(g => new
             {
-                TotalEvents     = g.Count(),
-                TotalRevenue    = g.Sum(e => e.Revenue ?? 0),
-                BilledRevenue   = g.Sum(e => e.IsBilled ? e.Revenue ?? 0 : 0),
+                TotalEvents = g.Count(),
+                TotalRevenue = g.Sum(e => e.Revenue ?? 0),
+                BilledRevenue = g.Sum(e => e.IsBilled ? e.Revenue ?? 0 : 0),
                 UnbilledRevenue = g.Sum(e => !e.IsBilled ? e.Revenue ?? 0 : 0),
-                LeadsCaptured   = g.Count(e => e.EventCategory == "lead"),
-                UnbilledLeads   = g.Count(e => e.EventCategory == "lead" && !e.IsBilled),
+                LeadsCaptured = g.Count(e => e.EventCategory == "lead"),
+                UnbilledLeads = g.Count(e => e.EventCategory == "lead" && !e.IsBilled),
                 BookingsFromAds = g.Count(e => e.EventCategory == "booking" && e.Platform != "Organic")
             })
             .FirstOrDefaultAsync();
@@ -77,15 +77,15 @@ public class ConversionTrackingService : IConversionTrackingService
 
         return new ConversionSummaryDto
         {
-            TotalEvents      = totals?.TotalEvents ?? 0,
-            TotalRevenue     = totals?.TotalRevenue ?? 0,
-            BilledRevenue    = totals?.BilledRevenue ?? 0,
-            UnbilledRevenue  = totals?.UnbilledRevenue ?? 0,
-            LeadsCaptured    = totals?.LeadsCaptured ?? 0,
-            UnbilledLeads    = totals?.UnbilledLeads ?? 0,
-            BookingsFromAds  = totals?.BookingsFromAds ?? 0,
+            TotalEvents = totals?.TotalEvents ?? 0,
+            TotalRevenue = totals?.TotalRevenue ?? 0,
+            BilledRevenue = totals?.BilledRevenue ?? 0,
+            UnbilledRevenue = totals?.UnbilledRevenue ?? 0,
+            LeadsCaptured = totals?.LeadsCaptured ?? 0,
+            UnbilledLeads = totals?.UnbilledLeads ?? 0,
+            BookingsFromAds = totals?.BookingsFromAds ?? 0,
             EventsByPlatform = byPlatform,
-            RevenueBySource  = bySource
+            RevenueBySource = bySource
         };
     }
 }

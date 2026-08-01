@@ -217,7 +217,7 @@ public class ClassSchedulingController : ControllerBase
         if (groupBooking == null) return NotFound(ApiResponse.Fail("Class not found"));
 
         var schedule = await _context.GroupBookingRecurrences.FirstOrDefaultAsync(r => r.ClassId == id && r.TenantId == tenantId);
-        
+
         if (schedule == null)
         {
             schedule = new GroupBookingRecurrence
@@ -255,7 +255,7 @@ public class ClassSchedulingController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var schedule = await _context.GroupBookingRecurrences.FirstOrDefaultAsync(r => r.ClassId == id && r.TenantId == tenantId);
-        
+
         if (schedule == null)
             return NotFound(ApiResponse.Fail("No recurring schedule found"));
 

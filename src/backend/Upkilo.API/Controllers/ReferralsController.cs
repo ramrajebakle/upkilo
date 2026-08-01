@@ -272,7 +272,7 @@ public class ReferralsController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var code = $"REF{Guid.NewGuid().ToString()[..6].ToUpper()}";
-        
+
         var record = new ReferralRecord
         {
             TenantId = tenantId.Value,
@@ -290,7 +290,7 @@ public class ReferralsController : ControllerBase
 
         var appUrl = (_configuration["APP_URL"] ?? "https://app.upkilo.com").TrimEnd('/');
         var link = $"{appUrl}/ref/{code}";
-        
+
         await _emailService.SendSystemEmailAsync(
             request.Email,
             "You've been invited to join Upkilo!",

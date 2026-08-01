@@ -22,9 +22,9 @@ namespace Upkilo.Infrastructure.Jobs
             IConfiguration configuration,
             AppDbContext context)
         {
-            _logger        = logger;
+            _logger = logger;
             _configuration = configuration;
-            _context       = context;
+            _context = context;
         }
 
         public async Task ExecuteAsync()
@@ -37,8 +37,8 @@ namespace Upkilo.Infrastructure.Jobs
             // ── Check 1: Verify Azure Blob backup container is reachable and has recent files ──
             try
             {
-                var storageAccount  = _configuration["Azure:StorageAccountName"];
-                var containerName   = _configuration["Azure:BackupContainerName"] ?? "db-backups";
+                var storageAccount = _configuration["Azure:StorageAccountName"];
+                var containerName = _configuration["Azure:BackupContainerName"] ?? "db-backups";
                 var storageSasToken = _configuration["Azure:BackupSasToken"];
 
                 if (!string.IsNullOrEmpty(storageAccount) && !string.IsNullOrEmpty(storageSasToken))
@@ -83,7 +83,7 @@ namespace Upkilo.Infrastructure.Jobs
             // ── Check 2: Live DB health probe — verify critical tables are queryable ──
             try
             {
-                var tenantCount  = await _context.Tenants.CountAsync();
+                var tenantCount = await _context.Tenants.CountAsync();
                 var bookingCount = await _context.Bookings.CountAsync();
 
                 _logger.LogInformation(

@@ -36,7 +36,7 @@ public class WhatsAppService : IWhatsAppService
         var accountSid = _secretProvider.GetSecret("Twilio:AccountSid") ?? configuration["Twilio:AccountSid"];
         var authToken = _secretProvider.GetSecret("Twilio:AuthToken") ?? configuration["Twilio:AuthToken"];
         _fromNumber = _secretProvider.GetSecret("Twilio:WhatsAppFromNumber") ?? configuration["Twilio:WhatsAppFromNumber"] ?? "";
-        
+
         _isEnabled = !string.IsNullOrEmpty(accountSid) && !string.IsNullOrEmpty(authToken) && !string.IsNullOrEmpty(_fromNumber);
 
         if (_isEnabled)
@@ -67,8 +67,8 @@ public class WhatsAppService : IWhatsAppService
             }
 
             var pipeline = ResiliencePolicies.GetGenericRetryPolicy();
-            
-            var messageResource = await pipeline.ExecuteAsync(async (ct) => 
+
+            var messageResource = await pipeline.ExecuteAsync(async (ct) =>
                 await MessageResource.CreateAsync(
                     to: new PhoneNumber(toPhoneNumber),
                     from: new PhoneNumber(_fromNumber),
@@ -98,7 +98,7 @@ public class WhatsAppService : IWhatsAppService
     {
         var message = $"Hi {data.ClientName}, your booking for {data.ServiceName} at {data.BusinessName} is confirmed for {data.BookingDate:MMM dd} at {data.BookingTime:hh\\:mm}. Ref: {data.ConfirmationCode}";
         var result = await SendWhatsAppAsync(data.TenantId, data.PhoneNumber, message, data.ClientId);
-        
+
         if (result.Success)
         {
             await LogCommunicationAsync(data, "Booking Confirmation", message, result.MessageId);
@@ -110,7 +110,7 @@ public class WhatsAppService : IWhatsAppService
     {
         var message = $"Reminder: You have an appointment for {data.ServiceName} tomorrow at {data.BookingTime:hh\\:mm} with {data.StaffName} at {data.BusinessName}. See you then!";
         var result = await SendWhatsAppAsync(data.TenantId, data.PhoneNumber, message, data.ClientId);
-        
+
         if (result.Success)
         {
             await LogCommunicationAsync(data, "Booking Reminder", message, result.MessageId);
@@ -135,7 +135,7 @@ public class WhatsAppService : IWhatsAppService
                 ExternalReference = externalReference,
                 CreatedAt = DateTime.UtcNow
             };
-            
+
             _context.CommunicationLogs.Add(log);
             await _context.SaveChangesAsync();
         }

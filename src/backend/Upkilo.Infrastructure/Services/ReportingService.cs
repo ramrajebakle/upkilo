@@ -33,7 +33,7 @@ public class ReportingService : IReportingService
     public async Task<ReportDataResult> ExecuteReportAsync(Guid tenantId, ReportDefinition definition, Dictionary<string, string>? runtimeFilters = null)
     {
         var result = new ReportDataResult();
-        
+
         // 1. Data Retrieval based on ReportType
         IQueryable query = definition.ReportType.ToLower() switch
         {
@@ -45,7 +45,7 @@ public class ReportingService : IReportingService
 
         // 2. Parse ConfigJson for dynamic columns/grouping
         var config = JsonSerializer.Deserialize<ReportConfig>(definition.ConfigJson) ?? new ReportConfig();
-        
+
         // 3. Apply Runtime and Saved Filters
         if (config.Filters != null && config.Filters.Any())
         {
@@ -69,12 +69,13 @@ public class ReportingService : IReportingService
         // 4. Dynamic Projection
         var columns = config.Columns ?? GetDefaultColumns(definition.ReportType);
         result.Columns = columns;
-        
+
         var selectClause = "new(" + string.Join(", ", columns.Select(c => c + " as " + c)) + ")";
-        
+
         var items = await query.Select(selectClause).Take(1000).ToDynamicListAsync();
 
-        result.Rows = items.Select(item => {
+        result.Rows = items.Select(item =>
+        {
             var row = new Dictionary<string, object>();
             foreach (var col in columns)
             {
@@ -93,11 +94,11 @@ public class ReportingService : IReportingService
 
         // Prevention against Dynamic LINQ injection: White-list allowed properties
         var allowedProps = new[] { "Status", "TotalAmount", "InvoiceNumber", "StartTime", "ClientName", "ServiceName", "CreatedAt", "TenantId", "Email", "FirstName", "LastName" };
-        
+
         foreach (var word in filter.Split(new[] { ' ', '(', ')', '=', '>', '<', '!' }, StringSplitOptions.RemoveEmptyEntries))
         {
-            if (word.Contains(".") || word.Contains("[")) continue; 
-            
+            if (word.Contains(".") || word.Contains("[")) continue;
+
             if (char.IsLetter(word[0]))
             {
                 if (!allowedProps.Any(p => p.Equals(word, StringComparison.OrdinalIgnoreCase)))

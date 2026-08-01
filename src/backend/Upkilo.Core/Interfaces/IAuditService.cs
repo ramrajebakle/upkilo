@@ -7,24 +7,24 @@ namespace Upkilo.Core.Interfaces;
 
 public interface IAuditService
 {
-    Task LogAsync(Guid tenantId, Guid? userId, string entityType, string entityId, 
-                  string action, object? oldValues, object? newValues, 
+    Task LogAsync(Guid tenantId, Guid? userId, string entityType, string entityId,
+                  string action, object? oldValues, object? newValues,
                   string? ipAddress = null, string? userAgent = null);
-    
-    Task<IEnumerable<AuditEntry>> GetLogsAsync(Guid tenantId, 
-        string? entityType = null, string? entityId = null, 
+
+    Task<IEnumerable<AuditEntry>> GetLogsAsync(Guid tenantId,
+        string? entityType = null, string? entityId = null,
         DateTime? from = null, DateTime? to = null, int limit = 100);
 
     /// <summary>
     /// Export audit logs to JSON format
     /// </summary>
-    Task<byte[]> ExportToJsonAsync(Guid tenantId, DateTime? from = null, DateTime? to = null, 
+    Task<byte[]> ExportToJsonAsync(Guid tenantId, DateTime? from = null, DateTime? to = null,
         string? entityType = null, int maxRecords = 10000);
 
     /// <summary>
     /// Export audit logs to CSV format
     /// </summary>
-    Task<byte[]> ExportToCsvAsync(Guid tenantId, DateTime? from = null, DateTime? to = null, 
+    Task<byte[]> ExportToCsvAsync(Guid tenantId, DateTime? from = null, DateTime? to = null,
         string? entityType = null, int maxRecords = 10000);
 
     /// <summary>

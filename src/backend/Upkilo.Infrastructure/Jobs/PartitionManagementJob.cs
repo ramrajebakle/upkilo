@@ -47,14 +47,14 @@ public class PartitionManagementJob
     private async Task ManageMonthlyRangePartitionsAsync(string tableName, string columnName)
     {
         var now = DateTime.UtcNow;
-        
+
         // Ensure partitions exist for the current month and the next 3 months
         for (int i = 0; i <= 3; i++)
         {
             var date = now.AddMonths(i);
             var year = date.Year;
             var month = date.Month;
-            
+
             var partitionName = $"{tableName.ToLower()}_y{year}m{month:D2}";
             var startDate = new DateTime(year, month, 1);
             var endDate = startDate.AddMonths(1);

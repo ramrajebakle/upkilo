@@ -78,9 +78,9 @@ public class SuperAdminController : ControllerBase
         // Mandate 2FA setup if not enabled
         if (!user.TwoFactorEnabled)
         {
-            return Ok(new 
-            { 
-                status = "SetupRequired", 
+            return Ok(new
+            {
+                status = "SetupRequired",
                 message = "Two-factor authentication must be configured first.",
                 email = user.Email
             });
@@ -94,9 +94,9 @@ public class SuperAdminController : ControllerBase
             preAuthToken,
             new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) });
 
-        return Ok(new 
-        { 
-            status = "TwoFactorRequired", 
+        return Ok(new
+        {
+            status = "TwoFactorRequired",
             message = "Please enter your TOTP code.",
             email = user.Email,
             preAuthToken = preAuthToken
@@ -170,10 +170,10 @@ public class SuperAdminController : ControllerBase
         }
 
         var token = GenerateAdminToken(user);
-        return Ok(new 
-        { 
+        return Ok(new
+        {
             token,
-            user = new 
+            user = new
             {
                 id = user.Id,
                 email = user.Email,
@@ -277,7 +277,7 @@ public class SuperAdminController : ControllerBase
             new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "SuperAdmin"),
             new System.Security.Claims.Claim("IsSuperAdmin", "true")
         };
-        
+
         var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
@@ -301,7 +301,7 @@ public class SuperAdminController : ControllerBase
         // Direct DB update if service doesn't handle finding user across tenants
         // SuperAdmin might need to find user in ANY tenant.
         // User entity has QueryFilter for TenantId! SuperAdmin needs IgnoreQueryFilters.
-        
+
         var user = await _context.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null) return NotFound("User not found");
 
@@ -309,7 +309,7 @@ public class SuperAdminController : ControllerBase
         // is permanently locked out (system demands 2FA but no secret exists).
         user.TwoFactorSecret = null;
         user.TwoFactorEnabled = false;
-        
+
         await _context.SaveChangesAsync();
         _logger.LogWarning("Super Admin reset 2FA for user {UserId}", userId);
         return Ok(new { success = true, message = "2FA has been reset for the user" });
@@ -368,7 +368,7 @@ public class SuperAdminController : ControllerBase
                 mrr = t.SubscriptionTier == SubscriptionTier.Enterprise ? "₹1,45,000" : "₹15,000"
             })
             .ToListAsync();
-        
+
         return Ok(new { data = tenants, total, page, pageSize });
     }
 
@@ -431,8 +431,8 @@ public class SuperAdminController : ControllerBase
         {
             tenant.Status = status;
             await _context.SaveChangesAsync();
-             _logger.LogInformation("Tenant {TenantId} status updated to {Status}", id, request.Status);
-             return Ok(new { success = true, status = request.Status });
+            _logger.LogInformation("Tenant {TenantId} status updated to {Status}", id, request.Status);
+            return Ok(new { success = true, status = request.Status });
         }
         return BadRequest("Invalid status");
     }
@@ -445,7 +445,7 @@ public class SuperAdminController : ControllerBase
     {
         var tenant = await _context.Tenants.FirstOrDefaultAsync(x => x.Id == id);
         if (tenant == null) return NotFound("Tenant not found");
-        
+
         if (tenant.Status != TenantStatus.Active)
             return BadRequest(new { error = "Cannot impersonate an inactive or suspended tenant." });
 
@@ -487,7 +487,7 @@ public class SuperAdminController : ControllerBase
 
         var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtSecret));
         var credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(key, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256);
-        
+
         var claims = new List<System.Security.Claims.Claim>
         {
             new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, targetUser.Id.ToString()),
@@ -499,7 +499,7 @@ public class SuperAdminController : ControllerBase
             new System.Security.Claims.Claim("impersonator", "superadmin"),
             new System.Security.Claims.Claim("portal_access", "true")
         };
-        
+
         var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
@@ -550,16 +550,16 @@ public class SuperAdminController : ControllerBase
         var totalTenants = await _context.Tenants.IgnoreQueryFilters().CountAsync();
         var activeTenants = await _context.Tenants.IgnoreQueryFilters().CountAsync(t => t.Status == TenantStatus.Active);
         var totalUsers = await _context.Users.IgnoreQueryFilters().CountAsync();
-        
+
         // Comprehensive aggregates
         var totalRevenue = await _context.Payments.IgnoreQueryFilters()
             .Where(p => p.Status == PaymentStatus.Succeeded)
             .SumAsync(p => p.Amount);
-            
+
         var totalBookings = await _context.Bookings.IgnoreQueryFilters().CountAsync();
         var activeSubscriptions = await _context.Subscriptions.IgnoreQueryFilters()
             .CountAsync(s => s.Status == SubscriptionStatus.Active);
-            
+
         var lastMonth = DateTime.UtcNow.AddMonths(-1);
         var newTenantsMonth = await _context.Tenants.IgnoreQueryFilters()
             .CountAsync(t => t.CreatedAt >= lastMonth);
@@ -731,12 +731,12 @@ public class SuperAdminController : ControllerBase
     public async Task<IActionResult> GetSystemHealth()
     {
         bool dbHealthy = await _context.Database.CanConnectAsync();
-        
+
         long enqueuedCount = 0;
         long failedCount = 0;
         long processingCount = 0;
 
-        try 
+        try
         {
             var monitoringApi = Hangfire.JobStorage.Current.GetMonitoringApi();
             enqueuedCount = monitoringApi.EnqueuedCount("default");
@@ -756,8 +756,8 @@ public class SuperAdminController : ControllerBase
             services = new
             {
                 database = new { status = dbHealthy ? "healthy" : "crashed" },
-                backgroundJobs = new 
-                { 
+                backgroundJobs = new
+                {
                     status = (enqueuedCount > 5000) ? "congested" : "healthy",
                     enqueued = enqueuedCount,
                     failed = failedCount,
@@ -776,7 +776,7 @@ public class SuperAdminController : ControllerBase
         // Assuming simple sums for demonstration. Real MRR would require complex calculation.
         var totalRevenue = await _context.Payments.IgnoreQueryFilters().SumAsync(p => p.Amount);
         var activeSubscriptions = await _context.Subscriptions.IgnoreQueryFilters().CountAsync();
-        
+
         return Ok(new
         {
             totalRevenue,
@@ -798,7 +798,7 @@ public class SuperAdminController : ControllerBase
         var webhookDeliveries = await _context.WebhookDeliveries.IgnoreQueryFilters().CountAsync(w => w.TenantId == id);
         var storageUsedBytes = -1L; // TODO: Query Azure Blob Storage API for actual tenant storage usage
         _logger.LogDebug("Storage usage tracking not yet implemented for tenant {TenantId}", id);
-        
+
         return Ok(new
         {
             tenantId = id,
@@ -851,7 +851,7 @@ public class SuperAdminController : ControllerBase
     public async Task<IActionResult> BroadcastSystemMessage([FromBody] SendAnnouncementRequest request)
     {
         _logger.LogInformation("System broadcast sent: {Title} ({Type})", request.Title, request.Type);
-        
+
         return Ok(new { success = true, sentAt = DateTime.UtcNow });
     }
 
@@ -881,7 +881,7 @@ public class SuperAdminController : ControllerBase
             return Unauthorized();
         var authService = HttpContext.RequestServices.GetRequiredService<IAuthService>();
         var success = await authService.ProcessTwoFactorRecoveryRequestAsync(id, adminId, request.Approve, request.Notes ?? string.Empty);
-        
+
         if (!success)
             return NotFound(new { message = "Request not found or already processed." });
 
@@ -997,11 +997,11 @@ public class SuperAdminController : ControllerBase
             })
             .ToListAsync();
 
-        var totalRequests  = logs.Count;
-        var totalTokens    = logs.Sum(l => l.InputTokens + l.OutputTokens);
-        var totalCost      = logs.Sum(l => (double)l.Cost);
-        var successCount   = logs.Count(l => l.Success);
-        var avgLatency     = logs.Where(l => l.LatencyMs.HasValue).Select(l => (double)l.LatencyMs!.Value)
+        var totalRequests = logs.Count;
+        var totalTokens = logs.Sum(l => l.InputTokens + l.OutputTokens);
+        var totalCost = logs.Sum(l => (double)l.Cost);
+        var successCount = logs.Count(l => l.Success);
+        var avgLatency = logs.Where(l => l.LatencyMs.HasValue).Select(l => (double)l.LatencyMs!.Value)
                                 .DefaultIfEmpty(0).Average();
 
         // Model breakdown
@@ -1009,11 +1009,11 @@ public class SuperAdminController : ControllerBase
             .GroupBy(l => l.Model)
             .Select(g => new
             {
-                model        = g.Key,
-                requests     = g.Count(),
-                tokens       = g.Sum(l => l.InputTokens + l.OutputTokens),
-                cost         = Math.Round(g.Sum(l => (double)l.Cost), 4),
-                successRate  = g.Count() > 0 ? Math.Round(100.0 * g.Count(l => l.Success) / g.Count(), 1) : 100.0
+                model = g.Key,
+                requests = g.Count(),
+                tokens = g.Sum(l => l.InputTokens + l.OutputTokens),
+                cost = Math.Round(g.Sum(l => (double)l.Cost), 4),
+                successRate = g.Count() > 0 ? Math.Round(100.0 * g.Count(l => l.Success) / g.Count(), 1) : 100.0
             })
             .OrderByDescending(x => x.cost)
             .ToList();
@@ -1023,10 +1023,10 @@ public class SuperAdminController : ControllerBase
             .GroupBy(l => l.Feature)
             .Select(g => new
             {
-                feature  = g.Key,
+                feature = g.Key,
                 requests = g.Count(),
-                tokens   = g.Sum(l => l.InputTokens + l.OutputTokens),
-                cost     = Math.Round(g.Sum(l => (double)l.Cost), 4)
+                tokens = g.Sum(l => l.InputTokens + l.OutputTokens),
+                cost = Math.Round(g.Sum(l => (double)l.Cost), 4)
             })
             .OrderByDescending(x => x.cost)
             .ToList();
@@ -1042,11 +1042,11 @@ public class SuperAdminController : ControllerBase
             .GroupBy(l => l.TenantId)
             .Select(g => new
             {
-                tenantId    = g.Key,
-                tenantName  = tenantNames.GetValueOrDefault(g.Key, "Unknown"),
-                requests    = g.Count(),
-                tokens      = g.Sum(l => l.InputTokens + l.OutputTokens),
-                cost        = Math.Round(g.Sum(l => (double)l.Cost), 4),
+                tenantId = g.Key,
+                tenantName = tenantNames.GetValueOrDefault(g.Key, "Unknown"),
+                requests = g.Count(),
+                tokens = g.Sum(l => l.InputTokens + l.OutputTokens),
+                cost = Math.Round(g.Sum(l => (double)l.Cost), 4),
                 failedCount = g.Count(l => !l.Success)
             })
             .OrderByDescending(x => x.cost)
@@ -1061,25 +1061,25 @@ public class SuperAdminController : ControllerBase
             .GroupBy(l => l.CreatedAt.Date)
             .Select(g => new
             {
-                date     = g.Key.ToString("yyyy-MM-dd"),
-                cost     = Math.Round(g.Sum(l => (double)l.Cost), 4),
+                date = g.Key.ToString("yyyy-MM-dd"),
+                cost = Math.Round(g.Sum(l => (double)l.Cost), 4),
                 requests = g.Count(),
-                tokens   = g.Sum(l => l.InputTokens + l.OutputTokens)
+                tokens = g.Sum(l => l.InputTokens + l.OutputTokens)
             })
             .OrderBy(x => x.date)
             .ToList();
 
         return Ok(new
         {
-            period           = new { days, since },
+            period = new { days, since },
             summary = new
             {
                 totalRequests,
                 totalTokens,
-                totalCostUsd    = Math.Round(totalCost, 4),
-                successRate     = totalRequests > 0 ? Math.Round(100.0 * successCount / totalRequests, 1) : 100.0,
-                avgLatencyMs    = Math.Round(avgLatency, 0),
-                failedRequests  = totalRequests - successCount
+                totalCostUsd = Math.Round(totalCost, 4),
+                successRate = totalRequests > 0 ? Math.Round(100.0 * successCount / totalRequests, 1) : 100.0,
+                avgLatencyMs = Math.Round(avgLatency, 0),
+                failedRequests = totalRequests - successCount
             },
             byModel,
             byFeature,
@@ -1122,10 +1122,10 @@ public class SuperAdminController : ControllerBase
             .GroupBy(l => l.Feature)
             .Select(g => new
             {
-                feature  = g.Key,
+                feature = g.Key,
                 requests = g.Count(),
-                tokens   = g.Sum(l => l.InputTokens + l.OutputTokens),
-                cost     = Math.Round(g.Sum(l => (double)l.Cost), 4),
+                tokens = g.Sum(l => l.InputTokens + l.OutputTokens),
+                cost = Math.Round(g.Sum(l => (double)l.Cost), 4),
                 failures = g.Count(l => !l.Success)
             })
             .OrderByDescending(x => x.cost)
@@ -1137,10 +1137,10 @@ public class SuperAdminController : ControllerBase
             .Take(10)
             .Select(l => new
             {
-                feature      = l.Feature,
-                model        = l.Model,
+                feature = l.Feature,
+                model = l.Model,
                 errorMessage = l.ErrorMessage,
-                occurredAt   = l.CreatedAt
+                occurredAt = l.CreatedAt
             })
             .ToList();
 
@@ -1148,8 +1148,8 @@ public class SuperAdminController : ControllerBase
             .GroupBy(l => l.CreatedAt.Date)
             .Select(g => new
             {
-                date     = g.Key.ToString("yyyy-MM-dd"),
-                cost     = Math.Round(g.Sum(l => (double)l.Cost), 4),
+                date = g.Key.ToString("yyyy-MM-dd"),
+                cost = Math.Round(g.Sum(l => (double)l.Cost), 4),
                 requests = g.Count()
             })
             .OrderBy(x => x.date)
@@ -1157,12 +1157,12 @@ public class SuperAdminController : ControllerBase
 
         return Ok(new
         {
-            tenantId      = id,
-            period        = new { days, since },
+            tenantId = id,
+            period = new { days, since },
             totalRequests = logs.Count,
-            totalCostUsd  = Math.Round(logs.Sum(l => (double)l.Cost), 4),
-            totalTokens   = logs.Sum(l => l.InputTokens + l.OutputTokens),
-            successRate   = logs.Count > 0 ? Math.Round(100.0 * logs.Count(l => l.Success) / logs.Count, 1) : 100.0,
+            totalCostUsd = Math.Round(logs.Sum(l => (double)l.Cost), 4),
+            totalTokens = logs.Sum(l => l.InputTokens + l.OutputTokens),
+            successRate = logs.Count > 0 ? Math.Round(100.0 * logs.Count(l => l.Success) / logs.Count, 1) : 100.0,
             byFeature,
             recentFailures,
             dailyTrend
@@ -1207,18 +1207,18 @@ public class SuperAdminController : ControllerBase
             .Select(e => new
             {
                 e.Id,
-                severity    = e.Severity.ToString(),
+                severity = e.Severity.ToString(),
                 e.EventType,
                 e.Description,
                 e.TenantId,
                 e.IpAddress,
-                occurredAt  = e.CreatedAt
+                occurredAt = e.CreatedAt
             })
             .ToListAsync();
 
-        var loginFailures    = events.Count(e => e.EventType == SecurityEventTypes.LoginFailed);
-        var loginSuccesses   = events.Count(e => e.EventType == SecurityEventTypes.LoginSuccess);
-        var failureRate      = (loginSuccesses + loginFailures) > 0
+        var loginFailures = events.Count(e => e.EventType == SecurityEventTypes.LoginFailed);
+        var loginSuccesses = events.Count(e => e.EventType == SecurityEventTypes.LoginSuccess);
+        var failureRate = (loginSuccesses + loginFailures) > 0
             ? Math.Round(100.0 * loginFailures / (loginSuccesses + loginFailures), 1)
             : 0.0;
 
@@ -1234,9 +1234,9 @@ public class SuperAdminController : ControllerBase
             .GroupBy(e => e.TenantId!.Value)
             .Select(g => new
             {
-                tenantId   = g.Key,
+                tenantId = g.Key,
                 tenantName = tenantNames.GetValueOrDefault(g.Key, "Unknown"),
-                failures   = g.Count()
+                failures = g.Count()
             })
             .OrderByDescending(x => x.failures)
             .Take(5)
@@ -1247,10 +1247,10 @@ public class SuperAdminController : ControllerBase
             period = new { days, since },
             summary = new
             {
-                totalEvents      = events.Count,
-                unresolvedCount  = events.Count(e => !e.IsResolved),
-                criticalCount    = events.Count(e => e.Severity == SecuritySeverity.Critical),
-                highCount        = events.Count(e => e.Severity == SecuritySeverity.High),
+                totalEvents = events.Count,
+                unresolvedCount = events.Count(e => !e.IsResolved),
+                criticalCount = events.Count(e => e.Severity == SecuritySeverity.Critical),
+                highCount = events.Count(e => e.Severity == SecuritySeverity.High),
                 loginFailureRate = failureRate,
                 loginFailures,
                 loginSuccesses

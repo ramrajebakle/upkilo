@@ -92,7 +92,7 @@ public class LocationService : ILocationService
     public async Task<bool> SetDefaultAsync(Guid id, Guid tenantId)
     {
         var locations = _context.Set<Location>().Where(l => l.TenantId == tenantId).ToList();
-        
+
         foreach (var loc in locations)
         {
             loc.IsPrimary = loc.Id == id;

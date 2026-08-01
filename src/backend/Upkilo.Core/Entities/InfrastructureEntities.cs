@@ -95,7 +95,7 @@ public class AuditEntry : TenantEntity
     public string? UserAgent { get; set; }
     public string? Details { get; set; }
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-    
+
     // Compatibility aliases
     public Guid? PerformedById { get => UserId; set => UserId = value; }
     public DateTime PerformedAt { get => Timestamp; set => Timestamp = value; }

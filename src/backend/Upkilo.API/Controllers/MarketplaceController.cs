@@ -95,8 +95,15 @@ public class MarketplaceController : ControllerBase
             .Take(6)
             .Select(t => new
             {
-                t.Id, t.Name, t.Slug, t.Tagline,
-                t.City, t.Country, t.AverageRating, t.ReviewCount, t.Industry,
+                t.Id,
+                t.Name,
+                t.Slug,
+                t.Tagline,
+                t.City,
+                t.Country,
+                t.AverageRating,
+                t.ReviewCount,
+                t.Industry,
                 bookingUrl = $"https://app.upkilo.com/book/{t.Slug}"
             })
             .ToListAsync();
@@ -134,9 +141,14 @@ public class MarketplaceController : ControllerBase
             .Take(pageSize)
             .Select(r => new
             {
-                r.Id, r.ReviewerName, r.Rating,
-                comment = r.ReviewText, r.ReviewDate, source = r.Platform,
-                ownerReply = r.ResponseText, ownerReplyAt = r.RespondedAt
+                r.Id,
+                r.ReviewerName,
+                r.Rating,
+                comment = r.ReviewText,
+                r.ReviewDate,
+                source = r.Platform,
+                ownerReply = r.ResponseText,
+                ownerReplyAt = r.RespondedAt
             })
             .ToListAsync();
 
@@ -302,8 +314,15 @@ public class MarketplaceController : ControllerBase
             .Take(6)
             .Select(t => new
             {
-                t.Id, t.Name, t.Slug, t.Tagline, t.City,
-                t.AverageRating, t.ReviewCount, t.Industry, t.LogoUrl,
+                t.Id,
+                t.Name,
+                t.Slug,
+                t.Tagline,
+                t.City,
+                t.AverageRating,
+                t.ReviewCount,
+                t.Industry,
+                t.LogoUrl,
                 badge = "Promoted",
                 bookingUrl = $"/book/{t.Slug}"
             })
@@ -629,10 +648,17 @@ public class MarketplaceController : ControllerBase
             tenantsQuery = tenantsQuery.Where(t => t.Industry != null && t.Industry.ToLower().Contains(category.ToLower()));
 
         var tenants = await tenantsQuery
-            .Select(t => new { t.Id, t.Name, t.Slug, t.City, t.Industry,
+            .Select(t => new
+            {
+                t.Id,
+                t.Name,
+                t.Slug,
+                t.City,
+                t.Industry,
                 IsVerified = t.Settings.ContainsKey("verifiedBadge"),
                 LatStr = t.Settings.ContainsKey("geo_lat") ? t.Settings["geo_lat"].ToString() : null,
-                LngStr = t.Settings.ContainsKey("geo_lng") ? t.Settings["geo_lng"].ToString() : null })
+                LngStr = t.Settings.ContainsKey("geo_lng") ? t.Settings["geo_lng"].ToString() : null
+            })
             .ToListAsync();
 
         // Haversine distance sort in memory
@@ -652,7 +678,12 @@ public class MarketplaceController : ControllerBase
                 && double.TryParse(t.LatStr, out _) && double.TryParse(t.LngStr, out _))
             .Select(t => new
             {
-                t.Id, t.Name, t.Slug, t.City, t.Industry, t.IsVerified,
+                t.Id,
+                t.Name,
+                t.Slug,
+                t.City,
+                t.Industry,
+                t.IsVerified,
                 distanceKm = Haversine(lat, lng,
                     double.Parse(t.LatStr!),
                     double.Parse(t.LngStr!))

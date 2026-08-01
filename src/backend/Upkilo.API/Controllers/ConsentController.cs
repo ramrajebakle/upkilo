@@ -49,7 +49,7 @@ public class ConsentController : ControllerBase
     {
         var tenantId = GetTenantId();
         var success = await _consentService.RevokeConsentAsync(tenantId, clientId, request.ConsentType);
-        
+
         if (!success) return BadRequest(new { error = "Failed to revoke consent or consent not found" });
 
         return Ok(new { success = true });
@@ -73,7 +73,7 @@ public class ConsentController : ControllerBase
     public async Task<IActionResult> GetConsentStatus(Guid clientId, [FromQuery] string type)
     {
         if (string.IsNullOrEmpty(type)) return BadRequest("type query parameter is required");
-        
+
         var tenantId = GetTenantId();
         var status = await _consentService.GetConsentStatusAsync(tenantId, clientId, type);
         return Ok(new { consentType = type, status = status.ToString() });

@@ -143,7 +143,7 @@ public class SessionManagementController : ControllerBase
 
         // user.SessionTimeoutMinutes = request.TimeoutMinutes;
         // await _context.SaveChangesAsync();
-        
+
         // Log security event
         _logger.LogInformation("User {UserId} updated session timeout to {Timeout} minutes.", userId, request.TimeoutMinutes);
 

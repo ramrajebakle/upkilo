@@ -207,7 +207,7 @@ public class PackagesController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         using var transaction = await _context.Database.BeginTransactionAsync();
-        try 
+        try
         {
             var package = await _context.ServicePackages
                 .FirstOrDefaultAsync(p => p.Id == id && p.TenantId == tenantId.Value && !p.IsDeleted);

@@ -24,7 +24,7 @@ public static class MigrationRollbackStrategy
      * 4. State Verification:
      *    - Verify data integrity after `dotnet ef database update <PreviousMigration>`.
      */
-     
+
     public static string GetRollbackCheckQuery(string tableName, string columnName)
     {
         return $"SELECT COUNT(*) FROM \"{tableName}\" WHERE \"{columnName}\" IS NOT NULL;";

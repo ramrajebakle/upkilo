@@ -106,8 +106,8 @@ public class PromoCodesController : ControllerBase
                 request.OrderAmount * (promo.DiscountValue / 100m),
                 promo.MaxDiscountAmount ?? decimal.MaxValue),
             PromoType.FixedAmount => Math.Min(promo.DiscountValue, request.OrderAmount),
-            PromoType.FreeTrial   => request.OrderAmount,
-            _                     => 0m
+            PromoType.FreeTrial => request.OrderAmount,
+            _ => 0m
         };
 
         return Ok(new

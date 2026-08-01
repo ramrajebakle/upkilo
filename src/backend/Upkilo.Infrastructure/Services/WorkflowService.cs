@@ -26,9 +26,9 @@ public class WorkflowService : IWorkflowService
     // Tier-based execution limits for tenant isolation
     private static readonly Dictionary<string, TenantExecutionLimits> TierLimits = new()
     {
-        ["free"]       = new(MaxConcurrent: 5,   MaxStepsPerExecution: 20,  StepTimeoutSeconds: 15,  MaxExecutionDurationMinutes: 5),
-        ["starter"]    = new(MaxConcurrent: 15,  MaxStepsPerExecution: 50,  StepTimeoutSeconds: 30,  MaxExecutionDurationMinutes: 15),
-        ["professional"] = new(MaxConcurrent: 50, MaxStepsPerExecution: 100, StepTimeoutSeconds: 60,  MaxExecutionDurationMinutes: 30),
+        ["free"] = new(MaxConcurrent: 5, MaxStepsPerExecution: 20, StepTimeoutSeconds: 15, MaxExecutionDurationMinutes: 5),
+        ["starter"] = new(MaxConcurrent: 15, MaxStepsPerExecution: 50, StepTimeoutSeconds: 30, MaxExecutionDurationMinutes: 15),
+        ["professional"] = new(MaxConcurrent: 50, MaxStepsPerExecution: 100, StepTimeoutSeconds: 60, MaxExecutionDurationMinutes: 30),
         ["enterprise"] = new(MaxConcurrent: 200, MaxStepsPerExecution: 500, StepTimeoutSeconds: 120, MaxExecutionDurationMinutes: 60),
     };
 
@@ -212,9 +212,9 @@ public class WorkflowService : IWorkflowService
                     execution.ErrorMessage = errorMessage;
                     execution.CompletedAt = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
-                    
-                    await _notificationService.EscalateAsync(workflow.TenantId, "Workflow", 
-                        $"Step {stepIndex} timed out", "Medium", 
+
+                    await _notificationService.EscalateAsync(workflow.TenantId, "Workflow",
+                        $"Step {stepIndex} timed out", "Medium",
                         new { WorkflowId = workflowId, ExecutionId = executionId }, false);
 
                     _backgroundJobs.Enqueue<IWorkflowService>(x => x.ExecuteCompensatoryStepsAsync(execution.Id));
@@ -399,9 +399,9 @@ public class WorkflowService : IWorkflowService
             execution.Status = "CompensationFailed";
             execution.ErrorMessage += $" | Compensation error: {ex.Message}";
             await _context.SaveChangesAsync();
-            
-            await _notificationService.EscalateAsync(execution.TenantId, "Workflow", 
-                "Saga compensation failed - manual intervention required", "Critical", 
+
+            await _notificationService.EscalateAsync(execution.TenantId, "Workflow",
+                "Saga compensation failed - manual intervention required", "Critical",
                 new { ExecutionId = executionId, Error = ex.Message }, true);
         }
     }
@@ -509,8 +509,8 @@ public class WorkflowService : IWorkflowService
 
         try
         {
-            var config = step.Config.ValueKind != JsonValueKind.Undefined 
-                ? JsonSerializer.Deserialize<ConditionStepConfig>(step.Config.GetRawText(), 
+            var config = step.Config.ValueKind != JsonValueKind.Undefined
+                ? JsonSerializer.Deserialize<ConditionStepConfig>(step.Config.GetRawText(),
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 : null;
 
@@ -531,11 +531,11 @@ public class WorkflowService : IWorkflowService
             var engine = new WorkflowConditionEngine();
             bool result = engine.EvaluateCondition(config.Expression, context);
 
-            _logger.LogInformation("Condition step {StepIndex} expression '{Expression}' evaluated to: {Result}", 
+            _logger.LogInformation("Condition step {StepIndex} expression '{Expression}' evaluated to: {Result}",
                 stepIndex, config.Expression, result);
 
-            int nextIndex = result 
-                ? (config.TrueStepIndex ?? (stepIndex + 1)) 
+            int nextIndex = result
+                ? (config.TrueStepIndex ?? (stepIndex + 1))
                 : (config.FalseStepIndex ?? -1);
 
             if (nextIndex >= 0)

@@ -19,11 +19,11 @@ public class TenantRateLimitMiddleware
 
     private static readonly Dictionary<SubscriptionTier, (int PerDay, int PerMinute)> Limits = new()
     {
-        [SubscriptionTier.Free]         = (200, 10),
-        [SubscriptionTier.Starter]      = (1000, 30),
+        [SubscriptionTier.Free] = (200, 10),
+        [SubscriptionTier.Starter] = (1000, 30),
         [SubscriptionTier.Professional] = (5000, 60),
-        [SubscriptionTier.Business]     = (10000, 120),
-        [SubscriptionTier.Enterprise]   = (0, 0), // unlimited
+        [SubscriptionTier.Business] = (10000, 120),
+        [SubscriptionTier.Enterprise] = (0, 0), // unlimited
     };
 
     public TenantRateLimitMiddleware(RequestDelegate next, ILogger<TenantRateLimitMiddleware> logger, IConnectionMultiplexer? redis = null)

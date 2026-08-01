@@ -21,7 +21,7 @@ public class SandboxEnvironmentMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Headers.TryGetValue("X-Sandbox-Mode", out var sandboxHeader) && 
+        if (context.Request.Headers.TryGetValue("X-Sandbox-Mode", out var sandboxHeader) &&
             sandboxHeader == "true")
         {
             context.Items["IsSandbox"] = true;

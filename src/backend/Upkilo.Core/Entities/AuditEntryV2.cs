@@ -19,7 +19,7 @@ public class AuditEntryV2 : TenantEntity
     public string? UserAgent { get; set; }
     public string? Details { get; set; }
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-    
+
     // Additional indexing for Phase 10
     public string? RequestId { get; set; }
     public string? CorrelationId { get; set; }

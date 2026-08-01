@@ -24,9 +24,9 @@ public class SandboxController : ControllerBase
         // Get user ID from JWT
         if (!Guid.TryParse((User.FindFirst("sub")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value), out var userId))
             return Unauthorized(new { error = "Invalid user identity in token." });
-        
+
         var sandbox = await _sandboxService.CreateSandboxAsync(userId, seedConfig);
-        
+
         return CreatedAtAction(nameof(Get), new { id = sandbox.SandboxId }, sandbox);
     }
 

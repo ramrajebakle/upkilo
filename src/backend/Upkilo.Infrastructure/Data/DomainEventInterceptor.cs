@@ -19,8 +19,8 @@ public class DomainEventInterceptor : SaveChangesInterceptor
     }
 
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
-        DbContextEventData eventData, 
-        InterceptionResult<int> result, 
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
         await PublishDomainEvents(eventData.Context);
@@ -28,7 +28,7 @@ public class DomainEventInterceptor : SaveChangesInterceptor
     }
 
     public override InterceptionResult<int> SavingChanges(
-        DbContextEventData eventData, 
+        DbContextEventData eventData,
         InterceptionResult<int> result)
     {
         PublishDomainEvents(eventData.Context).GetAwaiter().GetResult();

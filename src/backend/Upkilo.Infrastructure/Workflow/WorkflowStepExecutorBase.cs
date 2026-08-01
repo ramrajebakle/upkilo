@@ -20,7 +20,7 @@ public abstract class WorkflowStepExecutorBase : IWorkflowStepExecutor
         // Default implementation is a no-op. Concrete executors should override if they have side effects to revert.
         return Task.CompletedTask;
     }
-    
+
     protected WorkflowStepResult Success(string? outputJson = null)
     {
         return new WorkflowStepResult { Success = true, OutputDataJson = outputJson };

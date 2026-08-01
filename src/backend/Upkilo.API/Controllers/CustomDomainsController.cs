@@ -95,14 +95,14 @@ public class CustomDomainsController : ControllerBase
 
         var domain = new CustomDomain
         {
-            Id                = Guid.NewGuid(),
-            TenantId          = tenantId.Value,
-            Hostname          = request.Hostname,
+            Id = Guid.NewGuid(),
+            TenantId = tenantId.Value,
+            Hostname = request.Hostname,
             VerificationToken = $"upkilo-verify-{Guid.NewGuid():N}",
-            IsVerified        = false,
-            SslStatus         = DomainSslStatus.Pending,
-            CreatedAt         = DateTime.UtcNow,
-            UpdatedAt         = DateTime.UtcNow
+            IsVerified = false,
+            SslStatus = DomainSslStatus.Pending,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         _context.CustomDomains.Add(domain);
@@ -168,11 +168,11 @@ public class CustomDomainsController : ControllerBase
 
         if (verified)
         {
-            domain.IsVerified      = true;
-            domain.LastVerifiedAt  = DateTime.UtcNow;
+            domain.IsVerified = true;
+            domain.LastVerifiedAt = DateTime.UtcNow;
             // WL-07: SSL provisioning is async — stay Pending until cert is issued
-            domain.SslStatus       = DomainSslStatus.Pending;
-            domain.UpdatedAt       = DateTime.UtcNow;
+            domain.SslStatus = DomainSslStatus.Pending;
+            domain.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 
@@ -184,7 +184,7 @@ public class CustomDomainsController : ControllerBase
             _ = Task.Run(async () =>
             {
                 await using var bgScope = _scopeFactory.CreateAsyncScope();
-                var bgDb  = bgScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var bgDb = bgScope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var bgSvc = bgScope.ServiceProvider.GetRequiredService<DomainManagementService>();
                 var bgLog = bgScope.ServiceProvider.GetRequiredService<ILogger<CustomDomainsController>>();
                 try

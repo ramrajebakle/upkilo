@@ -61,7 +61,7 @@ public class AIDashboardService : IAIDashboardService
     public async Task<IEnumerable<AITokenUsageDto>> GetTokenUsageTrendsAsync(Guid tenantId, int days = 30)
     {
         var cutoff = DateTime.UtcNow.AddDays(-days);
-        
+
         return await _context.AIUsageLogs
             .Where(l => l.TenantId == tenantId && l.CreatedAt >= cutoff)
             .GroupBy(l => l.CreatedAt.Date)

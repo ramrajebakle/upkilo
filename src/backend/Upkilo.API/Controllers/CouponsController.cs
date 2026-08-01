@@ -177,7 +177,7 @@ public class CouponsController : ControllerBase
         var randomLength = request.RandomLength > 0 ? request.RandomLength : 6;
         var coupons = new List<PromoCode>();
         var random = new Random();
-        
+
         for (int i = 0; i < request.Count; i++)
         {
             var randomString = Guid.NewGuid().ToString("N").Substring(0, Math.Min(randomLength, 32)).ToUpper();
@@ -295,7 +295,7 @@ public class CouponsController : ControllerBase
         {
             var customerUsageCount = await _context.PromoRedemptions
                 .CountAsync(r => r.PromoCodeId == coupon.Id && r.ClientId == request.ClientId.Value);
-            
+
             if (customerUsageCount >= coupon.MaxUsagePerCustomer.Value)
             {
                 return Ok(new { valid = false, error = "You have reached the maximum usage limit for this coupon." });
@@ -317,7 +317,7 @@ public class CouponsController : ControllerBase
         {
             var hasPreviousBookings = await _context.Bookings
                 .AnyAsync(b => b.ClientId == request.ClientId.Value && b.Status == BookingStatus.Completed);
-                
+
             if (hasPreviousBookings)
             {
                 return Ok(new { valid = false, error = "This coupon is valid for new clients only." });
@@ -349,7 +349,7 @@ public class CouponsController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         using var transaction = await _context.Database.BeginTransactionAsync();
-        try 
+        try
         {
             var coupon = await _context.PromoCodes
                 .FirstOrDefaultAsync(c => c.Id == id && c.TenantId == tenantId.Value && !c.IsDeleted && c.IsActive);

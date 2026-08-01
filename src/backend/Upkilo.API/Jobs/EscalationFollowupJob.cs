@@ -48,8 +48,8 @@ public class EscalationFollowupJob
 
                 // Only remind at 24h, 72h, and 168h windows to avoid spamming
                 bool shouldRemind =
-                    (ageHours >= 24  && ageHours < 48)  ||
-                    (ageHours >= 72  && ageHours < 96)  ||
+                    (ageHours >= 24 && ageHours < 48) ||
+                    (ageHours >= 72 && ageHours < 96) ||
                     (ageHours >= 168 && ageHours < 192);
 
                 if (!shouldRemind) continue;

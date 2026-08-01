@@ -9,7 +9,7 @@ public interface IWorkflowStepExecutor
     /// Executes the logical business domain of the workflow step.
     /// </summary>
     Task<WorkflowStepResult> ExecuteAsync(IWorkflowStepConfig config, WorkflowContext context);
-    
+
     /// <summary>
     /// Defines if this executor dictates a custom retry policy or relies on the global configuration.
     /// </summary>

@@ -21,22 +21,22 @@ public class SubscriptionEnforcerMiddleware
     }
 
     public async Task InvokeAsync(
-        HttpContext context, 
-        ISubscriptionService subscriptionService, 
+        HttpContext context,
+        ISubscriptionService subscriptionService,
         ITenantProvider tenantProvider,
         Microsoft.Extensions.Caching.Distributed.IDistributedCache cache)
     {
         // Resolve tenant ID
         var tenantId = tenantProvider.GetTenantId();
-        
+
         if (tenantId.HasValue)
         {
             // Store tier for rate limiting / analytics, read from Redis first
             var cacheKey = $"tenant_tier:{tenantId.Value}";
             var cachedTier = await cache.GetStringAsync(cacheKey);
-            
+
             Upkilo.Core.Entities.SubscriptionTier tier;
-            
+
             if (!string.IsNullOrEmpty(cachedTier) && Enum.TryParse(cachedTier, out tier))
             {
                 context.Items["TenantTier"] = tier;
@@ -51,12 +51,12 @@ public class SubscriptionEnforcerMiddleware
                 tier = Enum.TryParse<Upkilo.Core.Entities.SubscriptionTier>(planName, out var parsed)
                     ? parsed
                     : Upkilo.Core.Entities.SubscriptionTier.Free;
-                
+
                 await cache.SetStringAsync(cacheKey, tier.ToString(), new Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15)
                 });
-                
+
                 context.Items["TenantTier"] = tier;
             }
         }
@@ -77,15 +77,15 @@ public class SubscriptionEnforcerMiddleware
         // Check if the endpoint requires a specific feature
         var endpoint = context.GetEndpoint();
         var featureAttribute = endpoint?.Metadata.GetMetadata<RequiresFeatureAttribute>();
-        
+
         if (featureAttribute != null)
         {
             var hasAccess = await subscriptionService.CheckFeatureAccessAsync(tenantId.Value, featureAttribute.FeatureName);
             if (!hasAccess)
             {
-                _logger.LogWarning("Access denied to feature {Feature} for tenant {TenantId}", 
+                _logger.LogWarning("Access denied to feature {Feature} for tenant {TenantId}",
                     featureAttribute.FeatureName, tenantId);
-                
+
                 context.Response.StatusCode = 403;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new
@@ -101,18 +101,18 @@ public class SubscriptionEnforcerMiddleware
         // Check and RESERVE usage limits atomically for specific operations
         var usageAttribute = endpoint?.Metadata.GetMetadata<ChecksUsageAttribute>();
         bool reservedQuota = false;
-        
+
         if (usageAttribute != null && context.Request.Method != "GET")
         {
             reservedQuota = await subscriptionService.TryReserveUsageAsync(
                 tenantId.Value, usageAttribute.UsageType, usageAttribute.Amount);
-            
+
             if (!reservedQuota)
             {
                 var usage = await subscriptionService.GetUsageAsync(tenantId.Value);
-                _logger.LogWarning("Usage limit exceeded for {UsageType} for tenant {TenantId}", 
+                _logger.LogWarning("Usage limit exceeded for {UsageType} for tenant {TenantId}",
                     usageAttribute.UsageType, tenantId);
-                
+
                 context.Response.StatusCode = 429;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new
@@ -176,7 +176,7 @@ public class SubscriptionEnforcerMiddleware
 public class RequiresFeatureAttribute : Attribute
 {
     public string FeatureName { get; }
-    
+
     public RequiresFeatureAttribute(string featureName)
     {
         FeatureName = featureName;
@@ -191,7 +191,7 @@ public class ChecksUsageAttribute : Attribute
 {
     public UsageType UsageType { get; }
     public int Amount { get; }
-    
+
     public ChecksUsageAttribute(UsageType usageType, int amount = 1)
     {
         UsageType = usageType;

@@ -38,7 +38,7 @@ public class ServiceBundleItem : BaseEntity
     public Guid BundleServiceId { get; set; }
     public Guid ComponentServiceId { get; set; }
     public int Order { get; set; }
-    
+
     public virtual Service? BundleService { get; set; }
     public virtual Service? ComponentService { get; set; }
 }
@@ -52,7 +52,7 @@ public class ServiceUpsell : BaseEntity
     public Guid UpsellServiceId { get; set; }
     public string? Pitch { get; set; }
     public decimal? DiscountedPrice { get; set; }
-    
+
     public virtual Service? MainService { get; set; }
     public virtual Service? UpsellService { get; set; }
 }
@@ -78,7 +78,7 @@ public class StaffMember : TenantEntity
     public string? GoogleCalendarId { get; set; }
     public string? OutlookCalendarId { get; set; }
     public string Timezone { get; set; } = "UTC";
-    
+
     // Professional Details
     public decimal HourlyRate { get; set; }
     public decimal BaseCommissionRate { get; set; }
@@ -86,12 +86,12 @@ public class StaffMember : TenantEntity
     public EmploymentType EmploymentType { get; set; } = EmploymentType.FullTime;
     public DateTime DateJoined { get; set; } = DateTime.UtcNow;
     public List<string> Tags { get; set; } = new();
-    
+
     // Financials & Payouts
     public string? StripeConnectId { get; set; }
     public string? StripePayoutStatus { get; set; } // active, pending, restricted
     public bool PayoutsEnabled { get; set; }
-    
+
     public Dictionary<string, object> Settings { get; set; } = new();
 
     // Navigation

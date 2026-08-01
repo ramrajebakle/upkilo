@@ -154,9 +154,9 @@ public class OutboxProcessor : BackgroundService
     private static bool ShouldSyncToElastic(string eventType)
     {
         // Define which entity events should be synced to Elasticsearch for search
-        return eventType.StartsWith("booking.") || 
-               eventType.StartsWith("client.") || 
-               eventType.StartsWith("staff.") || 
+        return eventType.StartsWith("booking.") ||
+               eventType.StartsWith("client.") ||
+               eventType.StartsWith("staff.") ||
                eventType.StartsWith("service.");
     }
 

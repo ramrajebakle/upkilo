@@ -25,9 +25,9 @@ public class DevOpsDashboardService
         IConfiguration configuration,
         IHttpClientFactory httpClientFactory)
     {
-        _logger       = logger;
+        _logger = logger;
         _configuration = configuration;
-        _httpClient   = httpClientFactory.CreateClient("AzureManagement");
+        _httpClient = httpClientFactory.CreateClient("AzureManagement");
     }
 
     /// <summary>
@@ -39,8 +39,8 @@ public class DevOpsDashboardService
         _logger.LogCritical("EMERGENCY ROLLBACK triggered for {Env}. Reason: {Reason}", targetEnv, reason);
 
         var subscriptionId = _configuration["Azure:SubscriptionId"];
-        var resourceGroup  = _configuration["Azure:ResourceGroup"];
-        var appName        = _configuration["Azure:AppServiceName"];
+        var resourceGroup = _configuration["Azure:ResourceGroup"];
+        var appName = _configuration["Azure:AppServiceName"];
 
         if (string.IsNullOrEmpty(subscriptionId) || string.IsNullOrEmpty(resourceGroup) || string.IsNullOrEmpty(appName))
             throw new InvalidOperationException(
@@ -86,8 +86,8 @@ public class DevOpsDashboardService
         _logger.LogInformation("Updating canary traffic for {Service} to {Weight}%", serviceName, percentage);
 
         var subscriptionId = _configuration["Azure:SubscriptionId"];
-        var resourceGroup  = _configuration["Azure:ResourceGroup"];
-        var profileName    = _configuration["Azure:TrafficManagerProfile"];
+        var resourceGroup = _configuration["Azure:ResourceGroup"];
+        var profileName = _configuration["Azure:TrafficManagerProfile"];
 
         if (string.IsNullOrEmpty(subscriptionId) || string.IsNullOrEmpty(resourceGroup) || string.IsNullOrEmpty(profileName))
             throw new InvalidOperationException(
@@ -133,15 +133,15 @@ public class DevOpsDashboardService
 
     private async Task<string> GetAzureAccessTokenAsync()
     {
-        var tenantId     = _configuration["Azure:TenantId"]
+        var tenantId = _configuration["Azure:TenantId"]
             ?? throw new InvalidOperationException("Azure:TenantId not configured.");
-        var clientId     = _configuration["Azure:ClientId"]
+        var clientId = _configuration["Azure:ClientId"]
             ?? throw new InvalidOperationException("Azure:ClientId not configured.");
         var clientSecret = _configuration["Azure:ClientSecret"]
             ?? throw new InvalidOperationException("Azure:ClientSecret not configured.");
 
         var tokenUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
-        var content  = new FormUrlEncodedContent(new[]
+        var content = new FormUrlEncodedContent(new[]
         {
             new System.Collections.Generic.KeyValuePair<string,string>("grant_type",    "client_credentials"),
             new System.Collections.Generic.KeyValuePair<string,string>("client_id",     clientId),

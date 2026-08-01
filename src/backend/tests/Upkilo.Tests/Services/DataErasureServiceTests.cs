@@ -28,8 +28,11 @@ public class DataErasureServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         var user = new User
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
-            Email = "target@test.com", FirstName = "John", LastName = "Doe"
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            Email = "target@test.com",
+            FirstName = "John",
+            LastName = "Doe"
         };
         ctx.Users.Add(user);
         await ctx.SaveChangesAsync();
@@ -60,13 +63,16 @@ public class DataErasureServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         var user = new User
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
-            Email = "target@test.com", FirstName = "Jane"
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            Email = "target@test.com",
+            FirstName = "Jane"
         };
         ctx.Users.Add(user);
         var booking = new Booking
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
             CustomerEmail = "target@test.com",
             CustomerName = "Jane Doe",
             StartTime = DateTime.UtcNow.AddDays(-1),

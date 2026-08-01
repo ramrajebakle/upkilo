@@ -24,8 +24,8 @@ public class InvitationController : ControllerBase
     private readonly ITenantProvider _tenantProvider;
 
     public InvitationController(
-        ILogger<InvitationController> logger, 
-        AppDbContext context, 
+        ILogger<InvitationController> logger,
+        AppDbContext context,
         IEmailService emailService,
         IConfiguration configuration,
         ITenantProvider tenantProvider)
@@ -61,7 +61,7 @@ public class InvitationController : ControllerBase
     public async Task<IActionResult> CreateInvitation([FromBody] CreateInvitationRequest request)
     {
         _logger.LogInformation("Attempting to create invitation for {Email} with role {Role}", request.Email, request.Role);
-        
+
         // Parse role safely
         if (!Enum.TryParse<UserRole>(request.Role, true, out var userRole))
         {
@@ -93,7 +93,7 @@ public class InvitationController : ControllerBase
         // 4. Create Invitation
         var currentUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
         var token = Guid.NewGuid().ToString("N");
-        
+
         var invitation = new Invitation
         {
             Id = Guid.NewGuid(),

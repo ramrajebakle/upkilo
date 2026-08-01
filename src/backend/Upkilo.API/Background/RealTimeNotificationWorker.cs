@@ -78,7 +78,7 @@ public class RealTimeNotificationWorker : BackgroundService
         {
             await group.StaffScheduleUpdated(new ScheduleUpdate(
                 staffId.ToString(),
-                "Staff Member", 
+                "Staff Member",
                 DateTime.UtcNow,
                 evt.EventName.Split('.')[1], // "schedule_updated" or "shift_updated"
                 "Schedule changed"
@@ -112,7 +112,7 @@ public class RealTimeNotificationWorker : BackgroundService
         // Try to extract basic booking info for notifications
         string bookingId = root.TryGetProperty("Id", out var idProp) ? idProp.GetGuid().ToString() : Guid.Empty.ToString();
         string status = root.TryGetProperty("Status", out var statusProp) ? statusProp.ToString() : "unknown";
-        
+
         // Construct notification message based on event type
         string message = evt.EventName switch
         {
@@ -135,10 +135,11 @@ public class RealTimeNotificationWorker : BackgroundService
         );
 
         // Try to get richer data if available (e.g. from Includes)
-        try {
+        try
+        {
             if (root.TryGetProperty("Client", out var client))
                 notification = notification with { ClientName = $"{client.GetProperty("FirstName")} {client.GetProperty("LastName")}" };
-            
+
             if (root.TryGetProperty("Service", out var service))
                 notification = notification with { ServiceName = service.GetProperty("Name").GetString() ?? "Service" };
 
@@ -147,7 +148,8 @@ public class RealTimeNotificationWorker : BackgroundService
 
             if (root.TryGetProperty("StartTime", out var startTime))
                 notification = notification with { StartTime = startTime.GetDateTime() };
-        } catch { /* Suppress mapping errors for extra fields */ }
+        }
+        catch { /* Suppress mapping errors for extra fields */ }
 
         _logger.LogInformation("Broadcasting {EventName} for Tenant {TenantId}", evt.EventName, evt.TenantId);
 
@@ -183,14 +185,14 @@ public class RealTimeNotificationWorker : BackgroundService
     {
         // Event Data format from SchedulingService:
         // new { StaffId = staffId, Date = cache.Date, Timestamp = DateTime.UtcNow }
-        
+
         // We use reflection or dynamic to get data because it's an anonymous object in the channel
         // For production, a shared DTO would be better, but let's parse from JSON for safety.
         var json = JsonSerializer.Serialize(evt.Data);
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
 
-        if (root.TryGetProperty("StaffId", out var staffIdProp) && 
+        if (root.TryGetProperty("StaffId", out var staffIdProp) &&
             root.TryGetProperty("Date", out var dateProp))
         {
             var staffId = staffIdProp.GetGuid();

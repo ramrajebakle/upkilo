@@ -14,18 +14,18 @@ public class Invoice : TenantEntity
     public InvoiceStatus Status { get; set; } = InvoiceStatus.Draft;
     public decimal TotalAmount { get; set; }
     public string Currency { get; set; } = "USD";
-    
+
     // Customer Details
     public string CustomerName { get; set; } = string.Empty;
     public string? CustomerEmail { get; set; }
     public string? BillToAddress { get; set; }
-    
+
     // Stripe Integration
     public string? StripeInvoiceId { get; set; }
     public string? SubscriptionId { get; set; }
     public string? HostedInvoiceUrl { get; set; }
-    public string? PdfUrl { get; set; } 
-    public string? Industry { get; set; } 
+    public string? PdfUrl { get; set; }
+    public string? Industry { get; set; }
 
     // Internal Billing Fields
     public DateTime? PaidAt { get; set; }

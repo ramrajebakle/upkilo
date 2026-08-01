@@ -6,9 +6,22 @@ name: DR Restore Drill
 # the latest backup to a scratch instance monthly, verifies it, then tears it down.
 # It never touches the primary/replica cluster.
 
+# ⚠️ MONTHLY SCHEDULE DISABLED — manual-only for now.
+#
+# Two reasons:
+#  1. COST. This drill runs `az postgres flexible-server restore`, creating a real
+#     (billable) scratch Postgres server every month. The production budget is
+#     ₹5,000/month total; an unattended monthly server is a material share of that.
+#  2. NOTHING TO DRILL. There is no customer data yet, so restoring a backup verifies
+#     very little. It also needs the DR_DRILL_CONNECTION_PREFIX / _SUFFIX secrets and a
+#     `production-readonly` environment, none of which exist — so it fails every run.
+#
+# An untested backup is genuinely not a backup, so RE-ENABLE THIS once real customer
+# data exists: restore the `schedule:` block below and create the missing secrets.
+#
+#  schedule:
+#    - cron: "0 4 1 * *"  # 04:00 UTC on the 1st of every month
 on:
-  schedule:
-    - cron: "0 4 1 * *"  # 04:00 UTC on the 1st of every month
   workflow_dispatch: {}
 
 jobs:

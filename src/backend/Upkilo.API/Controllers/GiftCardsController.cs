@@ -55,7 +55,7 @@ public class GiftCardsController : ControllerBase
             query = query.Where(g => g.Status == statusEnum);
 
         if (!string.IsNullOrEmpty(search))
-            query = query.Where(g => g.Code.Contains(search) || 
+            query = query.Where(g => g.Code.Contains(search) ||
                 (g.RecipientEmail != null && g.RecipientEmail.Contains(search)) ||
                 (g.SenderName != null && g.SenderName.Contains(search)));
 

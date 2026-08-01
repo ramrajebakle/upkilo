@@ -34,7 +34,7 @@ public class StripeWebhookControllerTests : IDisposable
         _emailService = new Mock<IEmailService>();
         _dbFactory = new TestDbContextFactory();
         _dbContext = _dbFactory.CreateContext();
-        
+
         _secretProvider.Setup(s => s.GetSecretAsync("Stripe:WebhookSecret")).ReturnsAsync("whsec_test_secret");
 
         var downgradeHandler = new SubscriptionDowngradeHandler(
@@ -76,19 +76,19 @@ public class StripeWebhookControllerTests : IDisposable
 
     // A true integration test for HandleWebhook involves generating a valid Stripe signature.
     // For unit testing purposes, we test the logic via the underlying service.
-    
+
     [Fact]
     public async Task SyncSubscription_DirectlyCallsService()
     {
         // This simulates what the webhook would do upon receiving checkout.session.completed
         var tenantId = Guid.NewGuid();
-        
+
         _subscriptionService.Setup(s => s.SyncWithStripeAsync(tenantId))
             .Returns(Task.CompletedTask);
 
         // Normally invoked inside the webhook switch case
         await _subscriptionService.Object.SyncWithStripeAsync(tenantId);
-        
+
         _subscriptionService.Verify(s => s.SyncWithStripeAsync(tenantId), Times.Once);
     }
 }

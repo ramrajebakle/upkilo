@@ -10,13 +10,13 @@ namespace Upkilo.Infrastructure.Utils;
 public static class UlidGenerator
 {
     private const string EncodingChars = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
-    
+
     public static string NewUlid()
     {
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var timestampPart = EncodeTimestamp(timestamp, 10);
         var randomPart = EncodeRandom(16);
-        
+
         return timestampPart + randomPart;
     }
 
@@ -36,7 +36,7 @@ public static class UlidGenerator
         var bytes = new byte[length];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(bytes);
-        
+
         var buffer = new char[length];
         for (var i = 0; i < length; i++)
         {

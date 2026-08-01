@@ -92,7 +92,7 @@ public class GiftCertificateService : IGiftCertificateService
             }
 
             cert.RemainingAmount -= amount;
-            
+
             if (cert.RemainingAmount == 0)
             {
                 cert.Status = GiftCertificateStatus.FullyRedeemed;
@@ -165,7 +165,7 @@ public class GiftCertificateService : IGiftCertificateService
         result[1] = 'P';
         result[2] = 'K';
         result[3] = '-';
-        
+
         for (int i = 0; i < 4; i++)
         {
             result[i + 4] = chars[random[i] % chars.Length];

@@ -30,7 +30,7 @@ public class DlqDashboardController : ControllerBase
     public async Task<IActionResult> GetMessages([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         var query = _dbContext.Set<DeadLetterMessage>().OrderByDescending(m => m.CreatedAt);
-        
+
         var total = await query.CountAsync();
         var messages = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 

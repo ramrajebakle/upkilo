@@ -39,8 +39,8 @@ namespace Upkilo.Infrastructure.Jobs
 
             if (format.ToLower() == "json")
             {
-                var options = new System.Text.Json.JsonSerializerOptions 
-                { 
+                var options = new System.Text.Json.JsonSerializerOptions
+                {
                     WriteIndented = true,
                     PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
                 };
@@ -57,9 +57,9 @@ namespace Upkilo.Infrastructure.Jobs
 
             // Save to storage (S3/Azure Blob/Local)
             var url = await _fileService.SaveFileAsync(content, fileName, "application/octet-stream", tenantId);
-            
+
             _logger.LogInformation("Audit log export completed. URL: {Url}", url);
-            
+
             // In a real system, we'd notify the user via email/notification that the export is ready
         }
     }

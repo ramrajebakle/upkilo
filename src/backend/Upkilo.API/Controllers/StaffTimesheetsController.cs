@@ -33,7 +33,7 @@ public class StaffTimesheetsController : ControllerBase
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var staffMember = await _context.StaffMembers.FirstOrDefaultAsync(s => s.UserId.ToString() == userId);
-            
+
             if (staffMember == null) return Forbid();
             query = query.Where(t => t.StaffId == staffMember.Id);
         }
@@ -54,7 +54,7 @@ public class StaffTimesheetsController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         var staffMember = await _context.StaffMembers.FirstOrDefaultAsync(s => s.UserId.ToString() == userId);
         if (staffMember == null) return Unauthorized("Linked staff member not found.");
 
@@ -84,7 +84,7 @@ public class StaffTimesheetsController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         var staffMember = await _context.StaffMembers.FirstOrDefaultAsync(s => s.UserId.ToString() == userId);
         if (staffMember == null) return Unauthorized("Linked staff member not found.");
 

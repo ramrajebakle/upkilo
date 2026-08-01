@@ -14,8 +14,8 @@ public class ChatbotService : IChatbotService
     private readonly ISchedulingService _schedulingService;
 
     public ChatbotService(
-        AppDbContext context, 
-        IAIService aiService, 
+        AppDbContext context,
+        IAIService aiService,
         IAIDashboardService dashboardService,
         IBookingService bookingService,
         ISchedulingService schedulingService)
@@ -68,7 +68,7 @@ public class ChatbotService : IChatbotService
 
         // Add real-time service and slot context if the message looks like a booking request
         string bookingContext = "";
-        if (request.Message.Contains("book", StringComparison.OrdinalIgnoreCase) || 
+        if (request.Message.Contains("book", StringComparison.OrdinalIgnoreCase) ||
             request.Message.Contains("appointment", StringComparison.OrdinalIgnoreCase) ||
             request.Message.Contains("available", StringComparison.OrdinalIgnoreCase))
         {
@@ -76,8 +76,8 @@ public class ChatbotService : IChatbotService
                 .Where(s => s.TenantId == request.TenantId && s.IsActive)
                 .Select(s => $"{s.Name} (${s.Price}, {s.DurationMinutes}min)")
                 .ToListAsync();
-            
-            bookingContext = "\nOur available services include:\n" + string.Join("\n", services) + 
+
+            bookingContext = "\nOur available services include:\n" + string.Join("\n", services) +
                              "\n\nTo check specific availability, ask the user for their preferred date and time.";
         }
 
@@ -107,7 +107,7 @@ public class ChatbotService : IChatbotService
         var lowercaseResponse = responseContent.ToLowerInvariant();
         var clientMessageBase = request.Message.ToLowerInvariant();
 
-        var handoffRequested = lowercaseResponse.Contains("human") || 
+        var handoffRequested = lowercaseResponse.Contains("human") ||
                                lowercaseResponse.Contains("staff") ||
                                clientMessageBase.Contains("speak to a person") ||
                                clientMessageBase.Contains("human") ||
@@ -148,7 +148,7 @@ public class ChatbotService : IChatbotService
                 .Reverse()
                 .Select(m => $"{m.Role}: {m.Content}")
                 .ToListAsync();
-            
+
             var summaryPrompt = $"Summarize this conversation in one short sentence: \n{string.Join("\n", history)}";
             var summaryResult = await _aiService.GenerateTextAsync(request.TenantId, null, summaryPrompt);
             if (summaryResult.Success)

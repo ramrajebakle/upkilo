@@ -19,7 +19,7 @@ public class AdCampaignService : IAdCampaignService
 
     private IAdPlatformService GetPlatformService(string platform)
     {
-        return _serviceProvider.GetKeyedService<IAdPlatformService>(platform) 
+        return _serviceProvider.GetKeyedService<IAdPlatformService>(platform)
             ?? throw new NotSupportedException($"Platform {platform} is not supported.");
     }
 
@@ -34,7 +34,7 @@ public class AdCampaignService : IAdCampaignService
     {
         var platformService = GetPlatformService(platform);
         var platformCampaigns = await platformService.GetCampaignsAsync(tenantId);
-        
+
         var adAccount = await _context.AdAccounts
             .FirstOrDefaultAsync(a => a.TenantId == tenantId && a.Platform == platform && a.IsConnected);
 
@@ -117,7 +117,7 @@ public class AdCampaignService : IAdCampaignService
                 .ToListAsync();
 
             var platformService = GetPlatformService(account.Platform);
-            
+
             foreach (var campaign in campaigns)
             {
                 var metrics = await platformService.GetMetricsAsync(tenantId, campaign.ExternalCampaignId, from, to);

@@ -32,7 +32,7 @@ public class CalendarSyncBookingCreatedHandler : INotificationHandler<BookingCre
     {
         var evt = notification.Event;
         _logger.LogInformation("Syncing calendar for BookingCreated {BookingId}", evt.BookingId);
-        
+
         try
         {
             await _calendarService.SyncBookingsAsync(evt.StaffId);
@@ -98,8 +98,8 @@ public class CalendarSyncBookingRescheduledHandler : INotificationHandler<Bookin
 
         try
         {
-             _logger.LogWarning("StaffId is not present on BookingRescheduled event. Requires lookup for immediate sync.");
-             await Task.CompletedTask;
+            _logger.LogWarning("StaffId is not present on BookingRescheduled event. Requires lookup for immediate sync.");
+            await Task.CompletedTask;
         }
         catch (Exception ex)
         {

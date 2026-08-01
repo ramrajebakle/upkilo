@@ -59,25 +59,25 @@ public class SeoController : ControllerBase
 
         return Ok(new
         {
-            name         = tenant.Name,
-            slug         = tenant.Slug,
-            description  = tenant.Description,
-            logo         = tenant.LogoUrl,
+            name = tenant.Name,
+            slug = tenant.Slug,
+            description = tenant.Description,
+            logo = tenant.LogoUrl,
             primaryColor = tenant.PrimaryColor,
-            phone        = primary?.Phone ?? tenant.Phone,
-            email        = primary?.Email ?? tenant.Email,
-            website      = wsite?.ToString(),
-            industry     = tenant.Industry,
+            phone = primary?.Phone ?? tenant.Phone,
+            email = primary?.Email ?? tenant.Email,
+            website = wsite?.ToString(),
+            industry = tenant.Industry,
             address = primary == null ? null : (object)new
             {
-                line1      = primary.AddressLine1,
-                city       = primary.City,
-                state      = primary.State,
+                line1 = primary.AddressLine1,
+                city = primary.City,
+                state = primary.State,
                 postalCode = primary.PostalCode,
-                country    = primary.Country,
+                country = primary.Country,
             },
             services = tenant.Services.Take(10).Select(s => new { s.Name, s.Price, s.DurationMinutes }),
-            reviews  = new { averageRating = avgRating, totalCount = reviews.Count },
+            reviews = new { averageRating = avgRating, totalCount = reviews.Count },
         });
     }
 
@@ -94,8 +94,8 @@ public class SeoController : ControllerBase
 
         if (tenant == null) return NotFound();
 
-        var primary   = tenant.Locations.FirstOrDefault(l => l.IsPrimary) ?? tenant.Locations.FirstOrDefault();
-        var reviews   = await _context.ExternalReviews.Where(r => r.TenantId == tenantId).ToListAsync();
+        var primary = tenant.Locations.FirstOrDefault(l => l.IsPrimary) ?? tenant.Locations.FirstOrDefault();
+        var reviews = await _context.ExternalReviews.Where(r => r.TenantId == tenantId).ToListAsync();
         var blogCount = await _context.Set<Upkilo.Core.Entities.BlogPost>()
             .CountAsync(p => p.TenantId == tenantId && p.Status == "Published");
 
@@ -122,16 +122,16 @@ public class SeoController : ControllerBase
         return Ok(new
         {
             score,
-            grade  = score >= 85 ? "A" : score >= 70 ? "B" : score >= 50 ? "C" : "D",
+            grade = score >= 85 ? "A" : score >= 70 ? "B" : score >= 50 ? "C" : "D",
             checks,
             summary = new
             {
-                totalReviews      = reviews.Count,
-                avgRating         = reviews.Any() ? Math.Round(reviews.Average(r => r.Rating), 1) : 0.0,
-                publishedPosts    = blogCount,
-                servicesListed    = tenant.Services.Count,
+                totalReviews = reviews.Count,
+                avgRating = reviews.Any() ? Math.Round(reviews.Average(r => r.Rating), 1) : 0.0,
+                publishedPosts = blogCount,
+                servicesListed = tenant.Services.Count,
                 descriptionLength = tenant.Description?.Length ?? 0,
-                recentReviews     = reviews.Count(r => r.ReviewDate >= DateTime.UtcNow.AddDays(-30)),
+                recentReviews = reviews.Count(r => r.ReviewDate >= DateTime.UtcNow.AddDays(-30)),
             }
         });
     }
@@ -157,13 +157,13 @@ public class SeoController : ControllerBase
         foreach (var svc in tenant.Services.Take(6))
         {
             var name = svc.Name.ToLower();
-            suggestions.Add(new { keyword = name + " near me",          intent = "local",         volume = "High",   tip = "People searching right now for your service." });
+            suggestions.Add(new { keyword = name + " near me", intent = "local", volume = "High", tip = "People searching right now for your service." });
             suggestions.Add(new { keyword = "book " + name + " online", intent = "transactional", volume = "Medium", tip = "High-intent searchers ready to book." });
             if (!string.IsNullOrEmpty(city))
             {
-                suggestions.Add(new { keyword = name + " " + city.ToLower(),                 intent = "local",       volume = "High",   tip = "Your city + service is the highest value keyword." });
-                suggestions.Add(new { keyword = "best " + name + " in " + city.ToLower(),    intent = "commercial",  volume = "Medium", tip = "Comparison shoppers looking for top-rated businesses." });
-                suggestions.Add(new { keyword = name + " " + city.ToLower() + " prices",     intent = "commercial",  volume = "Low",    tip = "Price-conscious clients early in their search." });
+                suggestions.Add(new { keyword = name + " " + city.ToLower(), intent = "local", volume = "High", tip = "Your city + service is the highest value keyword." });
+                suggestions.Add(new { keyword = "best " + name + " in " + city.ToLower(), intent = "commercial", volume = "Medium", tip = "Comparison shoppers looking for top-rated businesses." });
+                suggestions.Add(new { keyword = name + " " + city.ToLower() + " prices", intent = "commercial", volume = "Low", tip = "Price-conscious clients early in their search." });
             }
         }
 

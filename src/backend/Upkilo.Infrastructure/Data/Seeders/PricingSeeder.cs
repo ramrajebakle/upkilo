@@ -63,131 +63,131 @@ public static class PricingSeeder
         // Re-adding a currency later is a data change here plus rows in Stripe; no code change
         // is needed, because GetPlans falls back to USD for any currency it has no rows for.
         context.PlanPrices.AddRange(
-            new PlanPrice { PricingPlan = starter,  Amount = 39,     CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = starter,  Amount = 370,    CurrencyCode = "USD", Cycle = BillingCycle.Annual  }, // $39×12=$468 → save $98
-            new PlanPrice { PricingPlan = pro,      Amount = 89,     CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = pro,      Amount = 844,    CurrencyCode = "USD", Cycle = BillingCycle.Annual  }, // $89×12=$1,068 → save $224
-            new PlanPrice { PricingPlan = business, Amount = 199,    CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = business, Amount = 1887,   CurrencyCode = "USD", Cycle = BillingCycle.Annual  }, // $199×12=$2,388 → save $501
-            new PlanPrice { PricingPlan = agency,   Amount = 249,    CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = agency,   Amount = 2361,   CurrencyCode = "USD", Cycle = BillingCycle.Annual  }  // $249×12=$2,988 → save $627
+            new PlanPrice { PricingPlan = starter, Amount = 39, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
+            new PlanPrice { PricingPlan = starter, Amount = 370, CurrencyCode = "USD", Cycle = BillingCycle.Annual }, // $39×12=$468 → save $98
+            new PlanPrice { PricingPlan = pro, Amount = 89, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
+            new PlanPrice { PricingPlan = pro, Amount = 844, CurrencyCode = "USD", Cycle = BillingCycle.Annual }, // $89×12=$1,068 → save $224
+            new PlanPrice { PricingPlan = business, Amount = 199, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
+            new PlanPrice { PricingPlan = business, Amount = 1887, CurrencyCode = "USD", Cycle = BillingCycle.Annual }, // $199×12=$2,388 → save $501
+            new PlanPrice { PricingPlan = agency, Amount = 249, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
+            new PlanPrice { PricingPlan = agency, Amount = 2361, CurrencyCode = "USD", Cycle = BillingCycle.Annual }  // $249×12=$2,988 → save $627
         );
 
         // 4. Feature Mappings — Free
         // Lite AI (50 actions/mo) creates the "aha moment" on free and drives upgrade.
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMaxStaff,          NumericLimit = 1,   IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMaxLocations,       NumericLimit = 1,   IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMaxClients,         NumericLimit = 150, IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiActions,          NumericLimit = 50,  IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fOnlineBooking,                          IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fSmsReminders,                           IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiCopilot,                              IsEnabled = true  }, // lite AI visible on Free to drive upgrade
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiWorkflows,                            IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiInsights,                             IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fWhiteLabel,                             IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fApiAccess,                              IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAdvancedSecurity,                       IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMarketingAutomation,                    IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fShowBranding,                           IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAgencyManagement,  NumericLimit = 0,   IsEnabled = false }
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMaxStaff, NumericLimit = 1, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMaxLocations, NumericLimit = 1, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMaxClients, NumericLimit = 150, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiActions, NumericLimit = 50, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fOnlineBooking, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fSmsReminders, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiCopilot, IsEnabled = true }, // lite AI visible on Free to drive upgrade
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiWorkflows, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAiInsights, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fWhiteLabel, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fApiAccess, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAdvancedSecurity, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fMarketingAutomation, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fShowBranding, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
         );
 
         // Feature Mappings — Starter
         // fAiCopilot was previously false despite having 500 AI action quota — corrected.
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxStaff,          NumericLimit = 3,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxLocations,       NumericLimit = 1,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxClients,         NumericLimit = 1000, IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiActions,          NumericLimit = 500,  IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fOnlineBooking,                           IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fSmsReminders,                            IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiCopilot,                               IsEnabled = true  }, // unlocks the 500 AI actions quota
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiWorkflows,                             IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiInsights,                              IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fWhiteLabel,                              IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fApiAccess,                               IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAdvancedSecurity,                        IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMarketingAutomation,                     IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fShowBranding,                            IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAgencyManagement,  NumericLimit = 0,    IsEnabled = false }
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxStaff, NumericLimit = 3, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxLocations, NumericLimit = 1, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxClients, NumericLimit = 1000, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiActions, NumericLimit = 500, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fOnlineBooking, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fSmsReminders, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiCopilot, IsEnabled = true }, // unlocks the 500 AI actions quota
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiWorkflows, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiInsights, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fWhiteLabel, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fApiAccess, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAdvancedSecurity, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMarketingAutomation, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fShowBranding, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
         );
 
         // Feature Mappings — Professional
         // AI Workflow Builder moved down from Business: biggest upgrade trigger from Starter.
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxStaff,          NumericLimit = 10,   IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxLocations,       NumericLimit = 3,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxClients,         NumericLimit = null, IsEnabled = true  }, // Unlimited
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiActions,          NumericLimit = 3000, IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fOnlineBooking,                           IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fSmsReminders,                            IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiCopilot,                               IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiWorkflows,                             IsEnabled = true  }, // moved down from Business
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiInsights,                              IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fWhiteLabel,                              IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fApiAccess,                               IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAdvancedSecurity,                        IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMarketingAutomation,                     IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fShowBranding,                            IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAgencyManagement,  NumericLimit = 0,    IsEnabled = false }
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxStaff, NumericLimit = 10, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxLocations, NumericLimit = 3, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true }, // Unlimited
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiActions, NumericLimit = 3000, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fOnlineBooking, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fSmsReminders, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiCopilot, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiWorkflows, IsEnabled = true }, // moved down from Business
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiInsights, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fWhiteLabel, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fApiAccess, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAdvancedSecurity, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMarketingAutomation, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fShowBranding, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
         );
 
         // Feature Mappings — Business
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxStaff,          NumericLimit = 25,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxLocations,       NumericLimit = 10,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxClients,         NumericLimit = null,  IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiActions,          NumericLimit = 10000, IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fOnlineBooking,                             IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fSmsReminders,                              IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiCopilot,                                 IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiWorkflows,                               IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiInsights,                                IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fWhiteLabel,                                IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fApiAccess,                                 IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAdvancedSecurity,                          IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMarketingAutomation,                       IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fShowBranding,                              IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAgencyManagement,  NumericLimit = 0,      IsEnabled = false }
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxStaff, NumericLimit = 25, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxLocations, NumericLimit = 10, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiActions, NumericLimit = 10000, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fOnlineBooking, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fSmsReminders, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiCopilot, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiWorkflows, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiInsights, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fWhiteLabel, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fApiAccess, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAdvancedSecurity, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMarketingAutomation, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fShowBranding, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
         );
 
         // Feature Mappings — Agency (Business features + sub-tenant management, up to 20 sub-accounts)
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxStaff,          NumericLimit = 25,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxLocations,       NumericLimit = 10,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxClients,         NumericLimit = null,  IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiActions,          NumericLimit = 15000, IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fOnlineBooking,                            IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fSmsReminders,                             IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiCopilot,                                IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiWorkflows,                              IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiInsights,                               IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fWhiteLabel,                               IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fApiAccess,                                IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAdvancedSecurity,                         IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMarketingAutomation,                      IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fShowBranding,                             IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAgencyManagement,  NumericLimit = 20,    IsEnabled = true  }
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxStaff, NumericLimit = 25, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxLocations, NumericLimit = 10, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiActions, NumericLimit = 15000, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fOnlineBooking, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fSmsReminders, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiCopilot, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiWorkflows, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiInsights, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fWhiteLabel, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fApiAccess, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAdvancedSecurity, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMarketingAutomation, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fShowBranding, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAgencyManagement, NumericLimit = 20, IsEnabled = true }
         );
 
         // Feature Mappings — Enterprise
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMaxStaff,          NumericLimit = null,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMaxLocations,       NumericLimit = null,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMaxClients,         NumericLimit = null,    IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiActions,          NumericLimit = 100000,  IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fOnlineBooking,                               IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fSmsReminders,                                IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiCopilot,                                   IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiWorkflows,                                 IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiInsights,                                  IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fWhiteLabel,                                  IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fApiAccess,                                   IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAdvancedSecurity,                            IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMarketingAutomation,                         IsEnabled = true  },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fShowBranding,                                IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAgencyManagement,  NumericLimit = null,    IsEnabled = true  }
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMaxStaff, NumericLimit = null, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMaxLocations, NumericLimit = null, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiActions, NumericLimit = 100000, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fOnlineBooking, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fSmsReminders, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiCopilot, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiWorkflows, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAiInsights, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fWhiteLabel, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fApiAccess, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAdvancedSecurity, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMarketingAutomation, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fShowBranding, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAgencyManagement, NumericLimit = null, IsEnabled = true }
         );
 
         await context.SaveChangesAsync();

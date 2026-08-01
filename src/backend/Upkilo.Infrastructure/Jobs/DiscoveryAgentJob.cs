@@ -69,7 +69,7 @@ namespace Upkilo.Infrastructure.Jobs
 
                 _context.AIDiscoveryReports.Add(report);
                 await _context.SaveChangesAsync();
-                
+
                 _logger.LogInformation("Discovery report saved for tenant {TenantId}", tenant.Id);
             }
             else
@@ -100,7 +100,7 @@ namespace Upkilo.Infrastructure.Jobs
                 // Base score: 1.0
                 // Length bonus: longer words are often more specific
                 var score = 1.0 + (word.Length * 0.1);
-                
+
                 // Position bias: words at the beginning/end are often more important
                 if (i < words.Count * 0.2) score *= 1.2;
                 if (i > words.Count * 0.8) score *= 1.1;

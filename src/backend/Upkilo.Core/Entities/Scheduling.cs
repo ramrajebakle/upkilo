@@ -179,12 +179,12 @@ public class AvailabilityCache : TenantEntity
 {
     public Guid StaffId { get; set; }
     public DateOnly Date { get; set; }
-    
+
     /// <summary>
     /// Bitmask or JSON representation of available 15-min slots
     /// 00000000... (96 bits for 24 hours)
     /// </summary>
     public string AvailableSlotsMask { get; set; } = string.Empty;
-    
+
     public DateTime LastUpdatedAt { get; set; }
 }

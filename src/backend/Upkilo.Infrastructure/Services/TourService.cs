@@ -39,7 +39,7 @@ public class TourService : ITourService
     public async Task UpdateProgressAsync(Guid userId, string tourKey, int step, bool completed = false)
     {
         var progress = await GetProgressAsync(userId, tourKey);
-        
+
         progress.CurrentStep = step;
         progress.IsCompleted = completed;
         progress.LastInteractedAt = DateTime.UtcNow;

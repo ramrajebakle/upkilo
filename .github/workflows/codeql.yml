@@ -1,12 +1,27 @@
 name: "CodeQL Advanced"
 
+# ⚠️ DISABLED on push/PR — this workflow cannot succeed on the current plan.
+#
+# CodeQL uploads results to GitHub code scanning, which requires GitHub Advanced
+# Security. That is not available for private repositories on the Free plan, so every
+# run failed with:
+#   "Code scanning is not enabled for this repository."
+#
+# A permanently-red required check trains people to ignore red checks, which is worse
+# than having no check. Left as manual-only so it is one line away from returning.
+#
+# TO RE-ENABLE once Advanced Security is available (GitHub Team/Enterprise, or make the
+# repository public): restore the push/pull_request/schedule triggers below.
+#
+#  on:
+#    push:
+#      branches: [ "main" ]
+#    pull_request:
+#      branches: [ "main" ]
+#    schedule:
+#      - cron: '30 1 * * 0'
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '30 1 * * 0' # Weekly
+  workflow_dispatch:
 
 jobs:
   analyze:
@@ -24,18 +39,27 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
         queries: security-extended,security-and-quality
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+    # autobuild cannot detect how to build this solution ("Could not auto-detect a
+    # suitable build method"), so C# is built explicitly. JavaScript needs no build step.
+    - name: Setup .NET
+      if: matrix.language == 'csharp'
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build C# solution
+      if: matrix.language == 'csharp'
+      run: dotnet build src/backend/Upkilo.sln --configuration Release
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"

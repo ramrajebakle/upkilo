@@ -18,7 +18,7 @@ public class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilte
         if (env?.IsDevelopment() == true) return true;
 
         // In production, check for SuperAdmin role
-        return httpContext.User.Identity?.IsAuthenticated == true && 
+        return httpContext.User.Identity?.IsAuthenticated == true &&
                httpContext.User.IsInRole("SuperAdmin");
     }
 }

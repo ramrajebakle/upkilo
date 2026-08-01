@@ -21,9 +21,9 @@ public class SearchService : ISearchService
         // This is a simplified pattern for PG Full-Text Search.
         // In reality, you'd use EF.Functions.ToTsVector and EF.Functions.ToTsQuery.
         // We ensure tenant isolation for all searches.
-        
+
         var dbSet = _context.Set<T>();
-        
+
         if (typeof(T) == typeof(Upkilo.Core.Entities.Booking))
         {
             return (IEnumerable<T>)await _context.Bookings

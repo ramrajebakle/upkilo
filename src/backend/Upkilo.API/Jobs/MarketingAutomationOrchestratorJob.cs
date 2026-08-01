@@ -84,16 +84,16 @@ public class MarketingAutomationOrchestratorJob
         if (ShouldRunAgent(config, "Content", TimeSpan.FromDays(3.5))) // Approx 2/week
         {
             _logger.LogInformation("Triggering Content Agent for tenant {TenantId}", tenantId);
-            
+
             // Dynamic Topic Selection: Combine industry niche with trending keywords from discovery
             var latestDiscovery = await _context.AIDiscoveryReports
                 .Where(r => r.TenantId == tenantId)
                 .OrderByDescending(r => r.GeneratedAt)
                 .FirstOrDefaultAsync();
-            
+
             var keywords = latestDiscovery?.Keywords?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                            .Take(3).Select(k => k.Trim()).ToArray() ?? new[] { "innovation", "tips" };
-            
+
             var topic = $"How {config.IndustryNiche} is evolving with {string.Join(" and ", keywords)}";
             await _marketingService.GenerateBlogPostAsync(tenantId, topic, keywords);
         }
@@ -125,10 +125,10 @@ public class MarketingAutomationOrchestratorJob
         if (ShouldRunAgent(config, "Analytics", TimeSpan.FromDays(1)))
         {
             _logger.LogInformation("Triggering Analytics Agent for tenant {TenantId}", tenantId);
-            
+
             // 1. Sync Real-World Analytics (GA4)
             await _marketingService.SyncAnalyticsFromExternalAsync(tenantId);
-            
+
             // 2. Generate Forecasts
             await _marketingService.GetForecastsAsync(tenantId, 30);
         }
@@ -187,7 +187,7 @@ public class MarketingAutomationOrchestratorJob
     {
         var now = DateTime.UtcNow;
         var last24Hours = now.AddHours(-24);
-        
+
         // 1. Conversion Rate Anomaly
         var analytics = await _context.PageAnalyticsRecords
             .Where(a => a.TenantId == tenantId && a.Timestamp >= last24Hours)

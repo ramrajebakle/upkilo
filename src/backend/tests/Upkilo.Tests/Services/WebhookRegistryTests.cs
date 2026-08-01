@@ -22,7 +22,7 @@ public class WebhookRegistryTests
     public void Register_AddsNewEvent_OnlyIfUnique()
     {
         var registry = new WebhookRegistry();
-        
+
         registry.Register("custom.event", "description");
         var all = registry.GetAll().ToList();
         all.Should().Contain(e => e.EventType == "custom.event");

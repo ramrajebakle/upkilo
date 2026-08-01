@@ -72,8 +72,8 @@ public class WhiteLabelController : ControllerBase
         string? validatedFavicon;
         try
         {
-            sanitizedCss   = BrandingValidator.SanitizeCss(request.CustomCss);
-            validatedLogo  = BrandingValidator.ValidateHttpsUrl(request.CustomLogoUrl, "Logo URL");
+            sanitizedCss = BrandingValidator.SanitizeCss(request.CustomCss);
+            validatedLogo = BrandingValidator.ValidateHttpsUrl(request.CustomLogoUrl, "Logo URL");
             validatedFavicon = BrandingValidator.ValidateHttpsUrl(request.CustomFavicon, "Favicon URL");
         }
         catch (ArgumentException ex)
@@ -102,15 +102,15 @@ public class WhiteLabelController : ControllerBase
             config.DomainVerifiedAt = null;
         }
 
-        config.CustomDomain      = request.CustomDomain;
-        config.CustomLogoUrl     = validatedLogo;
-        config.PrimaryColor      = request.PrimaryColor;
-        config.SecondaryColor    = request.SecondaryColor;
-        config.RemovePoweredBy   = request.RemovePoweredBy;
-        config.CustomFavicon     = validatedFavicon;
-        config.CustomCss         = sanitizedCss;
+        config.CustomDomain = request.CustomDomain;
+        config.CustomLogoUrl = validatedLogo;
+        config.PrimaryColor = request.PrimaryColor;
+        config.SecondaryColor = request.SecondaryColor;
+        config.RemovePoweredBy = request.RemovePoweredBy;
+        config.CustomFavicon = validatedFavicon;
+        config.CustomCss = sanitizedCss;
         config.CustomEmailDomain = request.CustomEmailDomain;
-        config.UpdatedAt         = DateTime.UtcNow;
+        config.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         _logger.LogInformation("White-label config updated for tenant {TenantId}", tenantId);
@@ -189,8 +189,8 @@ public class WhiteLabelController : ControllerBase
 
             // WL-12: persist verification result
             config.IsEmailVerified = spfValid && dkimValid;
-            config.EmailVerifiedAt  = spfValid && dkimValid ? DateTime.UtcNow : config.EmailVerifiedAt;
-            config.UpdatedAt        = DateTime.UtcNow;
+            config.EmailVerifiedAt = spfValid && dkimValid ? DateTime.UtcNow : config.EmailVerifiedAt;
+            config.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             if (spfValid && dkimValid)
@@ -216,7 +216,11 @@ public class WhiteLabelController : ControllerBase
             .Where(t => t.ParentTenantId == tenantId && !t.IsDeleted)
             .Select(t => new
             {
-                t.Id, t.BusinessName, t.Slug, t.Sector, t.CreatedAt,
+                t.Id,
+                t.BusinessName,
+                t.Slug,
+                t.Sector,
+                t.CreatedAt,
                 status = t.IsSuspended ? "Suspended" : "Active"
             })
             .ToListAsync();
@@ -254,12 +258,12 @@ public class WhiteLabelController : ControllerBase
 
         var newTenant = new Tenant
         {
-            BusinessName      = request.BusinessName,
-            Slug              = request.Slug,
-            Sector            = request.Sector,
-            ParentTenantId    = parentId.Value,
-            SubscriptionTier  = SubscriptionTier.Starter,
-            CreatedAt         = DateTime.UtcNow
+            BusinessName = request.BusinessName,
+            Slug = request.Slug,
+            Sector = request.Sector,
+            ParentTenantId = parentId.Value,
+            SubscriptionTier = SubscriptionTier.Starter,
+            CreatedAt = DateTime.UtcNow
         };
 
         _context.Tenants.Add(newTenant);
@@ -289,7 +293,7 @@ public class WhiteLabelController : ControllerBase
             currentCycle = new
             {
                 startsAt = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
-                endsAt   = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month))
+                endsAt = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month))
             },
             basePlanCost,
             subAccounts = new
@@ -354,18 +358,18 @@ public class WhiteLabelConfigDto
     {
         return new WhiteLabelConfigDto
         {
-            CustomDomain      = c.CustomDomain,
-            CustomLogoUrl     = c.CustomLogoUrl,
-            PrimaryColor      = c.PrimaryColor,
-            SecondaryColor    = c.SecondaryColor,
-            RemovePoweredBy   = c.RemovePoweredBy,
-            CustomFavicon     = c.CustomFavicon,
-            CustomCss         = includeCss ? c.CustomCss : null,
+            CustomDomain = c.CustomDomain,
+            CustomLogoUrl = c.CustomLogoUrl,
+            PrimaryColor = c.PrimaryColor,
+            SecondaryColor = c.SecondaryColor,
+            RemovePoweredBy = c.RemovePoweredBy,
+            CustomFavicon = c.CustomFavicon,
+            CustomCss = includeCss ? c.CustomCss : null,
             CustomEmailDomain = c.CustomEmailDomain,
-            IsVerified        = c.IsVerified,
-            DomainVerifiedAt  = c.DomainVerifiedAt,
-            IsEmailVerified   = c.IsEmailVerified,
-            EmailVerifiedAt   = c.EmailVerifiedAt
+            IsVerified = c.IsVerified,
+            DomainVerifiedAt = c.DomainVerifiedAt,
+            IsEmailVerified = c.IsEmailVerified,
+            EmailVerifiedAt = c.EmailVerifiedAt
         };
     }
 }

@@ -28,8 +28,11 @@ public class GdprServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         var user = new User
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
-            Email = "real@email.com", FirstName = "John", LastName = "Doe",
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            Email = "real@email.com",
+            FirstName = "John",
+            LastName = "Doe",
             PasswordHash = "hash123"
         };
         ctx.Users.Add(user);
@@ -70,8 +73,11 @@ public class GdprServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         var user = new User
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
-            Email = "export@test.com", FirstName = "Jane", LastName = "Smith"
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            Email = "export@test.com",
+            FirstName = "Jane",
+            LastName = "Smith"
         };
         ctx.Users.Add(user);
         await ctx.SaveChangesAsync();

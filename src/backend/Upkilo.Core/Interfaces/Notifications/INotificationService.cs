@@ -10,7 +10,7 @@ public interface INotificationService
     // User-specific notifications
     Task SendToUserAsync(string userId, string method, object notification);
     Task SendToastAsync(string userId, string title, string? message = null, string type = "info");
-    
+
     // Tenant-wide notifications
     Task SendToTenantAsync(string tenantId, string method, object notification);
 

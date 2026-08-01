@@ -52,12 +52,12 @@ public class AnalyticsController : ControllerBase
             .GroupBy(_ => 1)
             .Select(g => new
             {
-                TodayRevenue      = g.Sum(b => b.StartTime >= today && b.Status == BookingStatus.Confirmed ? b.Price ?? 0 : 0),
-                YesterdayRevenue  = g.Sum(b => b.StartTime < today  && b.Status == BookingStatus.Confirmed ? b.Price ?? 0 : 0),
-                TodayBookings     = g.Count(b => b.StartTime >= today),
+                TodayRevenue = g.Sum(b => b.StartTime >= today && b.Status == BookingStatus.Confirmed ? b.Price ?? 0 : 0),
+                YesterdayRevenue = g.Sum(b => b.StartTime < today && b.Status == BookingStatus.Confirmed ? b.Price ?? 0 : 0),
+                TodayBookings = g.Count(b => b.StartTime >= today),
                 YesterdayBookings = g.Count(b => b.StartTime < today),
-                UpcomingToday     = g.Count(b => b.StartTime >= today && b.Status == BookingStatus.Confirmed),
-                CompletedToday    = g.Count(b => b.StartTime >= today && b.Status == BookingStatus.Completed)
+                UpcomingToday = g.Count(b => b.StartTime >= today && b.Status == BookingStatus.Confirmed),
+                CompletedToday = g.Count(b => b.StartTime >= today && b.Status == BookingStatus.Completed)
             })
             .FirstOrDefaultAsync();
 
@@ -67,14 +67,14 @@ public class AnalyticsController : ControllerBase
         var activeClients = await _context.Clients.AsNoTracking()
             .CountAsync(c => c.TenantId == tenantId && c.LastVisitAt >= DateTime.UtcNow.AddDays(-90));
 
-        var todayRevenue      = bm?.TodayRevenue      ?? 0;
-        var yesterdayRevenue  = bm?.YesterdayRevenue  ?? 0;
-        var todayBookings     = bm?.TodayBookings     ?? 0;
+        var todayRevenue = bm?.TodayRevenue ?? 0;
+        var yesterdayRevenue = bm?.YesterdayRevenue ?? 0;
+        var todayBookings = bm?.TodayBookings ?? 0;
         var yesterdayBookings = bm?.YesterdayBookings ?? 0;
-        var upcomingToday     = bm?.UpcomingToday     ?? 0;
-        var completedToday    = bm?.CompletedToday    ?? 0;
+        var upcomingToday = bm?.UpcomingToday ?? 0;
+        var completedToday = bm?.CompletedToday ?? 0;
 
-        double revenueChange  = yesterdayRevenue  > 0 ? (double)((todayRevenue  - yesterdayRevenue)  / yesterdayRevenue  * 100) : 0;
+        double revenueChange = yesterdayRevenue > 0 ? (double)((todayRevenue - yesterdayRevenue) / yesterdayRevenue * 100) : 0;
         double bookingsChange = yesterdayBookings > 0 ? (double)((todayBookings - yesterdayBookings) / (double)yesterdayBookings * 100) : 0;
 
         return Ok(new
@@ -113,7 +113,7 @@ public class AnalyticsController : ControllerBase
         // Previous period (for comparison) in DB
         var prevStartDate = startDate.AddDays(-days);
         var prevEndDate = startDate;
-        
+
         var prevRevenue = await _context.Bookings.AsNoTracking()
             .Where(b => b.TenantId == tenantId && b.StartTime >= prevStartDate && b.StartTime < prevEndDate && b.Status == BookingStatus.Confirmed)
             .SumAsync(b => b.Price) ?? 0;
@@ -164,10 +164,10 @@ public class AnalyticsController : ControllerBase
         // Basic counts in DB
         var totalBookings = await _context.Bookings.AsNoTracking()
             .CountAsync(b => b.TenantId == tenantId && b.StartTime >= startDate);
-            
+
         var completed = await _context.Bookings.AsNoTracking()
             .CountAsync(b => b.TenantId == tenantId && b.StartTime >= startDate && (b.Status == BookingStatus.Completed || b.Status == BookingStatus.Confirmed));
-        
+
         var averageValue = await _context.Bookings.AsNoTracking()
             .Where(b => b.TenantId == tenantId && b.StartTime >= startDate && (b.Status == BookingStatus.Completed || b.Status == BookingStatus.Confirmed))
             .AverageAsync(b => (decimal?)b.Price) ?? 0;
@@ -306,7 +306,7 @@ public class AnalyticsController : ControllerBase
         var totalBookingsPaid = await _context.Payments.CountAsync(p => p.TenantId == tenantId && p.CreatedAt >= startDate && p.Status == PaymentStatus.Succeeded);
 
         // Using a base multiple to simulate traffic before registration
-        long baseTraffic = Math.Max(totalClientsCreated * 5, 100); 
+        long baseTraffic = Math.Max(totalClientsCreated * 5, 100);
 
         var steps = new[]
         {

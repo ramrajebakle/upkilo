@@ -20,12 +20,12 @@ public class SandboxMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         // 1. Detect Sandbox Headers
-        if (context.Request.Headers.TryGetValue("X-Sandbox-Mode", out var sandboxMode) && 
+        if (context.Request.Headers.TryGetValue("X-Sandbox-Mode", out var sandboxMode) &&
             sandboxMode.ToString().ToLower() == "true")
         {
             // 2. Identify the Sandbox ID (if provided)
             context.Request.Headers.TryGetValue("X-Sandbox-Id", out var sandboxId);
-            
+
             // 3. Update the request context items for downstream services
             context.Items["IsSandboxRequest"] = true;
             context.Items["SandboxId"] = sandboxId.ToString();

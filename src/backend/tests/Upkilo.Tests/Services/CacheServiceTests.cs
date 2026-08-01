@@ -106,7 +106,7 @@ public class CacheServiceTests
     {
         var sut = CreateSut(includeRedis: false);
         await sut.InvalidatePatternAsync(Guid.NewGuid(), "prefix");
-        
+
         // Assert: No exceptions, should log warning
         _loggerMock.Verify(
             l => l.Log(
@@ -127,7 +127,7 @@ public class CacheServiceTests
 
         var endpointMock = new Mock<EndPoint>();
         var endpoints = new[] { endpointMock.Object };
-        
+
         _redisMock.Setup(r => r.GetEndPoints(false)).Returns(endpoints);
         _redisMock.Setup(r => r.GetServer(endpointMock.Object, null)).Returns(_serverMock.Object);
         _redisMock.Setup(r => r.GetDatabase(It.IsAny<int>(), It.IsAny<object>())).Returns(_dbMock.Object);

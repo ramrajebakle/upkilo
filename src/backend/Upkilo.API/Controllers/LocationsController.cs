@@ -16,7 +16,7 @@ public class LocationsController : ControllerBase
     private readonly ILogger<LocationsController> _logger;
 
     public LocationsController(
-        ILocationService locationService, 
+        ILocationService locationService,
         ITenantProvider tenantProvider,
         ILogger<LocationsController> logger)
     {

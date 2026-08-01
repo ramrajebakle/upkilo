@@ -30,9 +30,9 @@ public class SmsController : ControllerBase
     private readonly IPublishEndpoint _publishEndpoint;
 
     public SmsController(
-        ILogger<SmsController> logger, 
-        AppDbContext context, 
-        ITenantProvider tenantProvider, 
+        ILogger<SmsController> logger,
+        AppDbContext context,
+        ITenantProvider tenantProvider,
         ISubscriptionService subscriptionService,
         IPublishEndpoint publishEndpoint)
     {
@@ -70,7 +70,7 @@ public class SmsController : ControllerBase
             {
                 id = l.Id,
                 to = l.Metadata.ContainsKey("To") ? l.Metadata["To"] : "Unknown",
-                clientName = l.ClientId.ToString(), 
+                clientName = l.ClientId.ToString(),
                 type = l.Type.ToString(),
                 message = l.Body,
                 status = l.Status.ToString(),
@@ -244,7 +244,7 @@ public class SmsController : ControllerBase
         {
             tenant.Settings["TwilioFromNumber"] = request.FromNumber;
         }
-        
+
         // Save other settings if needed based on the DTO...
 
         _context.Tenants.Update(tenant);

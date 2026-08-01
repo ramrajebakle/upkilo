@@ -30,7 +30,7 @@ public class InventoryItemsController : ControllerBase
             .Where(i => i.ProductId == productId)
             .OrderByDescending(i => i.LastRestockedAt)
             .ToListAsync();
-            
+
         return Ok(inventory);
     }
 
@@ -60,7 +60,7 @@ public class InventoryItemsController : ControllerBase
         {
             inventoryItem.Quantity += request.QuantityAdded;
             inventoryItem.LastRestockedAt = DateTime.UtcNow;
-            if (request.LowStockThreshold.HasValue) 
+            if (request.LowStockThreshold.HasValue)
                 inventoryItem.LowStockThreshold = request.LowStockThreshold.Value;
         }
 

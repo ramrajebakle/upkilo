@@ -1,0 +1,38 @@
+# Docker reads .dockerignore from the build CONTEXT directory. deploy.yml builds the
+# frontend with `context: ./src/frontend`, so the repository-root .dockerignore does not
+# apply here and this file is required.
+#
+# Without it the build context is ~600MB and, worse, `COPY . .` in the builder stage
+# overwrites the Linux node_modules installed by the deps stage with the host's
+# (Windows/macOS) node_modules — platform-specific binaries and all.
+
+node_modules
+.next
+out
+
+# Build/test artifacts
+coverage
+playwright-report
+test-results
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Local environment — never bake secrets into an image
+.env
+.env.*
+!.env.example
+
+# VCS and editor
+.git
+.gitignore
+.vscode
+.idea
+
+# Docs and Docker files themselves
+*.md
+Dockerfile
+.dockerignore
+
+# OS noise
+.DS_Store
+Thumbs.db

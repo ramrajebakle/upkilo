@@ -98,11 +98,11 @@ public class MarketingAutoResponder : TenantEntity
     public string Name { get; set; } = string.Empty;
 
     public string TriggerEvent { get; set; } = "client.created";
-    
+
     public Guid? EmailTemplateId { get; set; }
     public string? Subject { get; set; }
     public string? Content { get; set; }
-    
+
     public int DelayMinutes { get; set; } = 0;
     public bool IsActive { get; set; } = true;
 }

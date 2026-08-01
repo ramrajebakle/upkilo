@@ -19,7 +19,7 @@ public interface IMembershipService
     Task<bool> PauseSubscriptionAsync(Guid id, Guid tenantId, DateTime? resumeDate);
     Task<bool> ResumeSubscriptionAsync(Guid id, Guid tenantId);
     Task<bool> RecordUsageAsync(Guid id, Guid tenantId, Guid serviceId);
-    
+
     // Analytics
     Task<object> GetAnalyticsAsync(Guid tenantId);
 }

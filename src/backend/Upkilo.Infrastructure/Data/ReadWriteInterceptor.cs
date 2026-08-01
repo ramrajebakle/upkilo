@@ -17,8 +17,8 @@ public class ReadWriteInterceptor : DbCommandInterceptor
     }
 
     public override InterceptionResult<DbDataReader> ReaderExecuting(
-        DbCommand command, 
-        CommandEventData eventData, 
+        DbCommand command,
+        CommandEventData eventData,
         InterceptionResult<DbDataReader> result)
     {
         UpdateConnection(command);
@@ -26,9 +26,9 @@ public class ReadWriteInterceptor : DbCommandInterceptor
     }
 
     public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
-        DbCommand command, 
-        CommandEventData eventData, 
-        InterceptionResult<DbDataReader> result, 
+        DbCommand command,
+        CommandEventData eventData,
+        InterceptionResult<DbDataReader> result,
         CancellationToken cancellationToken = default)
     {
         UpdateConnection(command);
@@ -38,7 +38,7 @@ public class ReadWriteInterceptor : DbCommandInterceptor
     private void UpdateConnection(DbCommand command)
     {
         // If it's a SELECT query and not part of an explicit transaction, use replica
-        if (command.CommandText.TrimStart().StartsWith("SELECT", StringComparison.OrdinalIgnoreCase) && 
+        if (command.CommandText.TrimStart().StartsWith("SELECT", StringComparison.OrdinalIgnoreCase) &&
             command.Transaction == null)
         {
             _connectionSelector.UseReplica(true);
@@ -47,7 +47,7 @@ public class ReadWriteInterceptor : DbCommandInterceptor
         {
             _connectionSelector.UseReplica(false);
         }
-        
+
         var newConnectionString = _connectionSelector.GetConnectionString();
         if (command.Connection != null && command.Connection.ConnectionString != newConnectionString)
         {

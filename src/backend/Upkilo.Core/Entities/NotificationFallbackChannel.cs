@@ -7,19 +7,19 @@ namespace Upkilo.Core.Entities;
 public class NotificationFallbackChannel : TenantEntity
 {
     public Guid UserId { get; set; }
-    
+
     public string NotificationType { get; set; } = string.Empty; // e.g., "BookingConfirmation", "BillingAlert"
-    
+
     public string PrimaryChannel { get; set; } = "Push"; // Push, Email, SMS, WhatsApp
-    
-    public string FirstFallbackChannel { get; set; } = "Email"; 
-    
-    public string? SecondFallbackChannel { get; set; } 
-    
+
+    public string FirstFallbackChannel { get; set; } = "Email";
+
+    public string? SecondFallbackChannel { get; set; }
+
     public int TimeoutSecondsBeforeFallback { get; set; } = 300; // 5 minutes standard
-    
+
     public bool IsActive { get; set; } = true;
-    
+
     // Navigation
     public virtual User? User { get; set; }
 }

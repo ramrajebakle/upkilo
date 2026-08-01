@@ -144,7 +144,7 @@ public class WebhookService : IWebhookService
     {
         var webhook = _context.Set<Webhook>()
             .FirstOrDefault(e => e.Id == endpointId && e.TenantId == tenantId);
-        
+
         if (webhook == null)
             throw new InvalidOperationException("Webhook not found");
 
@@ -153,7 +153,8 @@ public class WebhookService : IWebhookService
             Id = Guid.NewGuid(),
             WebhookId = endpointId,
             EventType = "test.event",
-            Payload = JsonSerializer.Serialize(new { 
+            Payload = JsonSerializer.Serialize(new
+            {
                 message = "This is a test event",
                 timestamp = DateTime.UtcNow
             })
@@ -176,7 +177,7 @@ public class WebhookService : IWebhookService
 
         var query = _context.Set<WebhookDelivery>()
             .Where(d => webhookIds.Contains(d.WebhookId));
-        
+
         if (endpointId.HasValue)
             query = query.Where(d => d.WebhookId == endpointId.Value);
 
@@ -200,7 +201,7 @@ public class WebhookService : IWebhookService
         delivery.Success = false;
         delivery.Error = null;
         delivery.UpdatedAt = DateTime.UtcNow;
-        
+
         await DeliverWebhookAsync(delivery, webhook);
         return true;
     }
@@ -224,7 +225,7 @@ public class WebhookService : IWebhookService
             .ToList();
 
         // Filter based on exponential backoff: 2^attempt minutes
-        var toProcess = pending.Where(d => 
+        var toProcess = pending.Where(d =>
         {
             var delayMinutes = Math.Pow(2, d.AttemptNumber);
             return d.UpdatedAt.AddMinutes(delayMinutes) <= now;

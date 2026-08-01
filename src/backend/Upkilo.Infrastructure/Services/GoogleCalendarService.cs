@@ -27,7 +27,7 @@ public class GoogleCalendarService : IGoogleCalendarService
         _configuration = configuration;
         _logger = logger;
         _context = context;
-        
+
         // Load from secret provider or config — NO mock fallback
         _clientId = secretProvider.GetSecret("Google--ClientId") ?? _configuration["Authentication:Google:ClientId"] ?? "";
         _clientSecret = secretProvider.GetSecret("Google--ClientSecret") ?? _configuration["Authentication:Google:ClientSecret"] ?? "";
@@ -80,11 +80,11 @@ public class GoogleCalendarService : IGoogleCalendarService
     {
         var token = await _context.CalendarSyncTokens
             .FirstOrDefaultAsync(t => t.StaffId == staffId && t.Provider == "google" && t.IsActive);
-        
+
         if (token == null) return;
 
         var accessToken = await GetValidAccessTokenAsync(token);
-        
+
         // Find bookings to push
         var bookings = await _context.Bookings
             .Include(b => b.Client)
@@ -151,7 +151,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 
             // Expiration is typically in seconds, but TokenResponse usually tracks IssuedUtc + ExpiresInSeconds
             // We approximate adding 3500 just to be safe if ExpiresInSeconds is not strictly populated
-            var expiresIn = credential.Token.ExpiresInSeconds ?? 3599; 
+            var expiresIn = credential.Token.ExpiresInSeconds ?? 3599;
             return (credential.Token.AccessToken, DateTime.UtcNow.AddSeconds(expiresIn));
         }
         catch (Exception ex)

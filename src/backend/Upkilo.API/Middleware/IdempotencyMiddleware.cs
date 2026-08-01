@@ -65,9 +65,9 @@ public class IdempotencyMiddleware
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24)
             };
-            
+
             await cache.SetStringAsync(cacheKey, responseBody, options);
-            
+
             await memoryStream.CopyToAsync(originalBodyStream);
         }
         else

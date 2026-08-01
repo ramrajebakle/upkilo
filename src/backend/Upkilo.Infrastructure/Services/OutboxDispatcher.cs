@@ -49,7 +49,7 @@ public class OutboxDispatcher : BackgroundService
                     {
                         // Simulate event dispatching (e.g., to RabbitMQ or MediatR)
                         _logger.LogInformation("OutboxDispatcher: Processing message {Id} of type {Type}.", message.Id, message.EventType);
-                        
+
                         message.ProcessedAt = DateTime.UtcNow;
                         await context.SaveChangesAsync(stoppingToken);
                     }

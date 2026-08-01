@@ -16,7 +16,7 @@ public class SupportTicketService : ISupportTicketService
     private readonly IEmailService _emailService;
 
     public SupportTicketService(
-        AppDbContext context, 
+        AppDbContext context,
         IEmailService emailService,
         ILogger<SupportTicketService> logger)
     {
@@ -30,7 +30,7 @@ public class SupportTicketService : ISupportTicketService
         ticket.Id = Guid.NewGuid();
         ticket.CreatedAt = DateTime.UtcNow;
         ticket.Status = TicketStatus.Open;
-        
+
         // Default SLR: 24 hours for normal, 4 hours for high priority
         ticket.SlaExpiresAt = ticket.Priority == TicketPriority.High || ticket.Priority == TicketPriority.Urgent
             ? DateTime.UtcNow.AddHours(4)
@@ -39,12 +39,12 @@ public class SupportTicketService : ISupportTicketService
         _context.SupportTickets.Add(ticket);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Created support ticket {TicketId} for tenant {TenantId}. Priority: {Priority}", 
+        _logger.LogInformation("Created support ticket {TicketId} for tenant {TenantId}. Priority: {Priority}",
             ticket.Id, ticket.TenantId, ticket.Priority);
 
         // Notify staff (In a real app, this would use a notification service or SignalR)
         await _emailService.SendSystemEmailAsync(
-            "support@upkilo.com", 
+            "support@upkilo.com",
             $"New {ticket.Priority} Ticket: {ticket.Subject}",
             $"A new support ticket has been opened by {ticket.ContactEmail}.<br/>Subject: {ticket.Subject}");
 
@@ -76,14 +76,14 @@ public class SupportTicketService : ISupportTicketService
         comment.TicketId = ticketId;
 
         _context.SupportTicketComments.Add(comment);
-        
+
         // Update ticket last activity
         ticket.UpdatedAt = DateTime.UtcNow;
-        
+
         if (comment.AuthorUserId == Guid.Empty) // Staff comment (pseudo-logic for now)
         {
             ticket.Status = TicketStatus.InProgress;
-            
+
             // Notify user
             await _emailService.SendSystemEmailAsync(
                 ticket.ContactEmail,
@@ -101,7 +101,7 @@ public class SupportTicketService : ISupportTicketService
 
         ticket.Status = status;
         ticket.UpdatedAt = DateTime.UtcNow;
-        
+
         if (status == TicketStatus.Resolved || status == TicketStatus.Closed)
         {
             ticket.ResolvedAt = DateTime.UtcNow;

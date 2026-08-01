@@ -47,10 +47,13 @@ public class FinancialProjectionServiceTests : IDisposable
         {
             ctx.Invoices.Add(new Invoice
             {
-                Id = Guid.NewGuid(), TenantId = tenantId,
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
                 IssuedAt = DateTime.UtcNow.AddMonths(-i).AddDays(1),
-                TotalAmount = 100m, Status = InvoiceStatus.Paid,
-                InvoiceNumber = $"INV-{i:000}", DueDate = DateTime.UtcNow.AddMonths(-i + 1)
+                TotalAmount = 100m,
+                Status = InvoiceStatus.Paid,
+                InvoiceNumber = $"INV-{i:000}",
+                DueDate = DateTime.UtcNow.AddMonths(-i + 1)
             });
         }
         await ctx.SaveChangesAsync();

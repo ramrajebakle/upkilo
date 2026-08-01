@@ -86,7 +86,7 @@ public class LoyaltyTransaction : TenantEntity
     public int Points { get; set; }
     public string? Description { get; set; }
     public LoyaltyTransactionType TransactionType { get; set; }
-    
+
     public virtual Client? Client { get; set; }
 }
 
@@ -110,7 +110,7 @@ public class ClientReferral : TenantEntity
     public ClientReferralStatus Status { get; set; } = ClientReferralStatus.Pending;
     public int RewardPoints { get; set; } = 100;
     public bool RewardIssued { get; set; }
-    
+
     public virtual Client? Referrer { get; set; }
     public virtual Client? Referred { get; set; }
 }

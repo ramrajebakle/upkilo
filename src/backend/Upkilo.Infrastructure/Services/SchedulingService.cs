@@ -37,8 +37,8 @@ public class SchedulingService : ISchedulingService
     public async Task<IEnumerable<DateTime>> GetAvailableSlotsAsync(Guid tenantId, Guid serviceId, Guid? staffId, DateTime date)
     {
         var cacheKey = $"slots:{tenantId}:{serviceId}:{staffId?.ToString() ?? "any"}:{date:yyyyMMdd}";
-        
-        return await _coalescer.ExecuteAsync(cacheKey, async () => 
+
+        return await _coalescer.ExecuteAsync(cacheKey, async () =>
         {
             if (!await CheckConcurrencyLimitAsync(tenantId))
             {
@@ -48,7 +48,7 @@ public class SchedulingService : ISchedulingService
             var service = await _context.Services.FindAsync(serviceId);
             if (service == null) return Enumerable.Empty<DateTime>();
 
-            var staffIds = staffId.HasValue 
+            var staffIds = staffId.HasValue
                 ? new List<Guid> { staffId.Value }
                 : await _context.StaffServices
                     .Where(ss => ss.ServiceId == serviceId)
@@ -95,12 +95,12 @@ public class SchedulingService : ISchedulingService
     // through the 96-slot mask loop. Static so the compiler cannot accidentally add awaits.
     private static bool DoesServiceFitInCache(string mask, int startIndex, Service service)
     {
-        int slotsNeeded       = (int)Math.Ceiling(service.DurationMinutes      / 15.0);
-        int bufferBeforeSlots = (int)Math.Ceiling(service.BufferBeforeMinutes  / 15.0);
-        int bufferAfterSlots  = (int)Math.Ceiling(service.BufferAfterMinutes   / 15.0);
+        int slotsNeeded = (int)Math.Ceiling(service.DurationMinutes / 15.0);
+        int bufferBeforeSlots = (int)Math.Ceiling(service.BufferBeforeMinutes / 15.0);
+        int bufferAfterSlots = (int)Math.Ceiling(service.BufferAfterMinutes / 15.0);
 
         int checkStart = startIndex - bufferBeforeSlots;
-        int checkEnd   = startIndex + slotsNeeded + bufferAfterSlots;
+        int checkEnd = startIndex + slotsNeeded + bufferAfterSlots;
 
         if (checkStart < 0 || checkEnd > 96) return false;
 
@@ -113,16 +113,16 @@ public class SchedulingService : ISchedulingService
     private async Task<IEnumerable<DateTime>> CalculateStaffAvailabilityAsync(Guid tenantId, Guid staffId, Service service, DateTime date)
     {
         var slots = new List<DateTime>();
-        
+
         // 0. Resolve Timezone
         var staff = await _context.StaffMembers
             .Include(s => s.Tenant)
             .FirstOrDefaultAsync(s => s.Id == staffId);
-        
+
         // We use a dummy booking to resolve the hierarchy (Staff > Tenant)
         var dummyBooking = new Booking { Staff = staff, TenantId = tenantId, Tenant = staff?.Tenant };
         var timezoneId = _timezoneService.GetBookingTimezone(dummyBooking);
-        
+
         // Calculate UTC window for this local "date"
         var localDayStart = date.Date; // e.g. 2026-04-01 00:00 (assumed local relative to the request)
         var utcDayStart = _timezoneService.ConvertToUtc(localDayStart, timezoneId);
@@ -160,18 +160,18 @@ public class SchedulingService : ISchedulingService
         // 3. Get Existing Bookings in UTC window
         var bookings = await _context.Bookings
             .Include(b => b.Service)
-            .Where(b => b.StaffId == staffId && 
-                        b.StartTime < utcDayEnd && 
-                        b.EndTime > utcDayStart && 
+            .Where(b => b.StaffId == staffId &&
+                        b.StartTime < utcDayEnd &&
+                        b.EndTime > utcDayStart &&
                         b.Status != BookingStatus.Cancelled)
             .ToListAsync();
 
         // 4. Get Active Slot Holds in local day
         var holds = await _context.SlotHolds
-            .Where(h => h.StaffId == staffId && 
-                        h.SlotDateTime >= utcDayStart && 
-                        h.SlotDateTime < utcDayEnd && 
-                        h.ExpiresAt > DateTime.UtcNow && 
+            .Where(h => h.StaffId == staffId &&
+                        h.SlotDateTime >= utcDayStart &&
+                        h.SlotDateTime < utcDayEnd &&
+                        h.ExpiresAt > DateTime.UtcNow &&
                         !h.IsReleased)
             .ToListAsync();
 
@@ -179,8 +179,9 @@ public class SchedulingService : ISchedulingService
         // ... slots logic below remains local-time based ...
         // Wait, the slot generation logic uses currentTime which is localDayStart + workingHours.StartTime.
         // So we need to compare local slots with local versions of bookings.
-        
-        var localizedBookings = bookings.Select(b => new {
+
+        var localizedBookings = bookings.Select(b => new
+        {
             LocalStart = _timezoneService.ConvertToUserTimezone(b.StartTime, timezoneId),
             LocalEnd = _timezoneService.ConvertToUserTimezone(b.EndTime, timezoneId),
             b.GroupSize,
@@ -188,7 +189,8 @@ public class SchedulingService : ISchedulingService
             b.Service
         }).ToList();
 
-        var localizedHolds = holds.Select(h => new {
+        var localizedHolds = holds.Select(h => new
+        {
             LocalStart = _timezoneService.ConvertToUserTimezone(h.SlotDateTime, timezoneId)
         }).ToList();
 
@@ -197,7 +199,7 @@ public class SchedulingService : ISchedulingService
         // This entire window must be free.
         // It must also fall within Working Hours (Start - BufferBefore >= WorkStart ? Maybe not, usually prep can trigger early arrival? 
         // Let's assume strict: The actual SERVICE time must be within working hours. But the staff must be Free for the buffer.)
-        
+
         // Policy: 
         // - Service Start/End must be within WorkStart/WorkEnd.
         // - BufferBefore/BufferAfter must NOT overlap with other bookings.
@@ -275,7 +277,7 @@ public class SchedulingService : ISchedulingService
                 }
             }
 
-            if (isBlocked) 
+            if (isBlocked)
             {
                 currentTime = currentTime.AddMinutes(15);
                 continue;
@@ -292,7 +294,7 @@ public class SchedulingService : ISchedulingService
                 }
             }
 
-            if (isBlocked) 
+            if (isBlocked)
             {
                 currentTime = currentTime.AddMinutes(15);
                 continue;
@@ -303,7 +305,7 @@ public class SchedulingService : ISchedulingService
             {
                 var exStart = date.Date.Add(exception.StartTime.Value);
                 var exEnd = date.Date.Add(exception.EndTime.Value);
-                
+
                 if (myBusyStart < exEnd && myBusyEnd > exStart)
                 {
                     isBlocked = true;
@@ -322,7 +324,7 @@ public class SchedulingService : ISchedulingService
                 }
             }
 
-            if (isBlocked) 
+            if (isBlocked)
             {
                 currentTime = currentTime.AddMinutes(15);
                 continue;
@@ -336,7 +338,7 @@ public class SchedulingService : ISchedulingService
             {
                 var hStart = h.SlotDateTime;
                 var hEnd = h.SlotDateTime.AddMinutes(h.DurationMinutes);
-                
+
                 // We simplify holds to exact times for now as we don't store buffers on holds easily without lookup
                 if (myBusyStart < hEnd && myBusyEnd > hStart)
                 {
@@ -504,15 +506,15 @@ public class SchedulingService : ISchedulingService
     public async Task UpdateAvailabilityCacheAsync(Guid tenantId, Guid staffId, DateOnly date)
     {
         var dateTime = date.ToDateTime(TimeOnly.MinValue);
-        
+
         // 1. Get raw slots (this logic is similar to CalculateStaffAvailabilityAsync but for all possible slots)
         // We reuse CalculateStaffAvailabilityAsync for a one-minute "mock" service to find free windows
-        var mockService = new Service 
-        { 
-            DurationMinutes = 15, 
-            BufferBeforeMinutes = 0, 
+        var mockService = new Service
+        {
+            DurationMinutes = 15,
+            BufferBeforeMinutes = 0,
             BufferAfterMinutes = 0,
-            MaxAttendees = 1 
+            MaxAttendees = 1
         };
 
         var availableStartTimes = await CalculateStaffAvailabilityAsync(tenantId, staffId, mockService, dateTime);
@@ -549,7 +551,8 @@ public class SchedulingService : ISchedulingService
         await _context.SaveChangesAsync();
 
         // Broadcast change event
-        await _eventService.PublishAsync("scheduling.availability_changed", new {
+        await _eventService.PublishAsync("scheduling.availability_changed", new
+        {
             StaffId = staffId,
             Date = cache.Date,
             Timestamp = DateTime.UtcNow
@@ -572,13 +575,14 @@ public class SchedulingService : ISchedulingService
         {
             _context.AvailabilityCaches.RemoveRange(caches);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Invalidated availability cache for staff {StaffId} in tenant {TenantId} (Date: {Date})", 
+            _logger.LogInformation("Invalidated availability cache for staff {StaffId} in tenant {TenantId} (Date: {Date})",
                 staffId, tenantId, date?.ToString() ?? "All");
 
             // Broadcast change event
             foreach (var cache in caches)
             {
-                await _eventService.PublishAsync("scheduling.availability_changed", new {
+                await _eventService.PublishAsync("scheduling.availability_changed", new
+                {
                     StaffId = staffId,
                     Date = cache.Date,
                     Timestamp = DateTime.UtcNow
@@ -610,7 +614,7 @@ public class SchedulingService : ISchedulingService
             {
                 // Align to the start of the week of the start date (assuming Sunday is 0)
                 var weekStartDate = currentDate.AddDays(-(int)currentDate.DayOfWeek);
-                
+
                 while (count < maxToGenerate)
                 {
                     foreach (var day in daysOfWeek.OrderBy(d => d))
@@ -623,9 +627,9 @@ public class SchedulingService : ISchedulingService
                         candidateDates.Add(targetDate);
                         count++;
                     }
-                    
+
                     weekStartDate = weekStartDate.AddDays(7 * interval);
-                    
+
                     // Termination conditions
                     if (endDate.HasValue && weekStartDate > endDate.Value.Date) break;
                     if (count >= maxToGenerate) break;

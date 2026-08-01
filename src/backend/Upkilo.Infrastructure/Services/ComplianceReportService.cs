@@ -120,7 +120,7 @@ public class ComplianceReportService
         };
 
         _logger.LogInformation("GDPR DSAR report generated for user {UserId}", userId);
-        
+
         return System.Text.Json.JsonSerializer.Serialize(reportData, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
     }
 }

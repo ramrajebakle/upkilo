@@ -236,7 +236,7 @@ public class ScheduleController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         if (tenantId == null) return Unauthorized();
- 
+
         var service = await _context.Services.FirstOrDefaultAsync(x => x.Id == serviceId);
         if (service == null) return BadRequest(new { error = "Service not found." });
 

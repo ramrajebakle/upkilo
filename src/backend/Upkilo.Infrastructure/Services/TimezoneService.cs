@@ -76,7 +76,7 @@ public class TimezoneService : ITimezoneService
 
         // 3. Check Location Timezone (via Service context if needed, but Booking has LocationId)
         // Note: For now, we assume if Staff has a timezone, that takes precedence.
-        
+
         // 4. Check Tenant Timezone
         if (booking.Tenant != null && !string.IsNullOrEmpty(booking.Tenant.Timezone))
             return booking.Tenant.Timezone;

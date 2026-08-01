@@ -10,7 +10,7 @@ public interface IWorkflowTriggerSystem
     /// Should be called by EventDispatcher/Outbox pattern.
     /// </summary>
     Task EvaluateEventTriggerAsync(string eventType, string eventDataJson, Guid tenantId);
-    
+
     /// <summary>
     /// Manual trigger bypassing event criteria. Used for user-spawned ad-hoc workflows.
     /// </summary>

@@ -63,7 +63,7 @@ public class AuditController : ControllerBase
     {
         var tenantId = GetTenantId();
         var bytes = await _auditService.ExportToJsonAsync(tenantId, from, to, entityType, maxRecords);
-        
+
         var fileName = $"audit-logs-{tenantId:N}-{DateTime.UtcNow:yyyyMMdd-HHmmss}.json";
         return File(bytes, "application/json", fileName);
     }
@@ -81,7 +81,7 @@ public class AuditController : ControllerBase
     {
         var tenantId = GetTenantId();
         var bytes = await _auditService.ExportToCsvAsync(tenantId, from, to, entityType, maxRecords);
-        
+
         var fileName = $"audit-logs-{tenantId:N}-{DateTime.UtcNow:yyyyMMdd-HHmmss}.csv";
         return File(bytes, "text/csv", fileName);
     }

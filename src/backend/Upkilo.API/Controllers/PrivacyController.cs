@@ -193,8 +193,8 @@ public class PrivacyController : ControllerBase
         }
         catch (Exception ex)
         {
-             _logger.LogError(ex, "Failed to schedule permanent deletion for user {UserId}", userId);
-             // We still return Ok because the account is at least soft-deleted/deactivated
+            _logger.LogError(ex, "Failed to schedule permanent deletion for user {UserId}", userId);
+            // We still return Ok because the account is at least soft-deleted/deactivated
         }
 
         _logger.LogWarning("Account deletion requested by user {UserId}. Reason: {Reason}",

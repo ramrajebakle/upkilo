@@ -255,7 +255,7 @@ public class WebhookServiceTests : IDisposable
     {
         var (sut, ctx, tenantId) = CreateSut();
         var hook = await sut.CreateEndpointAsync(tenantId, "H1", "https://example.com", new[] { "*" });
-        
+
         // Backoff: 2^attempt minutes. If attempt = 1, delay = 2 mins. If UpdatedAt = 3 mins ago, should process.
         var delivery = new WebhookDelivery
         {

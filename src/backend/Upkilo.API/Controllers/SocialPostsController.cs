@@ -54,7 +54,7 @@ public class SocialPostsController : ControllerBase
 
         _context.SocialPosts.Add(post);
         await _context.SaveChangesAsync();
-        
+
         // Example: if Status is Pending (publish now), you might directly call a service
         // Otherwise a background job like SocialPostDeliveryJob picks it up
 

@@ -44,7 +44,7 @@ public class WorkflowStepExecutor : Upkilo.Core.Interfaces.Workflow.IWorkflowSte
 
     public async Task<WorkflowStepResult> ExecuteAsync(IWorkflowStepConfig config, WorkflowContext context)
     {
-        _logger.LogInformation("Executing workflow step: {StepName} ({StepType}) for tenant {TenantId}", 
+        _logger.LogInformation("Executing workflow step: {StepName} ({StepType}) for tenant {TenantId}",
             config.StepName, config.StepType, context.TenantId);
 
         try

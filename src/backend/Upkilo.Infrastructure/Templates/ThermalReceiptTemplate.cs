@@ -20,7 +20,7 @@ public class ThermalReceiptTemplate : IInvoiceTemplate
         {
             // 80mm width, using points (1mm = 2.83465 points)
             // 80mm * 2.83465 = 226.77 points
-            page.Size(226, 600, Unit.Point); 
+            page.Size(226, 600, Unit.Point);
             page.Margin(10);
             page.PageColor(Colors.White);
             page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.CourierNew));
@@ -28,18 +28,18 @@ public class ThermalReceiptTemplate : IInvoiceTemplate
             page.Header().Column(col =>
             {
                 col.Item().AlignCenter().Text(tenant.Name).Bold().FontSize(12);
-                
+
                 if (tenant.Settings.TryGetValue("CompanyAddress", out var addr) && addr is string address && !string.IsNullOrEmpty(address))
                     col.Item().AlignCenter().Text(address).FontSize(8);
 
                 if (!string.IsNullOrEmpty(tenant.Phone))
                     col.Item().AlignCenter().Text(tenant.Phone).FontSize(8);
-                
+
                 if (tenant.Settings.TryGetValue("TaxId", out var tax) && tax is string taxId && !string.IsNullOrEmpty(taxId))
                     col.Item().AlignCenter().Text($"Tax ID: {taxId}").FontSize(8);
 
                 col.Item().PaddingVertical(5).LineHorizontal(1).LineColor(Colors.Black);
-                
+
                 col.Item().Text($"{InvoiceTranslator.GetLabel("Receipt", tenant.Locale)}: {invoice.InvoiceNumber}");
                 col.Item().Text($"{InvoiceTranslator.GetLabel("Date", tenant.Locale)}: {invoice.IssueDate:g}");
                 col.Item().PaddingBottom(5).LineHorizontal(1).LineColor(Colors.Black);
@@ -75,7 +75,7 @@ public class ThermalReceiptTemplate : IInvoiceTemplate
                     column.Item().PaddingTop(10).AlignCenter().Column(qrCol =>
                     {
                         qrCol.Item().AlignCenter().Text(InvoiceTranslator.GetLabel("ScanToPay", tenant.Locale)).FontSize(8);
-                        
+
                         var qrBytes = PaymentQrHelper.GenerateUpiQrCode(
                             upiId,
                             tenant.Name,
@@ -87,7 +87,7 @@ public class ThermalReceiptTemplate : IInvoiceTemplate
                         qrCol.Item().PaddingTop(5).AlignCenter().Width(80).Image(qrBytes);
                     });
                 }
-                
+
                 if (invoice.Status == InvoiceStatus.Paid)
                 {
                     column.Item().AlignCenter().PaddingTop(10).Text(InvoiceTranslator.GetLabel("Paid", tenant.Locale)).Bold().FontSize(14).FontColor(Colors.Grey.Darken3);

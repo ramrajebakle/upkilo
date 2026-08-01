@@ -13,7 +13,7 @@ public class JsonWorkflowParser : IWorkflowParser
         {
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             // For a real implementation, this would use polymorphic deserialization based on StepType
-            return JsonSerializer.Deserialize<List<IWorkflowStepConfig>>(jsonConfig, options) 
+            return JsonSerializer.Deserialize<List<IWorkflowStepConfig>>(jsonConfig, options)
                    ?? new List<IWorkflowStepConfig>();
         }
         catch

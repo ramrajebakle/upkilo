@@ -82,7 +82,7 @@ public class TenantConcurrencyLimiterMiddleware
         if (!await semaphore.WaitAsync(TimeSpan.FromSeconds(2)))
         {
             _logger.LogWarning("Concurrency limit ({Limit}) exceeded for tenant {TenantId} (tier: {Tier})", limit, tenantId, tier);
-            
+
             context.Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
             context.Response.Headers["Retry-After"] = "5";
             await context.Response.WriteAsJsonAsync(new

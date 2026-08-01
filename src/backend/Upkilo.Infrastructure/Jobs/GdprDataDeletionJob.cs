@@ -45,7 +45,7 @@ public class GdprDataDeletionJob
             // Delete non-critical related PII models
             var photos = await _context.ClientPhotos.Where(p => p.ClientId == clientId).ToListAsync(cancellationToken);
             _context.ClientPhotos.RemoveRange(photos);
-            
+
             var waitlists = await _context.WaitlistEntries.Where(w => w.ClientId == clientId).ToListAsync(cancellationToken);
             _context.WaitlistEntries.RemoveRange(waitlists);
 

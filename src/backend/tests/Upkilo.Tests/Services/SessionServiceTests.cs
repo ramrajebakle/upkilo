@@ -132,7 +132,7 @@ public class SessionServiceTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        
+
         using (var checkContext = _dbFactory.CreateContext())
         {
             var dbSession = checkContext.Set<UserSession>().Find(session.Id);
@@ -226,7 +226,7 @@ public class SessionServiceTests : IDisposable
 
         _dbMock.Setup(d => d.StringGetAsync(It.Is<RedisKey>(k => k.ToString().Contains("rt:rt-cached")), It.IsAny<CommandFlags>()))
             .ReturnsAsync((RedisValue)sessionId.ToString());
-        
+
         _dbMock.Setup(d => d.StringGetAsync(It.Is<RedisKey>(k => k.ToString().Contains(sessionId.ToString())), It.IsAny<CommandFlags>()))
             .ReturnsAsync((RedisValue)JsonSerializer.Serialize(cachedSession));
 

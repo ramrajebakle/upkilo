@@ -66,54 +66,54 @@ public class PasswordMigrationJob : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-        var users = await db.Users
-            .IgnoreQueryFilters()
-            .Where(u => !u.IsDeleted && u.SocialProvider == null)
-            .Select(u => new { u.Id, u.Email, u.FirstName, u.PasswordHash })
-            .OrderBy(u => u.Id)
-            .Skip(offset)
-            .Take(pageSize)
-            .ToListAsync(stoppingToken);
+            var users = await db.Users
+                .IgnoreQueryFilters()
+                .Where(u => !u.IsDeleted && u.SocialProvider == null)
+                .Select(u => new { u.Id, u.Email, u.FirstName, u.PasswordHash })
+                .OrderBy(u => u.Id)
+                .Skip(offset)
+                .Take(pageSize)
+                .ToListAsync(stoppingToken);
 
-        if (users.Count == 0) break;
-        offset += users.Count;
+            if (users.Count == 0) break;
+            offset += users.Count;
 
-        foreach (var user in users)
-        {
-            if (stoppingToken.IsCancellationRequested) break;
-
-            var hash = user.PasswordHash ?? "";
-
-            bool isLegacy = !hash.StartsWith("$2", StringComparison.Ordinal);
-            bool isLowCost = !isLegacy && IsLowCostBCrypt(hash);
-
-            if (!isLegacy && !isLowCost)
+            foreach (var user in users)
             {
-                skipped++;
-                continue;
+                if (stoppingToken.IsCancellationRequested) break;
+
+                var hash = user.PasswordHash ?? "";
+
+                bool isLegacy = !hash.StartsWith("$2", StringComparison.Ordinal);
+                bool isLowCost = !isLegacy && IsLowCostBCrypt(hash);
+
+                if (!isLegacy && !isLowCost)
+                {
+                    skipped++;
+                    continue;
+                }
+
+                if (isLegacy) legacy++;
+                else lowCost++;
+
+                _logger.LogWarning("[PasswordMigration] Weak hash detected for User {UserId} ({Type})",
+                    user.Id, isLegacy ? "non-BCrypt" : $"BCrypt cost<{TargetBCryptCost}");
+
+                try
+                {
+                    // Initiate a standard password-reset flow for this user
+                    await authService.InitiatePasswordResetAsync(user.Email);
+
+                    _logger.LogInformation("[PasswordMigration] Password reset email dispatched to {UserId}", user.Id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "[PasswordMigration] Failed to dispatch reset email for {UserId}", user.Id);
+                }
+
+                // Brief pause between emails to avoid overwhelming the mail relay
+                await Task.Delay(200, stoppingToken);
             }
-
-            if (isLegacy) legacy++;
-            else lowCost++;
-
-            _logger.LogWarning("[PasswordMigration] Weak hash detected for User {UserId} ({Type})",
-                user.Id, isLegacy ? "non-BCrypt" : $"BCrypt cost<{TargetBCryptCost}");
-
-            try
-            {
-                // Initiate a standard password-reset flow for this user
-                await authService.InitiatePasswordResetAsync(user.Email);
-
-                _logger.LogInformation("[PasswordMigration] Password reset email dispatched to {UserId}", user.Id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "[PasswordMigration] Failed to dispatch reset email for {UserId}", user.Id);
-            }
-
-            // Brief pause between emails to avoid overwhelming the mail relay
-            await Task.Delay(200, stoppingToken);
-        }
         } // end page loop
 
         _logger.LogWarning(

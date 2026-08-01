@@ -155,7 +155,7 @@ public class WorkflowTemplatesController : ControllerBase
     {
         var templates = (GetTemplates() as OkObjectResult)?.Value as WorkflowTemplate[];
         var template = templates?.FirstOrDefault(t => t.Id == id);
-        
+
         if (template == null)
             return NotFound(new { error = "Template not found" });
 
@@ -169,7 +169,7 @@ public class WorkflowTemplatesController : ControllerBase
     public IActionResult CloneTemplate(string id, [FromBody] CloneTemplateRequest request)
     {
         _logger.LogInformation("Cloning workflow template {TemplateId} as {Name}", id, request.Name);
-        
+
         return Ok(new
         {
             id = Guid.NewGuid(),

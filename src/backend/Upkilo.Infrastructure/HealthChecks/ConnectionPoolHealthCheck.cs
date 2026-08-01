@@ -75,7 +75,7 @@ public class ConnectionPoolHealthCheck : IHealthCheck
                 // Alert thresholds
                 if (utilizationPct > 90)
                 {
-                    _logger.LogWarning("DB connection utilization at {Pct}% ({Total}/{Max})", 
+                    _logger.LogWarning("DB connection utilization at {Pct}% ({Total}/{Max})",
                         utilizationPct, total, maxConnections);
                     return HealthCheckResult.Degraded(
                         $"Connection utilization at {utilizationPct:F1}% — near capacity",

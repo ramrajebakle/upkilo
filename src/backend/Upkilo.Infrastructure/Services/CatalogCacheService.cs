@@ -99,8 +99,8 @@ public class CatalogCacheService
 
     private static class CacheKey
     {
-        public static string Services(Guid tenantId)  => $"catalog:services:{tenantId}";
-        public static string Staff(Guid tenantId)     => $"catalog:staff:{tenantId}";
+        public static string Services(Guid tenantId) => $"catalog:services:{tenantId}";
+        public static string Staff(Guid tenantId) => $"catalog:staff:{tenantId}";
         public static string Locations(Guid tenantId) => $"catalog:locations:{tenantId}";
     }
 }

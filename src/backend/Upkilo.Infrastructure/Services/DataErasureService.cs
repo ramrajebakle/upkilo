@@ -86,10 +86,10 @@ public class DataErasureService
 
             foreach (var booking in bookings)
             {
-                booking.CustomerName  = "ANONYMIZED";
+                booking.CustomerName = "ANONYMIZED";
                 booking.CustomerEmail = "anonymized@upkilo.com";
                 booking.CustomerPhone = "ANONYMIZED";
-                booking.Notes         = _piiScrubber.Scrub(booking.Notes ?? string.Empty);
+                booking.Notes = _piiScrubber.Scrub(booking.Notes ?? string.Empty);
             }
 
             // 6. Anonymize client record if user is linked to one
@@ -98,11 +98,11 @@ public class DataErasureService
             if (client != null)
             {
                 client.FirstName = "ANONYMIZED";
-                client.LastName  = "USER";
-                client.Email     = $"erased_{userId:N}@upkilo.com";
-                client.Phone     = "ANONYMIZED";
-                client.Notes     = null;
-                client.Tags      = null;
+                client.LastName = "USER";
+                client.Email = $"erased_{userId:N}@upkilo.com";
+                client.Phone = "ANONYMIZED";
+                client.Notes = null;
+                client.Tags = null;
             }
 
             // 7. Remove the user record itself
@@ -153,9 +153,9 @@ public class DataErasureService
 
             foreach (var msg in messages)
             {
-                msg.Content     = "[Content purged per retention policy]";
+                msg.Content = "[Content purged per retention policy]";
                 msg.ToolOutputs = null;
-                msg.Metadata    = null;
+                msg.Metadata = null;
             }
 
             _context.AIConversations.RemoveRange(expiredConversations);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Upkilo.Infrastructure.Events;
 
-public class DashboardMetricsHandler : 
+public class DashboardMetricsHandler :
     INotificationHandler<BookingCreated>,
     INotificationHandler<BookingConfirmed>,
     INotificationHandler<BookingCancelled>,
@@ -29,7 +29,7 @@ public class DashboardMetricsHandler :
         var stats = await GetOrAddStats(notification.TenantId, cancellationToken);
         stats.TotalBookings++;
         stats.PendingBookings++;
-        
+
         if (notification.StartTime.Month == DateTime.UtcNow.Month && notification.StartTime.Year == DateTime.UtcNow.Year)
         {
             stats.BookingsThisMonth++;
@@ -71,7 +71,7 @@ public class DashboardMetricsHandler :
     {
         var stats = await GetOrAddStats(notification.TenantId, cancellationToken);
         stats.TotalRevenue += notification.Amount;
-        
+
         if (notification.OccurredAt.Month == DateTime.UtcNow.Month && notification.OccurredAt.Year == DateTime.UtcNow.Year)
         {
             stats.RevenueThisMonth += notification.Amount;

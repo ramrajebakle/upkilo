@@ -16,7 +16,7 @@ public class SearchController : ControllerBase
     private readonly ILogger<SearchController> _logger;
 
     public SearchController(
-        IElasticsearchService searchService, 
+        IElasticsearchService searchService,
         Upkilo.Infrastructure.Services.SearchEnhancementService searchEnhancementService,
         ILogger<SearchController> logger)
     {
@@ -35,7 +35,7 @@ public class SearchController : ControllerBase
 
         var tenantId = User.FindFirst("tenant_id")?.Value;
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         if (string.IsNullOrEmpty(tenantId))
             return Unauthorized();
 
@@ -183,7 +183,7 @@ public class SearchController : ControllerBase
         var tenantId = User.FindFirst("tenant_id")?.Value;
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) || 
+        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) ||
             !Guid.TryParse(tenantId, out var tid) || !Guid.TryParse(userId, out var uid))
             return Unauthorized();
 
@@ -197,7 +197,7 @@ public class SearchController : ControllerBase
         var tenantId = User.FindFirst("tenant_id")?.Value;
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) || 
+        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) ||
             !Guid.TryParse(tenantId, out var tid) || !Guid.TryParse(userId, out var uid))
             return Unauthorized();
 
@@ -219,7 +219,7 @@ public class SearchController : ControllerBase
         var tenantId = User.FindFirst("tenant_id")?.Value;
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) || 
+        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) ||
             !Guid.TryParse(tenantId, out var tid) || !Guid.TryParse(userId, out var uid))
             return Unauthorized();
 
@@ -233,7 +233,7 @@ public class SearchController : ControllerBase
         var tenantId = User.FindFirst("tenant_id")?.Value;
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) || 
+        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(userId) ||
             !Guid.TryParse(tenantId, out var tid) || !Guid.TryParse(userId, out var uid))
             return Unauthorized();
 

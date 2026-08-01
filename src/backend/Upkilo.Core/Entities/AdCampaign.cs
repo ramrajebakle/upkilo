@@ -15,7 +15,7 @@ public class AdCampaign : TenantEntity
     public DateTime? EndDate { get; set; }
     public string? Objective { get; set; } // Leads, Conversions, BrandAwareness
     public string? OptimizationGoal { get; set; }
-    
+
     // Navigation
     public virtual AdAccount? AdAccount { get; set; }
 }

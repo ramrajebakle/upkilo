@@ -71,7 +71,7 @@ public class SetupWizardService : ISetupWizardService
     public async Task<SetupProgress> ResetProgressAsync(Guid tenantId)
     {
         var progress = await GetProgressAsync(tenantId);
-        
+
         progress.ProfileCompleted = false;
         progress.ServicesCompleted = false;
         progress.StaffCompleted = false;

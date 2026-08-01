@@ -82,7 +82,7 @@ public class OutlookCalendarService : ICalendarService
         if (token == null) return;
 
         var accessToken = await GetValidAccessTokenAsync(token);
-        
+
         // Fetch upcoming bookings that haven't been synced or need update
         var upcomingBookings = await _context.Bookings
             .Include(b => b.Service)
@@ -100,7 +100,8 @@ public class OutlookCalendarService : ICalendarService
                 var eventPayload = new
                 {
                     subject = $"Upkilo: {booking.Service?.Name ?? "Booking"} with {booking.Client?.FirstName ?? "Client"}",
-                    body = new {
+                    body = new
+                    {
                         contentType = "HTML",
                         content = $"Booking ID: {booking.Id}<br/>Status: {booking.Status}"
                     },
@@ -154,7 +155,7 @@ public class OutlookCalendarService : ICalendarService
                     }
                     else
                     {
-                         _logger.LogWarning("Failed to create Outlook event for booking {BookingId}: {Error}", booking.Id, await postResponse.Content.ReadAsStringAsync());
+                        _logger.LogWarning("Failed to create Outlook event for booking {BookingId}: {Error}", booking.Id, await postResponse.Content.ReadAsStringAsync());
                     }
                 }
             }
@@ -163,7 +164,7 @@ public class OutlookCalendarService : ICalendarService
                 _logger.LogError(ex, "Error syncing booking {BookingId} to Outlook Calendar", booking.Id);
             }
         }
-        
+
         token.LastSyncAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
     }
@@ -210,7 +211,7 @@ public class OutlookCalendarService : ICalendarService
             token.ExpiresAt = DateTime.UtcNow.AddSeconds(tokenData.ExpiresIn);
             await _context.SaveChangesAsync();
         }
-        
+
         return token.AccessToken;
     }
 
@@ -218,10 +219,10 @@ public class OutlookCalendarService : ICalendarService
     {
         [System.Text.Json.Serialization.JsonPropertyName("access_token")]
         public string AccessToken { get; set; } = "";
-        
+
         [System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
         public string? RefreshToken { get; set; }
-        
+
         [System.Text.Json.Serialization.JsonPropertyName("expires_in")]
         public int ExpiresIn { get; set; }
     }

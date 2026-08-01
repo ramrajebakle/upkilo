@@ -9,7 +9,7 @@ public class InvoiceItem : BaseEntity
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal Amount { get; set; } // Quantity * UnitPrice
-    
+
     public decimal TaxRate { get; set; } // e.g. 0.10 for 10%
     public decimal TaxAmount { get; set; } // Amount * TaxRate
     public decimal TotalAmount { get; set; } // Amount + TaxAmount

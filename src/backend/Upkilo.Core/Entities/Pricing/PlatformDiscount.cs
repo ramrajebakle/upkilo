@@ -12,7 +12,7 @@ public class PlatformDiscount : BaseEntity
     public DateTime? ValidUntil { get; set; }
     public int? MaxRedemptions { get; set; }
     public int CurrentRedemptions { get; set; }
-    
+
     // External ID (e.g., Stripe Coupon ID)
     public string? StripeCouponId { get; set; }
 }

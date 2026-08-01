@@ -30,7 +30,7 @@ public class IntercomIntegrationService : IIntercomIntegrationService
     {
         // In a real implementation, we'd look up the OAuth token for this tenant
         // For now, we attempt to get a system-wide or tenant-specific secret
-        return _secretProvider.GetSecret($"Intercom--Token--{tenantId}") 
+        return _secretProvider.GetSecret($"Intercom--Token--{tenantId}")
             ?? _secretProvider.GetSecret("Intercom--DefaultToken");
     }
 

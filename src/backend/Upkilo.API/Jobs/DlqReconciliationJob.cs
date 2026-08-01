@@ -47,7 +47,7 @@ public class DlqReconciliationJob
         foreach (var message in unresolvedMessages)
         {
             message.RetryCount = (message.RetryCount ?? 0) + 1;
-            
+
             try
             {
                 if (message.Source == "WebhookDelivery")
@@ -55,7 +55,7 @@ public class DlqReconciliationJob
                     // Attempt to re-deliver webhook event using IWebhookService
                     // Check if webhook service has redeliver method, or just simulate successful reconciliation
                     _logger.LogInformation("Re-delivering webhook event {EventType} from DLQ for Tenant {TenantId}", message.EventType, message.TenantId);
-                    
+
                     // Call mock or real re-delivery
                     message.IsResolved = true;
                     message.ResolvedAt = DateTime.UtcNow;
@@ -73,7 +73,7 @@ public class DlqReconciliationJob
             {
                 message.Error = ex.Message;
                 message.StackTrace = ex.StackTrace;
-                
+
                 if (message.RetryCount >= 5)
                 {
                     _logger.LogError("DLQ message {Id} has exhausted maximum auto-retries (5). Critical intervention required.", message.Id);

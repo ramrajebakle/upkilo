@@ -15,10 +15,10 @@ public class FileService : IFileService
     private readonly BlobServiceClient _blobServiceClient;
     private readonly ILogger<FileService> _logger;
     private readonly string _containerName;
-    
+
     // Configuration
     private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
-    private static readonly string[] AllowedContentTypes = 
+    private static readonly string[] AllowedContentTypes =
     {
         "image/jpeg", "image/png", "image/gif", "image/webp",
         "application/pdf", "text/csv",
@@ -30,21 +30,21 @@ public class FileService : IFileService
     public FileService(IConfiguration configuration, ISecretProvider secretProvider, ILogger<FileService> logger)
     {
         _secretProvider = secretProvider;
-        var connectionString = _secretProvider.GetSecret("Azure--Storage--ConnectionString") 
+        var connectionString = _secretProvider.GetSecret("Azure--Storage--ConnectionString")
             ?? configuration["Azure:Storage:ConnectionString"]
             ?? throw new InvalidOperationException("Azure Storage ConnectionString not configured");
-            
+
         _containerName = configuration["Azure:Storage:ContainerName"] ?? "upkilo-files";
-        
+
         _blobServiceClient = new BlobServiceClient(connectionString);
         _logger = logger;
     }
 
     public async Task<FileUploadResult> UploadAsync(
-        Stream fileStream, 
-        string fileName, 
-        string contentType, 
-        Guid tenantId, 
+        Stream fileStream,
+        string fileName,
+        string contentType,
+        Guid tenantId,
         FileCategory category)
     {
         // Validate file size
@@ -61,7 +61,7 @@ public class FileService : IFileService
         // Generate blob name: tenants/{tenantId}/{category}/{guid}-{filename}
         var safeFileName = SanitizeFileName(fileName);
         var blobName = $"tenants/{tenantId}/{category.ToString().ToLower()}/{Guid.NewGuid()}-{safeFileName}";
-        
+
         var blobClient = containerClient.GetBlobClient(blobName);
 
         var headers = new BlobHttpHeaders
@@ -79,7 +79,7 @@ public class FileService : IFileService
         };
 
         var uploadPolicy = ResiliencePolicies.GetGenericRetryPolicy();
-        await uploadPolicy.ExecuteAsync(async (ct) => 
+        await uploadPolicy.ExecuteAsync(async (ct) =>
         {
             await blobClient.UploadAsync(fileStream, new BlobUploadOptions
             {
@@ -106,9 +106,9 @@ public class FileService : IFileService
             var blobName = ExtractBlobName(fileUrl);
             var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
             var blobClient = containerClient.GetBlobClient(blobName);
-            
+
             var deletePolicy = ResiliencePolicies.GetGenericRetryPolicy();
-            var response = await deletePolicy.ExecuteAsync(async (ct) => 
+            var response = await deletePolicy.ExecuteAsync(async (ct) =>
             {
                 return await blobClient.DeleteIfExistsAsync();
             });
@@ -147,16 +147,16 @@ public class FileService : IFileService
     public async Task<IEnumerable<FileMetadata>> ListFilesAsync(Guid tenantId, FileCategory? category = null, int limit = 100)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-        var prefix = category.HasValue 
+        var prefix = category.HasValue
             ? $"tenants/{tenantId}/{category.Value.ToString().ToLower()}/"
             : $"tenants/{tenantId}/";
 
         var results = new List<FileMetadata>();
-        
+
         await foreach (var blob in containerClient.GetBlobsAsync(traits: BlobTraits.Metadata, states: BlobStates.None, prefix: prefix, cancellationToken: default))
         {
             if (results.Count >= limit) break;
-            
+
             results.Add(new FileMetadata
             {
                 Url = $"{containerClient.Uri}/{blob.Name}",
@@ -181,7 +181,7 @@ public class FileService : IFileService
             var blobClient = containerClient.GetBlobClient(blobName);
 
             var props = await blobClient.GetPropertiesAsync();
-            
+
             return new FileMetadata
             {
                 Url = fileUrl,

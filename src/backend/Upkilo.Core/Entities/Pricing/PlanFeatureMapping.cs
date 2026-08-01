@@ -6,7 +6,7 @@ public class PlanFeatureMapping : BaseEntity
 {
     public Guid PricingPlanId { get; set; }
     public Guid PricingFeatureId { get; set; }
-    
+
     public bool IsEnabled { get; set; }
     public int? NumericLimit { get; set; }
     public string? TextValue { get; set; }

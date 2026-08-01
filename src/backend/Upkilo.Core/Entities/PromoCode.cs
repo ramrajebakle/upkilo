@@ -45,7 +45,7 @@ public class PromoRedemption : BaseEntity
     public Guid? BookingId { get; set; }
     public DateTime RedeemedAt { get; set; } = DateTime.UtcNow;
     public decimal DiscountApplied { get; set; }
-    
+
     // Navigation
     public virtual Tenant? Tenant { get; set; }
     public virtual PromoCode? PromoCode { get; set; }

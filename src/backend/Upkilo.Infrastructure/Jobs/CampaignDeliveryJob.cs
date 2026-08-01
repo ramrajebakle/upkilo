@@ -36,7 +36,7 @@ public class CampaignDeliveryJob
         {
             // Simplified logic: Suppose 'TargetSegment' = 'All' or a specific tag
             var clientsQuery = _context.Clients.Where(c => c.TenantId == campaign.TenantId);
-            
+
             if (campaign.TargetSegment != "All")
             {
                 clientsQuery = clientsQuery.Where(c => c.Tags.Contains(campaign.TargetSegment!));

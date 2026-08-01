@@ -210,7 +210,7 @@ public class WaiversController : ControllerBase
 
         // Check if already signed this version
         var existingSig = await _context.WaiverSignatures
-            .FirstOrDefaultAsync(cw => cw.WaiverId == waiverId && 
+            .FirstOrDefaultAsync(cw => cw.WaiverId == waiverId &&
                                        cw.ClientId == request.ClientId &&
                                        cw.WaiverVersion == waiver.Version);
 

@@ -59,9 +59,9 @@ public class RedisCacheService : IDistributedCacheService
         if (cached != null) return cached;
 
         // Acquire lock per key to prevent stampede
-            var value = await factory();
-            await SetAsync(key, value, expiry);
-            return value;
+        var value = await factory();
+        await SetAsync(key, value, expiry);
+        return value;
     }
 
     public async Task<IAsyncDisposable?> AcquireLockAsync(string key, TimeSpan lockDuration)

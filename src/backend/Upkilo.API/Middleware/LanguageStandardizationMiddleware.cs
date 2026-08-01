@@ -23,7 +23,7 @@ public class LanguageStandardizationMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         var userLanguage = context.Request.Headers["Accept-Language"].ToString().Split(',').FirstOrDefault();
-        
+
         // Default to English (US) if nothing provided or invalid
         var cultureName = "en-US";
 

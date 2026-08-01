@@ -53,7 +53,7 @@ public class ExportController : ControllerBase
 
         // Security check: If the user is a client, ensure they only download their own invoice
         var clientIdStr = User.FindFirst("client_id")?.Value;
-        
+
         var invoice = await _invoiceService.GetInvoiceByIdAsync(id, tenantId.Value);
         if (invoice == null) return NotFound();
 

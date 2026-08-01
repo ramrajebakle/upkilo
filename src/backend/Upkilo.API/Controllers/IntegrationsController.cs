@@ -533,147 +533,147 @@ public class IntegrationsController : ControllerBase
         switch (integrationId)
         {
             case "stripe":
-            {
-                var key = creds.GetValueOrDefault("api_key") ?? creds.GetValueOrDefault("access_token") ?? string.Empty;
-                if (string.IsNullOrEmpty(key)) return (false, "No API key stored. Please reconnect.", null);
-                http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
-                var res = await http.GetAsync("https://api.stripe.com/v1/account");
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "Stripe API key is invalid or revoked.", null);
-                if (!res.IsSuccessStatusCode)
-                    return (false, $"Stripe returned HTTP {(int)res.StatusCode}.", null);
-                var body = await res.Content.ReadAsStringAsync();
-                using var doc = JsonDocument.Parse(body);
-                var accountId = doc.RootElement.TryGetProperty("id", out var idEl) ? idEl.GetString() : null;
-                return (true, "Stripe connected successfully.", accountId);
-            }
+                {
+                    var key = creds.GetValueOrDefault("api_key") ?? creds.GetValueOrDefault("access_token") ?? string.Empty;
+                    if (string.IsNullOrEmpty(key)) return (false, "No API key stored. Please reconnect.", null);
+                    http.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
+                    var res = await http.GetAsync("https://api.stripe.com/v1/account");
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "Stripe API key is invalid or revoked.", null);
+                    if (!res.IsSuccessStatusCode)
+                        return (false, $"Stripe returned HTTP {(int)res.StatusCode}.", null);
+                    var body = await res.Content.ReadAsStringAsync();
+                    using var doc = JsonDocument.Parse(body);
+                    var accountId = doc.RootElement.TryGetProperty("id", out var idEl) ? idEl.GetString() : null;
+                    return (true, "Stripe connected successfully.", accountId);
+                }
 
             case "razorpay":
-            {
-                var keyId = creds.GetValueOrDefault("key_id") ?? string.Empty;
-                var keySecret = creds.GetValueOrDefault("key_secret") ?? string.Empty;
-                if (string.IsNullOrEmpty(keyId) || string.IsNullOrEmpty(keySecret))
-                    return (false, "Missing Razorpay Key ID or Key Secret.", null);
-                var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{keyId}:{keySecret}"));
-                http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
-                var res = await http.GetAsync("https://api.razorpay.com/v1/payments?count=1");
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "Razorpay credentials are invalid.", null);
-                return res.IsSuccessStatusCode
-                    ? (true, "Razorpay connected successfully.", keyId)
-                    : (false, $"Razorpay returned HTTP {(int)res.StatusCode}.", null);
-            }
+                {
+                    var keyId = creds.GetValueOrDefault("key_id") ?? string.Empty;
+                    var keySecret = creds.GetValueOrDefault("key_secret") ?? string.Empty;
+                    if (string.IsNullOrEmpty(keyId) || string.IsNullOrEmpty(keySecret))
+                        return (false, "Missing Razorpay Key ID or Key Secret.", null);
+                    var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{keyId}:{keySecret}"));
+                    http.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+                    var res = await http.GetAsync("https://api.razorpay.com/v1/payments?count=1");
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "Razorpay credentials are invalid.", null);
+                    return res.IsSuccessStatusCode
+                        ? (true, "Razorpay connected successfully.", keyId)
+                        : (false, $"Razorpay returned HTTP {(int)res.StatusCode}.", null);
+                }
 
             case "paypal":
-            {
-                var clientId = creds.GetValueOrDefault("client_id") ?? string.Empty;
-                var clientSecret = creds.GetValueOrDefault("client_secret") ?? string.Empty;
-                if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-                    return (false, "Missing PayPal Client ID or Client Secret.", null);
-                var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{clientId}:{clientSecret}"));
-                var tokenReq = new HttpRequestMessage(HttpMethod.Post, "https://api-m.paypal.com/v1/oauth2/token");
-                tokenReq.Headers.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
-                tokenReq.Content = new FormUrlEncodedContent(
-                    new[] { new KeyValuePair<string, string>("grant_type", "client_credentials") });
-                var res = await http.SendAsync(tokenReq);
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "PayPal credentials are invalid.", null);
-                return res.IsSuccessStatusCode
-                    ? (true, "PayPal connected successfully.", clientId)
-                    : (false, $"PayPal returned HTTP {(int)res.StatusCode}.", null);
-            }
+                {
+                    var clientId = creds.GetValueOrDefault("client_id") ?? string.Empty;
+                    var clientSecret = creds.GetValueOrDefault("client_secret") ?? string.Empty;
+                    if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+                        return (false, "Missing PayPal Client ID or Client Secret.", null);
+                    var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{clientId}:{clientSecret}"));
+                    var tokenReq = new HttpRequestMessage(HttpMethod.Post, "https://api-m.paypal.com/v1/oauth2/token");
+                    tokenReq.Headers.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+                    tokenReq.Content = new FormUrlEncodedContent(
+                        new[] { new KeyValuePair<string, string>("grant_type", "client_credentials") });
+                    var res = await http.SendAsync(tokenReq);
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "PayPal credentials are invalid.", null);
+                    return res.IsSuccessStatusCode
+                        ? (true, "PayPal connected successfully.", clientId)
+                        : (false, $"PayPal returned HTTP {(int)res.StatusCode}.", null);
+                }
 
             case "sendgrid":
-            {
-                var key = creds.GetValueOrDefault("api_key") ?? string.Empty;
-                if (string.IsNullOrEmpty(key)) return (false, "No SendGrid API key stored.", null);
-                http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
-                var res = await http.GetAsync("https://api.sendgrid.com/v3/user/profile");
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "SendGrid API key is invalid.", null);
-                return res.IsSuccessStatusCode
-                    ? (true, "SendGrid connected successfully.", null)
-                    : (false, $"SendGrid returned HTTP {(int)res.StatusCode}.", null);
-            }
+                {
+                    var key = creds.GetValueOrDefault("api_key") ?? string.Empty;
+                    if (string.IsNullOrEmpty(key)) return (false, "No SendGrid API key stored.", null);
+                    http.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
+                    var res = await http.GetAsync("https://api.sendgrid.com/v3/user/profile");
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "SendGrid API key is invalid.", null);
+                    return res.IsSuccessStatusCode
+                        ? (true, "SendGrid connected successfully.", null)
+                        : (false, $"SendGrid returned HTTP {(int)res.StatusCode}.", null);
+                }
 
             case "mailgun":
-            {
-                var key = creds.GetValueOrDefault("api_key") ?? string.Empty;
-                var domain = creds.GetValueOrDefault("domain") ?? string.Empty;
-                if (string.IsNullOrEmpty(key)) return (false, "No Mailgun API key stored.", null);
-                var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"api:{key}"));
-                http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
-                var res = await http.GetAsync("https://api.mailgun.net/v3/domains");
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "Mailgun API key is invalid.", null);
-                return res.IsSuccessStatusCode
-                    ? (true, "Mailgun connected successfully.", domain)
-                    : (false, $"Mailgun returned HTTP {(int)res.StatusCode}.", null);
-            }
+                {
+                    var key = creds.GetValueOrDefault("api_key") ?? string.Empty;
+                    var domain = creds.GetValueOrDefault("domain") ?? string.Empty;
+                    if (string.IsNullOrEmpty(key)) return (false, "No Mailgun API key stored.", null);
+                    var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"api:{key}"));
+                    http.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+                    var res = await http.GetAsync("https://api.mailgun.net/v3/domains");
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "Mailgun API key is invalid.", null);
+                    return res.IsSuccessStatusCode
+                        ? (true, "Mailgun connected successfully.", domain)
+                        : (false, $"Mailgun returned HTTP {(int)res.StatusCode}.", null);
+                }
 
             case "twilio":
-            {
-                var sid = creds.GetValueOrDefault("account_sid") ?? string.Empty;
-                var token = creds.GetValueOrDefault("auth_token") ?? string.Empty;
-                if (string.IsNullOrEmpty(sid) || string.IsNullOrEmpty(token))
-                    return (false, "Missing Twilio Account SID or Auth Token.", null);
-                var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{sid}:{token}"));
-                http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
-                var res = await http.GetAsync($"https://api.twilio.com/2010-04-01/Accounts/{sid}.json");
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "Twilio credentials are invalid.", null);
-                return res.IsSuccessStatusCode
-                    ? (true, "Twilio connected successfully.", sid)
-                    : (false, $"Twilio returned HTTP {(int)res.StatusCode}.", null);
-            }
+                {
+                    var sid = creds.GetValueOrDefault("account_sid") ?? string.Empty;
+                    var token = creds.GetValueOrDefault("auth_token") ?? string.Empty;
+                    if (string.IsNullOrEmpty(sid) || string.IsNullOrEmpty(token))
+                        return (false, "Missing Twilio Account SID or Auth Token.", null);
+                    var encoded = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{sid}:{token}"));
+                    http.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+                    var res = await http.GetAsync($"https://api.twilio.com/2010-04-01/Accounts/{sid}.json");
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "Twilio credentials are invalid.", null);
+                    return res.IsSuccessStatusCode
+                        ? (true, "Twilio connected successfully.", sid)
+                        : (false, $"Twilio returned HTTP {(int)res.StatusCode}.", null);
+                }
 
             case "google-calendar":
-            {
-                var accessToken = creds.GetValueOrDefault("access_token") ?? string.Empty;
-                if (string.IsNullOrEmpty(accessToken))
-                    return (false, "No access token stored. Please reconnect.", null);
-                http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                var res = await http.GetAsync("https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=1");
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "Access token expired. Please reconnect Google Calendar.", null);
-                return res.IsSuccessStatusCode
-                    ? (true, "Google Calendar connected successfully.", null)
-                    : (false, $"Google Calendar returned HTTP {(int)res.StatusCode}.", null);
-            }
+                {
+                    var accessToken = creds.GetValueOrDefault("access_token") ?? string.Empty;
+                    if (string.IsNullOrEmpty(accessToken))
+                        return (false, "No access token stored. Please reconnect.", null);
+                    http.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                    var res = await http.GetAsync("https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=1");
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "Access token expired. Please reconnect Google Calendar.", null);
+                    return res.IsSuccessStatusCode
+                        ? (true, "Google Calendar connected successfully.", null)
+                        : (false, $"Google Calendar returned HTTP {(int)res.StatusCode}.", null);
+                }
 
             case "hubspot":
-            {
-                var key = creds.GetValueOrDefault("api_key") ?? string.Empty;
-                if (string.IsNullOrEmpty(key)) return (false, "No HubSpot API key stored.", null);
-                http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
-                var res = await http.GetAsync("https://api.hubapi.com/crm/v3/objects/contacts?limit=1");
-                if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    return (false, "HubSpot API key is invalid.", null);
-                return res.IsSuccessStatusCode
-                    ? (true, "HubSpot connected successfully.", null)
-                    : (false, $"HubSpot returned HTTP {(int)res.StatusCode}.", null);
-            }
+                {
+                    var key = creds.GetValueOrDefault("api_key") ?? string.Empty;
+                    if (string.IsNullOrEmpty(key)) return (false, "No HubSpot API key stored.", null);
+                    http.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
+                    var res = await http.GetAsync("https://api.hubapi.com/crm/v3/objects/contacts?limit=1");
+                    if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        return (false, "HubSpot API key is invalid.", null);
+                    return res.IsSuccessStatusCode
+                        ? (true, "HubSpot connected successfully.", null)
+                        : (false, $"HubSpot returned HTTP {(int)res.StatusCode}.", null);
+                }
 
             case "slack":
-            {
-                var webhookUrl = creds.GetValueOrDefault("webhook_url") ?? string.Empty;
-                if (string.IsNullOrEmpty(webhookUrl) || !webhookUrl.StartsWith("https://hooks.slack.com/"))
-                    return (false, "Invalid Slack webhook URL.", null);
-                var testPayload = JsonSerializer.Serialize(new { text = "Upkilo connected to Slack successfully." });
-                var res = await http.PostAsync(webhookUrl,
-                    new StringContent(testPayload, System.Text.Encoding.UTF8, "application/json"));
-                return res.IsSuccessStatusCode
-                    ? (true, "Slack connected successfully.", null)
-                    : (false, "Slack webhook URL returned an error.", null);
-            }
+                {
+                    var webhookUrl = creds.GetValueOrDefault("webhook_url") ?? string.Empty;
+                    if (string.IsNullOrEmpty(webhookUrl) || !webhookUrl.StartsWith("https://hooks.slack.com/"))
+                        return (false, "Invalid Slack webhook URL.", null);
+                    var testPayload = JsonSerializer.Serialize(new { text = "Upkilo connected to Slack successfully." });
+                    var res = await http.PostAsync(webhookUrl,
+                        new StringContent(testPayload, System.Text.Encoding.UTF8, "application/json"));
+                    return res.IsSuccessStatusCode
+                        ? (true, "Slack connected successfully.", null)
+                        : (false, "Slack webhook URL returned an error.", null);
+                }
 
             default:
                 return creds.Count > 0

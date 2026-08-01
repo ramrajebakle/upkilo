@@ -26,19 +26,19 @@ public class SecurityScannerService
     public async Task<SecurityScanResult> RunAutoScanAsync(Guid tenantId)
     {
         _logger.LogInformation("Starting autonomous security scan for tenant {TenantId}...", tenantId);
-        
+
         var findings = new List<string>();
         int score = 100;
 
         // 1. SQL Injection Simulation (Check for raw SQL patterns)
         // In real world, this would use a scanner like OWASP ZAP or specialized libs.
         await Task.Delay(500); // Simulating analysis
-        
+
         // 2. XSS Check (Scan stored content for script tags)
         var suspiciousContent = _context.GeneratedContents
             .Where(c => c.TenantId == tenantId && (c.Title.Contains("<script") || c.Body.Contains("<script")))
             .Any();
-        
+
         if (suspiciousContent)
         {
             findings.Add("Potential XSS payload detected in GeneratedContent.");

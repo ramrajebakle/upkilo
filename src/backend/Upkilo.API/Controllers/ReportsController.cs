@@ -71,7 +71,7 @@ public class ReportsController : ControllerBase
         if (definition == null) return NotFound();
 
         var result = await _reportingService.ExecuteReportAsync(tenantId, definition);
-        
+
         if (format.ToLower() == "csv")
         {
             // CSV serialization logic

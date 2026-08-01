@@ -64,13 +64,13 @@ public class CommunicationsController : ControllerBase
         }
 
         _context.CommunicationLogs.Add(log);
-        try 
+        try
         {
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-           // Log error but don't fail request if SMS sent
+            // Log error but don't fail request if SMS sent
         }
 
         if (!result.Success) return BadRequest($"Failed to send SMS: {result.Error}");

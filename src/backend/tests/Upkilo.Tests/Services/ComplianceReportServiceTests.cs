@@ -60,8 +60,11 @@ public class ComplianceReportServiceTests : IDisposable
 
         ctx.AuditEntries.Add(new Upkilo.Core.Entities.AuditEntry
         {
-            TenantId = tenantId, EntityType = "Booking", EntityId = "1",
-            Action = "Create", Timestamp = now
+            TenantId = tenantId,
+            EntityType = "Booking",
+            EntityId = "1",
+            Action = "Create",
+            Timestamp = now
         });
         await ctx.SaveChangesAsync();
 

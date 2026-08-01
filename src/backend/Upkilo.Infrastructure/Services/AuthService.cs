@@ -34,7 +34,7 @@ public class AuthService : IAuthService
     private readonly IBusinessMetrics _metrics;
     private readonly IDbConnectionSelector _connectionSelector;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    
+
     // Configuration
     private const int PasswordResetTokenExpiryMinutes = 15;
     private const int EmailVerificationTokenExpiryHours = 48;
@@ -44,7 +44,7 @@ public class AuthService : IAuthService
     private const int MinPasswordLength = 8;
 
     private readonly IDistributedCache _cache;
-    
+
     // Configuration
     private const string SessionCachePrefix = "session:";
     private readonly IValidator<RegisterRequest> _registerValidator;
@@ -215,7 +215,7 @@ public class AuthService : IAuthService
         var appUrl = _configuration["APP_URL"] ?? _configuration["App:FrontendUrl"] ?? "https://app.upkilo.com";
         // Include tid for robust multi-db lookup
         var verifyUrl = $"{appUrl.TrimEnd('/')}/verify-email?token={token}&tid={user.TenantId}";
-        
+
         await _emailService.SendSystemEmailAsync(
             user.Email,
             "Verify Your Email - Upkilo",
@@ -253,7 +253,7 @@ public class AuthService : IAuthService
 
         if (verificationToken == null)
         {
-            _logger.LogWarning("Verification token not found in database or already used for hashed prefix: {HashPrefix}", 
+            _logger.LogWarning("Verification token not found in database or already used for hashed prefix: {HashPrefix}",
                 hashedToken.Substring(0, Math.Min(10, hashedToken.Length)));
             return (false, "Verification token not found or already used.");
         }
@@ -261,7 +261,7 @@ public class AuthService : IAuthService
         var now = DateTime.UtcNow;
         if (verificationToken.ExpiresAt < now)
         {
-            _logger.LogWarning("Verification token expired. ExpiresAt (UTC): {ExpiresAt}, Now (UTC): {Now}", 
+            _logger.LogWarning("Verification token expired. ExpiresAt (UTC): {ExpiresAt}, Now (UTC): {Now}",
                 verificationToken.ExpiresAt, now);
             return (false, "Verification link has expired.");
         }
@@ -332,7 +332,7 @@ public class AuthService : IAuthService
         });
         await _context.SaveChangesAsync();
         _logger.LogWarning("Failed login attempt for: {Email} from IP: {IpAddress}", email, ipAddress);
-        
+
         await _siemLoggingService.ForwardEventAsync("LoginFailure", new { Email = email, IP = ipAddress });
     }
 
@@ -427,7 +427,7 @@ public class AuthService : IAuthService
         if (is2faEnabled || is2faEnforced)
         {
             // Check if this is a trusted device (skip 2FA)
-            if (!string.IsNullOrEmpty(deviceToken) && 
+            if (!string.IsNullOrEmpty(deviceToken) &&
                 await _twoFactorService.IsDeviceTrustedAsync(user.Id, deviceToken))
             {
                 _logger.LogInformation("2FA skipped for user {Email} — trusted device", email);
@@ -435,13 +435,13 @@ public class AuthService : IAuthService
             }
             else
             {
-                return new AuthResult 
-                { 
-                    Success = true, 
+                return new AuthResult
+                {
+                    Success = true,
                     TwoFactorRequired = true,
                     TwoFactorEnforced = is2faEnforced && !is2faEnabled,
-                    Message = is2faEnforced && !is2faEnabled 
-                        ? "2FA is required by your organization. Please set up 2FA." 
+                    Message = is2faEnforced && !is2faEnabled
+                        ? "2FA is required by your organization. Please set up 2FA."
                         : "2FA Required"
                 };
             }
@@ -480,17 +480,18 @@ public class AuthService : IAuthService
 
         // Invalidate older identical sessions to perform proper regeneration
         var oldSessions = await _context.UserSessions
-            .Where(s => s.UserId == user.Id && 
-                        s.IpAddress == ipAddress && 
+            .Where(s => s.UserId == user.Id &&
+                        s.IpAddress == ipAddress &&
                         s.Browser == userAgent &&
                         !s.IsRevoked)
             .ToListAsync();
-            
-        foreach(var oldSession in oldSessions) {
+
+        foreach (var oldSession in oldSessions)
+        {
             oldSession.IsRevoked = true;
             oldSession.ExpiresAt = DateTime.UtcNow;
         }
-        
+
         // Record session
         var session = new UserSession
         {
@@ -540,10 +541,10 @@ public class AuthService : IAuthService
         var validationResult = await _registerValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return new AuthResult 
-            { 
-                Success = false, 
-                Message = string.Join(" ", validationResult.Errors.Select(e => e.ErrorMessage)) 
+            return new AuthResult
+            {
+                Success = false,
+                Message = string.Join(" ", validationResult.Errors.Select(e => e.ErrorMessage))
             };
         }
 
@@ -575,8 +576,8 @@ public class AuthService : IAuthService
 
         // Ensure we handle the transaction inside the configured execution strategy (for retries)
         // and force the connection to the Primary database for the write operation.
-        _connectionSelector.UseReplica(false); 
-        
+        _connectionSelector.UseReplica(false);
+
         var strategy = _context.Database.CreateExecutionStrategy();
         return await strategy.ExecuteAsync(async () =>
         {
@@ -662,7 +663,7 @@ public class AuthService : IAuthService
                 var refreshToken = GenerateSecureToken();
 
                 var message = "Registration successful. A verification email has been sent to your inbox.";
-                
+
                 // 8. Email Verification - Wrap in try-catch to ensure registration doesn't 
                 // fail just because an email couldn't be sent (account is already committed).
                 try
@@ -690,13 +691,13 @@ public class AuthService : IAuthService
                 };
                 _context.UserSessions.Add(session);
                 await _context.SaveChangesAsync();
-                
+
                 // Record success metric
                 _metrics.RecordRegistrationAttempt("success");
 
                 // Update rate limit count
                 var currentCount = regCountStr == null ? 0 : int.Parse(regCountStr);
-                await _cache.SetStringAsync(rateLimitKey, (currentCount + 1).ToString(), 
+                await _cache.SetStringAsync(rateLimitKey, (currentCount + 1).ToString(),
                     new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1) });
 
                 return new AuthResult
@@ -788,7 +789,7 @@ public class AuthService : IAuthService
         var cacheKey = $"2fa_attempts_{email.ToLower()}";
         var attemptsStr = await _cache.GetStringAsync(cacheKey);
         int attempts = string.IsNullOrEmpty(attemptsStr) ? 0 : int.Parse(attemptsStr);
-        
+
         if (attempts >= 5)
         {
             _logger.LogWarning("2FA verification locked out for {Email} due to rate limiting.", email);
@@ -808,10 +809,10 @@ public class AuthService : IAuthService
         var twoFa = await _context.Set<User2FA>().FirstOrDefaultAsync(t => t.UserId == user.Id);
         if (twoFa != null && twoFa.LockedUntil.HasValue && twoFa.LockedUntil > DateTime.UtcNow)
         {
-            return new AuthResult 
-            { 
-                Success = false, 
-                Message = $"2FA is locked due to too many failed attempts. Try again at {twoFa.LockedUntil.Value:HH:mm} UTC." 
+            return new AuthResult
+            {
+                Success = false,
+                Message = $"2FA is locked due to too many failed attempts. Try again at {twoFa.LockedUntil.Value:HH:mm} UTC."
             };
         }
 
@@ -910,7 +911,7 @@ public class AuthService : IAuthService
         if (user == null) return;
 
         var status = enabled ? "enabled" : "disabled";
-        
+
         // Fire-and-forget email notification
         _ = _emailService.SendSystemEmailAsync(
             user.Email,
@@ -952,13 +953,13 @@ public class AuthService : IAuthService
 
         session.IsRevoked = true;
         await _context.SaveChangesAsync();
-        
+
         // Blacklist in Redis for immediate global revocation
         await _cache.SetStringAsync($"blacklist:sid:{session.Id}", "revoked", new DistributedCacheEntryOptions
         {
             AbsoluteExpiration = DateTimeOffset.UtcNow.AddDays(7)
         });
-        
+
         return true;
     }
 
@@ -1009,7 +1010,7 @@ public class AuthService : IAuthService
         {
             session.IsRevoked = true;
             session.ExpiresAt = DateTime.UtcNow;
-            
+
             // Blacklist in Redis for immediate global revocation
             await _cache.SetStringAsync($"blacklist:sid:{session.Id}", "revoked", new DistributedCacheEntryOptions
             {
@@ -1033,7 +1034,7 @@ public class AuthService : IAuthService
         {
             throw new InvalidOperationException("JWT Secret is not configured or is too weak. Set 'Jwt:Secret' in Key Vault or environment (min 32 chars; generate with: openssl rand -hex 32).");
         }
-        
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -1089,10 +1090,10 @@ public class AuthService : IAuthService
 
         _context.TwoFaRecoveryRequests.Add(request);
         await _context.SaveChangesAsync();
-        
+
         // Notify admins (optional)
         _logger.LogInformation("New 2FA recovery request submitted by User: {UserId}", user.Id);
-        
+
         return new AuthResponse(true, "Recovery request submitted successfully. Our team will review it.");
     }
 
@@ -1117,9 +1118,9 @@ public class AuthService : IAuthService
                 {
                     _context.Set<User2FA>().Remove(twoFa);
                 }
-                
+
                 await _siemLoggingService.ForwardEventAsync("TwoFaDisabledByAdmin", new { RequestId = requestId, AdminId = adminId }, user.Id, user.TenantId);
-                
+
                 _ = _emailService.SendSystemEmailAsync(
                     user.Email,
                     "2FA Recovery Request Approved",
@@ -1410,7 +1411,7 @@ public class AuthService : IAuthService
 
         _context.UserSessions.Add(session);
         _context.LoginAttempts.Add(new LoginAttempt { Email = user.Email.ToLower(), IpAddress = ipAddress, Succeeded = true });
-        
+
         await _context.SaveChangesAsync();
         await _siemLoggingService.ForwardEventAsync("BiometricLoginSuccess", new { IP = ipAddress, UserAgent = userAgent }, user.Id, user.TenantId);
 
@@ -1449,7 +1450,7 @@ public class AuthService : IAuthService
 
             // Provision a new user
             isNewUser = true;
-            
+
             var role = UserRole.Staff;
             Guid? customRoleId = null;
 
@@ -1518,7 +1519,7 @@ public class AuthService : IAuthService
 
         _context.UserSessions.Add(session);
         _context.LoginAttempts.Add(new LoginAttempt { Email = email.ToLower(), IpAddress = ipAddress, Succeeded = true });
-        
+
         await _context.SaveChangesAsync();
         await _siemLoggingService.ForwardEventAsync($"SsoLogin:{provider}", new { IP = ipAddress }, user.Id, user.TenantId);
 

@@ -116,10 +116,10 @@ builder.Services.AddRateLimiter(options =>
             factory: _ => new SlidingWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit        = 1000,  // 1 000 requests per minute
-                SegmentsPerWindow  = 6,     // refresh every 10 s
-                Window             = TimeSpan.FromMinutes(1),
-                QueueLimit         = 0
+                PermitLimit = 1000,  // 1 000 requests per minute
+                SegmentsPerWindow = 6,     // refresh every 10 s
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
             }));
 
     // R5 fix: tight policy for the public unauthenticated AI Receptionist endpoint.
@@ -130,10 +130,10 @@ builder.Services.AddRateLimiter(options =>
             factory: _ => new SlidingWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit        = 10,   // 10 messages per minute per IP
-                SegmentsPerWindow  = 2,
-                Window             = TimeSpan.FromMinutes(1),
-                QueueLimit         = 0
+                PermitLimit = 10,   // 10 messages per minute per IP
+                SegmentsPerWindow = 2,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
             }));
 
     // C3/OWASP A07: strict auth-endpoint limit — 10 attempts per 15 min per IP
@@ -144,10 +144,10 @@ builder.Services.AddRateLimiter(options =>
             factory: _ => new SlidingWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit        = 10,
-                SegmentsPerWindow  = 3,
-                Window             = TimeSpan.FromMinutes(15),
-                QueueLimit         = 0
+                PermitLimit = 10,
+                SegmentsPerWindow = 3,
+                Window = TimeSpan.FromMinutes(15),
+                QueueLimit = 0
             }));
 
     // VULN-A11: Kiosk endpoints are AllowAnonymous — limit to 20 req/min per IP
@@ -158,10 +158,10 @@ builder.Services.AddRateLimiter(options =>
             factory: _ => new SlidingWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit        = 20,
-                SegmentsPerWindow  = 4,
-                Window             = TimeSpan.FromMinutes(1),
-                QueueLimit         = 0
+                PermitLimit = 20,
+                SegmentsPerWindow = 4,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
             }));
 
     // Public booking endpoints: unauthenticated but DB-heavy — 60 req/min per IP
@@ -172,10 +172,10 @@ builder.Services.AddRateLimiter(options =>
             factory: _ => new SlidingWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit        = 60,
-                SegmentsPerWindow  = 4,
-                Window             = TimeSpan.FromMinutes(1),
-                QueueLimit         = 0
+                PermitLimit = 60,
+                SegmentsPerWindow = 4,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
             }));
 
     // Integration credential-write endpoints (connect/disconnect/test/api-key):
@@ -189,10 +189,10 @@ builder.Services.AddRateLimiter(options =>
             factory: _ => new SlidingWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit        = 30,   // 30 writes per minute per user/IP
-                SegmentsPerWindow  = 6,
-                Window             = TimeSpan.FromMinutes(1),
-                QueueLimit         = 0
+                PermitLimit = 30,   // 30 writes per minute per user/IP
+                SegmentsPerWindow = 6,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
             }));
 
     options.RejectionStatusCode = 429;
@@ -265,7 +265,8 @@ builder.Services.AddResiliencePipeline<string>("default", pipeline =>
     });
 });
 
-builder.Services.AddDbContextFactory<AppDbContext>((sp, options) => {
+builder.Services.AddDbContextFactory<AppDbContext>((sp, options) =>
+{
     // IMPORTANT: Use npgsqlDataSource (built with EnableDynamicJson) so that
     // Dictionary<string, object> JSONB columns serialize correctly in Npgsql 8+.
     options.UseNpgsql(npgsqlDataSource, npgsqlOpts =>
@@ -381,7 +382,7 @@ builder.Services.AddAuthorization(options =>
         .Build();
     options.DefaultPolicy = defaultPolicy;
 
-    options.AddPolicy("ClientPortal", policy => 
+    options.AddPolicy("ClientPortal", policy =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("portal_access", "true");
@@ -667,11 +668,11 @@ GlobalJobFilters.Filters.Add(new Hangfire.AutomaticRetryAttribute
 
 // FIX #8: Register all health checks including Hangfire and Elasticsearch
 builder.Services.AddHealthChecks()
-    .AddCheck<DatabaseHealthCheck>("postgresql",       tags: new[] { "ready", "db" })
+    .AddCheck<DatabaseHealthCheck>("postgresql", tags: new[] { "ready", "db" })
     .AddCheck<Upkilo.Infrastructure.HealthChecks.ConnectionPoolHealthCheck>("connection-pool", tags: new[] { "ready", "db" })
-    .AddCheck<RedisHealthCheck>("redis",               tags: new[] { "ready", "cache" })
-    .AddCheck<ApplicationHealthCheck>("app",            tags: new[] { "live" })
-    .AddCheck<HangfireHealthCheck>("hangfire",          tags: new[] { "ready", "jobs" })
+    .AddCheck<RedisHealthCheck>("redis", tags: new[] { "ready", "cache" })
+    .AddCheck<ApplicationHealthCheck>("app", tags: new[] { "live" })
+    .AddCheck<HangfireHealthCheck>("hangfire", tags: new[] { "ready", "jobs" })
     // Pricing fails silently — a missing price list still returns 200 and renders "Contact us"
     // on every plan, so nothing alerts while the site has quietly stopped selling.
     .AddCheck<Upkilo.Infrastructure.HealthChecks.PricingHealthCheck>("pricing", tags: new[] { "ready", "billing" })

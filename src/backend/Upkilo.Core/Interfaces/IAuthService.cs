@@ -76,7 +76,7 @@ public interface IAuthService
     /// Gets full user profile for the current authenticated user
     /// </summary>
     Task<dynamic?> GetCurrentUserAsync(Guid userId);
-    
+
     /// <summary>
     /// Sends a 2FA code via SMS to the user's registered phone number
     /// </summary>

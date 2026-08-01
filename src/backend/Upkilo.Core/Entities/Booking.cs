@@ -12,13 +12,13 @@ public class Booking : TenantEntity
     public Guid? StaffId { get; set; }
     public Guid? ServiceId { get; set; }
     public Guid? LocationId { get; set; }
-    
+
     // Denormalized customer info for guests and search
     public string? CustomerName { get; set; }
     public string? CustomerEmail { get; set; }
     public string? CustomerPhone { get; set; }
     public string? CustomerId { get; set; } // Can store guest guid or client guid as string
-    
+
     public string? ServiceName { get; set; }
     public string? StaffName { get; set; }
     public BookingStatus Status { get; set; } = BookingStatus.Confirmed;
@@ -70,24 +70,24 @@ public class Booking : TenantEntity
         CancellationReason = reason;
         CancelledAt = DateTime.UtcNow;
         CancelledBy = cancelledBy;
-        
-        AddDomainEvent(new BookingCancelled 
-        { 
-            TenantId = TenantId, 
-            BookingId = Id, 
+
+        AddDomainEvent(new BookingCancelled
+        {
+            TenantId = TenantId,
+            BookingId = Id,
             ClientId = ClientId ?? Guid.Empty,
-            CancellationReason = reason 
+            CancellationReason = reason
         });
     }
 
     public void MarkAsCompleted()
     {
         Status = BookingStatus.Completed;
-        
-        AddDomainEvent(new BookingCompleted 
-        { 
-            TenantId = TenantId, 
-            BookingId = Id, 
+
+        AddDomainEvent(new BookingCompleted
+        {
+            TenantId = TenantId,
+            BookingId = Id,
             ClientId = ClientId ?? Guid.Empty,
             StaffId = StaffId ?? Guid.Empty,
             FinalPrice = Price ?? 0
@@ -142,16 +142,16 @@ public class Payment : TenantEntity
     public void MarkAsSucceeded()
     {
         Status = PaymentStatus.Succeeded;
-        
-        AddDomainEvent(new PaymentReceived 
-        { 
-            TenantId = TenantId, 
-            PaymentId = Id, 
-            BookingId = BookingId, 
-            ClientId = ClientId, 
-            Amount = Amount, 
-            Currency = Currency, 
-            PaymentMethod = PaymentMethod ?? "unknown" 
+
+        AddDomainEvent(new PaymentReceived
+        {
+            TenantId = TenantId,
+            PaymentId = Id,
+            BookingId = BookingId,
+            ClientId = ClientId,
+            Amount = Amount,
+            Currency = Currency,
+            PaymentMethod = PaymentMethod ?? "unknown"
         });
     }
 }

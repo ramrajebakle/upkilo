@@ -26,7 +26,7 @@ namespace Upkilo.API.Controllers
             _tenantProvider = tenantProvider;
         }
 
-        private Guid GetTenantId() => _tenantProvider.GetTenantId() 
+        private Guid GetTenantId() => _tenantProvider.GetTenantId()
             ?? throw new UnauthorizedAccessException("Tenant context not available");
 
         [HttpPost("apps")]
@@ -52,11 +52,11 @@ namespace Upkilo.API.Controllers
             _context.OAuthApps.Add(app);
             await _context.SaveChangesAsync();
 
-            return Ok(new 
-            { 
-                clientId, 
+            return Ok(new
+            {
+                clientId,
                 clientSecret, // ONLY returned once
-                message = "App registered. Store your secret safely; it cannot be retrieved again." 
+                message = "App registered. Store your secret safely; it cannot be retrieved again."
             });
         }
 

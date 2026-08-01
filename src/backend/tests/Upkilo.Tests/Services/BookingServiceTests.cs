@@ -105,8 +105,8 @@ public class BookingServiceTests : IDisposable
     public async Task CreateBookingAsync_ValidModel_CreatesBookingAndReturnsIt()
     {
         var model = new CreateBookingModel(
-            _clientId, _serviceId, _staffId, 
-            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30), 
+            _clientId, _serviceId, _staffId,
+            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30),
             "Test booking"
         );
 
@@ -123,8 +123,8 @@ public class BookingServiceTests : IDisposable
     public async Task CreateBookingAsync_InvalidService_Throws()
     {
         var model = new CreateBookingModel(
-            null, Guid.NewGuid(), _staffId, 
-            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30), 
+            null, Guid.NewGuid(), _staffId,
+            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30),
             null
         );
 
@@ -140,8 +140,8 @@ public class BookingServiceTests : IDisposable
         _schedulingService.Setup(s => s.CheckConcurrencyLimitAsync(_tenantId)).ReturnsAsync(false);
 
         var model = new CreateBookingModel(
-            null, _serviceId, _staffId, 
-            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30), 
+            null, _serviceId, _staffId,
+            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30),
             null
         );
 
@@ -159,8 +159,8 @@ public class BookingServiceTests : IDisposable
             It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(false);
 
         var model = new CreateBookingModel(
-            null, _serviceId, _staffId, 
-            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30), 
+            null, _serviceId, _staffId,
+            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30),
             null
         );
 
@@ -174,8 +174,8 @@ public class BookingServiceTests : IDisposable
     public async Task CreateBookingAsync_WalkIn_SetsCheckedInTimestamp()
     {
         var model = new CreateBookingModel(
-            _clientId, _serviceId, _staffId, 
-            DateTime.UtcNow, DateTime.UtcNow.AddMinutes(30), 
+            _clientId, _serviceId, _staffId,
+            DateTime.UtcNow, DateTime.UtcNow.AddMinutes(30),
             null, 1, true
         );
 
@@ -189,8 +189,8 @@ public class BookingServiceTests : IDisposable
     public async Task CreateBookingAsync_PublishesDomainEvents()
     {
         var model = new CreateBookingModel(
-            _clientId, _serviceId, _staffId, 
-            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30), 
+            _clientId, _serviceId, _staffId,
+            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddMinutes(30),
             null
         );
 

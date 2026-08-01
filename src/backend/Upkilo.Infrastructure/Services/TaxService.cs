@@ -32,7 +32,7 @@ public class TaxService : ITaxService
     public async Task<TaxRate> CreateTaxRateAsync(Guid tenantId, TaxRate taxRate)
     {
         taxRate.TenantId = tenantId;
-        
+
         if (taxRate.IsDefault)
         {
             await ClearDefaultTaxRateAsync(tenantId);

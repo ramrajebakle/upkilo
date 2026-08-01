@@ -70,7 +70,7 @@ public class BiometricAuthController : ControllerBase
             };
 
             var options = _fido2.RequestNewCredential(fidoUser, existingKeys, authenticatorSelection, AttestationConveyancePreference.None);
-            
+
             // Temporarily store the options to verify in the next step
             await _cache.SetStringAsync($"fido2:reg:{userId}", options.ToJson(), new DistributedCacheEntryOptions
             {
@@ -125,7 +125,7 @@ public class BiometricAuthController : ControllerBase
 
                 _context.UserPasskeys.Add(passkey);
                 await _context.SaveChangesAsync();
-                
+
                 await _cache.RemoveAsync($"fido2:reg:{userId}");
                 return Ok(new { success = true, message = "Biometric credential registered successfully." });
             }
@@ -216,7 +216,7 @@ public class BiometricAuthController : ControllerBase
 
                 var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
                 var userAgent = Request.Headers["User-Agent"].ToString();
-                
+
                 var authResult = await _authService.LoginWithBiometricAsync(user.Id, ipAddress, userAgent);
                 if (authResult.Success)
                 {

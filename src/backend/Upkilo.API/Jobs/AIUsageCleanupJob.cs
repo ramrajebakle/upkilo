@@ -21,7 +21,7 @@ public class AIUsageCleanupJob
 
         // Keep last 90 days of detailed usage logs
         var cutoffDate = DateTime.UtcNow.AddDays(-90);
-        
+
         var logsToRemove = await _context.AIUsageLogs
             .Where(l => l.CreatedAt < cutoffDate)
             .ToListAsync();

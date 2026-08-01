@@ -45,7 +45,7 @@ public class NotificationHub : Hub<INotificationClient>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+
         _logger.LogInformation(
             "Client disconnected: {ConnectionId}, User: {UserId}, Exception: {Exception}",
             Context.ConnectionId, userId, exception?.Message);
@@ -59,7 +59,7 @@ public class NotificationHub : Hub<INotificationClient>
     public async Task SubscribeToStaffCalendar(string staffId)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, $"staff_calendar_{staffId}");
-        _logger.LogDebug("Connection {ConnectionId} subscribed to staff calendar: {StaffId}", 
+        _logger.LogDebug("Connection {ConnectionId} subscribed to staff calendar: {StaffId}",
             Context.ConnectionId, staffId);
     }
 
@@ -89,8 +89,8 @@ public class NotificationHub : Hub<INotificationClient>
     public async Task MarkNotificationRead(string notificationId)
     {
         var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
-        _logger.LogDebug("User {UserId} marked notification {NotificationId} as read", 
+
+        _logger.LogDebug("User {UserId} marked notification {NotificationId} as read",
             userId, notificationId);
 
         // In production, this would update the database
@@ -138,11 +138,11 @@ public interface INotificationClient
     Task SystemNotification(SystemNotification notification);
     Task ToastMessage(ToastNotification notification);
     Task SystemEscalation(EscalationNotification notification);
-    
+
     // System announcements (maintenance, updates)
     Task MaintenanceAnnouncement(MaintenanceNotification notification);
     Task FeatureAnnouncement(FeatureAnnouncementNotification notification);
-    
+
     // Billing/subscription updates
     Task UsageLimitWarning(UsageLimitNotification notification);
     Task SubscriptionUpdated(SubscriptionUpdateNotification notification);

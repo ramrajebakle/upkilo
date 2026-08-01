@@ -177,9 +177,14 @@ public class AgencyController : ControllerBase
             aggregatedClients = activeClients,
             subTenants = subTenants.Select(t => new
             {
-                t.Id, t.Name, t.Slug, t.Status,
+                t.Id,
+                t.Name,
+                t.Slug,
+                t.Status,
                 tier = t.SubscriptionTier.ToString(),
-                t.AverageRating, t.ReviewCount, t.CreatedAt
+                t.AverageRating,
+                t.ReviewCount,
+                t.CreatedAt
             })
         });
     }

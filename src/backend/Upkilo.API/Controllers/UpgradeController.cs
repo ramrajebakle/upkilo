@@ -46,7 +46,7 @@ public class UpgradeController : ControllerBase
         var locationCount = await _context.Locations.CountAsync(l => l.TenantId == tenantId);
         var hasSmsCampaigns = await _context.Campaigns.AnyAsync(c => c.TenantId == tenantId && c.Type == "SMS");
         var hasApiKeys = await _context.Set<Upkilo.Core.Entities.ApiKey>().AnyAsync(k => k.TenantId == tenantId);
-        
+
         var triggers = new
         {
             RequiresStaffUpgrade = plan == "Free" && staffCount >= 2,

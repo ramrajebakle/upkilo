@@ -35,7 +35,7 @@ namespace Upkilo.API.Controllers
             var query = _context.Products.Where(p => p.TenantId == GetTenantId() && p.IsActive);
             // In a real system, product category would be a separate entity or field
             // if (!string.IsNullOrEmpty(category)) query = query.Where(p => p.Category == category);
-            
+
             return await query.OrderBy(p => p.Name).ToListAsync();
         }
 
@@ -110,7 +110,7 @@ namespace Upkilo.API.Controllers
         {
             var clientId = _tenantProvider.GetUserId();
             if (clientId == null || clientId == Guid.Empty) return Unauthorized();
-            
+
             await _cartService.MergeCartAsync(GetTenantId(), sessionId, clientId.Value);
             return Ok(new { message = "Cart merged" });
         }

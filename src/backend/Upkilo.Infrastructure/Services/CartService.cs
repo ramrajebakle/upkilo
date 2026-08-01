@@ -25,10 +25,10 @@ namespace Upkilo.Infrastructure.Services
             if (product == null || !product.IsActive) throw new Exception("Product not found");
 
             var cartItem = await _context.CartItems
-                .FirstOrDefaultAsync(c => c.TenantId == tenantId && 
-                                          ((clientId.HasValue && c.ClientId == clientId) || 
-                                           (!clientId.HasValue && c.SessionId == sessionId)) && 
-                                          c.ProductId == productId && 
+                .FirstOrDefaultAsync(c => c.TenantId == tenantId &&
+                                          ((clientId.HasValue && c.ClientId == clientId) ||
+                                           (!clientId.HasValue && c.SessionId == sessionId)) &&
+                                          c.ProductId == productId &&
                                           c.SelectedVariant == variant);
 
             if (cartItem != null)
@@ -64,9 +64,9 @@ namespace Upkilo.Infrastructure.Services
         public async Task RemoveFromCartAsync(Guid tenantId, Guid? clientId, string sessionId, Guid productId)
         {
             var cartItems = await _context.CartItems
-                .Where(c => c.TenantId == tenantId && 
-                            ((clientId.HasValue && c.ClientId == clientId) || 
-                             (!clientId.HasValue && c.SessionId == sessionId)) && 
+                .Where(c => c.TenantId == tenantId &&
+                            ((clientId.HasValue && c.ClientId == clientId) ||
+                             (!clientId.HasValue && c.SessionId == sessionId)) &&
                             c.ProductId == productId)
                 .ToListAsync();
 
@@ -80,9 +80,9 @@ namespace Upkilo.Infrastructure.Services
         public async Task UpdateQuantityAsync(Guid tenantId, Guid? clientId, string sessionId, Guid productId, int quantity)
         {
             var cartItem = await _context.CartItems
-                .FirstOrDefaultAsync(c => c.TenantId == tenantId && 
-                                          ((clientId.HasValue && c.ClientId == clientId) || 
-                                           (!clientId.HasValue && c.SessionId == sessionId)) && 
+                .FirstOrDefaultAsync(c => c.TenantId == tenantId &&
+                                          ((clientId.HasValue && c.ClientId == clientId) ||
+                                           (!clientId.HasValue && c.SessionId == sessionId)) &&
                                           c.ProductId == productId);
 
             if (cartItem != null)
@@ -109,8 +109,8 @@ namespace Upkilo.Infrastructure.Services
         {
             return await _context.CartItems
                 .Include(c => c.Product)
-                .Where(c => c.TenantId == tenantId && 
-                            ((clientId.HasValue && c.ClientId == clientId) || 
+                .Where(c => c.TenantId == tenantId &&
+                            ((clientId.HasValue && c.ClientId == clientId) ||
                              (!clientId.HasValue && c.SessionId == sessionId)))
                 .ToListAsync();
         }
@@ -118,8 +118,8 @@ namespace Upkilo.Infrastructure.Services
         public async Task ClearCartAsync(Guid tenantId, Guid? clientId, string sessionId)
         {
             var cartItems = await _context.CartItems
-                .Where(c => c.TenantId == tenantId && 
-                            ((clientId.HasValue && c.ClientId == clientId) || 
+                .Where(c => c.TenantId == tenantId &&
+                            ((clientId.HasValue && c.ClientId == clientId) ||
                              (!clientId.HasValue && c.SessionId == sessionId)))
                 .ToListAsync();
 
@@ -139,8 +139,8 @@ namespace Upkilo.Infrastructure.Services
             {
                 // Try to find if client already has this product in cart
                 var clientItem = await _context.CartItems
-                    .FirstOrDefaultAsync(c => c.TenantId == tenantId && c.ClientId == clientId && 
-                                              c.ProductId == guestItem.ProductId && 
+                    .FirstOrDefaultAsync(c => c.TenantId == tenantId && c.ClientId == clientId &&
+                                              c.ProductId == guestItem.ProductId &&
                                               c.SelectedVariant == guestItem.SelectedVariant);
 
                 if (clientItem != null)

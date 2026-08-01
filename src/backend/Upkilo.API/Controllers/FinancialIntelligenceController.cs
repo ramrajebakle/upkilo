@@ -20,7 +20,7 @@ namespace Upkilo.API.Controllers
         private readonly AppDbContext _context;
 
         public FinancialIntelligenceController(
-            IFinancialProjectionService projectionService, 
+            IFinancialProjectionService projectionService,
             ITenantProvider tenantProvider,
             AppDbContext context)
         {
@@ -29,7 +29,7 @@ namespace Upkilo.API.Controllers
             _context = context;
         }
 
-        private Guid GetTenantId() => _tenantProvider.GetTenantId() 
+        private Guid GetTenantId() => _tenantProvider.GetTenantId()
             ?? throw new UnauthorizedAccessException("Tenant context not available");
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Upkilo.API.Controllers
         {
             var startDate = start ?? DateTime.UtcNow.AddMonths(-1);
             var endDate = end ?? DateTime.UtcNow;
-            
+
             var report = await _projectionService.GenerateTaxReportAsync(GetTenantId(), startDate, endDate);
             return Ok(report);
         }

@@ -175,7 +175,9 @@ public class FranchiseController : ControllerBase
             .Where(t => subIds.Contains(t.Id))
             .Select(t => new
             {
-                t.Id, t.Name, t.City,
+                t.Id,
+                t.Name,
+                t.City,
                 services = _context.Services
                     .Where(s => s.TenantId == t.Id && s.IsActive && !s.IsDeleted &&
                                 (serviceCategory == null || s.Category == serviceCategory))

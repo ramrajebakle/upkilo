@@ -123,7 +123,7 @@ public class DashboardAggregateQueryHandler
             .Where(b => b.TenantId == query.TenantId && b.StartTime >= from && b.Status == BookingStatus.Completed)
             .Select(b => new { b.StartTime, b.EndTime })
             .ToListAsync(cancellationToken);
-            
+
         var totalBookedMinutes = completedBookingsForMinutes.Sum(b => (b.EndTime - b.StartTime).TotalMinutes);
         var daysInPeriod = Math.Max(1, (now - from).Days);
         var totalAvailableMinutes = activeStaff * daysInPeriod * 8 * 60; // 8-hour workday
@@ -167,10 +167,10 @@ public class DashboardAggregateQueryHandler
         var now = DateTime.UtcNow;
         return period switch
         {
-            "7d"  => (now.AddDays(-7), now.AddDays(-14), now.AddDays(-7)),
+            "7d" => (now.AddDays(-7), now.AddDays(-14), now.AddDays(-7)),
             "90d" => (now.AddDays(-90), now.AddDays(-180), now.AddDays(-90)),
             "ytd" => (new DateTime(now.Year, 1, 1), new DateTime(now.Year - 1, 1, 1), new DateTime(now.Year, 1, 1)),
-            _     => (now.AddDays(-30), now.AddDays(-60), now.AddDays(-30)), // 30d default
+            _ => (now.AddDays(-30), now.AddDays(-60), now.AddDays(-30)), // 30d default
         };
     }
 }

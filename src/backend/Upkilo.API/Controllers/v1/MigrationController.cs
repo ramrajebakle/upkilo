@@ -35,10 +35,10 @@ public class MigrationController : ControllerBase
         try
         {
             var overview = await _migrationService.GetMigrationOverviewAsync(
-                request.Provider, 
-                request.ApiKey, 
+                request.Provider,
+                request.ApiKey,
                 request.ExtraCredentials);
-            
+
             return Ok(overview);
         }
         catch (ArgumentException ex)

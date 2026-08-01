@@ -105,7 +105,7 @@ public class ApiKeyMiddleware
 
         var identity = new ClaimsIdentity(claims, "ApiKey");
         context.User = new ClaimsPrincipal(identity);
-        
+
         // Also set items for other middleware
         context.Items["TenantId"] = keyRecord.TenantId.ToString();
         context.Items["IsApiKeyRequest"] = true;

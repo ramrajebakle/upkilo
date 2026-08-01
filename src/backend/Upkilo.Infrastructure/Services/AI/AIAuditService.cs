@@ -58,27 +58,27 @@ public class AIAuditService : IAIAuditService
 
         var log = new AIDecisionLog
         {
-            Id                 = Guid.NewGuid(),
-            TenantId           = entry.TenantId,
-            AgentName          = entry.Feature,
-            DecisionType       = entry.WasBlocked ? "Blocked" : "Allowed",
-            InputData          = entry.SanitizedPrompt,
-            OutputDecision     = entry.Response ?? string.Empty,
-            ConfidenceScore    = (decimal)entry.ConfidenceScore,
-            InputTokens        = entry.InputTokens,
+            Id = Guid.NewGuid(),
+            TenantId = entry.TenantId,
+            AgentName = entry.Feature,
+            DecisionType = entry.WasBlocked ? "Blocked" : "Allowed",
+            InputData = entry.SanitizedPrompt,
+            OutputDecision = entry.Response ?? string.Empty,
+            ConfidenceScore = (decimal)entry.ConfidenceScore,
+            InputTokens = entry.InputTokens,
             RequiresHumanReview = entry.RequiresApproval,
-            IsApproved         = entry.ApprovalStatus == "approved",
-            Feedback           = entry.RejectionReason,
+            IsApproved = entry.ApprovalStatus == "approved",
+            Feedback = entry.RejectionReason,
             // Store full audit context including original prompt and threats in Feedback JSON
-            Model              = JsonSerializer.Serialize(new
+            Model = JsonSerializer.Serialize(new
             {
-                auditId          = entry.Id,
-                originalPrompt   = entry.OriginalPrompt,
-                detectedThreats  = entry.DetectedThreats,
-                wasBlocked       = entry.WasBlocked,
-                approvalStatus   = entry.ApprovalStatus,
-                cost             = entry.Cost,
-                userId           = entry.UserId
+                auditId = entry.Id,
+                originalPrompt = entry.OriginalPrompt,
+                detectedThreats = entry.DetectedThreats,
+                wasBlocked = entry.WasBlocked,
+                approvalStatus = entry.ApprovalStatus,
+                cost = entry.Cost,
+                userId = entry.UserId
             })
         };
 
@@ -116,9 +116,9 @@ public class AIAuditService : IAIAuditService
         var log = await FindByAuditIdAsync(auditId, ct)
             ?? throw new KeyNotFoundException($"Audit entry '{auditId}' not found.");
 
-        log.IsApproved  = true;
-        log.ReviewedBy  = approverId;
-        log.ReviewedAt  = DateTime.UtcNow;
+        log.IsApproved = true;
+        log.ReviewedBy = approverId;
+        log.ReviewedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(ct);
         _logger.LogInformation("AI audit entry approved. AuditId={AuditId}, ApprovedBy={ApproverId}", auditId, approverId);
@@ -129,10 +129,10 @@ public class AIAuditService : IAIAuditService
         var log = await FindByAuditIdAsync(auditId, ct)
             ?? throw new KeyNotFoundException($"Audit entry '{auditId}' not found.");
 
-        log.IsApproved  = false;
-        log.ReviewedBy  = approverId;
-        log.ReviewedAt  = DateTime.UtcNow;
-        log.Feedback    = reason;
+        log.IsApproved = false;
+        log.ReviewedBy = approverId;
+        log.ReviewedAt = DateTime.UtcNow;
+        log.Feedback = reason;
 
         await _context.SaveChangesAsync(ct);
         _logger.LogInformation("AI audit entry rejected. AuditId={AuditId}, RejectedBy={ApproverId}, Reason={Reason}",
@@ -153,17 +153,17 @@ public class AIAuditService : IAIAuditService
     {
         var entry = new AIAuditEntry
         {
-            TenantId        = log.TenantId,
-            Feature         = log.AgentName,
+            TenantId = log.TenantId,
+            Feature = log.AgentName,
             SanitizedPrompt = log.InputData,
-            Response        = log.OutputDecision,
+            Response = log.OutputDecision,
             ConfidenceScore = (double)log.ConfidenceScore,
-            InputTokens     = log.InputTokens,
+            InputTokens = log.InputTokens,
             RequiresApproval = log.RequiresHumanReview,
-            ApprovalStatus  = log.IsApproved ? "approved" : (log.ReviewedAt.HasValue ? "rejected" : "pending"),
-            ApprovedBy      = log.ReviewedBy,
+            ApprovalStatus = log.IsApproved ? "approved" : (log.ReviewedAt.HasValue ? "rejected" : "pending"),
+            ApprovedBy = log.ReviewedBy,
             RejectionReason = log.Feedback,
-            CreatedAt       = log.CreatedAt
+            CreatedAt = log.CreatedAt
         };
 
         // Restore fields from the embedded JSON context
@@ -173,10 +173,10 @@ public class AIAuditService : IAIAuditService
             {
                 using var doc = JsonDocument.Parse(log.Model);
                 var root = doc.RootElement;
-                if (root.TryGetProperty("auditId", out var id))          entry.Id = id.GetString() ?? entry.Id;
-                if (root.TryGetProperty("originalPrompt", out var op))   entry.OriginalPrompt = op.GetString() ?? string.Empty;
-                if (root.TryGetProperty("wasBlocked", out var wb))       entry.WasBlocked = wb.GetBoolean();
-                if (root.TryGetProperty("cost", out var cost))           entry.Cost = cost.GetDecimal();
+                if (root.TryGetProperty("auditId", out var id)) entry.Id = id.GetString() ?? entry.Id;
+                if (root.TryGetProperty("originalPrompt", out var op)) entry.OriginalPrompt = op.GetString() ?? string.Empty;
+                if (root.TryGetProperty("wasBlocked", out var wb)) entry.WasBlocked = wb.GetBoolean();
+                if (root.TryGetProperty("cost", out var cost)) entry.Cost = cost.GetDecimal();
                 if (root.TryGetProperty("userId", out var uid) && uid.ValueKind != JsonValueKind.Null)
                     entry.UserId = uid.GetGuid();
                 if (root.TryGetProperty("detectedThreats", out var dt))

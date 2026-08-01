@@ -114,7 +114,7 @@ public class BillingController : ControllerBase
 
         var responseCurrency =
             available.Contains(requested) ? requested
-            : available.Contains("USD")   ? "USD"
+            : available.Contains("USD") ? "USD"
             : available.FirstOrDefault() ?? requested;
 
         var mapped = newPlans.Select(p =>
@@ -132,15 +132,15 @@ public class BillingController : ControllerBase
                 p.TrialDays,
                 p.IsCustom,
                 monthlyPrice = priced.FirstOrDefault(x => x.Cycle == Upkilo.Core.Entities.BillingCycle.Monthly)?.Amount,
-                annualPrice  = priced.FirstOrDefault(x => x.Cycle == Upkilo.Core.Entities.BillingCycle.Annual)?.Amount,
-                currency     = responseCurrency,
-                ctaLabel     = p.IsCustom ? "Contact us" : "Get started",
-                features     = p.FeatureMappings.Select(m => new
+                annualPrice = priced.FirstOrDefault(x => x.Cycle == Upkilo.Core.Entities.BillingCycle.Annual)?.Amount,
+                currency = responseCurrency,
+                ctaLabel = p.IsCustom ? "Contact us" : "Get started",
+                features = p.FeatureMappings.Select(m => new
                 {
-                    key     = m.PricingFeature?.Key,
-                    name    = m.PricingFeature?.Name,
+                    key = m.PricingFeature?.Key,
+                    name = m.PricingFeature?.Name,
                     enabled = m.IsEnabled,
-                    limit   = m.NumericLimit
+                    limit = m.NumericLimit
                 })
             };
         });
@@ -329,21 +329,21 @@ public class BillingController : ControllerBase
         static int pct(int used, int limit) =>
             limit <= 0 ? 0 : Math.Min(100, (int)Math.Round((double)used / limit * 100));
 
-        var staff     = pct(u.StaffCount,      u.StaffLimit);
-        var ai        = pct(u.AiCreditsUsed,   u.AiCreditsLimit);
-        var sms       = pct(u.SmsUsed,         u.SmsLimit);
-        var locations = pct(u.LocationCount,   u.LocationLimit);
-        var bookings  = pct(u.BookingsUsed,    u.BookingsLimit);
+        var staff = pct(u.StaffCount, u.StaffLimit);
+        var ai = pct(u.AiCreditsUsed, u.AiCreditsLimit);
+        var sms = pct(u.SmsUsed, u.SmsLimit);
+        var locations = pct(u.LocationCount, u.LocationLimit);
+        var bookings = pct(u.BookingsUsed, u.BookingsLimit);
 
         return Ok(new
         {
-            staff      = new { used = u.StaffCount,     limit = u.StaffLimit,      percent = staff,     nearLimit = staff >= 80 },
-            aiActions  = new { used = u.AiCreditsUsed,  limit = u.AiCreditsLimit,  percent = ai,        nearLimit = ai >= 80 },
-            sms        = new { used = u.SmsUsed,        limit = u.SmsLimit,        percent = sms,       nearLimit = sms >= 80 },
-            locations  = new { used = u.LocationCount,  limit = u.LocationLimit,   percent = locations, nearLimit = locations >= 80 },
-            bookings   = new { used = u.BookingsUsed,   limit = u.BookingsLimit,   percent = bookings,  nearLimit = bookings >= 80 },
+            staff = new { used = u.StaffCount, limit = u.StaffLimit, percent = staff, nearLimit = staff >= 80 },
+            aiActions = new { used = u.AiCreditsUsed, limit = u.AiCreditsLimit, percent = ai, nearLimit = ai >= 80 },
+            sms = new { used = u.SmsUsed, limit = u.SmsLimit, percent = sms, nearLimit = sms >= 80 },
+            locations = new { used = u.LocationCount, limit = u.LocationLimit, percent = locations, nearLimit = locations >= 80 },
+            bookings = new { used = u.BookingsUsed, limit = u.BookingsLimit, percent = bookings, nearLimit = bookings >= 80 },
             periodStart = u.PeriodStart,
-            periodEnd   = u.PeriodEnd,
+            periodEnd = u.PeriodEnd,
             enabledFeatures = u.EnabledFeatures,
             anyNearLimit = staff >= 80 || ai >= 80 || sms >= 80 || locations >= 80 || bookings >= 80
         });
@@ -383,23 +383,23 @@ public class BillingController : ControllerBase
         if (monthlyPrice == null || annualPrice == null)
             return Ok(new { eligible = false, reason = "Annual pricing not yet configured" });
 
-        var annualIfMonthly  = monthlyPrice.Amount * 12;
-        var savingsAmount    = annualIfMonthly - annualPrice.Amount;
-        var savingsPercent   = Math.Round(savingsAmount / annualIfMonthly * 100, 0);
-        var monthsOnPlan     = (DateTime.UtcNow - subscription.StartDate).TotalDays / 30.0;
+        var annualIfMonthly = monthlyPrice.Amount * 12;
+        var savingsAmount = annualIfMonthly - annualPrice.Amount;
+        var savingsPercent = Math.Round(savingsAmount / annualIfMonthly * 100, 0);
+        var monthsOnPlan = (DateTime.UtcNow - subscription.StartDate).TotalDays / 30.0;
 
         return Ok(new
         {
-            eligible         = true,
-            planName         = plan.Name,
-            monthlyAmount    = monthlyPrice.Amount,
-            annualAmount     = annualPrice.Amount,
+            eligible = true,
+            planName = plan.Name,
+            monthlyAmount = monthlyPrice.Amount,
+            annualAmount = annualPrice.Amount,
             annualIfMonthly,
             savingsAmount,
             savingsPercent,
-            currency         = monthlyPrice.CurrencyCode,
+            currency = monthlyPrice.CurrencyCode,
             monthsOnCurrentPlan = Math.Round(monthsOnPlan, 1),
-            showBanner       = monthsOnPlan >= 30
+            showBanner = monthsOnPlan >= 30
         });
     }
 
@@ -419,8 +419,8 @@ public class BillingController : ControllerBase
         {
             triggers = triggers.Select(t => new
             {
-                type     = t.Type,
-                message  = t.Message,
+                type = t.Type,
+                message = t.Message,
                 priority = t.Priority
             }),
             hasActiveTriggers = triggers.Count > 0,
@@ -436,9 +436,9 @@ public class BillingController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var result = await _subscriptionService.CreateCheckoutSessionAsync(
-            tenantId.Value, 
-            request.PlanId, 
-            request.IsAnnual, 
+            tenantId.Value,
+            request.PlanId,
+            request.IsAnnual,
             request.PromoCode);
 
         if (!result.Success || string.IsNullOrEmpty(result.SessionUrl))
@@ -471,7 +471,7 @@ public class BillingController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var tenant = await _context.Tenants.FindAsync(tenantId);
-        if (tenant == null || string.IsNullOrEmpty(tenant.StripeCustomerId)) 
+        if (tenant == null || string.IsNullOrEmpty(tenant.StripeCustomerId))
             return BadRequest("Tenant does not have an active billing profile.");
 
         var options = new Stripe.BillingPortal.SessionCreateOptions
@@ -479,7 +479,7 @@ public class BillingController : ControllerBase
             Customer = tenant.StripeCustomerId,
             ReturnUrl = $"{(_configuration["APP_URL"] ?? "https://app.upkilo.com").TrimEnd('/')}/settings/billing",
         };
-        
+
         var service = new Stripe.BillingPortal.SessionService();
         var session = await service.CreateAsync(options);
 

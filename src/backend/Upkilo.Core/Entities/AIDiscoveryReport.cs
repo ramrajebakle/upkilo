@@ -14,7 +14,7 @@ namespace Upkilo.Core.Entities
         public string Keywords { get; set; } = string.Empty; // Semicolon separated
         public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
         public bool IsUserReviewed { get; set; }
-        
+
         // Navigation
         public virtual Tenant? Tenant { get; set; }
     }

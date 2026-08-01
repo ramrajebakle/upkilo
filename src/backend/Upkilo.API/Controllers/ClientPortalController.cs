@@ -420,7 +420,7 @@ public class ClientPortalController : ControllerBase
             return Unauthorized();
 
         var invoices = await _invoiceService.GetClientInvoicesAsync(tenantId, clientId, page, pageSize);
-        
+
         // We count total for pagination
         var total = await _context.Invoices.CountAsync(i => i.ClientId == clientId && !i.IsDeleted);
 

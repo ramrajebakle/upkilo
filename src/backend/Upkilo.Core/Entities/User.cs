@@ -31,7 +31,7 @@ public class User : TenantEntity
     public bool DoNotSell { get; set; }
     public DateTime? DoNotSellUpdatedAt { get; set; }
 
-   // Navigation properties
+    // Navigation properties
     public virtual Tenant? Tenant { get; set; }
     public virtual StaffMember? StaffMember { get; set; }
     public virtual CustomRole? CustomRole { get; set; }

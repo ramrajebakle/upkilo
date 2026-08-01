@@ -85,7 +85,7 @@ public class StripeWebhookController : ControllerBase
         // crafted payload — now we rely solely on HMAC signature verification.
         // Strategy: try platform secret; if that fails and Connect secret is configured, try it.
         var platformSecret = await _secretProvider.GetSecretAsync("Stripe:WebhookSecret");
-        var connectSecret  = await _secretProvider.GetSecretAsync("Stripe:ConnectWebhookSecret");
+        var connectSecret = await _secretProvider.GetSecretAsync("Stripe:ConnectWebhookSecret");
 
         Stripe.Event? stripeEvent = null;
         bool isConnectWebhook = false;
@@ -125,7 +125,7 @@ public class StripeWebhookController : ControllerBase
             var inserted = await _context.Database.ExecuteSqlRawAsync(
                 @"INSERT INTO ""ProcessedWebhooks"" (""EventId"", ""EventType"", ""ProcessedAt"")
                   VALUES ({0}, {1}, {2})
-                  ON CONFLICT (""EventId"") DO NOTHING", 
+                  ON CONFLICT (""EventId"") DO NOTHING",
                 stripeEvent.Id, stripeEvent.Type, DateTime.UtcNow);
 
             if (inserted == 0)
@@ -684,7 +684,7 @@ public class StripeWebhookController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
-        _logger.LogInformation("Invoice {StripeInvoiceId} (No: {InvoiceNumber}) created/updated locally for tenant {TenantId}", 
+        _logger.LogInformation("Invoice {StripeInvoiceId} (No: {InvoiceNumber}) created/updated locally for tenant {TenantId}",
             stripeInvoice.Id, stripeInvoice.Number, tenantId);
     }
 
@@ -810,7 +810,7 @@ public class StripeWebhookController : ControllerBase
 
     private async Task HandleInvoiceUpcoming(Stripe.Invoice invoice)
     {
-        _logger.LogInformation("Upcoming invoice for customer {CustomerId}, amount: {Amount}", 
+        _logger.LogInformation("Upcoming invoice for customer {CustomerId}, amount: {Amount}",
             invoice.CustomerId, Upkilo.Core.Helpers.Currency.FromMinorUnits(invoice.AmountDue, invoice.Currency));
         await Task.CompletedTask;
     }
@@ -863,8 +863,8 @@ public class StripeWebhookController : ControllerBase
         var subToken = invoice.RawJObject["subscription"];
         if (subToken != null)
         {
-            return subToken.Type == Newtonsoft.Json.Linq.JTokenType.String 
-                ? subToken.ToString() 
+            return subToken.Type == Newtonsoft.Json.Linq.JTokenType.String
+                ? subToken.ToString()
                 : subToken["id"]?.ToString();
         }
         return null;
@@ -913,15 +913,15 @@ public class StripeWebhookController : ControllerBase
     {
         return status switch
         {
-            "active"               => SubscriptionStatus.Active,
-            "trialing"             => SubscriptionStatus.Trialing,
-            "past_due"             => SubscriptionStatus.PastDue,
+            "active" => SubscriptionStatus.Active,
+            "trialing" => SubscriptionStatus.Trialing,
+            "past_due" => SubscriptionStatus.PastDue,
             "canceled" or "cancelled" => SubscriptionStatus.Cancelled,
-            "unpaid"               => SubscriptionStatus.PastDue,       // consistent with BillingReconciliationJob
-            "paused"               => SubscriptionStatus.Paused,
-            "incomplete"           => SubscriptionStatus.PastDue,       // not yet collected, not yet cancelled
-            "incomplete_expired"   => SubscriptionStatus.Cancelled,
-            _                      => SubscriptionStatus.Suspended
+            "unpaid" => SubscriptionStatus.PastDue,       // consistent with BillingReconciliationJob
+            "paused" => SubscriptionStatus.Paused,
+            "incomplete" => SubscriptionStatus.PastDue,       // not yet collected, not yet cancelled
+            "incomplete_expired" => SubscriptionStatus.Cancelled,
+            _ => SubscriptionStatus.Suspended
         };
     }
 

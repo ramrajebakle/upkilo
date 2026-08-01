@@ -26,8 +26,8 @@ public class PublicBookingController : ControllerBase
     private readonly IMemoryCache _cache;
 
     public PublicBookingController(
-        ILogger<PublicBookingController> logger, 
-        AppDbContext context, 
+        ILogger<PublicBookingController> logger,
+        AppDbContext context,
         ISchedulingService schedulingService,
         IPaymentService paymentService,
         IEventService eventService,
@@ -55,7 +55,7 @@ public class PublicBookingController : ControllerBase
         var tenant = await _context.Tenants
             .Include(t => t.Locations)
             .FirstOrDefaultAsync(t => t.Slug == tenantSlug);
-            
+
         if (tenant == null) return NotFound("Business not found");
 
         var primaryLocation = tenant.Locations.FirstOrDefault(l => l.IsPrimary) ?? tenant.Locations.FirstOrDefault();
@@ -92,7 +92,8 @@ public class PublicBookingController : ControllerBase
 
         var services = await _context.Services
             .Where(s => s.TenantId == tenant.Id && s.IsActive)
-            .Select(s => new {
+            .Select(s => new
+            {
                 s.Id,
                 s.Name,
                 s.Description,
@@ -159,7 +160,7 @@ public class PublicBookingController : ControllerBase
         {
             var schedSlots = await _schedulingService.GetAvailableSlotsAsync(tenant.Id, serviceId, staffId, date);
             slots = schedSlots.ToList();
-            
+
             var cacheOptions = new MemoryCacheEntryOptions()
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(2)); // Short cache
 
@@ -169,7 +170,8 @@ public class PublicBookingController : ControllerBase
         return Ok(new
         {
             date = date.Date,
-            slots = slots.Select(s => new {
+            slots = slots.Select(s => new
+            {
                 time = s.ToString("HH:mm"),
                 available = true,
                 staffId = staffId
@@ -215,7 +217,7 @@ public class PublicBookingController : ControllerBase
             var isAvailable = await _schedulingService.IsSlotAvailableAsync(tenant.Id, request.ServiceId, assignedStaffId.Value, startTime, service.DurationMinutes);
             if (!isAvailable) return BadRequest("Slot no longer available");
         }
-        else 
+        else
         {
             // If no staff specified, we must verify that AT LEAST ONE staff member is available
             // and then ASSIGN that staff member to the booking to consume capacity!
@@ -223,7 +225,7 @@ public class PublicBookingController : ControllerBase
                     .Where(ss => ss.ServiceId == request.ServiceId)
                     .Select(ss => ss.StaffId)
                     .ToListAsync();
-            
+
             bool foundAvailableStaff = false;
             foreach (var sId in staffIds)
             {
@@ -287,7 +289,7 @@ public class PublicBookingController : ControllerBase
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
         await subscriptionService.IncrementUsageAsync(tenant.Id, UsageType.Bookings);
-        
+
         _logger.LogInformation("Booking created: {BookingId} for {Email}. Status: {Status}", booking.Id, request.Email, status);
 
         // Dispatch Event
@@ -454,7 +456,7 @@ public class PublicBookingController : ControllerBase
             .Include(b => b.Service)
             .Include(b => b.Payments)
             .FirstOrDefaultAsync(b => b.Id == id && b.TenantId == tenant.Id);
-            
+
         if (booking == null) return NotFound();
 
         if (!CanCancel(booking, tenant, out var penaltyPercent))
@@ -524,8 +526,9 @@ public class PublicBookingController : ControllerBase
 
             var booking = await _bookingService.RescheduleBookingAsync(tenant.Id, id, newStartTime, request.ConfirmationCode);
 
-            return Ok(new { 
-                message = "Booking rescheduled successfully", 
+            return Ok(new
+            {
+                message = "Booking rescheduled successfully",
                 newTime = booking.StartTime,
                 confirmationNumber = booking.Id.ToString().Substring(0, 8).ToUpper()
             });
@@ -554,10 +557,10 @@ public class PublicBookingController : ControllerBase
 
         if (tenant.Settings.TryGetValue("booking_notice_period_hours", out var hoursObj) && int.TryParse(hoursObj.ToString(), out var h))
             noticeHours = h;
-            
+
         if (tenant.Settings.TryGetValue("booking_allow_cancel", out var allowObj) && bool.TryParse(allowObj.ToString(), out var a))
             allowCancel = a;
-            
+
         if (tenant.Settings.TryGetValue("booking_late_cancel_allow", out var lateAllowObj) && bool.TryParse(lateAllowObj.ToString(), out var la))
             allowLateCancel = la;
 
@@ -567,7 +570,7 @@ public class PublicBookingController : ControllerBase
         if (!allowCancel) return false;
 
         var hoursUntil = (booking.StartTime - DateTime.UtcNow).TotalHours;
-        
+
         if (hoursUntil > noticeHours)
         {
             penaltyPercent = 0m; // Inside free cancellation window

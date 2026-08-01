@@ -89,19 +89,19 @@ public class AzureOpenAIService : IAIService
             // --- AI RESPONSE CACHING ---
             var promptHash = ComputeSha256Hash(prompt);
             var cacheKey = $"ai:cache:{tenantId}:{model}:{promptHash}";
-            
+
             var cachedResponse = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cachedResponse))
             {
                 _logger.LogInformation("Returning cached AI response for tenant {TenantId}, model {Model}", tenantId, model);
-                
+
                 var cachedResult = JsonSerializer.Deserialize<AIGenerationResult>(cachedResponse);
                 if (cachedResult != null)
                 {
                     var latency = (int)(DateTime.UtcNow - startTime).TotalMilliseconds;
-                    await LogUsageAsync(tenantId, userId, model + " (cached)", "text-generation", 
+                    await LogUsageAsync(tenantId, userId, model + " (cached)", "text-generation",
                         cachedResult.InputTokens, cachedResult.OutputTokens, 0m, latency, true, null, estimatedCost);
-                    
+
                     cachedResult.Cost = 0m;
                     return cachedResult;
                 }
@@ -109,7 +109,7 @@ public class AzureOpenAIService : IAIService
 
             // Call Azure OpenAI API with Fallback Logic
             AIGenerationResult? result = null;
-            try 
+            try
             {
                 result = await ExecuteApiCallAsync(tenantId, prompt, model);
             }
@@ -135,27 +135,28 @@ public class AzureOpenAIService : IAIService
 
             var latencyMs = (int)(DateTime.UtcNow - startTime).TotalMilliseconds;
             var loggedModel = isFallback ? $"{originalModel} (fallback to {model})" : model;
-            
+
             // --- CONFIDENCE HEURISTIC ---
             // Simple heuristic based on content analysis for uncertainty
             var uncertaintyMarkers = new[] { "i am not sure", "i don't have enough information", "as an ai", "it is uncertain", "potentially", "maybe" };
             double confidence = 95.0; // Assume high, then deduct
-            foreach(var marker in uncertaintyMarkers) {
-                if (result.Content != null && result.Content.Contains(marker, StringComparison.OrdinalIgnoreCase)) 
+            foreach (var marker in uncertaintyMarkers)
+            {
+                if (result.Content != null && result.Content.Contains(marker, StringComparison.OrdinalIgnoreCase))
                     confidence -= 20.0;
             }
             result.ConfidenceScore = Math.Max(0, confidence);
-            
-            if (result.ConfidenceScore < 70) 
+
+            if (result.ConfidenceScore < 70)
             {
                 result.RequiresApproval = true;
-                await _notificationService.EscalateAsync(tenantId, "AI", 
-                    $"Low confidence ({result.ConfidenceScore:F0}/100) on text-generation", "Medium", 
-                    new { Model = model, Content = result.Content?.Substring(0, Math.Min(50, result.Content.Length)) + "..." }, 
+                await _notificationService.EscalateAsync(tenantId, "AI",
+                    $"Low confidence ({result.ConfidenceScore:F0}/100) on text-generation", "Medium",
+                    new { Model = model, Content = result.Content?.Substring(0, Math.Min(50, result.Content.Length)) + "..." },
                     true);
             }
 
-            await LogUsageAsync(tenantId, userId, loggedModel, "text-generation", 
+            await LogUsageAsync(tenantId, userId, loggedModel, "text-generation",
                 result.InputTokens, result.OutputTokens, result.Cost, latencyMs, true, null, estimatedCost);
 
             return result;
@@ -165,7 +166,7 @@ public class AzureOpenAIService : IAIService
             _logger.LogError(ex, "AI text generation failed for tenant {TenantId}", tenantId);
             var loggedModel = isFallback ? $"{originalModel} (fallback failed)" : model;
             await LogUsageAsync(tenantId, userId, loggedModel, "text-generation", 0, 0, 0, 0, false, ex.Message, estimatedCost);
-            
+
             return new AIGenerationResult { Success = false, Error = ex.Message };
         }
     }
@@ -193,7 +194,7 @@ public class AzureOpenAIService : IAIService
         }
 
         var endpoint = _secretProvider.GetSecret("AzureOpenAI:Endpoint") ?? _configuration["AzureOpenAI:Endpoint"];
-        var apiKey   = _secretProvider.GetSecret("AzureOpenAI:ApiKey")   ?? _configuration["AzureOpenAI:ApiKey"];
+        var apiKey = _secretProvider.GetSecret("AzureOpenAI:ApiKey") ?? _configuration["AzureOpenAI:ApiKey"];
         var deploymentName = _configuration[$"AzureOpenAI:Deployments:{model}"] ?? model;
 
         if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(apiKey))
@@ -334,7 +335,7 @@ public class AzureOpenAIService : IAIService
         // Log usage at the end
         try
         {
-            int inputTokens  = Math.Max(1, prompt.Length / 4);
+            int inputTokens = Math.Max(1, prompt.Length / 4);
             int outputTokens = Math.Max(0, fullContent.Length / 4);
             var cost = CalculateCost(model, inputTokens, outputTokens);
             await LogUsageAsync(tenantId, userId, model, "text-generation-stream", inputTokens, outputTokens, cost, 0, true, null, estimatedCost);
@@ -348,7 +349,7 @@ public class AzureOpenAIService : IAIService
     private async Task<AIGenerationResult> ExecuteApiCallAsync(Guid tenantId, string prompt, string model)
     {
         var endpoint = _secretProvider.GetSecret("AzureOpenAI:Endpoint") ?? _configuration["AzureOpenAI:Endpoint"];
-        var apiKey   = _secretProvider.GetSecret("AzureOpenAI:ApiKey")   ?? _configuration["AzureOpenAI:ApiKey"];
+        var apiKey = _secretProvider.GetSecret("AzureOpenAI:ApiKey") ?? _configuration["AzureOpenAI:ApiKey"];
         var deploymentName = _configuration[$"AzureOpenAI:Deployments:{model}"] ?? model;
 
         if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(apiKey))
@@ -584,21 +585,21 @@ public class AzureOpenAIService : IAIService
             // Use Redis atomic counter for real-time quota enforcement
             var billingPeriodStr = subscription.CurrentPeriodStart.ToString("yyyy-MM-dd");
             var redisKey = $"ai:usage:{tenantId}:{billingPeriodStr}";
-            
+
             var redisDb = _redis.GetDatabase();
             var currentUsageString = await redisDb.StringGetAsync(redisKey);
             decimal currentUsage = 0m;
-            
+
             if (currentUsageString.HasValue && decimal.TryParse(currentUsageString.ToString(), out var parsedUsage))
             {
                 currentUsage = parsedUsage;
             }
-            
+
             // --- ESCALATE ON 90% BUDGET ---
             if (currentUsage > budget * 0.9m)
             {
-                await _notificationService.EscalateAsync(tenantId, "Billing", 
-                    $"AI Budget reach { (currentUsage/budget)*100:F0}% ({currentUsage}/{budget})", 
+                await _notificationService.EscalateAsync(tenantId, "Billing",
+                    $"AI Budget reach {(currentUsage / budget) * 100:F0}% ({currentUsage}/{budget})",
                     "Medium", null, false);
             }
 
@@ -623,11 +624,11 @@ public class AzureOpenAIService : IAIService
 
             var billingPeriodStr = subscription.CurrentPeriodStart.ToString("yyyy-MM-dd");
             var redisKey = $"ai:usage:{tenantId}:{billingPeriodStr}";
-            
+
             var redisDb = _redis.GetDatabase();
-            
+
             var newUsage = await redisDb.StringIncrementAsync(redisKey, (double)estimatedCost);
-            
+
             if ((decimal)newUsage > budget)
             {
                 await redisDb.StringIncrementAsync(redisKey, -(double)estimatedCost);
@@ -636,8 +637,8 @@ public class AzureOpenAIService : IAIService
 
             if ((decimal)newUsage > budget * 0.9m)
             {
-                await _notificationService.EscalateAsync(tenantId, "Billing", 
-                    $"AI Budget reach { ((decimal)newUsage/budget)*100:F0}% ({newUsage}/{budget})", 
+                await _notificationService.EscalateAsync(tenantId, "Billing",
+                    $"AI Budget reach {((decimal)newUsage / budget) * 100:F0}% ({newUsage}/{budget})",
                     "Medium", null, false);
             }
 
@@ -681,7 +682,7 @@ public class AzureOpenAIService : IAIService
         }
     }
 
-    private async Task LogUsageAsync(Guid tenantId, Guid? userId, string model, string feature, 
+    private async Task LogUsageAsync(Guid tenantId, Guid? userId, string model, string feature,
         int inputTokens, int outputTokens, decimal cost, int latencyMs, bool success, string? error = null, decimal estimatedCost = 0m)
     {
         var log = new AIUsageLog
@@ -703,23 +704,23 @@ public class AzureOpenAIService : IAIService
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             dbContext.Set<AIUsageLog>().Add(log);
-            
+
             // Update Redis usage counter atomically
             var subscription = await dbContext.Set<Subscription>().AsNoTracking()
                 .FirstOrDefaultAsync(s => s.TenantId == tenantId);
-                
+
             if (subscription != null && cost > 0)
             {
                 var billingPeriodStr = subscription.CurrentPeriodStart.ToString("yyyy-MM-dd");
                 var redisKey = $"ai:usage:{tenantId}:{billingPeriodStr}";
                 var redisDb = _redis.GetDatabase();
-                
+
                 var adjustment = cost - estimatedCost;
                 if (adjustment != 0)
                 {
                     await redisDb.StringIncrementAsync(redisKey, (double)adjustment);
                 }
-                
+
                 // Set expiry to 32 days if not set
                 await redisDb.KeyExpireAsync(redisKey, TimeSpan.FromDays(32));
             }
@@ -733,10 +734,10 @@ public class AzureOpenAIService : IAIService
         // Input and output tokens have DIFFERENT per-token prices — never combine them.
         // Configuration keys: AzureOpenAI:PricingInput:{model} and AzureOpenAI:PricingOutput:{model}
         // Defaults are GPT-4 Turbo pricing per token (not per 1K).
-        var inputRateStr  = _configuration[$"AzureOpenAI:PricingInput:{model}"];
+        var inputRateStr = _configuration[$"AzureOpenAI:PricingInput:{model}"];
         var outputRateStr = _configuration[$"AzureOpenAI:PricingOutput:{model}"];
 
-        decimal inputRate  = decimal.TryParse(inputRateStr,  out var ir) ? ir : 0.000001m;  // $1.00/1M input
+        decimal inputRate = decimal.TryParse(inputRateStr, out var ir) ? ir : 0.000001m;  // $1.00/1M input
         decimal outputRate = decimal.TryParse(outputRateStr, out var or) ? or : 0.000003m;  // $3.00/1M output
 
         return (inputTokens * inputRate) + (outputTokens * outputRate);

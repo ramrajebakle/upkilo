@@ -37,9 +37,9 @@ public class RequestResponseLoggingMiddleware
 
         // 1. Log Request
         string requestBody = await ReadRequestBody(context.Request);
-        _logger.LogInformation("HTTP Request: {Method} {Path} {Query} Body: {Body}", 
-            context.Request.Method, 
-            context.Request.Path, 
+        _logger.LogInformation("HTTP Request: {Method} {Path} {Query} Body: {Body}",
+            context.Request.Method,
+            context.Request.Path,
             context.Request.QueryString,
             Truncate(requestBody, MaxBodyLength));
 

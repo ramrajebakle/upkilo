@@ -369,7 +369,7 @@ public class LegalController : ControllerBase
 
         var tenant = await _context.Tenants.FindAsync(tenantId.Value);
         var tenantName = tenant?.Name ?? "Your Company";
-        
+
         var dpaContent = $@"
 DATA PROCESSING AGREEMENT (DPA)
 DPDP Act, 2023 (India) & GDPR Art. 28(3) Compliant

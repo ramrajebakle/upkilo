@@ -114,8 +114,12 @@ public class TenantCurrencySyncServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         ctx.Services.Add(new Service
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id, Name = "Haircut",
-            Price = 30, Currency = "USD", DurationMinutes = 30
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            Name = "Haircut",
+            Price = 30,
+            Currency = "USD",
+            DurationMinutes = 30
         });
         await ctx.SaveChangesAsync();
 
@@ -138,8 +142,12 @@ public class TenantCurrencySyncServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         ctx.Services.Add(new Service
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id, Name = "Free consult",
-            Price = 0, Currency = "USD", DurationMinutes = 15
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            Name = "Free consult",
+            Price = 0,
+            Currency = "USD",
+            DurationMinutes = 15
         });
         await ctx.SaveChangesAsync();
 

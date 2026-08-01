@@ -17,12 +17,12 @@ public class AzureKeyVaultSecretProvider : ISecretProvider
     private readonly bool _isProduction;
 
     public AzureKeyVaultSecretProvider(
-        IConfiguration configuration, 
+        IConfiguration configuration,
         ILogger<AzureKeyVaultSecretProvider> logger)
     {
         _configuration = configuration;
         _logger = logger;
-        
+
         // Support both config key conventions:
         // - "AzureKeyVault:VaultUri"  (set by appsettings.json and Bicep env var AzureKeyVault__VaultUri)
         // - "Azure:KeyVault:Uri"      (legacy / alternative convention)

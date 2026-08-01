@@ -158,7 +158,7 @@ public class PaymentsController : ControllerBase
         var razorpayService = HttpContext.RequestServices.GetRequiredService<RazorpayService>();
         var orderId = await razorpayService.CreateOrderAsync(
             amount, currency.ToUpper(), request.ReceiptId);
-        
+
         if (orderId == null)
         {
             _logger.LogWarning("Razorpay order creation failed for tenant {TenantId}", tenantId);
@@ -198,7 +198,7 @@ public class PaymentsController : ControllerBase
 
         var razorpayService = HttpContext.RequestServices.GetRequiredService<RazorpayService>();
         var isValid = razorpayService.VerifySignature(request.OrderId, request.PaymentId, request.Signature);
-        
+
         if (!isValid)
         {
             _logger.LogWarning(
@@ -206,7 +206,7 @@ public class PaymentsController : ControllerBase
                 tenantId, request.OrderId);
             return BadRequest(new { error = "Payment verification failed" });
         }
-        
+
         // Capture payment with server-calculated amount
         var captured = await razorpayService.CapturePaymentAsync(
             request.PaymentId, amount, currency);

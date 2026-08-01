@@ -4,6 +4,11 @@ RUN apk add --no-progress --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+# package.json declares "prepare": "husky", which npm runs automatically during `npm ci`.
+# Husky needs a .git directory; this stage copies only the manifests, so it aborts and
+# fails the whole install. HUSKY=0 disables it — git hooks are a developer-machine
+# concern and have no meaning inside an image build.
+ENV HUSKY=0
 RUN npm ci
 
 # ── Stage 2: Build ───────────────────────────────────────────

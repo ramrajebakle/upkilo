@@ -62,7 +62,7 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
@@ -82,7 +82,7 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
@@ -104,7 +104,7 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
@@ -122,7 +122,7 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
@@ -137,7 +137,7 @@ public class TwoFactorServiceTests : IDisposable
         var success = await sut.EnableTwoFactorAsync(user.Id, code);
 
         success.Should().BeTrue();
-        
+
         context.ChangeTracker.Clear();
         var twoFa = context.Set<User2FA>().FirstOrDefault(t => t.UserId == user.Id);
         twoFa.Should().NotBeNull();
@@ -151,7 +151,7 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
@@ -169,12 +169,12 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
         context.Users.Add(user);
-        
+
         var twoFa = new User2FA { Id = Guid.NewGuid(), UserId = user.Id, IsEnabled = true, TotpSecret = "SECRET", BackupCodes = "[]" };
         context.Set<User2FA>().Add(twoFa);
         await context.SaveChangesAsync();
@@ -195,12 +195,12 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
         context.Users.Add(user);
-        
+
         var user2Fa = new User2FA { Id = Guid.NewGuid(), UserId = user.Id };
         context.Set<User2FA>().Add(user2Fa);
         await context.SaveChangesAsync();
@@ -221,12 +221,12 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
         context.Users.Add(user);
-        
+
         var user2Fa = new User2FA { Id = Guid.NewGuid(), UserId = user.Id };
         context.Set<User2FA>().Add(user2Fa);
         await context.SaveChangesAsync();
@@ -247,12 +247,12 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
         context.Users.Add(user);
-        
+
         var user2Fa = new User2FA { Id = Guid.NewGuid(), UserId = user.Id };
         context.Set<User2FA>().Add(user2Fa);
         await context.SaveChangesAsync();
@@ -301,7 +301,7 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
@@ -326,7 +326,7 @@ public class TwoFactorServiceTests : IDisposable
         // We can't know the plain code directly, but let's mock/inject or verify using the captured SMS code
         // Instead, let's grab the code sent to smsService
         _smsServiceMock.Verify(s => s.SendVerificationCodeAsync(tenant.Id, "+1234567890", It.IsAny<string>()), Times.Once);
-        
+
         // Since we verify via SmsCode, let's look at the stored hashed SMS code.
         // Let's create a test verifying with wrong code first
         var verifyWrong = await sut.VerifySmsCodeAsync(user.Id, "000000");
@@ -338,7 +338,7 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
+
         var tenant = new Tenant { Id = Guid.NewGuid(), Name = "Test Tenant", Slug = "test-tenant" };
         context.Tenants.Add(tenant);
         var user = new User { Id = Guid.NewGuid(), TenantId = tenant.Id, Email = "test@upkilo.com", FirstName = "Test", LastName = "User" };
@@ -393,11 +393,11 @@ public class TwoFactorServiceTests : IDisposable
     {
         var context = _dbFactory.CreateContext();
         var sut = CreateSut(context);
-        
-        var tenant = new Tenant 
-        { 
-            Id = Guid.NewGuid(), 
-            Name = "Test Tenant", 
+
+        var tenant = new Tenant
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Tenant",
             Slug = "test-tenant",
             EnforceTwoFactor = false,
             Settings = new Dictionary<string, object>

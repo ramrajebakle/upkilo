@@ -54,13 +54,13 @@ public class MarketingIntegrationService : IMarketingIntegrationService
             {
                 var payload = new { url = pageUrl, type = "URL_UPDATED" };
                 var response = await SendExternalRequestAsync(account, "https://indexing.googleapis.com/v3/urlNotifications:publish", HttpMethod.Post, payload);
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     _logger.LogInformation("Successfully submitted {Url} to Google Search Console API.", pageUrl);
                     return true;
                 }
-                
+
                 var error = await response.Content.ReadAsStringAsync();
                 _logger.LogError("Google Indexing API error for {Url}: {Error}", pageUrl, error);
                 return false;
@@ -72,7 +72,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
                 var payload = new { siteUrl = ExtractDomain(pageUrl), urlList = new[] { pageUrl } };
                 // Bing requires an API Key or OAuth. Assuming OAuth via AdAccount.
                 var response = await SendExternalRequestAsync(account, $"https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey={account.AccessToken}", HttpMethod.Post, payload);
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     _logger.LogInformation("Successfully submitted {Url} to Bing Webmaster API.", pageUrl);
@@ -112,7 +112,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<dynamic>();
-                
+
                 var rows = result?.rows;
                 if (rows != null)
                 {
@@ -120,7 +120,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
                     double totalImpressions = 0;
                     double sumPosition = 0;
 
-                    foreach(var row in rows)
+                    foreach (var row in rows)
                     {
                         totalClicks += (double)row.clicks;
                         totalImpressions += (double)row.impressions;
@@ -156,11 +156,12 @@ public class MarketingIntegrationService : IMarketingIntegrationService
         if (platform == "LinkedIn")
         {
             // Real LinkedIn UGC Post API (V2)
-            var payload = new 
+            var payload = new
             {
                 author = $"urn:li:person:{account.ExternalAccountId}",
                 lifecycleState = "PUBLISHED",
-                specificContent = new { 
+                specificContent = new
+                {
                     @namespace = "com.linkedin.ugc.ShareContent",
                     shareCommentary = new { text = content },
                     shareMediaCategory = "NONE"
@@ -182,7 +183,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
             // Real Twitter V2 Post API
             var payload = new { text = content };
             var response = await SendExternalRequestAsync(account, "https://api.twitter.com/2/tweets", HttpMethod.Post, payload);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<dynamic>();
@@ -201,7 +202,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
 
         // --- REAL GA4 DATA API (runReport) ---
         // Reference: https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport
-        var payload = new 
+        var payload = new
         {
             dateRanges = new[] { new { startDate = startDate.ToString("yyyy-MM-dd"), endDate = endDate.ToString("yyyy-MM-dd") } },
             dimensions = new[] { new { name = "pagePath" } },
@@ -210,9 +211,9 @@ public class MarketingIntegrationService : IMarketingIntegrationService
 
         var propertyId = account.ExternalAccountId; // Assuming GA4 Property ID is stored here
         var url = $"https://analyticsdata.googleapis.com/v1beta/properties/{propertyId}:runReport";
-        
+
         var response = await SendExternalRequestAsync(account, url, HttpMethod.Post, payload);
-        
+
         if (response.IsSuccessStatusCode)
         {
             var result = await response.Content.ReadFromJsonAsync<Ga4ReportResponse>();
@@ -224,7 +225,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
                 var pageUrl = row.DimensionValues[0].Value;
                 var views = int.Parse(row.MetricValues[0].Value);
                 var conversions = int.Parse(row.MetricValues[2].Value);
-                
+
                 var record = await _context.PageAnalyticsRecords
                     .FirstOrDefaultAsync(r => r.TenantId == tenantId && r.PageUrl == pageUrl && r.Timestamp.Date == DateTime.UtcNow.Date);
 
@@ -246,7 +247,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
                     record.ConversionRate = views == 0 ? 0 : ((decimal)conversions / views) * 100;
                 }
             }
-            
+
             await _context.SaveChangesAsync();
             _logger.LogInformation("Successfully synced GA4 analytics for Tenant {TenantId}.", tenantId);
             return true;
@@ -295,7 +296,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
         if (string.IsNullOrEmpty(account.RefreshToken)) return;
 
         _logger.LogInformation("Refreshing token for {Platform} account {AccountId}", account.Platform, account.Id);
-        
+
         try
         {
             var tokenEndpoint = "";
@@ -319,7 +320,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
             }
 
             var response = await _httpClient.PostAsync(tokenEndpoint, new FormUrlEncodedContent(requestContent));
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var tokens = await response.Content.ReadFromJsonAsync<dynamic>();
@@ -327,7 +328,7 @@ public class MarketingIntegrationService : IMarketingIntegrationService
                 {
                     string newToken = tokens.GetProperty("access_token").GetString();
                     int expiresIn = tokens.GetProperty("expires_in").GetInt32();
-                    
+
                     account.AccessToken = newToken;
                     account.TokenExpiresAt = DateTime.UtcNow.AddSeconds(expiresIn);
                     await _context.SaveChangesAsync();
@@ -338,9 +339,9 @@ public class MarketingIntegrationService : IMarketingIntegrationService
                 _logger.LogWarning("Failed to refresh token for {Platform}: {Error}", account.Platform, await response.Content.ReadAsStringAsync());
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-             _logger.LogError(ex, "Exception refreshing token for {Platform}", account.Platform);
+            _logger.LogError(ex, "Exception refreshing token for {Platform}", account.Platform);
         }
     }
 

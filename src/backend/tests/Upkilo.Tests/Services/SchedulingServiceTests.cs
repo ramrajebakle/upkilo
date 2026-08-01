@@ -57,7 +57,7 @@ namespace Upkilo.Tests.Services
         {
             var ctx = _dbFactory.CreateContext();
             var tenantId = Guid.NewGuid();
-            
+
             // Seed base tenant
             ctx.Tenants.Add(new Tenant { Id = tenantId, Name = "T", Slug = "t" });
             ctx.SaveChanges();

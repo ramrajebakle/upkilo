@@ -41,9 +41,9 @@ public class SsoIntegrationService
     {
         var id = $"_auth_{Guid.NewGuid():N}";
         var issueInstant = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
-        
+
         var xml = $@"<samlp:AuthnRequest xmlns:samlp=""urn:oasis:names:tc:SAML:2.0:protocol"" xmlns:saml=""urn:oasis:names:tc:SAML:2.0:assertion"" ID=""{id}"" Version=""2.0"" IssueInstant=""{issueInstant}"" Destination=""{destination}"" AssertionConsumerServiceURL=""{acsUrl}""><saml:Issuer>{issuer}</saml:Issuer><samlp:NameIDPolicy Format=""urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"" AllowCreate=""true"" /></samlp:AuthnRequest>";
-        
+
         var bytes = Encoding.UTF8.GetBytes(xml);
         using var output = new MemoryStream();
         using (var zip = new DeflateStream(output, CompressionMode.Compress))
@@ -347,7 +347,7 @@ public class SsoIntegrationService
     {
         _logger.LogInformation("Authenticating via {Provider} for SSO ID {Id}", provider, tenantSsoId);
         await Task.Delay(10);
-        return new ClaimsPrincipal(); 
+        return new ClaimsPrincipal();
     }
 
     public async Task ProvisionTenantSsoAsync(Guid tenantId, string provider, string metadataUrl)

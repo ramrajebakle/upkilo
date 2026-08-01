@@ -50,8 +50,8 @@ public class PrometheusBusinessMetrics : IBusinessMetrics
 
     private static readonly Histogram ApiLatencyHistogram = Metrics.CreateHistogram(
         "upkilo_api_latency_seconds", "API request latency in seconds.",
-        new HistogramConfiguration 
-        { 
+        new HistogramConfiguration
+        {
             LabelNames = new[] { "tenant_id", "endpoint" },
             Buckets = new[] { 0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0 }
         });
@@ -59,19 +59,19 @@ public class PrometheusBusinessMetrics : IBusinessMetrics
     private static readonly Gauge ActiveConnectionsGauge = Metrics.CreateGauge(
         "upkilo_active_connections", "Current number of active client connections.");
 
-    public void RecordBookingCreated(string tenantId, string serviceType) => 
+    public void RecordBookingCreated(string tenantId, string serviceType) =>
         BookingsCounter.WithLabels(tenantId, serviceType).Inc();
 
-    public void RecordPaymentProcessed(string tenantId, decimal amount, string status) => 
+    public void RecordPaymentProcessed(string tenantId, decimal amount, string status) =>
         PaymentsCounter.WithLabels(tenantId, status).Inc();
 
-    public void RecordSmsSent(string tenantId) => 
+    public void RecordSmsSent(string tenantId) =>
         SmsCounter.WithLabels(tenantId).Inc();
 
-    public void RecordEmailSent(string tenantId) => 
+    public void RecordEmailSent(string tenantId) =>
         EmailCounter.WithLabels(tenantId).Inc();
 
-    public void RecordAiOperation(string tenantId, string operationType) => 
+    public void RecordAiOperation(string tenantId, string operationType) =>
         AiCounter.WithLabels(tenantId, operationType).Inc();
 
     public void RecordBookingCancelled(string tenantId, string cancellationSource) =>

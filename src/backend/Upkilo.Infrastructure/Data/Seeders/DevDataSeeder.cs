@@ -80,18 +80,18 @@ public static class DevDataSeeder
 
         // ── Users (owners) ────────────────────────────────────────────
         var glowOwner = MakeUser(glowTenant.Id, "owner@glowbeauty.test", "Sophia", "Carter", UserRole.Owner);
-        var fitOwner  = MakeUser(fitTenant.Id,  "owner@fitlifegym.test",  "Marcus", "Reed",   UserRole.Owner);
-        var pawOwner  = MakeUser(pawTenant.Id,  "owner@pawcare.test",      "Dr. Elena", "Voss", UserRole.Owner);
+        var fitOwner = MakeUser(fitTenant.Id, "owner@fitlifegym.test", "Marcus", "Reed", UserRole.Owner);
+        var pawOwner = MakeUser(pawTenant.Id, "owner@pawcare.test", "Dr. Elena", "Voss", UserRole.Owner);
 
         context.Users.AddRange(glowOwner, fitOwner, pawOwner);
 
         // ── Staff members ─────────────────────────────────────────────
-        var (glowStaff1, glowUser1) = MakeStaff(glowTenant.Id, "Emma", "Wilson",  "staff1@glowbeauty.test", "Senior Stylist",   "#F472B6");
-        var (glowStaff2, glowUser2) = MakeStaff(glowTenant.Id, "James", "Lee",    "staff2@glowbeauty.test", "Nail Technician",  "#A78BFA");
-        var (fitStaff1,  fitUser1)  = MakeStaff(fitTenant.Id,  "Priya", "Sharma", "staff1@fitlifegym.test", "Personal Trainer", "#34D399");
-        var (fitStaff2,  fitUser2)  = MakeStaff(fitTenant.Id,  "Mike",  "Torres", "staff2@fitlifegym.test", "Yoga Instructor",  "#60A5FA");
-        var (pawStaff1,  pawUser1)  = MakeStaff(pawTenant.Id,  "Dr. Sarah", "Chen", "staff1@pawcare.test",  "Veterinarian",     "#FBBF24");
-        var (pawStaff2,  pawUser2)  = MakeStaff(pawTenant.Id,  "Alex",  "Kim",    "staff2@pawcare.test",    "Groomer",          "#F87171");
+        var (glowStaff1, glowUser1) = MakeStaff(glowTenant.Id, "Emma", "Wilson", "staff1@glowbeauty.test", "Senior Stylist", "#F472B6");
+        var (glowStaff2, glowUser2) = MakeStaff(glowTenant.Id, "James", "Lee", "staff2@glowbeauty.test", "Nail Technician", "#A78BFA");
+        var (fitStaff1, fitUser1) = MakeStaff(fitTenant.Id, "Priya", "Sharma", "staff1@fitlifegym.test", "Personal Trainer", "#34D399");
+        var (fitStaff2, fitUser2) = MakeStaff(fitTenant.Id, "Mike", "Torres", "staff2@fitlifegym.test", "Yoga Instructor", "#60A5FA");
+        var (pawStaff1, pawUser1) = MakeStaff(pawTenant.Id, "Dr. Sarah", "Chen", "staff1@pawcare.test", "Veterinarian", "#FBBF24");
+        var (pawStaff2, pawUser2) = MakeStaff(pawTenant.Id, "Alex", "Kim", "staff2@pawcare.test", "Groomer", "#F87171");
 
         context.Users.AddRange(glowUser1, glowUser2, fitUser1, fitUser2, pawUser1, pawUser2);
         context.StaffMembers.AddRange(glowStaff1, glowStaff2, fitStaff1, fitStaff2, pawStaff1, pawStaff2);
@@ -185,20 +185,20 @@ public static class DevDataSeeder
         // Glow Beauty — 20 bookings spread over past 60 days and next 14 days
         for (int i = 0; i < 10; i++)
         {
-            var client  = glowClients[i % glowClients.Length];
+            var client = glowClients[i % glowClients.Length];
             var service = glowServices[i % glowServices.Length];
-            var staff   = i % 2 == 0 ? glowStaff1 : glowStaff2;
-            var start   = now.AddDays(-60 + i * 6).Date.AddHours(9 + (i % 5));
+            var staff = i % 2 == 0 ? glowStaff1 : glowStaff2;
+            var start = now.AddDays(-60 + i * 6).Date.AddHours(9 + (i % 5));
 
             bookings.Add(MakeBooking(glowTenant.Id, client, staff, service, start,
                 status: BookingStatus.Completed, payment: PaymentStatus.Succeeded));
         }
         for (int i = 0; i < 6; i++)
         {
-            var client  = glowClients[i % glowClients.Length];
+            var client = glowClients[i % glowClients.Length];
             var service = glowServices[i % glowServices.Length];
-            var staff   = i % 2 == 0 ? glowStaff1 : glowStaff2;
-            var start   = now.AddDays(1 + i * 2).Date.AddHours(10 + (i % 4));
+            var staff = i % 2 == 0 ? glowStaff1 : glowStaff2;
+            var start = now.AddDays(1 + i * 2).Date.AddHours(10 + (i % 4));
 
             bookings.Add(MakeBooking(glowTenant.Id, client, staff, service, start,
                 status: BookingStatus.Confirmed, payment: PaymentStatus.Pending));
@@ -213,20 +213,20 @@ public static class DevDataSeeder
         // FitLife Gym — 20 bookings
         for (int i = 0; i < 10; i++)
         {
-            var client  = fitClients[i % fitClients.Length];
+            var client = fitClients[i % fitClients.Length];
             var service = fitServices[i % fitServices.Length];
-            var staff   = i % 2 == 0 ? fitStaff1 : fitStaff2;
-            var start   = now.AddDays(-45 + i * 4).Date.AddHours(7 + (i % 6));
+            var staff = i % 2 == 0 ? fitStaff1 : fitStaff2;
+            var start = now.AddDays(-45 + i * 4).Date.AddHours(7 + (i % 6));
 
             bookings.Add(MakeBooking(fitTenant.Id, client, staff, service, start,
                 status: BookingStatus.Completed, payment: PaymentStatus.Succeeded));
         }
         for (int i = 0; i < 8; i++)
         {
-            var client  = fitClients[i % fitClients.Length];
+            var client = fitClients[i % fitClients.Length];
             var service = fitServices[i % fitServices.Length];
-            var staff   = i % 2 == 0 ? fitStaff1 : fitStaff2;
-            var start   = now.AddDays(1 + i).Date.AddHours(8 + (i % 5));
+            var staff = i % 2 == 0 ? fitStaff1 : fitStaff2;
+            var start = now.AddDays(1 + i).Date.AddHours(8 + (i % 5));
 
             bookings.Add(MakeBooking(fitTenant.Id, client, staff, service, start,
                 status: BookingStatus.Confirmed, payment: PaymentStatus.Pending));
@@ -240,20 +240,20 @@ public static class DevDataSeeder
         // PawCare — 20 bookings
         for (int i = 0; i < 10; i++)
         {
-            var client  = pawClients[i % pawClients.Length];
+            var client = pawClients[i % pawClients.Length];
             var service = pawServices[i % pawServices.Length];
-            var staff   = i % 2 == 0 ? pawStaff1 : pawStaff2;
-            var start   = now.AddDays(-30 + i * 3).Date.AddHours(9 + (i % 4));
+            var staff = i % 2 == 0 ? pawStaff1 : pawStaff2;
+            var start = now.AddDays(-30 + i * 3).Date.AddHours(9 + (i % 4));
 
             bookings.Add(MakeBooking(pawTenant.Id, client, staff, service, start,
                 status: BookingStatus.Completed, payment: PaymentStatus.Succeeded));
         }
         for (int i = 0; i < 8; i++)
         {
-            var client  = pawClients[i % pawClients.Length];
+            var client = pawClients[i % pawClients.Length];
             var service = pawServices[i % pawServices.Length];
-            var staff   = i % 2 == 0 ? pawStaff1 : pawStaff2;
-            var start   = now.AddDays(1 + i * 2).Date.AddHours(10 + (i % 3));
+            var staff = i % 2 == 0 ? pawStaff1 : pawStaff2;
+            var start = now.AddDays(1 + i * 2).Date.AddHours(10 + (i % 3));
 
             bookings.Add(MakeBooking(pawTenant.Id, client, staff, service, start,
                 status: BookingStatus.Confirmed, payment: PaymentStatus.Pending));
@@ -272,16 +272,16 @@ public static class DevDataSeeder
 
         // Pull completed bookings to generate invoices from
         var completedGlow = bookings.Where(b => b.TenantId == glowTenant.Id && b.Status == BookingStatus.Completed).Take(6).ToList();
-        var completedFit  = bookings.Where(b => b.TenantId == fitTenant.Id  && b.Status == BookingStatus.Completed).Take(6).ToList();
-        var completedPaw  = bookings.Where(b => b.TenantId == pawTenant.Id  && b.Status == BookingStatus.Completed).Take(6).ToList();
+        var completedFit = bookings.Where(b => b.TenantId == fitTenant.Id && b.Status == BookingStatus.Completed).Take(6).ToList();
+        var completedPaw = bookings.Where(b => b.TenantId == pawTenant.Id && b.Status == BookingStatus.Completed).Take(6).ToList();
 
         foreach (var b in completedGlow) invoices.Add(MakeInvoice(glowTenant.Id, b, ref invoiceSeq));
-        foreach (var b in completedFit)  invoices.Add(MakeInvoice(fitTenant.Id,  b, ref invoiceSeq));
-        foreach (var b in completedPaw)  invoices.Add(MakeInvoice(pawTenant.Id,  b, ref invoiceSeq));
+        foreach (var b in completedFit) invoices.Add(MakeInvoice(fitTenant.Id, b, ref invoiceSeq));
+        foreach (var b in completedPaw) invoices.Add(MakeInvoice(pawTenant.Id, b, ref invoiceSeq));
 
         // Add a few overdue invoices (sent but not paid)
         var overdueGlow = MakeInvoice(glowTenant.Id, completedGlow[0], ref invoiceSeq, overdue: true);
-        var overdueFit  = MakeInvoice(fitTenant.Id,  completedFit[0],  ref invoiceSeq, overdue: true);
+        var overdueFit = MakeInvoice(fitTenant.Id, completedFit[0], ref invoiceSeq, overdue: true);
         invoices.Add(overdueGlow);
         invoices.Add(overdueFit);
 
@@ -336,55 +336,55 @@ public static class DevDataSeeder
 
     private static Service MakeService(Guid tenantId, string name, decimal price, int durationMinutes,
         string color, string category) => new()
-    {
-        TenantId = tenantId,
-        Name = name,
-        Price = price,
-        DurationMinutes = durationMinutes,
-        Duration = durationMinutes,
-        Color = color,
-        Category = category,
-        IsActive = true,
-        Currency = "USD"
-    };
+        {
+            TenantId = tenantId,
+            Name = name,
+            Price = price,
+            DurationMinutes = durationMinutes,
+            Duration = durationMinutes,
+            Color = color,
+            Category = category,
+            IsActive = true,
+            Currency = "USD"
+        };
 
     private static Client MakeClient(Guid tenantId, string firstName, string lastName,
         string email, string phone) => new()
-    {
-        TenantId = tenantId,
-        FirstName = firstName,
-        LastName = lastName,
-        Email = email,
-        Phone = phone,
-        IsActive = true,
-        MarketingConsent = true,
-        Source = "Walk-in",
-        LoyaltyTier = "Bronze",
-        CreatedAt = DateTime.UtcNow.AddDays(-Random.Shared.Next(10, 180))
-    };
+        {
+            TenantId = tenantId,
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Phone = phone,
+            IsActive = true,
+            MarketingConsent = true,
+            Source = "Walk-in",
+            LoyaltyTier = "Bronze",
+            CreatedAt = DateTime.UtcNow.AddDays(-Random.Shared.Next(10, 180))
+        };
 
     private static Booking MakeBooking(Guid tenantId, Client client, StaffMember staff,
         Service service, DateTime start, BookingStatus status, PaymentStatus payment,
         string? cancellationReason = null) => new()
-    {
-        TenantId = tenantId,
-        ClientId = client.Id,
-        StaffId = staff.Id,
-        ServiceId = service.Id,
-        CustomerName = client.FullName,
-        CustomerEmail = client.Email,
-        CustomerPhone = client.Phone,
-        ServiceName = service.Name,
-        StaffName = staff.FirstName + " " + staff.LastName,
-        StartTime = start,
-        EndTime = start.AddMinutes(service.DurationMinutes),
-        Status = status,
-        PaymentStatus = payment,
-        Price = service.Price,
-        Source = BookingSource.Manual,
-        CancellationReason = cancellationReason,
-        CancelledAt = cancellationReason != null ? start.AddDays(-1) : null
-    };
+        {
+            TenantId = tenantId,
+            ClientId = client.Id,
+            StaffId = staff.Id,
+            ServiceId = service.Id,
+            CustomerName = client.FullName,
+            CustomerEmail = client.Email,
+            CustomerPhone = client.Phone,
+            ServiceName = service.Name,
+            StaffName = staff.FirstName + " " + staff.LastName,
+            StartTime = start,
+            EndTime = start.AddMinutes(service.DurationMinutes),
+            Status = status,
+            PaymentStatus = payment,
+            Price = service.Price,
+            Source = BookingSource.Manual,
+            CancellationReason = cancellationReason,
+            CancelledAt = cancellationReason != null ? start.AddDays(-1) : null
+        };
 
     private static Invoice MakeInvoice(Guid tenantId, Booking booking, ref int seq, bool overdue = false)
     {

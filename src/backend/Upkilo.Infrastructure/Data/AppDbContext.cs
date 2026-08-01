@@ -21,7 +21,7 @@ public class AppDbContext : DbContext
     private readonly DomainEventInterceptor? _domainEventInterceptor;
 
     public AppDbContext(
-        DbContextOptions<AppDbContext> options, 
+        DbContextOptions<AppDbContext> options,
         ITenantProvider? tenantProvider = null,
         IDbConnectionSelector? connectionSelector = null,
         ReadWriteInterceptor? readWriteInterceptor = null,
@@ -48,7 +48,7 @@ public class AppDbContext : DbContext
         // EnableDynamicJson() enabled, which is required for Dictionary<string, object>
         // JSONB columns. Calling UseNpgsql again with a raw connection string would
         // create a new data source without that setting, causing serialization failures.
-        
+
         var interceptors = new List<Microsoft.EntityFrameworkCore.Diagnostics.IInterceptor>();
         if (_readWriteInterceptor != null) interceptors.Add(_readWriteInterceptor);
         if (_slowQueryInterceptor != null) interceptors.Add(_slowQueryInterceptor);
@@ -56,12 +56,12 @@ public class AppDbContext : DbContext
         if (_searchSyncInterceptor != null) interceptors.Add(_searchSyncInterceptor);
         if (_auditLogInterceptor != null) interceptors.Add(_auditLogInterceptor);
         if (_domainEventInterceptor != null) interceptors.Add(_domainEventInterceptor);
-        
+
         if (interceptors.Any())
         {
             optionsBuilder.AddInterceptors(interceptors);
         }
-        
+
         base.OnConfiguring(optionsBuilder);
     }
 
@@ -314,7 +314,7 @@ public class AppDbContext : DbContext
     public DbSet<LoginAttempt> LoginAttempts => Set<LoginAttempt>();
     public DbSet<PasswordHistory> PasswordHistories => Set<PasswordHistory>();
     public DbSet<MagicLinkToken> MagicLinkTokens => Set<MagicLinkToken>();
-    
+
     // Subscriptions & Pricing
     public DbSet<PricingPlan> PricingPlans => Set<PricingPlan>();
     public DbSet<PlanPrice> PlanPrices => Set<PlanPrice>();
@@ -460,7 +460,7 @@ public class AppDbContext : DbContext
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             var properties = entityType.GetProperties()
-                .Where(p => p.ClrType == typeof(Dictionary<string, object>) || 
+                .Where(p => p.ClrType == typeof(Dictionary<string, object>) ||
                             p.ClrType == typeof(Dictionary<string, string>) ||
                             p.ClrType == typeof(PlanFeatures));
 
@@ -785,7 +785,7 @@ public class AppDbContext : DbContext
             entity.HasIndex(e => new { e.TenantId, e.StartTime });
             entity.Property(e => e.Price).HasPrecision(10, 2);
             entity.Property(e => e.DepositPaid).HasPrecision(10, 2);
-            
+
             // From redundant block
             entity.HasIndex(e => new { e.StaffId, e.StartTime, e.EndTime });
 
@@ -1173,7 +1173,7 @@ public class AppDbContext : DbContext
             else if (entry.State == EntityState.Modified)
             {
                 entry.Entity.UpdatedAt = DateTime.UtcNow;
-                
+
                 // Prevent changing TenantId on existing entities
                 if (entry.Entity is TenantEntity tenantEntity)
                 {

@@ -255,11 +255,11 @@ public class ResourcesController : ControllerBase
         var endDate = startDate.AddDays(days);
 
         var bookings = await _context.ResourceBookings
-            .Where(b => b.ResourceId == id 
-                && b.TenantId == tenantId.Value 
+            .Where(b => b.ResourceId == id
+                && b.TenantId == tenantId.Value
                 && !b.IsDeleted
                 && b.Status != "cancelled"
-                && b.StartTime < endDate 
+                && b.StartTime < endDate
                 && b.EndTime > startDate)
             .OrderBy(b => b.StartTime)
             .Select(b => new
@@ -416,9 +416,9 @@ public class ResourcesController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var booking = await _context.ResourceBookings
-            .FirstOrDefaultAsync(b => b.Id == bookingId 
-                && b.ResourceId == id 
-                && b.TenantId == tenantId.Value 
+            .FirstOrDefaultAsync(b => b.Id == bookingId
+                && b.ResourceId == id
+                && b.TenantId == tenantId.Value
                 && !b.IsDeleted);
 
         if (booking == null) return NotFound();

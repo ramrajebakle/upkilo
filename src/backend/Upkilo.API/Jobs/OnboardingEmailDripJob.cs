@@ -36,7 +36,7 @@ public class OnboardingEmailDripJob
         var appUrl = (_configuration["APP_URL"] ?? "https://app.upkilo.com").TrimEnd('/');
         var day1Start = todayStart.AddDays(-1);
         var day1End = day1Start.AddDays(1);
-        await SendDripAsync(day1Start, day1End, "Day 1 Drip", "Welcome to Upkilo! Let's get your profile set up.", 
+        await SendDripAsync(day1Start, day1End, "Day 1 Drip", "Welcome to Upkilo! Let's get your profile set up.",
             $"Hi {{0}},<br/><br/>Welcome to Upkilo! The first step to scaling your business is completing your profile and setting up your first service. <a href='{appUrl}/settings'>Click here to get started!</a>");
 
         // Day 3: Calendar sync

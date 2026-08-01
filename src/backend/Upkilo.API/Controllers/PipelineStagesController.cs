@@ -26,12 +26,12 @@ public class PipelineStagesController : ControllerBase
     public async Task<IActionResult> GetStages([FromQuery] Guid pipelineId)
     {
         var tenantId = _tenantProvider.GetTenantId();
-        
+
         var stages = await _context.PipelineStages
             .Where(s => s.PipelineId == pipelineId)
             .OrderBy(s => s.OrderIndex)
             .ToListAsync();
-            
+
         return Ok(stages);
     }
 
@@ -52,7 +52,7 @@ public class PipelineStagesController : ControllerBase
 
         _context.PipelineStages.Add(stage);
         await _context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(GetStages), new { pipelineId = stage.PipelineId }, stage);
     }
 }

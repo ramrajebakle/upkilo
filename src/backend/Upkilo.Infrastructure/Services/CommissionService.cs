@@ -33,7 +33,7 @@ namespace Upkilo.Infrastructure.Services
             // 3. Staff specific (default)
             // 4. Service specific (global)
             // 5. Global default
-            
+
             var rules = await _context.Set<CommissionRule>()
                 .Where(r => r.TenantId == tenantId && r.IsActive)
                 .Where(r => r.EffectiveFrom <= DateTime.UtcNow && (r.EffectiveUntil == null || r.EffectiveUntil >= DateTime.UtcNow))

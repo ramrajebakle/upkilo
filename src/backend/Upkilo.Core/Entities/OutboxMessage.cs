@@ -8,16 +8,16 @@ public class OutboxMessage : TenantEntity
     [Required]
     [MaxLength(200)]
     public string EventType { get; set; } = string.Empty;
-    
+
     [Required]
     public string Payload { get; set; } = string.Empty;
-    
+
     public bool IsProcessed { get; set; }
-    
+
     public DateTime? ProcessedAt { get; set; }
-    
+
     public int RetryCount { get; set; }
-    
+
     [MaxLength(500)]
     public string? Error { get; set; }
 

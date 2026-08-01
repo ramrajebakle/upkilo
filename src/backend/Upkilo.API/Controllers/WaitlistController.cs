@@ -553,9 +553,9 @@ public class WaitlistController : ControllerBase
 
         // Position is determined by Priority (desc) then CreatedAt (asc)
         var position = await _context.WaitlistEntries
-            .Where(w => w.TenantId == tenantId.Value 
+            .Where(w => w.TenantId == tenantId.Value
                         && w.Status == WaitlistStatus.Waiting
-                        && (w.Priority > entry.Priority 
+                        && (w.Priority > entry.Priority
                             || (w.Priority == entry.Priority && w.CreatedAt < entry.CreatedAt)))
             .CountAsync() + 1;
 

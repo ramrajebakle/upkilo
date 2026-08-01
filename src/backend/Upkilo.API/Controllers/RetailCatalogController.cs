@@ -131,7 +131,7 @@ public class RetailCatalogController : ControllerBase
         };
 
         product.QuantityOnHand -= request.Quantity;
-        
+
         // Add to booking price
         var productTotal = (product.SalePrice ?? 0) * request.Quantity;
         booking.Price = (booking.Price ?? 0) + productTotal;

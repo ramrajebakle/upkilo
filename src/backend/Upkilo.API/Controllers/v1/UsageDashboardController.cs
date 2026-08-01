@@ -131,10 +131,10 @@ public class UsageDashboardController : ControllerBase
         var endDate = to ?? DateTime.UtcNow;
 
         var history = await GetUsageHistoryAsync(tenantId.Value, startDate, endDate, "day");
-        
+
         var csv = new System.Text.StringBuilder();
         csv.AppendLine("Date,Bookings,SMS,AICredits,StorageGB");
-        
+
         foreach (var point in history)
         {
             csv.AppendLine($"{point.Date:yyyy-MM-dd},{point.Bookings},{point.Sms},{point.AiCredits},{point.StorageGb:F2}");
@@ -171,8 +171,8 @@ public class UsageDashboardController : ControllerBase
                     Cost = g.Sum(l => l.Cost),
                     AvgLatencyMs = (int)(g.Where(l => l.LatencyMs.HasValue).Average(l => l.LatencyMs) ?? 0)
                 }),
-            SuccessRate = logs.Count > 0 
-                ? (decimal)logs.Count(l => l.Success) / logs.Count * 100 
+            SuccessRate = logs.Count > 0
+                ? (decimal)logs.Count(l => l.Success) / logs.Count * 100
                 : 100
         };
     }
@@ -278,10 +278,10 @@ public class UsageDashboardController : ControllerBase
         var alerts = new List<UsageAlert>();
 
         // Check booking usage
-        var bookingPercent = usage.BookingsLimit > 0 
-            ? (decimal)usage.BookingsUsed / usage.BookingsLimit * 100 
+        var bookingPercent = usage.BookingsLimit > 0
+            ? (decimal)usage.BookingsUsed / usage.BookingsLimit * 100
             : 0;
-        
+
         if (bookingPercent >= 100)
             alerts.Add(new UsageAlert { Type = "danger", Resource = "Bookings", Message = "Booking limit reached", Percentage = 100 });
         else if (bookingPercent >= 90)
@@ -290,8 +290,8 @@ public class UsageDashboardController : ControllerBase
             alerts.Add(new UsageAlert { Type = "info", Resource = "Bookings", Message = "80% of booking quota used", Percentage = (int)bookingPercent });
 
         // Check AI credits
-        var aiPercent = usage.AiCreditsLimit > 0 
-            ? (decimal)usage.AiCreditsUsed / usage.AiCreditsLimit * 100 
+        var aiPercent = usage.AiCreditsLimit > 0
+            ? (decimal)usage.AiCreditsUsed / usage.AiCreditsLimit * 100
             : 0;
 
         if (aiPercent >= 100)
@@ -300,8 +300,8 @@ public class UsageDashboardController : ControllerBase
             alerts.Add(new UsageAlert { Type = "warning", Resource = "AI Credits", Message = "90% of AI credits used", Percentage = (int)aiPercent });
 
         // Check SMS
-        var smsPercent = usage.SmsLimit > 0 
-            ? (decimal)usage.SmsUsed / usage.SmsLimit * 100 
+        var smsPercent = usage.SmsLimit > 0
+            ? (decimal)usage.SmsUsed / usage.SmsLimit * 100
             : 0;
 
         if (smsPercent >= 90)

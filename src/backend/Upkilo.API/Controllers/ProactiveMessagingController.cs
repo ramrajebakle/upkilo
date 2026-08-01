@@ -142,8 +142,8 @@ public class ProactiveMessagingController : ControllerBase
             .Select(c => new { c.LifetimeValue })
             .ToListAsync(ct);
 
-        var count    = lapsed.Count;
-        var avgLtv   = count > 0 ? Math.Round(lapsed.Average(c => (double)c.LifetimeValue), 2) : 0;
+        var count = lapsed.Count;
+        var avgLtv = count > 0 ? Math.Round(lapsed.Average(c => (double)c.LifetimeValue), 2) : 0;
         // Estimate one additional visit = ~25% of their avg order value (LTV / typical visits)
         var estimatedRecovery = count > 0
             ? Math.Round(lapsed.Sum(c => (double)c.LifetimeValue * 0.10), 2)
@@ -152,8 +152,8 @@ public class ProactiveMessagingController : ControllerBase
         return Ok(ApiResponse<object>.Ok(new
         {
             lapsedDays,
-            lapsedClientCount    = count,
-            avgLifetimeValue     = avgLtv,
+            lapsedClientCount = count,
+            avgLifetimeValue = avgLtv,
             estimatedRecoveryRevenue = estimatedRecovery,
             message = count > 0
                 ? $"You have {count} lapsed clients — a win-back campaign could recover ~${estimatedRecovery:F0}."

@@ -56,7 +56,7 @@ public class TenantJobContextFilter : IClientFilter, IServerFilter
         _loggerScope = _logger.BeginScope(new Dictionary<string, object>
         {
             ["CorrelationId"] = correlationId,
-            ["JobId"]         = filterContext.BackgroundJob.Id
+            ["JobId"] = filterContext.BackgroundJob.Id
         });
     }
 

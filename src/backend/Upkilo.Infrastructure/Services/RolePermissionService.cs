@@ -38,7 +38,7 @@ public class RolePermissionService : IRolePermissionService
         // In a full implementation, we would query a RolePermissions junction table
         if (user.Role == UserRole.Owner) return new[] { "*" };
         if (user.Role == UserRole.Admin) return new[] { "read", "write", "delete" };
-        
+
         return new[] { "read" };
     }
 }

@@ -25,7 +25,7 @@ public static class WorkflowSeeder
                 TriggerConfig = JsonSerializer.Serialize(new { EventType = "ClientCreated" }),
                 Category = "onboarding",
                 IsPublic = true,
-                Steps = JsonSerializer.Serialize(new object[] 
+                Steps = JsonSerializer.Serialize(new object[]
                 {
                     new { Type = "SendEmail", Template = "WelcomeEmail" },
                     new { Type = "Wait", Duration = "3d" },

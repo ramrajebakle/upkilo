@@ -259,11 +259,11 @@ public partial class DataOperationsController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var job = await _context.DataImportJobs.FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == tenantId.Value);
-        if (job == null || job.Status != "Completed" || string.IsNullOrEmpty(job.FileName)) 
+        if (job == null || job.Status != "Completed" || string.IsNullOrEmpty(job.FileName))
             return NotFound("Export file not ready or job not found.");
 
         var filePath = Path.Combine(_env.ContentRootPath, "App_Data", "Exports", tenantId.Value.ToString(), job.FileName);
-        
+
         if (!System.IO.File.Exists(filePath))
             return NotFound("Export file was missing on the server storage.");
 
@@ -376,7 +376,7 @@ public partial class DataOperationsController : ControllerBase
         client.Email = $"anonymized_{Guid.NewGuid()}@deleted.local";
         client.Phone = null;
         client.Notes = "GDPR Deletion Request Executed";
-        
+
         // Create GDPR compliance audit trail
         _context.AuditEntries.Add(new AuditEntry
         {

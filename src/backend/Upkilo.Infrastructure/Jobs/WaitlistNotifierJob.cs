@@ -77,9 +77,9 @@ public class WaitlistNotifierJob
 
             if (match == null) continue;
 
-            var email     = entry.Client?.Email ?? entry.Email;
+            var email = entry.Client?.Email ?? entry.Email;
             var firstName = entry.Client?.FirstName ?? entry.FirstName;
-            var service   = entry.Service?.Name ?? "your requested service";
+            var service = entry.Service?.Name ?? "your requested service";
 
             if (string.IsNullOrWhiteSpace(email)) continue;
 
@@ -93,7 +93,7 @@ public class WaitlistNotifierJob
                     $"Book now before it's taken!");
 
                 // Only mark Notified after confirmed send — prevents silent re-send suppression.
-                entry.Status    = WaitlistStatus.Notified;
+                entry.Status = WaitlistStatus.Notified;
                 entry.UpdatedAt = DateTime.UtcNow;
                 notified++;
             }
@@ -120,10 +120,10 @@ public class WaitlistNotifierJob
 
         return preference.ToLowerInvariant() switch
         {
-            "morning"   => slotTime.Hour >= 6  && slotTime.Hour < 12,
+            "morning" => slotTime.Hour >= 6 && slotTime.Hour < 12,
             "afternoon" => slotTime.Hour >= 12 && slotTime.Hour < 17,
-            "evening"   => slotTime.Hour >= 17 && slotTime.Hour < 21,
-            _           => true
+            "evening" => slotTime.Hour >= 17 && slotTime.Hour < 21,
+            _ => true
         };
     }
 }

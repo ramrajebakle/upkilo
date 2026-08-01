@@ -33,8 +33,13 @@ public class MembershipServiceTests : IDisposable
     {
         return await sut.CreatePlanAsync(tenantId, new MembershipPlan
         {
-            Id = Guid.NewGuid(), TenantId = tenantId, Name = "Gold", Price = 29.99m,
-            BillingInterval = billing, ServicesIncluded = 5, IsActive = true
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            Name = "Gold",
+            Price = 29.99m,
+            BillingInterval = billing,
+            ServicesIncluded = 5,
+            IsActive = true
         });
     }
 

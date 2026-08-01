@@ -225,7 +225,7 @@ public class UpsellController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var bookingCount = await _context.Bookings.CountAsync(b => b.ClientId == clientId && b.TenantId == tenantId);
-        
+
         if (bookingCount > 3)
         {
             var plans = await _context.MembershipPlans
@@ -234,7 +234,7 @@ public class UpsellController : ControllerBase
                 .Take(2)
                 .Select(p => new { p.Id, p.Name, p.Price, Reason = "Frequent visitor discount" })
                 .ToListAsync();
-            
+
             return Ok(new { data = plans });
         }
 

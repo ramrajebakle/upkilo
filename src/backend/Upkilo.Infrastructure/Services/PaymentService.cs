@@ -105,7 +105,7 @@ public class PaymentService : IPaymentService
             var policy = ResiliencePolicies.GetGenericRetryPolicy();
             // H-7 FIX: Include PriceId in idempotency key so different checkouts on the same day don't collide
             var reqOptions = await GetRequestOptionsAsync(request.TenantId, $"checkout_{request.TenantId}_{request.PriceId}_{DateTime.UtcNow:yyyyMMddHH}");
-            var session = await policy.ExecuteAsync(async (ct) => 
+            var session = await policy.ExecuteAsync(async (ct) =>
                 await service.CreateAsync(options, reqOptions)
             );
 
@@ -176,7 +176,7 @@ public class PaymentService : IPaymentService
             var service = new PaymentIntentService();
             var policy = ResiliencePolicies.GetGenericRetryPolicy();
             var reqOptions = await GetRequestOptionsAsync(request.TenantId, $"pi_{request.BookingId}");
-            var paymentIntent = await policy.ExecuteAsync(async (ct) => 
+            var paymentIntent = await policy.ExecuteAsync(async (ct) =>
                 await service.CreateAsync(options, reqOptions)
             );
 
@@ -279,7 +279,7 @@ public class PaymentService : IPaymentService
             // M-2 FIX: Use explicit 'full' string for null amounts to avoid collisions with Amount=0
             var amountKey = request.Amount.HasValue ? request.Amount.Value.ToString("F2") : "full";
             var reqOptions = await GetRequestOptionsAsync(tenantId, $"refund_{request.PaymentIntentId}_{amountKey}");
-            var refund = await policy.ExecuteAsync(async (ct) => 
+            var refund = await policy.ExecuteAsync(async (ct) =>
                 await service.CreateAsync(options, reqOptions)
             );
 

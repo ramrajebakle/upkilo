@@ -26,7 +26,7 @@ public class SavedSearchFiltersController : ControllerBase
     public async Task<IActionResult> GetFilters([FromQuery] string targetEntity)
     {
         var tenantId = _tenantProvider.GetTenantId();
-        
+
         // Get user ID from authentication context
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
@@ -36,7 +36,7 @@ public class SavedSearchFiltersController : ControllerBase
             .Where(f => f.TenantId == tenantId && f.UserId == userId && f.TargetEntity == targetEntity)
             .OrderBy(f => f.Name)
             .ToListAsync();
-            
+
         return Ok(filters);
     }
 
@@ -61,7 +61,7 @@ public class SavedSearchFiltersController : ControllerBase
             // Reset other default filters for this entity and user
             var existingDefault = await _context.SavedSearchFilters
                 .FirstOrDefaultAsync(f => f.UserId == filter.UserId && f.TargetEntity == filter.TargetEntity && f.IsDefault);
-            
+
             if (existingDefault != null) existingDefault.IsDefault = false;
         }
 

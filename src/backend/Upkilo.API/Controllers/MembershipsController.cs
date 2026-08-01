@@ -43,7 +43,7 @@ public class MembershipsController : ControllerBase
     {
         var tenantId = GetTenantId();
         var plans = await _membershipService.GetPlansAsync(tenantId);
-        
+
         var result = plans.Select(p => new
         {
             p.Id,
@@ -93,7 +93,7 @@ public class MembershipsController : ControllerBase
     public async Task<IActionResult> CreatePlan([FromBody] CreateMembershipPlanRequest request)
     {
         var tenantId = GetTenantId();
-        
+
         var plan = new MembershipPlan
         {
             Name = request.Name,
@@ -121,7 +121,7 @@ public class MembershipsController : ControllerBase
     public async Task<IActionResult> UpdatePlan(Guid id, [FromBody] UpdateMembershipPlanRequest request)
     {
         var tenantId = GetTenantId();
-        
+
         var plan = new MembershipPlan();
         if (request.Name != null) plan.Name = request.Name;
         if (request.Description != null) plan.Description = request.Description;
@@ -144,7 +144,7 @@ public class MembershipsController : ControllerBase
     {
         var tenantId = GetTenantId();
         var success = await _membershipService.DeletePlanAsync(id, tenantId);
-        
+
         if (!success) return BadRequest(new { message = "Plan not found or has active subscriptions." });
 
         _logger.LogInformation("Membership plan deleted: {PlanId}", id);
@@ -162,7 +162,7 @@ public class MembershipsController : ControllerBase
     {
         var tenantId = GetTenantId();
         var subscriptions = await _membershipService.GetSubscriptionsAsync(tenantId, status);
-        
+
         var result = subscriptions.Select(s => new
         {
             s.Id,
@@ -220,7 +220,7 @@ public class MembershipsController : ControllerBase
     public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionRequest request)
     {
         var tenantId = GetTenantId();
-        
+
         try
         {
             var sub = await _membershipService.SubscribeClientAsync(tenantId, request.ClientId, request.PlanId);
@@ -230,8 +230,8 @@ public class MembershipsController : ControllerBase
             if (sub.MembershipPlan != null && !string.IsNullOrEmpty(sub.MembershipPlan.StripePriceId))
             {
                 var checkoutReq = new CreateCheckoutRequest(
-                    tenantId, 
-                    sub.MembershipPlan.StripePriceId, 
+                    tenantId,
+                    sub.MembershipPlan.StripePriceId,
                     request.SuccessUrl ?? $"{Request.Scheme}://{Request.Host}/dashboard?success=true",
                     request.CancelUrl ?? $"{Request.Scheme}://{Request.Host}/dashboard?cancel=true",
                     sub.MembershipPlan.BillingInterval == "yearly",
@@ -239,7 +239,7 @@ public class MembershipsController : ControllerBase
                     null,
                     null
                 );
-                
+
                 var checkoutResult = await _paymentService.CreateCheckoutSessionAsync(checkoutReq);
                 if (checkoutResult.Success)
                 {
@@ -247,7 +247,8 @@ public class MembershipsController : ControllerBase
                 }
             }
 
-            return CreatedAtAction(nameof(GetSubscription), new { id = sub.Id }, new { 
+            return CreatedAtAction(nameof(GetSubscription), new { id = sub.Id }, new
+            {
                 subscription = sub,
                 checkoutUrl
             });
@@ -266,7 +267,7 @@ public class MembershipsController : ControllerBase
     {
         var tenantId = GetTenantId();
         var success = await _membershipService.CancelSubscriptionAsync(id, tenantId, request.Immediately);
-        
+
         if (!success) return NotFound();
 
         _logger.LogInformation("Subscription cancelled: {SubscriptionId}", id);
@@ -281,7 +282,7 @@ public class MembershipsController : ControllerBase
     {
         var tenantId = GetTenantId();
         var success = await _membershipService.PauseSubscriptionAsync(id, tenantId, request.ResumeDate);
-        
+
         if (!success) return NotFound();
 
         _logger.LogInformation("Subscription paused: {SubscriptionId}", id);
@@ -296,7 +297,7 @@ public class MembershipsController : ControllerBase
     {
         var tenantId = GetTenantId();
         var success = await _membershipService.ResumeSubscriptionAsync(id, tenantId);
-        
+
         if (!success) return NotFound();
 
         _logger.LogInformation("Subscription resumed: {SubscriptionId}", id);
@@ -312,7 +313,7 @@ public class MembershipsController : ControllerBase
         var tenantId = GetTenantId();
         var success = await _membershipService.RecordUsageAsync(id, tenantId, request.ServiceId);
 
-        if (!success) 
+        if (!success)
             return BadRequest(new { message = "Failed to record usage. Subscription may be inactive or limit reached." });
 
         _logger.LogInformation("Service used for subscription: {SubscriptionId}, Service: {ServiceId}", id, request.ServiceId);

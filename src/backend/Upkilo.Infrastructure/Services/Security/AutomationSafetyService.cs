@@ -236,22 +236,22 @@ public class AutomationSafetyService : IAutomationSafetyService
         var severity = action.RiskLevel switch
         {
             AutomationRiskLevel.Critical => "Critical",
-            AutomationRiskLevel.High     => "High",
-            AutomationRiskLevel.Medium   => "Medium",
-            _                            => "Low"
+            AutomationRiskLevel.High => "High",
+            AutomationRiskLevel.Medium => "Medium",
+            _ => "Low"
         };
 
         _context.AIEscalations.Add(new AIEscalation
         {
-            Id               = Guid.NewGuid(),
-            TenantId         = tenantId,
-            Module           = "Automation",
-            Reason           = action.Reason,
-            Severity         = severity,
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            Module = "Automation",
+            Reason = action.Reason,
+            Severity = severity,
             RequiresApproval = true,
-            IsResolved       = false,
-            CreatedAt        = DateTime.UtcNow,
-            MetadataJson     = $"{{\"affectedResource\":\"{action.AffectedResource}\"}}"
+            IsResolved = false,
+            CreatedAt = DateTime.UtcNow,
+            MetadataJson = $"{{\"affectedResource\":\"{action.AffectedResource}\"}}"
         });
 
         await _context.SaveChangesAsync();

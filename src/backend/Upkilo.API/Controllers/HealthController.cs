@@ -66,7 +66,7 @@ public class HealthController : ControllerBase
 
         if (report.Status == HealthStatus.Unhealthy)
         {
-            _logger.LogWarning("Readiness check UNHEALTHY: {Details}", 
+            _logger.LogWarning("Readiness check UNHEALTHY: {Details}",
                 string.Join(", ", report.Entries
                     .Where(e => e.Value.Status != HealthStatus.Healthy)
                     .Select(e => $"{e.Key}={e.Value.Status}")));

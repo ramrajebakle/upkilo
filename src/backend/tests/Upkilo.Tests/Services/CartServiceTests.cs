@@ -25,8 +25,12 @@ public class CartServiceTests : IDisposable
         ctx.Tenants.Add(new Tenant { Id = tenantId, Name = "T", Slug = "t" });
         var product = new Product
         {
-            Id = Guid.NewGuid(), TenantId = tenantId, Name = "Widget",
-            Price = 9.99m, IsActive = true, TrackInventory = false
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            Name = "Widget",
+            Price = 9.99m,
+            IsActive = true,
+            TrackInventory = false
         };
         ctx.Products.Add(product);
         ctx.SaveChanges();

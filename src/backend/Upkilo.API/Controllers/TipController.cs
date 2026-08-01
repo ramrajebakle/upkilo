@@ -196,8 +196,13 @@ public class TipController : ControllerBase
                 .Select(g => new { method = g.Key, total = g.Sum(t => t.Amount), count = g.Count() }),
             tips = tips.Select(t => new
             {
-                t.Id, t.Amount, t.Type, t.PaymentMethod,
-                t.IsDistributed, t.CreatedAt, t.BookingId
+                t.Id,
+                t.Amount,
+                t.Type,
+                t.PaymentMethod,
+                t.IsDistributed,
+                t.CreatedAt,
+                t.BookingId
             })
         });
     }

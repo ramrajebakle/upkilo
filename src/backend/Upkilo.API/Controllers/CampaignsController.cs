@@ -32,8 +32,8 @@ public class CampaignsController : ControllerBase
     private readonly ICopywritingAgent _copywritingAgent;
 
     public CampaignsController(
-        ILogger<CampaignsController> logger, 
-        AppDbContext context, 
+        ILogger<CampaignsController> logger,
+        AppDbContext context,
         ITenantProvider tenantProvider,
         IEventService eventService,
         ICampaignAnalyticsService analyticsService,
@@ -206,7 +206,7 @@ public class CampaignsController : ControllerBase
         if (request.Preheader != null) campaign.Preheader = request.Preheader;
         if (request.Content != null) campaign.Content = request.Content;
         if (request.AudienceType != null) campaign.AudienceType = request.AudienceType;
-        if (request.AudienceFilters != null) 
+        if (request.AudienceFilters != null)
             campaign.AudienceFilters = JsonSerializer.Serialize(request.AudienceFilters);
 
         campaign.UpdatedAt = DateTime.UtcNow;
@@ -428,7 +428,8 @@ public class CampaignsController : ControllerBase
         {
             campaignName = campaign.Name,
             summary,
-            recentLogs = logs.Select(l => new {
+            recentLogs = logs.Select(l => new
+            {
                 l.Id,
                 l.Status,
                 l.CreatedAt,

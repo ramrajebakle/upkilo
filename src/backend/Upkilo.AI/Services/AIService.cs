@@ -20,7 +20,7 @@ public class AIService : Upkilo.AI.Interfaces.IAIService
     public AIService(IConfiguration configuration, ILogger<AIService> logger)
     {
         _logger = logger;
-        
+
         var endpoint = configuration["Azure:OpenAI:Endpoint"];
         var key = configuration["Azure:OpenAI:Key"];
         _defaultModel = configuration["Azure:OpenAI:DefaultModel"] ?? "gpt-4o-mini";
@@ -69,7 +69,7 @@ public class AIService : Upkilo.AI.Interfaces.IAIService
                 new SystemChatMessage($"You are an expert system. Instruction: {instruction}"),
                 new UserChatMessage($"Analyze the following text: {text}")
             };
-            
+
             var response = await chatClient.CompleteChatAsync(messages);
             return response.Value.Content[0].Text;
         }

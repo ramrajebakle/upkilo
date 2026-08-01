@@ -28,7 +28,7 @@ public class FormSubmissionsController : ControllerBase
             .Where(s => s.FormDefinitionId == definitionId)
             .OrderByDescending(s => s.SubmittedAt)
             .ToListAsync();
-            
+
         return Ok(submissions);
     }
 
@@ -39,14 +39,14 @@ public class FormSubmissionsController : ControllerBase
         var form = await _context.FormDefinitions
             .Include(f => f.Fields)
             .FirstOrDefaultAsync(f => f.Id == definitionId && !f.IsDeleted);
-            
+
         if (form == null || !form.IsActive) return NotFound("Form not found or inactive.");
 
         // Strict validation: check required fields
         var root = responseData.RootElement;
         foreach (var field in form.Fields.Where(f => f.IsRequired))
         {
-            if (!root.TryGetProperty(field.Label, out var prop) || 
+            if (!root.TryGetProperty(field.Label, out var prop) ||
                 prop.ValueKind == JsonValueKind.Null ||
                 (prop.ValueKind == JsonValueKind.String && string.IsNullOrWhiteSpace(prop.GetString())))
             {
@@ -74,9 +74,9 @@ public class FormSubmissionsController : ControllerBase
 
         _context.FormSubmissions.Add(submission);
         await _context.SaveChangesAsync();
-        
+
         // Trigger workflow event: FormSubmitted
-        
+
         return Ok(new { success = true, submissionId = submission.Id });
     }
 
@@ -97,10 +97,10 @@ public class FormSubmissionsController : ControllerBase
 
         // Basic field completion stats could go here if parsed
 
-        return Ok(new 
-        { 
-            definitionId, 
-            totalSubmissions, 
+        return Ok(new
+        {
+            definitionId,
+            totalSubmissions,
             recentSubmissions,
             conversionRate
         });

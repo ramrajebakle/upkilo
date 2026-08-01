@@ -25,7 +25,7 @@ public class SupportController : ControllerBase
     }
 
     private Guid GetTenantId() => _tenantProvider.GetTenantId() ?? throw new UnauthorizedAccessException();
-    
+
     private Guid GetUserId()
     {
         var idClaim = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -50,7 +50,7 @@ public class SupportController : ControllerBase
 
         _context.SupportTickets.Add(ticket);
         await _context.SaveChangesAsync();
-        
+
         _logger.LogInformation("Support ticket {TicketId} created by user {UserId}", ticket.Id, userId);
 
         return Ok(new { success = true, ticketId = ticket.Id });

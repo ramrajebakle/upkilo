@@ -16,7 +16,7 @@ public class AuditEntryV2
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
-    
+
     public Guid? TenantId { get; set; }
     public Guid? UserId { get; set; }
     public string? Action { get; set; }
@@ -47,10 +47,10 @@ public class TenantIsolationValidator
     {
         // 1. Check Global Query Filters are active
         // This confirms EF Core's .HasQueryFilter() is respected.
-        
+
         // 2. Cross-check raw count vs filtered count
         // (Simulated logic for isolation verification)
         await Task.Delay(100);
-        return true; 
+        return true;
     }
 }

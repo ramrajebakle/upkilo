@@ -241,7 +241,7 @@ public class SubscriptionService : ISubscriptionService
         {
             // Resolve promo to Stripe Coupon ID if possible, or use PromotionCode object
             // For now, assuming promoCode is a Stripe Promotion Code ID
-             options.Discounts = new List<Stripe.Checkout.SessionDiscountOptions>
+            options.Discounts = new List<Stripe.Checkout.SessionDiscountOptions>
              {
                  new Stripe.Checkout.SessionDiscountOptions { PromotionCode = promoCode }
              };
@@ -278,7 +278,7 @@ public class SubscriptionService : ISubscriptionService
             }
         };
 
-        try 
+        try
         {
             var service = new CustomerService();
             var customer = await service.CreateAsync(options);
@@ -286,10 +286,10 @@ public class SubscriptionService : ISubscriptionService
         }
         catch (StripeException ex)
         {
-             _logger.LogError(ex, "Failed to create Stripe customer for tenant {TenantId}", tenant.Id);
-             // Return a dummy ID if Stripe fails in dev, or rethrow? 
-             // Rethrowing is safer for consistent data.
-             throw;
+            _logger.LogError(ex, "Failed to create Stripe customer for tenant {TenantId}", tenant.Id);
+            // Return a dummy ID if Stripe fails in dev, or rethrow? 
+            // Rethrowing is safer for consistent data.
+            throw;
         }
     }
 
@@ -297,21 +297,21 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<string> GetPortalSessionUrlAsync(Guid tenantId, string returnUrl)
     {
-         var tenant = await _context.Set<Tenant>().FindAsync(tenantId);
-         if (tenant == null || string.IsNullOrEmpty(tenant.StripeCustomerId))
-         {
-             throw new InvalidOperationException("Tenant has no Stripe customer record.");
-         }
+        var tenant = await _context.Set<Tenant>().FindAsync(tenantId);
+        if (tenant == null || string.IsNullOrEmpty(tenant.StripeCustomerId))
+        {
+            throw new InvalidOperationException("Tenant has no Stripe customer record.");
+        }
 
-         var options = new Stripe.BillingPortal.SessionCreateOptions
-         {
-             Customer = tenant.StripeCustomerId,
-             ReturnUrl = returnUrl ?? $"{(_configuration["APP_URL"] ?? "https://app.upkilo.com").TrimEnd('/')}/billing"
-         };
+        var options = new Stripe.BillingPortal.SessionCreateOptions
+        {
+            Customer = tenant.StripeCustomerId,
+            ReturnUrl = returnUrl ?? $"{(_configuration["APP_URL"] ?? "https://app.upkilo.com").TrimEnd('/')}/billing"
+        };
 
-         var service = new Stripe.BillingPortal.SessionService();
-         var session = await service.CreateAsync(options);
-         return session.Url;
+        var service = new Stripe.BillingPortal.SessionService();
+        var session = await service.CreateAsync(options);
+        return session.Url;
     }
 
     public async Task<SubscriptionResult> ChangeSubscriptionAsync(
@@ -372,21 +372,21 @@ public class SubscriptionService : ISubscriptionService
     {
         var subscription = await GetSubscriptionAsync(tenantId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
-             return new SubscriptionResult { Success = false, Message = "No active subscription found" };
+            return new SubscriptionResult { Success = false, Message = "No active subscription found" };
 
         try
         {
             var service = new Stripe.SubscriptionService();
             if (immediate)
             {
-                 await service.CancelAsync(subscription.StripeSubscriptionId, new SubscriptionCancelOptions());
+                await service.CancelAsync(subscription.StripeSubscriptionId, new SubscriptionCancelOptions());
             }
             else
             {
-                 await service.UpdateAsync(subscription.StripeSubscriptionId, new SubscriptionUpdateOptions
-                 {
-                     CancelAtPeriodEnd = true
-                 });
+                await service.UpdateAsync(subscription.StripeSubscriptionId, new SubscriptionUpdateOptions
+                {
+                    CancelAtPeriodEnd = true
+                });
             }
 
             // Webhook will handle status update, but we can set locally too
@@ -409,9 +409,9 @@ public class SubscriptionService : ISubscriptionService
     public async Task<SubscriptionResult> PauseSubscriptionAsync(Guid tenantId, DateTime? resumeAt = null)
     {
         var subscription = await GetSubscriptionAsync(tenantId);
-        if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId)) 
+        if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
             return new SubscriptionResult { Success = false, Message = "No active Stripe subscription found" };
-        
+
         try
         {
             var service = new Stripe.SubscriptionService();
@@ -425,7 +425,7 @@ public class SubscriptionService : ISubscriptionService
             };
 
             await service.UpdateAsync(subscription.StripeSubscriptionId, options);
-            
+
             subscription.Status = SubscriptionStatus.Paused;
             subscription.PausedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
@@ -441,31 +441,31 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionResult> ResumeSubscriptionAsync(Guid tenantId)
     {
-         var subscription = await GetSubscriptionAsync(tenantId);
-         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId)) 
-             return new SubscriptionResult { Success = false, Message = "No active Stripe subscription found" };
+        var subscription = await GetSubscriptionAsync(tenantId);
+        if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
+            return new SubscriptionResult { Success = false, Message = "No active Stripe subscription found" };
 
-         try
-         {
-             var service = new Stripe.SubscriptionService();
-             var options = new SubscriptionUpdateOptions
-             {
-                 PauseCollection = null // Removes the pause
-             };
+        try
+        {
+            var service = new Stripe.SubscriptionService();
+            var options = new SubscriptionUpdateOptions
+            {
+                PauseCollection = null // Removes the pause
+            };
 
-             await service.UpdateAsync(subscription.StripeSubscriptionId, options);
+            await service.UpdateAsync(subscription.StripeSubscriptionId, options);
 
-             subscription.Status = SubscriptionStatus.Active;
-             subscription.PausedAt = null;
-             await _context.SaveChangesAsync();
-             await InvalidateSubscriptionCacheAsync(tenantId);
+            subscription.Status = SubscriptionStatus.Active;
+            subscription.PausedAt = null;
+            await _context.SaveChangesAsync();
+            await InvalidateSubscriptionCacheAsync(tenantId);
 
-             return new SubscriptionResult { Success = true, Message = "Subscription resumed." };
-         }
-         catch (StripeException ex)
-         {
-             return new SubscriptionResult { Success = false, Message = "Stripe resume failed: " + ex.Message };
-         }
+            return new SubscriptionResult { Success = true, Message = "Subscription resumed." };
+        }
+        catch (StripeException ex)
+        {
+            return new SubscriptionResult { Success = false, Message = "Stripe resume failed: " + ex.Message };
+        }
     }
 
     public async Task SyncWithStripeAsync(Guid tenantId)
@@ -482,14 +482,14 @@ public class SubscriptionService : ISubscriptionService
                 Status = "all",
                 Limit = 1
             };
-            
+
             var subs = await service.ListAsync(options);
             if (subs.Data.Count > 0)
             {
                 var stripeSubId = subs.Data[0].Id;
                 var stripeSub = await service.GetAsync(stripeSubId);
                 var localSub = await GetSubscriptionAsync(tenantId);
-                
+
                 if (localSub == null)
                 {
                     localSub = new Upkilo.Core.Entities.Subscription { TenantId = tenantId };
@@ -498,8 +498,8 @@ public class SubscriptionService : ISubscriptionService
 
                 localSub.StripeSubscriptionId = stripeSub.Id;
                 localSub.Status = MapStripeStatus(stripeSub.Status);
-                localSub.BillingInterval = stripeSub.Items.Data[0].Price.Recurring?.Interval == "year" 
-                    ? BillingInterval.Annual 
+                localSub.BillingInterval = stripeSub.Items.Data[0].Price.Recurring?.Interval == "year"
+                    ? BillingInterval.Annual
                     : BillingInterval.Monthly;
 
                 // Sync plan_id from metadata if present
@@ -531,9 +531,9 @@ public class SubscriptionService : ISubscriptionService
                             localSub.AllowedAiModels = pricingPlan.Name.ToLowerInvariant() switch
                             {
                                 "enterprise" => new List<string> { "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo" },
-                                "business"   => new List<string> { "gpt-4o", "gpt-4", "gpt-3.5-turbo" },
+                                "business" => new List<string> { "gpt-4o", "gpt-4", "gpt-3.5-turbo" },
                                 "professional" => new List<string> { "gpt-4o-mini", "gpt-3.5-turbo" },
-                                _            => new List<string> { "gpt-3.5-turbo" }
+                                _ => new List<string> { "gpt-3.5-turbo" }
                             };
                         }
                     }
@@ -544,7 +544,7 @@ public class SubscriptionService : ISubscriptionService
                 {
                     _logger.LogInformation("Metadata is_trial found: {IsTrial}", isTrialStr);
                 }
-                
+
                 // Sync extra seat counts from Stripe item quantities
                 if (localSub.PricingPlanId.HasValue)
                 {
@@ -586,12 +586,12 @@ public class SubscriptionService : ISubscriptionService
                     {
                         var tier = resolvedPlan.Name.ToLowerInvariant() switch
                         {
-                            "free"         => SubscriptionTier.Free,
-                            "starter"      => SubscriptionTier.Starter,
+                            "free" => SubscriptionTier.Free,
+                            "starter" => SubscriptionTier.Starter,
                             "professional" => SubscriptionTier.Professional,
-                            "business"     => SubscriptionTier.Business,
-                            "enterprise"   => SubscriptionTier.Enterprise,
-                            _              => SubscriptionTier.Starter
+                            "business" => SubscriptionTier.Business,
+                            "enterprise" => SubscriptionTier.Enterprise,
+                            _ => SubscriptionTier.Starter
                         };
                         var tenantToUpdate = await _context.Tenants.FindAsync(tenantId);
                         if (tenantToUpdate != null)
@@ -604,8 +604,8 @@ public class SubscriptionService : ISubscriptionService
                         }
                     }
                 }
-                
-                
+
+
                 await _context.SaveChangesAsync();
             }
         }
@@ -655,22 +655,22 @@ public class SubscriptionService : ISubscriptionService
 
         return new UsageSummary
         {
-            BookingsUsed    = subscription?.BookingsUsed ?? 0,
-            BookingsLimit   = -1,
-            SmsUsed         = subscription?.SmsUsed ?? 0,
-            SmsLimit        = GetFlag("sms_reminders") ? -1 : 0,
-            AiCreditsUsed   = subscription?.AiCreditsUsed ?? 0,
-            AiCreditsLimit  = GetNumericLimit("ai_actions"),
-            StorageUsedBytes    = subscription?.StorageUsedBytes ?? 0,
-            StorageLimitBytes   = 5L * 1024 * 1024 * 1024,
-            StaffCount      = staffCount,
-            StaffLimit      = GetNumericLimit("max_staff") + (subscription?.ExtraStaffCount ?? 0),
-            LocationCount   = locationCount,
-            LocationLimit   = GetNumericLimit("max_locations") + (subscription?.ExtraLocationCount ?? 0),
-            AiCostUsed      = aiCost,
-            AiCostLimit     = subscription?.AiMonthlyBudget ?? 0,
-            PeriodStart     = subscription?.CurrentPeriodStart ?? DateTime.UtcNow,
-            PeriodEnd       = subscription?.CurrentPeriodEnd ?? DateTime.UtcNow.AddMonths(1),
+            BookingsUsed = subscription?.BookingsUsed ?? 0,
+            BookingsLimit = -1,
+            SmsUsed = subscription?.SmsUsed ?? 0,
+            SmsLimit = GetFlag("sms_reminders") ? -1 : 0,
+            AiCreditsUsed = subscription?.AiCreditsUsed ?? 0,
+            AiCreditsLimit = GetNumericLimit("ai_actions"),
+            StorageUsedBytes = subscription?.StorageUsedBytes ?? 0,
+            StorageLimitBytes = 5L * 1024 * 1024 * 1024,
+            StaffCount = staffCount,
+            StaffLimit = GetNumericLimit("max_staff") + (subscription?.ExtraStaffCount ?? 0),
+            LocationCount = locationCount,
+            LocationLimit = GetNumericLimit("max_locations") + (subscription?.ExtraLocationCount ?? 0),
+            AiCostUsed = aiCost,
+            AiCostLimit = subscription?.AiMonthlyBudget ?? 0,
+            PeriodStart = subscription?.CurrentPeriodStart ?? DateTime.UtcNow,
+            PeriodEnd = subscription?.CurrentPeriodEnd ?? DateTime.UtcNow.AddMonths(1),
             EnabledFeatures = mappings.ToDictionary(kv => kv.Key, kv => kv.Value.IsEnabled)
         };
     }
@@ -711,7 +711,7 @@ public class SubscriptionService : ISubscriptionService
             case UsageType.AiCredits: subscription.AiCreditsUsed += amount; break;
             case UsageType.Storage: subscription.StorageUsedBytes += amount; break;
         }
-        
+
         subscription.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
     }
@@ -723,11 +723,11 @@ public class SubscriptionService : ISubscriptionService
 
         bool withinLimit = usageType switch
         {
-            UsageType.Bookings   => usage.BookingsLimit == -1 || usage.BookingsUsed + amount <= usage.BookingsLimit,
-            UsageType.Sms        => usage.SmsLimit == -1 || usage.SmsUsed + amount <= usage.SmsLimit,
-            UsageType.AiCredits  => usage.AiCreditsLimit == -1 || usage.AiCreditsUsed + amount <= usage.AiCreditsLimit,
-            UsageType.Storage    => usage.StorageLimitBytes == -1 || usage.StorageUsedBytes + amount <= usage.StorageLimitBytes,
-            _                    => true
+            UsageType.Bookings => usage.BookingsLimit == -1 || usage.BookingsUsed + amount <= usage.BookingsLimit,
+            UsageType.Sms => usage.SmsLimit == -1 || usage.SmsUsed + amount <= usage.SmsLimit,
+            UsageType.AiCredits => usage.AiCreditsLimit == -1 || usage.AiCreditsUsed + amount <= usage.AiCreditsLimit,
+            UsageType.Storage => usage.StorageLimitBytes == -1 || usage.StorageUsedBytes + amount <= usage.StorageLimitBytes,
+            _ => true
         };
 
         if (!withinLimit) return false;
@@ -735,15 +735,15 @@ public class SubscriptionService : ISubscriptionService
         // Atomic increment — works regardless of plan system because Subscription counters are universal
         int rows = usageType switch
         {
-            UsageType.Bookings  => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
+            UsageType.Bookings => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
                                     .ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount)),
-            UsageType.Sms       => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
+            UsageType.Sms => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
                                     .ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount)),
             UsageType.AiCredits => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
                                     .ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount)),
-            UsageType.Storage   => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
+            UsageType.Storage => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
                                     .ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount)),
-            _                   => 1
+            _ => 1
         };
 
         return rows > 0;

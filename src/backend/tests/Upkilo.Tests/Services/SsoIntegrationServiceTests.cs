@@ -69,8 +69,8 @@ public class SsoIntegrationServiceTests
     {
         // Arrange
         var sut = CreateSut();
-        var config = new SamlConfiguration 
-        { 
+        var config = new SamlConfiguration
+        {
             TenantId = Guid.NewGuid(),
             IdpCertificate = "dummycert"
         };

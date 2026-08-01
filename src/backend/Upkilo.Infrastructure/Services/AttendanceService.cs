@@ -99,7 +99,7 @@ namespace Upkilo.Infrastructure.Services
 
                     if (!stats.HoursByStaff.ContainsKey(s.StaffId))
                         stats.HoursByStaff[s.StaffId] = 0;
-                    
+
                     stats.HoursByStaff[s.StaffId] += hours;
                 }
             }

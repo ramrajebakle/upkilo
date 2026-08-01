@@ -34,7 +34,7 @@ public class InvoiceService : IInvoiceService
         _logger = logger;
         _emailService = emailService;
         _stripeApiKey = configuration["Stripe:SecretKey"] ?? "";
-        
+
         // License for QuestPDF Community
         QuestPDF.Settings.License = LicenseType.Community;
     }
@@ -103,13 +103,13 @@ public class InvoiceService : IInvoiceService
 
         // Increment and save
         tenant.Settings["NextInvoiceNumber"] = nextNumber + 1;
-        
+
         // Ensure "InvoicePrefix" is saved if it wasn't there? Optional, but good for consistency.
         if (!tenant.Settings.ContainsKey("InvoicePrefix")) tenant.Settings["InvoicePrefix"] = prefix;
 
         // Mark as modified if using EF Core with dictionary change tracking issues
-        _context.Entry(tenant).State = EntityState.Modified; 
-        
+        _context.Entry(tenant).State = EntityState.Modified;
+
         // We'll save changes here to reserve the number. 
         // Note: In high concurrency, this simple approach might have race conditions, but for this scale it's acceptable.
         // A better approach would be a dedicated sequence table or atomic atomic update, 
@@ -124,7 +124,7 @@ public class InvoiceService : IInvoiceService
         try
         {
             // We need to instantiate Stripe's service explicitly.
-            var stripeService = new Stripe.InvoiceService(); 
+            var stripeService = new Stripe.InvoiceService();
             var stripeInvoice = await stripeService.GetAsync(stripeInvoiceId);
 
             if (stripeInvoice == null || !stripeInvoice.Metadata.ContainsKey("tenant_id"))
@@ -134,7 +134,7 @@ public class InvoiceService : IInvoiceService
             }
 
             var tenantId = Guid.Parse(stripeInvoice.Metadata["tenant_id"]);
-            
+
             // Check if exists
             var existing = await _context.Invoices.FirstOrDefaultAsync(i => i.StripeInvoiceId == stripeInvoiceId);
             if (existing != null)
@@ -170,15 +170,15 @@ public class InvoiceService : IInvoiceService
                 HostedInvoiceUrl = stripeInvoice.HostedInvoiceUrl,
                 PaidAt = stripeInvoice.Status == "paid" ? (DateTime?)DateTime.UtcNow : null
             };
-            
+
             // Add lines
             // Add lines
-            foreach(var line in stripeInvoice.Lines.Data)
+            foreach (var line in stripeInvoice.Lines.Data)
             {
                 var quantity = (int)(line.Quantity ?? 1);
                 var totalAmount = (decimal)line.Amount;
                 var unitPrice = quantity > 0 ? totalAmount / quantity : totalAmount;
-                
+
                 // Process Stripe Taxes if available
                 var stripeTax = line.Taxes?.Sum(t => t.Amount) ?? 0;
                 var taxRate = (stripeTax > 0 && totalAmount > 0) ? (decimal)stripeTax / (decimal)totalAmount : 0m;
@@ -236,7 +236,7 @@ public class InvoiceService : IInvoiceService
         var invoice = await _context.Invoices
             .Include(i => i.Items)
             .FirstOrDefaultAsync(i => i.Id == invoiceId && i.TenantId == tenantId);
-        
+
         if (invoice == null) throw new KeyNotFoundException("Invoice not found");
 
         var tenant = await _context.Tenants.FindAsync(tenantId);
@@ -258,7 +258,7 @@ public class InvoiceService : IInvoiceService
         var invoice = await _context.Invoices
             .Include(i => i.Items)
             .FirstOrDefaultAsync(i => i.Id == invoiceId && i.TenantId == tenantId);
-        
+
         if (invoice == null) throw new KeyNotFoundException("Invoice not found");
 
         var tenant = await _context.Tenants.FindAsync(tenantId);
@@ -279,14 +279,14 @@ public class InvoiceService : IInvoiceService
         var invoice = await _context.Invoices
             .Include(i => i.Items)
             .FirstOrDefaultAsync(i => i.Id == invoiceId && i.TenantId == tenantId);
-            
+
         if (invoice == null) throw new KeyNotFoundException("Invoice not found");
 
         var tenant = await _context.Tenants.FindAsync(tenantId);
         if (tenant == null) throw new KeyNotFoundException("Tenant not found");
 
         var pdfBytes = await GenerateInvoicePdfAsync(invoiceId, tenantId);
-        
+
         var subject = $"{InvoiceTranslator.GetLabel("Invoice", tenant.Locale)} #{invoice.InvoiceNumber} - {tenant.Name}";
         var body = $@"
             <div style='font-family: sans-serif;'>
@@ -314,7 +314,7 @@ public class InvoiceService : IInvoiceService
         var invoice = await _context.Invoices
             .Include(i => i.Items)
             .FirstOrDefaultAsync(i => i.Id == invoiceId && i.TenantId == tenantId);
-            
+
         if (invoice == null) throw new KeyNotFoundException("Invoice not found");
         if (invoice.Status != InvoiceStatus.Paid) throw new InvalidOperationException("Cannot send receipt for unpaid invoice");
 
@@ -322,7 +322,7 @@ public class InvoiceService : IInvoiceService
         if (tenant == null) throw new KeyNotFoundException("Tenant not found");
 
         var pdfBytes = await GenerateInvoicePdfAsync(invoiceId, tenantId);
-        
+
         var subject = $"{InvoiceTranslator.GetLabel("Receipt", tenant.Locale)} for Invoice #{invoice.InvoiceNumber} - {tenant.Name}";
         var body = $@"
             <div style='font-family: sans-serif;'>
@@ -437,7 +437,7 @@ public class InvoiceService : IInvoiceService
             subject,
             body,
             Array.Empty<byte>(),
-            "" 
+            ""
         ));
     }
 
@@ -491,15 +491,15 @@ public class InvoiceService : IInvoiceService
 
         invoice.RefundedAmount += amount;
         invoice.RefundedAt = DateTime.UtcNow;
-        
+
         if (invoice.RefundedAmount >= invoice.TotalAmount)
         {
             invoice.Status = InvoiceStatus.Refunded;
         }
 
         await _context.SaveChangesAsync();
-        
-        _logger.LogInformation("Processed partial refund of {Amount} for invoice {InvoiceNumber}. Reason: {Reason}", 
+
+        _logger.LogInformation("Processed partial refund of {Amount} for invoice {InvoiceNumber}. Reason: {Reason}",
             amount, invoice.InvoiceNumber, reason);
     }
 
@@ -510,7 +510,7 @@ public class InvoiceService : IInvoiceService
 
         var periodStart = tenant.SubscriptionPeriodEnd.Value.AddMonths(-1); // Assuming monthly
         var periodEnd = tenant.SubscriptionPeriodEnd.Value;
-        
+
         if (effectiveDate < periodStart || effectiveDate > periodEnd) return 0;
 
         var totalDays = (periodEnd - periodStart).TotalDays;
@@ -519,13 +519,13 @@ public class InvoiceService : IInvoiceService
         if (totalDays <= 0) return 0;
 
         var prorationFactor = (decimal)(remainingDays / totalDays);
-        var currentPrice = 0m; 
+        var currentPrice = 0m;
 
         // Fetch current price from the new DB architecture
         var currentPlan = await _context.PricingPlans
             .Include(p => p.Prices)
             .FirstOrDefaultAsync(p => p.Id == tenant.PricingPlanId);
-            
+
         currentPrice = currentPlan?.Prices
             .Where(p => p.Cycle == BillingCycle.Monthly)
             .Select(p => p.Amount)

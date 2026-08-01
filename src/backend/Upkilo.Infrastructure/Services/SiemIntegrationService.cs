@@ -37,7 +37,7 @@ public class SiemIntegrationService
             var client = _httpClientFactory.CreateClient("SIEM");
             var payload = System.Text.Json.JsonSerializer.Serialize(siemEvent);
             var content = new StringContent(payload, System.Text.Encoding.UTF8, "application/json");
-            
+
             var response = await client.PostAsync(_siemEndpoint, content);
             if (!response.IsSuccessStatusCode)
             {

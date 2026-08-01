@@ -11,7 +11,7 @@ public class HangfireDashboardAuthFilter : IDashboardAuthorizationFilter
     public bool Authorize(DashboardContext context)
     {
         var httpContext = context.GetHttpContext();
-        
+
         // In development, allow all access for debugging
         var env = httpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
         if (env.IsDevelopment())

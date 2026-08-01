@@ -24,7 +24,7 @@ public class DbConnectionSelector : IDbConnectionSelector
     private bool _useReplica;
 
     public DbConnectionSelector(
-        IConfiguration configuration, 
+        IConfiguration configuration,
         ILogger<DbConnectionSelector> logger,
         DatabaseHealthMonitor healthMonitor,
         ITenantProvider tenantProvider,
@@ -36,15 +36,15 @@ public class DbConnectionSelector : IDbConnectionSelector
             ?? configuration["Database:PrimaryConnectionString"]
             ?? throw new InvalidOperationException(
                 "Database connection string is not configured. Set ConnectionStrings:DefaultConnection.");
-        _replicaConnection = configuration.GetConnectionString("ReplicaConnection") 
-            ?? configuration["Database:ReplicaConnectionString"] 
+        _replicaConnection = configuration.GetConnectionString("ReplicaConnection")
+            ?? configuration["Database:ReplicaConnectionString"]
             ?? _primaryConnection;
         _logger = logger;
         _healthMonitor = healthMonitor;
         _tenantProvider = tenantProvider;
         _cache = cache;
         _metrics = metrics;
-        
+
         // Use the "default" resilience pipeline registered in Program.cs
         _resiliencePipeline = pipelineRegistry.GetPipeline("default");
     }
@@ -73,7 +73,7 @@ public class DbConnectionSelector : IDbConnectionSelector
 
         // 3. Per-request Read/Write splitting logic
         var connectionString = _useReplica ? _replicaConnection : _primaryConnection;
-        
+
         if (_useReplica)
         {
             _logger.LogDebug("Routing request to REPLICA database.");

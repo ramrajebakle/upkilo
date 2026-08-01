@@ -160,7 +160,7 @@ public class BulkSmsController : ControllerBase
         {
             var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
             var businessName = tenant?.Name ?? "our business";
-            
+
             foreach (var result in results)
             {
                 if (result.Status == "valid" && !string.IsNullOrEmpty(result.Phone))
@@ -168,8 +168,8 @@ public class BulkSmsController : ControllerBase
                     var msg = request.OptInMessageTemplate
                         .Replace("{{firstName}}", result.FirstName ?? "there")
                         .Replace("{{businessName}}", businessName);
-                        
-                    await _smsService.SendSmsAsync(tenantId, result.Phone, msg, 
+
+                    await _smsService.SendSmsAsync(tenantId, result.Phone, msg,
                         result.ClientId != null ? Guid.Parse(result.ClientId) : null);
                 }
             }

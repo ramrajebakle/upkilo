@@ -176,12 +176,12 @@ public class PushNotificationService : IPushNotificationService
     {
         var webSub = await _context.WebPushSubscriptions
             .FirstOrDefaultAsync(s => s.UserId == userId && s.Endpoint == identifier);
-        
+
         if (webSub != null) webSub.IsActive = false;
 
         var mobileToken = await _context.PushNotificationTokens
             .FirstOrDefaultAsync(t => t.UserId == userId && t.DeviceToken == identifier);
-            
+
         if (mobileToken != null) mobileToken.IsActive = false;
 
         await _context.SaveChangesAsync();
@@ -193,7 +193,7 @@ public class PushNotificationService : IPushNotificationService
         {
             var connectionString = await _secretProvider.GetSecretAsync("Azure:NotificationHub:ConnectionString");
             var hubName = _configuration["Azure:NotificationHub:HubName"];
-            
+
             if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(hubName)) return;
 
             var hub = NotificationHubClient.CreateClientFromConnectionString(connectionString, hubName);

@@ -46,13 +46,13 @@ public class SubscriptionsController : ControllerBase
             p.TrialDays,
             p.IsCustom,
             monthlyPrice = p.Prices.FirstOrDefault(x => x.Cycle == Upkilo.Core.Entities.BillingCycle.Monthly)?.Amount,
-            annualPrice  = p.Prices.FirstOrDefault(x => x.Cycle == Upkilo.Core.Entities.BillingCycle.Annual)?.Amount,
+            annualPrice = p.Prices.FirstOrDefault(x => x.Cycle == Upkilo.Core.Entities.BillingCycle.Annual)?.Amount,
             features = p.FeatureMappings.Select(m => new
             {
-                key     = m.PricingFeature?.Key,
-                name    = m.PricingFeature?.Name,
+                key = m.PricingFeature?.Key,
+                name = m.PricingFeature?.Name,
                 enabled = m.IsEnabled,
-                limit   = m.NumericLimit
+                limit = m.NumericLimit
             })
         }));
     }

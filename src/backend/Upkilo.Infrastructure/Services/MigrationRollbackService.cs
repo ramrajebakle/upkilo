@@ -43,7 +43,7 @@ public class MigrationRollbackService
     public async Task<string> CreateRollbackPointAsync(string migrationName)
     {
         var rollbackId = $"rb_{migrationName}_{DateTime.UtcNow:yyyyMMddHHmmss}";
-        
+
         var record = new Upkilo.Core.Entities.MigrationRecord
         {
             MigrationId = migrationName,
@@ -57,7 +57,7 @@ public class MigrationRollbackService
 
         _context.MigrationRecords.Add(record);
         await _context.SaveChangesAsync();
-        
+
         _logger.LogInformation("Rollback point created: {RollbackId} for migration {Migration}", rollbackId, migrationName);
         return rollbackId;
     }

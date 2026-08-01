@@ -16,7 +16,7 @@ public class ImportService : IImportService
     private readonly IBackgroundJobClient _jobClient;
 
     public ImportService(
-        AppDbContext context, 
+        AppDbContext context,
         ILogger<ImportService> logger,
         IBackgroundJobClient jobClient)
     {
@@ -56,11 +56,11 @@ public class ImportService : IImportService
     }
 
     public async Task<ImportJob> StartImportAsync(
-        Guid tenantId, 
-        Guid userId, 
-        string entityType, 
-        Stream fileStream, 
-        string fileName, 
+        Guid tenantId,
+        Guid userId,
+        string entityType,
+        Stream fileStream,
+        string fileName,
         Dictionary<string, string>? columnMapping = null)
     {
         // For background processing, we might need to save the file content or stream to a persistent store
@@ -102,7 +102,7 @@ public class ImportService : IImportService
 
         var errors = new List<object>();
         var lines = csvContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-        
+
         if (lines.Length < 2)
         {
             job.Status = "completed";
@@ -112,8 +112,8 @@ public class ImportService : IImportService
         }
 
         var headers = ParseCsvLine(lines[0]);
-        var mapping = !string.IsNullOrEmpty(job.ColumnMapping) 
-            ? JsonSerializer.Deserialize<Dictionary<string, string>>(job.ColumnMapping) 
+        var mapping = !string.IsNullOrEmpty(job.ColumnMapping)
+            ? JsonSerializer.Deserialize<Dictionary<string, string>>(job.ColumnMapping)
             : null;
 
         job.TotalRows = lines.Length - 1;
@@ -139,7 +139,7 @@ public class ImportService : IImportService
             }
 
             job.ProcessedRows++;
-            
+
             // Periodically save progress
             if (i % 20 == 0)
             {
@@ -153,7 +153,7 @@ public class ImportService : IImportService
         job.ProcessingTimeMs = (int)(DateTime.UtcNow - startTime).TotalMilliseconds;
 
         await _context.SaveChangesAsync();
-        _logger.LogInformation("Import job {JobId} finished with {Success} successes and {Fail} failures", 
+        _logger.LogInformation("Import job {JobId} finished with {Success} successes and {Fail} failures",
             jobId, job.SuccessfulRows, job.FailedRows);
     }
 
@@ -205,7 +205,7 @@ public class ImportService : IImportService
             var clientEmail = GetValue("ClientEmail");
             var serviceName = GetValue("ServiceName");
             var dateStr = GetValue("Date");
-            
+
             if (string.IsNullOrEmpty(clientEmail) || string.IsNullOrEmpty(serviceName) || string.IsNullOrEmpty(dateStr))
                 throw new Exception("ClientEmail, ServiceName, and Date are required");
 

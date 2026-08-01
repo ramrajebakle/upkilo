@@ -48,7 +48,7 @@ public class DashboardController : ControllerBase
 
         // Stats summary from Read Model
         var stats = await _context.TenantDashboardStats.FirstOrDefaultAsync();
-        
+
         return Ok(new
         {
             period = new { from = startDate, to = endDate },
@@ -119,12 +119,12 @@ public class DashboardController : ControllerBase
         var totalClients = await _context.Clients.CountAsync();
         var newClientsCount = await _context.Clients
             .CountAsync(c => c.CreatedAt >= startDate && c.CreatedAt <= endDate);
-            
+
         var prevNewClientsCount = await _context.Clients
             .CountAsync(c => c.CreatedAt >= prevStartDate && c.CreatedAt <= prevEndDate);
 
-        decimal trendPercentage = prevNewClientsCount == 0 
-            ? (newClientsCount > 0 ? 100M : 0M) 
+        decimal trendPercentage = prevNewClientsCount == 0
+            ? (newClientsCount > 0 ? 100M : 0M)
             : Math.Round(((newClientsCount - (decimal)prevNewClientsCount) / prevNewClientsCount) * 100M, 2);
 
         var topClients = await _context.Clients
@@ -158,9 +158,9 @@ public class DashboardController : ControllerBase
             .GroupBy(b => b.StaffId!)
             .Select(g => new
             {
-                StaffId      = g.Key,
+                StaffId = g.Key,
                 BookingCount = g.Count(),
-                Revenue      = g.Where(b => b.Status == BookingStatus.Confirmed).Sum(b => (decimal?)b.Price) ?? 0
+                Revenue = g.Where(b => b.Status == BookingStatus.Confirmed).Sum(b => (decimal?)b.Price) ?? 0
             })
             .ToListAsync();
 
@@ -176,9 +176,9 @@ public class DashboardController : ControllerBase
             return new
             {
                 s.Id,
-                name          = s.FirstName + " " + s.LastName,
+                name = s.FirstName + " " + s.LastName,
                 bookingsCount = b?.BookingCount ?? 0,
-                revenue       = b?.Revenue ?? 0
+                revenue = b?.Revenue ?? 0
             };
         }).ToList();
 
@@ -204,8 +204,8 @@ public class DashboardController : ControllerBase
             {
                 b.Id,
                 clientName = b.Client != null ? b.Client.FirstName + " " + b.Client.LastName : "Unknown",
-                clientInitials = b.Client != null 
-                    ? ((b.Client.FirstName != null && b.Client.FirstName.Length > 0 ? b.Client.FirstName.Substring(0, 1) : "") + 
+                clientInitials = b.Client != null
+                    ? ((b.Client.FirstName != null && b.Client.FirstName.Length > 0 ? b.Client.FirstName.Substring(0, 1) : "") +
                        (b.Client.LastName != null && b.Client.LastName.Length > 0 ? b.Client.LastName.Substring(0, 1) : ""))
                     : "U",
                 serviceName = b.Service != null ? b.Service.Name : "Unknown",
@@ -226,7 +226,7 @@ public class DashboardController : ControllerBase
     {
         var tenantId = GetTenantId();
         var cacheKey = "dashboard_summary";
-        
+
         var summary = await _cache.GetOrSetAsync(tenantId, cacheKey, async () =>
         {
             var stats = await _context.TenantDashboardStats.FirstOrDefaultAsync();

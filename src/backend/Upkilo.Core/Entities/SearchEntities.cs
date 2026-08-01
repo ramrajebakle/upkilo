@@ -11,7 +11,7 @@ public class SavedSearchFilter : TenantEntity
     public string Name { get; set; } = string.Empty;
     public string SearchType { get; set; } = "Global"; // Global, Clients, Bookings
     public string TargetEntity { get => SearchType; set => SearchType = value; } // Alias
-    
+
     public string QueryString { get; set; } = string.Empty;
     public string FiltersJson { get; set; } = "{}"; // JSON map of advanced filters
     public string FilterJson { get => FiltersJson; set => FiltersJson = value; } // Alias

@@ -32,9 +32,12 @@ public class GdprAutomationServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         var client = new Client
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
-            FirstName = "John", LastName = "Doe",
-            Email = "john@test.com", PhoneNumber = "1234567890"
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            PhoneNumber = "1234567890"
         };
         ctx.Clients.Add(client);
         await ctx.SaveChangesAsync();
@@ -87,8 +90,11 @@ public class GdprAutomationServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         var client = new Client
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
-            FirstName = "Export", LastName = "User", Email = "export@test.com"
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            FirstName = "Export",
+            LastName = "User",
+            Email = "export@test.com"
         };
         ctx.Clients.Add(client);
         await ctx.SaveChangesAsync();

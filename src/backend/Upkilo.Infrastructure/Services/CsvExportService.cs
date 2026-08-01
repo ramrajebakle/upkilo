@@ -10,7 +10,7 @@ public class CsvExportService : ICsvExportService
     {
         var sb = new StringBuilder();
         var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        
+
         // Header
         var headers = properties.Select(p => EscapeCsvField(p.Name));
         sb.AppendLine(string.Join(",", headers));
@@ -20,7 +20,7 @@ public class CsvExportService : ICsvExportService
         {
             if (item == null) continue;
 
-            var fields = properties.Select(p => 
+            var fields = properties.Select(p =>
             {
                 var val = p.GetValue(item, null);
                 return EscapeCsvField(val?.ToString() ?? string.Empty);
@@ -47,7 +47,7 @@ public class CsvExportService : ICsvExportService
         {
             return $"\"{field.Replace("\"", "\"\"")}\"";
         }
-        
+
         return field;
     }
 }

@@ -45,7 +45,7 @@ public class MarketplaceService : IMarketplaceService
         var leadCount = await _context.ConversionEvents
             .Where(c => c.TenantId == tenantId && c.Source == "Marketplace" && c.EventCategory == "lead" && !c.IsBilled)
             .CountAsync();
-            
+
         return leadCount * 2.50m; // $2.50 per marketplace lead
     }
 
@@ -67,7 +67,7 @@ public class MarketplaceService : IMarketplaceService
     {
         var listing = await _context.BusinessListings
             .FirstOrDefaultAsync(b => b.TenantId == tenantId);
-        
+
         if (listing == null) return false;
 
         listing.IsFeatured = true;
@@ -86,7 +86,7 @@ public class MarketplaceService : IMarketplaceService
 
         var totalAdSpend = activeAds.Sum(a => a.DailyBudget * 30); // simplistic monthly projection
         var platformShare = 0.15m; // 15% revenue share as per Task 381
-        
+
         var platformRevenue = totalAdSpend * platformShare;
         var partnerPayouts = totalAdSpend * (1 - platformShare);
 

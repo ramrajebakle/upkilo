@@ -224,7 +224,7 @@ public class ClientPhotosController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var photos = await _context.Set<ClientPhoto>()
-            .Where(p => p.ClientId == clientId && 
+            .Where(p => p.ClientId == clientId &&
                         p.TenantId == tenantId &&
                         (p.Type == PhotoType.Before || p.Type == PhotoType.After))
             .OrderBy(p => p.TakenAt ?? p.CreatedAt)

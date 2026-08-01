@@ -201,7 +201,7 @@ public class NotificationService : INotificationService
 
             // Notify all admins of the tenant
             await _hubContext.Clients.Group($"tenant_{tenantId}").SystemEscalation(notification);
-            
+
             // --- PERSIST TO DATABASE ---
             var dbEscalation = new Upkilo.Core.Entities.AIEscalation
             {
@@ -216,15 +216,15 @@ public class NotificationService : INotificationService
             };
             _context.Set<Upkilo.Core.Entities.AIEscalation>().Add(dbEscalation);
             await _context.SaveChangesAsync();
-            
+
             _logger.LogWarning("System escalation triggered and persisted for tenant {TenantId}: {Reason} ({Module}, Severity: {Severity})",
                 tenantId, reason, module, severity);
-            
+
             // Also send email & SMS for High/Critical severity
             if (severity == "High" || severity == "Critical")
             {
                 var admins = await _context.Set<Upkilo.Core.Entities.User>()
-                    .Where(u => u.TenantId == tenantId && 
+                    .Where(u => u.TenantId == tenantId &&
                                (u.Role == Upkilo.Core.Entities.UserRole.Admin || u.Role == Upkilo.Core.Entities.UserRole.Owner) &&
                                u.IsActive)
                     .ToListAsync();
@@ -233,7 +233,7 @@ public class NotificationService : INotificationService
                 {
                     // 1. Send Email
                     string emailSubject = $"[URGENT] System Escalation: {module} - {severity}";
-                    string billingCta = module == "Billing" 
+                    string billingCta = module == "Billing"
                         ? "<div style='margin-top: 20px;'><a href='https://app.upkilo.com/settings/billing' style='background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;'>Resolve in Billing Dashboard</a></div>"
                         : "";
 
@@ -248,7 +248,7 @@ public class NotificationService : INotificationService
                             <p style='color: #64748b;'>Please review this event immediately. High-severity alerts require manual intervention to prevent service disruption.</p>
                             {billingCta}
                         </div>";
-                    
+
                     await SendEmailAsync(admin.Email, emailSubject, emailBody);
 
                     // 2. Send SMS if phone exists
@@ -258,7 +258,7 @@ public class NotificationService : INotificationService
                         string smsMessage = module == "Billing"
                             ? $"[Upkilo URGENT] {module} Alert: {reason}. Top-up here: https://app.upkilo.com/settings/billing"
                             : $"[Upkilo URGENT] {module} Alert ({severity}): {reason}. Review required in-dashboard.";
-                            
+
                         await SendSmsAsync(tenantId, phone, smsMessage);
                     }
                 }
@@ -281,7 +281,7 @@ public class NotificationService : INotificationService
             .ToListAsync();
 
         var ageHours = (DateTime.UtcNow - escalation.CreatedAt).TotalHours;
-        var prefix   = ageHours >= 72 ? "[2nd REMINDER]" : "[REMINDER]";
+        var prefix = ageHours >= 72 ? "[2nd REMINDER]" : "[REMINDER]";
 
         foreach (var admin in admins)
         {

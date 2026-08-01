@@ -10,14 +10,14 @@ public interface ITwoFactorService
     Task<bool> VerifyBackupCodeAsync(Guid userId, string code);
     Task<bool> IsTwoFactorEnabledAsync(Guid userId);
     Task ResetTwoFactorAsync(Guid userId);
-    
+
     // Trusted device support (Task 18)
     Task<bool> IsDeviceTrustedAsync(Guid userId, string deviceToken);
     Task<string> TrustDeviceAsync(Guid userId, string userAgent);
-    
+
     // 2FA enforcement per role/tenant (Task 19)
     Task<bool> IsTwoFactorEnforcedAsync(Guid userId);
-    
+
     Task<bool> InitiateSmsCodeAsync(Guid userId);
     Task<bool> VerifySmsCodeAsync(Guid userId, string code);
     Task<bool> InitiateEmailCodeAsync(Guid userId);

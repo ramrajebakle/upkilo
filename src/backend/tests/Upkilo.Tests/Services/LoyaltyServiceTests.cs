@@ -30,9 +30,12 @@ public class LoyaltyServiceTests : IDisposable
         ctx.Tenants.Add(tenant);
         var client = new Client
         {
-            Id = Guid.NewGuid(), TenantId = tenant.Id,
-            FirstName = "Jane", LastName = "Doe",
-            LoyaltyPoints = initialPoints, LoyaltyTier = "Bronze"
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            FirstName = "Jane",
+            LastName = "Doe",
+            LoyaltyPoints = initialPoints,
+            LoyaltyTier = "Bronze"
         };
         ctx.Clients.Add(client);
         await ctx.SaveChangesAsync();

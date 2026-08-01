@@ -118,8 +118,11 @@ public class GiftCertificateServiceTests : IDisposable
         // Manually insert an expired certificate
         var expiredCert = new GiftCertificate
         {
-            Id = Guid.NewGuid(), TenantId = tenantId, Code = "UPK-EXPR-IRED",
-            InitialAmount = 50m, RemainingAmount = 50m,
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            Code = "UPK-EXPR-IRED",
+            InitialAmount = 50m,
+            RemainingAmount = 50m,
             Status = GiftCertificateStatus.Active,
             ExpiryDate = DateTime.UtcNow.AddDays(-1) // Already expired
         };

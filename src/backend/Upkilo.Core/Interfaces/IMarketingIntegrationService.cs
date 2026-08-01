@@ -10,7 +10,7 @@ public interface IMarketingIntegrationService
 {
     // Search Content Submission
     Task<bool> SubmitToIndexAsync(Guid tenantId, string pageUrl, string platform); // Google, Bing
-    
+
     // Search Performance Data
     Task<SearchAnalyticsResult> GetSearchPerformanceAsync(Guid tenantId, DateTime startDate, DateTime endDate);
 

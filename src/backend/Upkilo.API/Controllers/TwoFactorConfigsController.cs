@@ -26,7 +26,7 @@ public class TwoFactorConfigsController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         var tenant = await _context.Tenants.FindAsync(tenantId);
-        
+
         if (tenant == null) return NotFound();
 
         return Ok(new
@@ -41,11 +41,11 @@ public class TwoFactorConfigsController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         var tenant = await _context.Tenants.FindAsync(tenantId);
-        
+
         if (tenant == null) return NotFound();
 
         tenant.EnforceTwoFactorForStaff = request.EnforceTwoFactorForStaff;
-        
+
         // Example check: Assuming we add EnforceTwoFactorForClients to the DB schema if it's not there.
         // For now, updating what is statically available in typical multi-tenant setups.
 

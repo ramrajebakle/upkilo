@@ -418,7 +418,7 @@ public class LoyaltyController : ControllerBase
 
         var balance = await _context.LoyaltyBalances
             .FirstOrDefaultAsync(x => x.Id == id && x.TenantId == tenantId);
-        
+
         if (balance == null) return NotFound();
 
         balance.StampCount += 1;
@@ -451,7 +451,7 @@ public class LoyaltyController : ControllerBase
         var balance = await _context.LoyaltyBalances
             .Include(lb => lb.Client)
             .FirstOrDefaultAsync(x => x.Id == id && x.TenantId == tenantId);
-            
+
         if (balance == null) return NotFound();
 
         var program = await _context.LoyaltyPrograms

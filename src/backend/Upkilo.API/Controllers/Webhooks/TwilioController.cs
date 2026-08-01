@@ -49,8 +49,10 @@ public class TwilioController : ControllerBase
             var requestUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}";
             var parameters = new Dictionary<string, string>
             {
-                ["From"] = From ?? "", ["Body"] = Body ?? "",
-                ["To"] = To ?? "", ["MessageSid"] = MessageSid ?? ""
+                ["From"] = From ?? "",
+                ["Body"] = Body ?? "",
+                ["To"] = To ?? "",
+                ["MessageSid"] = MessageSid ?? ""
             };
             var signature = Request.Headers["X-Twilio-Signature"].ToString();
             if (!validator.Validate(requestUrl, parameters, signature))
@@ -67,7 +69,7 @@ public class TwilioController : ControllerBase
         {
             var isWhatsApp = From.StartsWith("whatsapp:");
             var normalizedPhone = From.Replace("whatsapp:", "").Replace("+", "");
-            
+
             var client = await _context.Clients
                 .Where(c => c.Phone == normalizedPhone || c.Phone == "+" + normalizedPhone)
                 .FirstOrDefaultAsync();

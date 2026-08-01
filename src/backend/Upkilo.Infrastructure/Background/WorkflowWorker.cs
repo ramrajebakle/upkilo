@@ -18,8 +18,8 @@ namespace Upkilo.Infrastructure.Background
         private readonly ILogger<WorkflowWorker> _logger;
 
         public WorkflowWorker(
-            EventService eventService, 
-            IServiceScopeFactory scopeFactory, 
+            EventService eventService,
+            IServiceScopeFactory scopeFactory,
             ILogger<WorkflowWorker> logger)
         {
             _eventService = eventService;
@@ -39,7 +39,7 @@ namespace Upkilo.Infrastructure.Background
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing event {EventName} for tenant {TenantId}", 
+                    _logger.LogError(ex, "Error processing event {EventName} for tenant {TenantId}",
                         evt.EventName, evt.TenantId);
                 }
             }
@@ -57,14 +57,14 @@ namespace Upkilo.Infrastructure.Background
 
             // 2. Find workflows triggered by this event
             var workflows = await context.Workflows
-                .Where(w => w.TenantId == evt.TenantId && 
-                            w.IsActive && 
+                .Where(w => w.TenantId == evt.TenantId &&
+                            w.IsActive &&
                             w.TriggerType == evt.EventName)
                 .ToListAsync();
 
             if (!workflows.Any())
             {
-                _logger.LogDebug("No matching workflows for event {EventName} and tenant {TenantId}", 
+                _logger.LogDebug("No matching workflows for event {EventName} and tenant {TenantId}",
                     evt.EventName, evt.TenantId);
                 return;
             }
@@ -82,15 +82,15 @@ namespace Upkilo.Infrastructure.Background
                 {
                     // 3. Evaluate TriggerConfig Conditions
                     bool shouldTrigger = EvaluateTriggerConfig(workflow.TriggerConfig, evtDataElement);
-                    if (!shouldTrigger) 
+                    if (!shouldTrigger)
                     {
                         _logger.LogInformation("Workflow {WorkflowId} trigger conditions not met for event {EventName}", workflow.Id, evt.EventName);
                         continue;
                     }
 
-                    _logger.LogInformation("Executing Workflow: {WorkflowName} ({WorkflowId}) for event {EventName}", 
+                    _logger.LogInformation("Executing Workflow: {WorkflowName} ({WorkflowId}) for event {EventName}",
                         workflow.Name, workflow.Id, evt.EventName);
-                    
+
                     await workflowService.ExecuteWorkflowAsync(workflow, evt);
                 }
                 catch (Exception ex)
@@ -105,7 +105,7 @@ namespace Upkilo.Infrastructure.Background
             if (string.IsNullOrWhiteSpace(triggerConfigJson) || triggerConfigJson == "{}")
                 return true;
 
-            try 
+            try
             {
                 var config = JsonSerializer.Deserialize<TriggerConfig>(triggerConfigJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (config == null || config.Filters == null || !config.Filters.Any())
@@ -135,19 +135,19 @@ namespace Upkilo.Infrastructure.Background
 
         private bool EvaluateFilter(TriggerFilter filter, JsonElement evtData)
         {
-             if (string.IsNullOrEmpty(filter.Field) || !evtData.TryGetProperty(filter.Field, out var element))
+            if (string.IsNullOrEmpty(filter.Field) || !evtData.TryGetProperty(filter.Field, out var element))
                 return false;
 
-             var elementValue = element.ToString()?.ToLower() ?? "";
-             var compareValue = filter.Value?.ToString()?.ToLower() ?? "";
+            var elementValue = element.ToString()?.ToLower() ?? "";
+            var compareValue = filter.Value?.ToString()?.ToLower() ?? "";
 
-             return filter.Operator.ToLower() switch
-             {
-                 "equals" => elementValue == compareValue,
-                 "notequals" => elementValue != compareValue,
-                 "contains" => elementValue.Contains(compareValue),
-                 _ => false // Unsupported operator
-             };
+            return filter.Operator.ToLower() switch
+            {
+                "equals" => elementValue == compareValue,
+                "notequals" => elementValue != compareValue,
+                "contains" => elementValue.Contains(compareValue),
+                _ => false // Unsupported operator
+            };
         }
     }
 }

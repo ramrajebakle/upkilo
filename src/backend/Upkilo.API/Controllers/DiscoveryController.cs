@@ -299,8 +299,16 @@ public class DiscoveryController : ControllerBase
             .Take(20)
             .Select(t => new
             {
-                t.Id, t.Name, t.Slug, t.Tagline, t.City,
-                t.Industry, t.BusinessType, t.AverageRating, t.ReviewCount, t.LogoUrl,
+                t.Id,
+                t.Name,
+                t.Slug,
+                t.Tagline,
+                t.City,
+                t.Industry,
+                t.BusinessType,
+                t.AverageRating,
+                t.ReviewCount,
+                t.LogoUrl,
                 t.Settings,
                 bookingUrl = $"/book/{t.Slug}",
                 isVerified = t.Settings.ContainsKey("verifiedBadge")
@@ -315,8 +323,14 @@ public class DiscoveryController : ControllerBase
                 category = g.Key,
                 businesses = g.Take(3).Select(b => new
                 {
-                    b.Name, b.Slug, b.Tagline, b.AverageRating, b.ReviewCount,
-                    b.LogoUrl, b.bookingUrl, b.isVerified
+                    b.Name,
+                    b.Slug,
+                    b.Tagline,
+                    b.AverageRating,
+                    b.ReviewCount,
+                    b.LogoUrl,
+                    b.bookingUrl,
+                    b.isVerified
                 })
             })
             .ToList();
@@ -399,8 +413,8 @@ public class DiscoveryController : ControllerBase
         {
             >= 500 => "Gold",
             >= 200 => "Silver",
-            >= 50  => "Bronze",
-            _      => "Starter"
+            >= 50 => "Bronze",
+            _ => "Starter"
         };
 
         return Ok(new
@@ -413,8 +427,8 @@ public class DiscoveryController : ControllerBase
             {
                 >= 500 => null as int?,
                 >= 200 => 500 - totalPoints,
-                >= 50  => 200 - totalPoints,
-                _      => 50 - totalPoints
+                >= 50 => 200 - totalPoints,
+                _ => 50 - totalPoints
             },
             recentVisits = bookings.Take(10),
             perks = tier switch

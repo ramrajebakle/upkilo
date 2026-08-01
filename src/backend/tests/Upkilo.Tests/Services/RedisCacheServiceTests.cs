@@ -117,7 +117,7 @@ public class RedisCacheServiceTests
     {
         var key = "test-lock";
         var lockKey = $"lock:{key}";
-        
+
         // Set up both overloads; v2.7.10 may route through either depending on whether
         // the 4-param default interface method delegates internally to the 6-param version
         _dbMock.Setup(db => db.StringSetAsync(

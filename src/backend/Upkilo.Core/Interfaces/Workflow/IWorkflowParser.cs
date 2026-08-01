@@ -9,7 +9,7 @@ public interface IWorkflowParser
     /// Parses a JSON configuration string representing workflow steps into actionable objects.
     /// </summary>
     List<IWorkflowStepConfig> ParseSteps(string jsonConfig);
-    
+
     /// <summary>
     /// Validates the workflow configuration to ensure correct parameters and logical flow.
     /// </summary>

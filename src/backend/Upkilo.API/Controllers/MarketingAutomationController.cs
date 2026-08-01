@@ -48,10 +48,12 @@ public class MarketingAutomationController : ControllerBase
         {
             var dashboard = await _marketingService.GetDashboardAsync(GetTenantId());
             var config = await _context.MarketingConfigs.FirstOrDefaultAsync(c => c.TenantId == GetTenantId());
-            
-            return Ok(new { 
-                dashboard, 
-                config = config == null ? null : new {
+
+            return Ok(new
+            {
+                dashboard,
+                config = config == null ? null : new
+                {
                     config.IsOnboarded,
                     config.IsAutonomousMode,
                     config.PrimaryGoal,
@@ -109,9 +111,9 @@ public class MarketingAutomationController : ControllerBase
     public async Task<IActionResult> Onboard([FromBody] OnboardRequest request)
     {
         var config = await _marketingService.OnboardAsync(
-            GetTenantId(), 
-            request.BusinessUrl, 
-            request.PrimaryGoal, 
+            GetTenantId(),
+            request.BusinessUrl,
+            request.PrimaryGoal,
             request.TargetRegions
         );
         return Ok(config);

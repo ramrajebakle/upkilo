@@ -20,7 +20,7 @@ public class ApiKeyScopeService : IApiKeyScopeService
     public async Task<bool> ValidateScopeAsync(string plainApiKey, string requiredScope)
     {
         var hashedKey = HashApiKey(plainApiKey);
-        
+
         var key = await _context.Set<ApiKey>()
             .FirstOrDefaultAsync(k => k.KeyHash == hashedKey && k.IsActive);
 
@@ -34,9 +34,9 @@ public class ApiKeyScopeService : IApiKeyScopeService
 
         // Scope check logic: typical format "read:bookings", "write:clients" or "*"
         if (key.Scopes == null || key.Scopes.Count == 0) return false;
-        
+
         if (key.Scopes.Contains("*")) return true;
-        
+
         return key.Scopes.Any(s => s.Equals(requiredScope, StringComparison.OrdinalIgnoreCase));
     }
 

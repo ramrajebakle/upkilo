@@ -10,16 +10,16 @@ public interface IWebhookService
     Task<Webhook?> GetEndpointAsync(Guid id);
     Task<bool> DeleteEndpointAsync(Guid id, Guid tenantId);
     Task<bool> UpdateEndpointAsync(Guid id, Guid tenantId, string? name, string? url, string[]? events, bool? isActive);
-    
+
     // Event dispatch
     Task DispatchEventAsync(Guid tenantId, string eventType, object payload);
     Task<WebhookDelivery> SendTestEventAsync(Guid endpointId, Guid tenantId);
-    
+
     // Delivery logs
     Task<IEnumerable<WebhookDelivery>> GetDeliveriesAsync(Guid tenantId, Guid? endpointId = null, int limit = 50);
     Task<bool> ResendDeliveryAsync(Guid deliveryId, Guid tenantId);
     Task<bool> ClearDeliveriesAsync(Guid endpointId, Guid tenantId);
-    
+
     // Background processing
     Task ProcessPendingDeliveriesAsync();
 
@@ -41,7 +41,7 @@ public static class WebhookEvents
     public const string StaffCreated = "staff.created";
     public const string ServiceCreated = "service.created";
     public const string AppointmentReminder = "appointment.reminder";
-    
+
     public static readonly string[] All = new[]
     {
         BookingCreated, BookingUpdated, BookingCancelled, BookingCompleted,

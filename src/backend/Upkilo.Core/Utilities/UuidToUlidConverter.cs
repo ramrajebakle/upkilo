@@ -14,22 +14,22 @@ public static class UuidToUlidConverter
     public static string ToUlid(Guid guid)
     {
         var bytes = guid.ToByteArray();
-        
+
         // ULID is 128 bits, same as GUID.
         // We just need to encode it in Base32.
         var result = new char[26];
-        
+
         // This is a simplified encoding for migration purposes.
         // Real ULID has a specific bit layout (48-bit timestamp, 80-bit randomness).
         // Since we're converting an existing GUID, we lose the timestamp-sortability 
         // for OLD records, but we maintain the data integrity.
-        
+
         for (int i = 0; i < 26; i++)
         {
             // Simplified bit shifting for Base32
             int byteIndex = (i * 5) / 8;
             int bitOffset = (i * 5) % 8;
-            
+
             if (byteIndex < 16)
             {
                 int val = bytes[byteIndex] >> bitOffset;
@@ -44,7 +44,7 @@ public static class UuidToUlidConverter
                 result[i] = '0';
             }
         }
-        
+
         return new string(result);
     }
 }

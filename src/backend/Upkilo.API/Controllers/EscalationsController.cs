@@ -27,7 +27,7 @@ public class EscalationsController : ControllerBase
         _logger = logger;
     }
 
-    private Guid GetTenantId() => _tenantProvider.GetTenantId() 
+    private Guid GetTenantId() => _tenantProvider.GetTenantId()
         ?? throw new UnauthorizedAccessException("Tenant context not available");
 
     /// <summary>
@@ -76,7 +76,7 @@ public class EscalationsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Escalation {Id} ({Module}) resolved as {Action} by user {UserId}", 
+        _logger.LogInformation("Escalation {Id} ({Module}) resolved as {Action} by user {UserId}",
             id, escalation.Module, escalation.ActionTaken, escalation.ResolvedBy);
 
         return Ok(new { message = "Escalation resolved", item = escalation });
@@ -91,10 +91,11 @@ public class EscalationsController : ControllerBase
         var stats = await _context.Set<AIEscalation>()
             .Where(e => e.TenantId == GetTenantId())
             .GroupBy(e => new { e.Module, e.IsResolved })
-            .Select(g => new { 
-                Module = g.Key.Module, 
-                IsResolved = g.Key.IsResolved, 
-                Count = g.Count() 
+            .Select(g => new
+            {
+                Module = g.Key.Module,
+                IsResolved = g.Key.IsResolved,
+                Count = g.Count()
             })
             .ToListAsync();
 

@@ -14,7 +14,7 @@ public class CreateBookingRequestValidator : AbstractValidator<CreateBookingRequ
         RuleFor(x => x.EndTime).NotEmpty().GreaterThan(x => x.StartTime)
             .WithMessage("End time must be after start time.");
         RuleFor(x => x.GroupSize).GreaterThan(0).LessThanOrEqualTo(100);
-        
+
         RuleFor(x => x.ClientEmail).EmailAddress().When(x => !string.IsNullOrEmpty(x.ClientEmail));
         RuleFor(x => x.ClientId).NotEmpty().When(x => string.IsNullOrEmpty(x.ClientEmail))
             .WithMessage("Either ClientId or ClientEmail must be provided.");

@@ -58,7 +58,7 @@ public class LoyaltyPointsJob
                     continue;
 
                 var points = await _loyaltyService.CalculatePointsAsync(booking.Price!.Value);
-                
+
                 if (points > 0)
                 {
                     var reason = $"Booking: {booking.Service?.Name ?? "Service"} on {booking.StartTime:yyyy-MM-dd}";
@@ -67,7 +67,7 @@ public class LoyaltyPointsJob
                     // Mark as processed
                     booking.Metadata["loyalty_points_awarded"] = points;
                     booking.Metadata["loyalty_points_awarded_at"] = DateTime.UtcNow.ToString("o");
-                    
+
                     processed++;
                     _logger.LogInformation("Awarded {Points} points to client {ClientId} for booking {BookingId}",
                         points, booking.ClientId, booking.Id);

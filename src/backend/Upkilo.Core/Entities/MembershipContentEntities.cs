@@ -13,9 +13,9 @@ public class MembershipContent : TenantEntity
     public string? ThumbnailUrl { get; set; }
     public ContentType Type { get; set; } = ContentType.Course;
     public bool IsPublished { get; set; }
-    
+
     // JSON array of Guid strings (MembershipPlan IDs) that grant access to this content
-    public string RequiredPlanIds { get; set; } = "[]"; 
+    public string RequiredPlanIds { get; set; } = "[]";
 
     public virtual ICollection<MembershipModule> Modules { get; set; } = new List<MembershipModule>();
 }
@@ -29,9 +29,9 @@ public class MembershipModule : TenantEntity
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
     public int SortOrder { get; set; }
-    
+
     // Drip content functionality: unlock module X days after enrollment
-    public int DripDaysDelay { get; set; } 
+    public int DripDaysDelay { get; set; }
 
     public virtual MembershipContent? Content { get; set; }
     public virtual ICollection<MembershipLesson> Lessons { get; set; } = new List<MembershipLesson>();
@@ -60,13 +60,13 @@ public class ClientContentProgress : TenantEntity
 {
     public Guid ClientId { get; set; }
     public Guid MembershipLessonId { get; set; }
-    
+
     // When the user started the lesson
     public DateTime StartedAt { get; set; }
-    
+
     // Last position (e.g., video timestamp in seconds)
     public int LastPositionSeconds { get; set; }
-    
+
     public bool IsCompleted { get; set; }
     public DateTime? CompletedAt { get; set; }
 

@@ -35,7 +35,7 @@ public class DataExportsController : ControllerBase
             .Where(e => e.TenantId == tenantId)
             .OrderByDescending(e => e.RequestedAt)
             .ToListAsync();
-            
+
         return Ok(exports);
     }
 
@@ -49,7 +49,7 @@ public class DataExportsController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         var export = new DataExport
         {
             TenantId = tenantId.Value,
@@ -74,10 +74,11 @@ public class DataExportsController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         var export = await _context.DataExports.FirstOrDefaultAsync(e => e.Id == id && e.TenantId == tenantId);
-        
+
         if (export == null) return NotFound();
 
-        return Ok(new {
+        return Ok(new
+        {
             export.Id,
             export.Status,
             export.TargetEntity,
@@ -93,9 +94,9 @@ public class DataExportsController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         var export = await _context.DataExports.FirstOrDefaultAsync(e => e.Id == id && e.TenantId == tenantId);
-        
+
         if (export == null) return NotFound();
-        if (export.Status != "Completed" || string.IsNullOrEmpty(export.FileUrl)) 
+        if (export.Status != "Completed" || string.IsNullOrEmpty(export.FileUrl))
             return BadRequest(new { message = "Export is not ready for download." });
 
         // F-06: canonicalize and confirm the resolved path stays within wwwroot — defense in

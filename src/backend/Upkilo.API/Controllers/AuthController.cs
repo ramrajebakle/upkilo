@@ -81,11 +81,11 @@ public class AuthController : ControllerBase
 
         if (result.TwoFactorRequired)
         {
-            return Ok(new 
-            { 
-                twoFactorRequired = true, 
+            return Ok(new
+            {
+                twoFactorRequired = true,
                 email = request.Email,
-                message = "Two-factor authentication is required" 
+                message = "Two-factor authentication is required"
             });
         }
 
@@ -175,7 +175,7 @@ public class AuthController : ControllerBase
 
         // Get full user profile via interface
         var user = await _authService.GetCurrentUserAsync(userId);
-        
+
         if (user == null)
             return NotFound();
 
@@ -196,18 +196,18 @@ public class AuthController : ControllerBase
         Response.Cookies.Delete("token", new CookieOptions
         {
             HttpOnly = true,
-            Secure   = true,
+            Secure = true,
             SameSite = SameSiteMode.Strict,
-            Path     = "/",
-            Domain   = IsDevelopment() ? null : ".upkilo.com"
+            Path = "/",
+            Domain = IsDevelopment() ? null : ".upkilo.com"
         });
         Response.Cookies.Delete("refresh_token", new CookieOptions
         {
             HttpOnly = true,
-            Secure   = true,
+            Secure = true,
             SameSite = SameSiteMode.Strict,
-            Path     = "/api/v1/auth/refresh",
-            Domain   = IsDevelopment() ? null : ".upkilo.com"
+            Path = "/api/v1/auth/refresh",
+            Domain = IsDevelopment() ? null : ".upkilo.com"
         });
         await _authService.RevokeTokenAsync(request.RefreshToken);
         return Ok(new { message = "Logged out successfully" });
@@ -257,7 +257,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Email is required" });
 
         await _authService.InitiatePasswordResetAsync(request.Email);
-        
+
         // Always return success to prevent email enumeration
         return Ok(new { message = "If an account exists with this email, you will receive a password reset link." });
     }
@@ -274,7 +274,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Token and new password are required" });
 
         var result = await _authService.ResetPasswordAsync(request.Token, request.NewPassword, request.TenantId);
-        
+
         if (!result.Success)
             return BadRequest(new { message = result.Message });
 
@@ -296,7 +296,7 @@ public class AuthController : ControllerBase
         _logger.LogDebug("Verification attempt received for token: {TokenPrefix}", request.Token[..Math.Min(5, request.Token.Length)] + "...");
 
         var result = await _authService.VerifyEmailAsync(request.Token, request.TenantId);
-        
+
         if (!result.Success)
         {
             _logger.LogWarning("Verification failed for token {Token}: {Message}", request.Token.Substring(0, Math.Min(5, request.Token.Length)) + "...", result.Message);
@@ -319,7 +319,7 @@ public class AuthController : ControllerBase
             return Unauthorized();
 
         await _authService.SendEmailVerificationAsync(userId);
-        
+
         return Ok(new { message = "Verification email has been sent." });
     }
 
@@ -335,7 +335,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Email is required" });
 
         var result = await _authService.SendTwoFactorSmsAsync(request.Email);
-        
+
         if (!result.Success)
             return BadRequest(new { message = result.Message });
 
@@ -354,7 +354,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Email is required" });
 
         var result = await _authService.SendTwoFactorEmailAsync(request.Email);
-        
+
         if (!result.Success)
             return BadRequest(new { message = result.Message });
 
@@ -371,7 +371,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Email and verification data are required" });
 
         var result = await _authService.SubmitTwoFactorRecoveryRequestAsync(request.Email, request.IdentityVerificationData);
-        
+
         if (!result.Success)
             return BadRequest(new { message = result.Message });
 
@@ -531,11 +531,11 @@ public class AuthController : ControllerBase
 
         Response.Cookies.Append("token", token, new CookieOptions
         {
-            HttpOnly  = true,
-            Secure    = true,                    // HTTPS only — never sent over plain HTTP
-            SameSite  = SameSiteMode.Strict,     // blocks CSRF
-            Expires   = DateTimeOffset.UtcNow.AddMinutes(expirationMinutes),
-            Path      = "/",
+            HttpOnly = true,
+            Secure = true,                    // HTTPS only — never sent over plain HTTP
+            SameSite = SameSiteMode.Strict,     // blocks CSRF
+            Expires = DateTimeOffset.UtcNow.AddMinutes(expirationMinutes),
+            Path = "/",
             // Scope cookie to root domain in production so api.upkilo.com can also
             // read the cookie set by app.upkilo.com (e.g. during SSR proxy requests).
             // SECURITY (F-05): this shares the session cookie across ALL *.upkilo.com
@@ -543,7 +543,7 @@ public class AuthController : ControllerBase
             // cross-tenant 403. INVARIANT: tenant-authored HTML/JS must NEVER be served from a
             // *.upkilo.com origin — host tenant sites on a separate sandbox domain so this
             // cookie is never exposed to attacker-controlled script.
-            Domain    = IsDevelopment() ? null : ".upkilo.com"
+            Domain = IsDevelopment() ? null : ".upkilo.com"
         });
     }
 
@@ -556,12 +556,12 @@ public class AuthController : ControllerBase
     {
         Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions
         {
-            HttpOnly  = true,
-            Secure    = true,
-            SameSite  = SameSiteMode.Strict,
-            Expires   = DateTimeOffset.UtcNow.AddDays(30),
-            Path      = "/api/v1/auth/refresh",
-            Domain    = IsDevelopment() ? null : ".upkilo.com"
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddDays(30),
+            Path = "/api/v1/auth/refresh",
+            Domain = IsDevelopment() ? null : ".upkilo.com"
         });
     }
 

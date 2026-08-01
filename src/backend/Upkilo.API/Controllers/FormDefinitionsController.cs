@@ -30,7 +30,7 @@ public class FormDefinitionsController : ControllerBase
             .Include(f => f.Fields)
             .OrderByDescending(f => f.CreatedAt)
             .ToListAsync();
-            
+
         return Ok(forms);
     }
 
@@ -40,7 +40,7 @@ public class FormDefinitionsController : ControllerBase
         var form = await _context.FormDefinitions
             .Include(f => f.Fields)
             .FirstOrDefaultAsync(f => f.Id == id);
-            
+
         if (form == null) return NotFound();
         return Ok(form);
     }
@@ -74,7 +74,7 @@ public class FormDefinitionsController : ControllerBase
 
         _context.FormDefinitions.Add(form);
         await _context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(GetForm), new { id = form.Id }, form);
     }
 

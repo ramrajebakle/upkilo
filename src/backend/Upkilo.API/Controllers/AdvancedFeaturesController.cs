@@ -26,7 +26,7 @@ public class AdvancedFeaturesController : ControllerBase
     public async Task<IActionResult> GetFeatures()
     {
         var tenantId = _tenantProvider.GetTenantId();
-        
+
         var features = await _context.AdvancedFeatures
             .FirstOrDefaultAsync(f => f.TenantId == tenantId);
 

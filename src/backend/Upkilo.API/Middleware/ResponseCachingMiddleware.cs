@@ -24,7 +24,7 @@ public class ResponseCachingMiddleware
         _next = next;
         _cache = cache;
         _logger = logger;
-        
+
         // Paths that benefit from short-lived caching (30s default)
         _cacheablePathPrefixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -46,7 +46,7 @@ public class ResponseCachingMiddleware
         }
 
         var path = context.Request.Path.Value ?? "";
-        
+
         // Check if this path should be cached
         if (!_cacheablePathPrefixes.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
         {

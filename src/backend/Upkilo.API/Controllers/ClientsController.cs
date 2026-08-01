@@ -156,18 +156,18 @@ public class ClientsController : ControllerBase
             .OrderByDescending(c => c.CreatedAt)
             .Skip((page - 1) * limit)
             .Take(limit)
-            .Select(c => new 
-            { 
-                c.Id, 
-                c.FirstName, 
-                c.LastName, 
-                c.Email, 
-                c.Phone, 
-                c.CreatedAt, 
-                c.LastBookingAt, 
-                c.LifetimeValue, 
-                c.Tags, 
-                c.LoyaltyTier 
+            .Select(c => new
+            {
+                c.Id,
+                c.FirstName,
+                c.LastName,
+                c.Email,
+                c.Phone,
+                c.CreatedAt,
+                c.LastBookingAt,
+                c.LifetimeValue,
+                c.Tags,
+                c.LoyaltyTier
             })
             .ToListAsync();
 
@@ -213,7 +213,7 @@ public class ClientsController : ControllerBase
             // For now assuming PostgreSQL array operations or client-side eval if dataset is small (but we want server-side)
             // Ideally: query.Where(c => c.Tags.Any(t => request.Tags.Contains(t))); 
             // Better for PostgreSQL text[]: 
-            foreach(var tag in request.Tags)
+            foreach (var tag in request.Tags)
             {
                 query = query.Where(c => c.Tags.Contains(tag));
             }
@@ -229,18 +229,18 @@ public class ClientsController : ControllerBase
         var clients = await query
             .OrderByDescending(c => c.LifetimeValue)
             .Take(100) // Safety limit
-            .Select(c => new 
-            { 
-                c.Id, 
-                c.FirstName, 
-                c.LastName, 
-                c.Email, 
-                c.Phone, 
-                c.CreatedAt, 
-                c.LastBookingAt, 
-                c.LifetimeValue, 
-                c.Tags, 
-                c.LoyaltyTier 
+            .Select(c => new
+            {
+                c.Id,
+                c.FirstName,
+                c.LastName,
+                c.Email,
+                c.Phone,
+                c.CreatedAt,
+                c.LastBookingAt,
+                c.LifetimeValue,
+                c.Tags,
+                c.LoyaltyTier
             })
             .ToListAsync();
 
@@ -258,17 +258,17 @@ public class ClientsController : ControllerBase
 
         var client = await _context.Clients
             .Where(x => x.Id == id && x.TenantId == tenantId)
-            .Select(c => new 
-            { 
-                c.Id, 
-                c.FirstName, 
-                c.LastName, 
-                c.Email, 
-                c.Phone, 
-                c.CreatedAt, 
-                c.LastBookingAt, 
-                c.LifetimeValue, 
-                c.Tags, 
+            .Select(c => new
+            {
+                c.Id,
+                c.FirstName,
+                c.LastName,
+                c.Email,
+                c.Phone,
+                c.CreatedAt,
+                c.LastBookingAt,
+                c.LifetimeValue,
+                c.Tags,
                 c.LoyaltyTier,
                 c.Notes
             })
@@ -300,7 +300,7 @@ public class ClientsController : ControllerBase
 
         _context.Clients.Add(client);
         await _context.SaveChangesAsync();
-        
+
         _logger.LogInformation("Client created: {ClientId}", client.Id);
 
         // Publish Event for Workflow Engine
@@ -327,7 +327,7 @@ public class ClientsController : ControllerBase
         if (request.Phone != null) client.Phone = request.Phone;
 
         await _context.SaveChangesAsync();
-        
+
         await _eventService.PublishAsync("client.updated", client, _tenantProvider.GetTenantId() ?? Guid.Empty);
 
         _logger.LogInformation("Client updated: {ClientId}", id);
@@ -348,7 +348,7 @@ public class ClientsController : ControllerBase
         client.IsDeleted = true;
         client.DeletedAt = DateTime.UtcNow;
         client.DeletedBy = User.FindFirst("id")?.Value;
-        
+
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Client soft-deleted: {ClientId}", id);
@@ -368,7 +368,7 @@ public class ClientsController : ControllerBase
         client.IsDeleted = false;
         client.DeletedAt = null;
         client.DeletedBy = null;
-        
+
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Client restored: {ClientId}", id);
@@ -391,8 +391,8 @@ public class ClientsController : ControllerBase
         if (!string.IsNullOrWhiteSpace(request.Query))
         {
             var s = request.Query.ToLower();
-            query = query.Where(c => (c.FirstName + " " + c.LastName).ToLower().Contains(s) 
-                                     || (c.Email != null && c.Email.ToLower().Contains(s)) 
+            query = query.Where(c => (c.FirstName + " " + c.LastName).ToLower().Contains(s)
+                                     || (c.Email != null && c.Email.ToLower().Contains(s))
                                      || (c.Phone != null && c.Phone.Contains(s)));
         }
 
@@ -447,7 +447,7 @@ public class ClientsController : ControllerBase
             .Where(c => c.TenantId == tenantId && request.ClientIds.Contains(c.Id) && !c.IsDeleted)
             .ToListAsync();
 
-        foreach(var client in clientsToDelete)
+        foreach (var client in clientsToDelete)
         {
             client.IsDeleted = true;
             client.DeletedAt = DateTime.UtcNow;
@@ -492,7 +492,7 @@ public class ClientsController : ControllerBase
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
                 var values = line.Split(',');
-                
+
                 try
                 {
                     // Expecting: FirstName, LastName, Email, Phone
@@ -613,9 +613,9 @@ public class ClientsController : ControllerBase
         if (client == null) return NotFound();
 
         var history = await _loyaltyService.GetHistoryAsync(id);
-        
-        return Ok(new 
-        { 
+
+        return Ok(new
+        {
             points = client.LoyaltyPoints,
             tier = client.LoyaltyTier,
             history

@@ -83,7 +83,7 @@ public class CustomFieldsControllerTests : ControllerTestBase
 
         // Assert
         result.Should().BeOfType<CreatedAtActionResult>();
-        
+
         var definition = await Context.CustomFieldDefinitions
             .FirstOrDefaultAsync(d => d.TenantId == TenantId && d.Label == "My New Field Label");
         definition.Should().NotBeNull();
@@ -120,7 +120,7 @@ public class CustomFieldsControllerTests : ControllerTestBase
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
-        
+
         var updated = await Context.CustomFieldDefinitions.FindAsync(def.Id);
         updated!.Label.Should().Be("New Label");
         updated.IsRequired.Should().BeTrue();
@@ -149,7 +149,7 @@ public class CustomFieldsControllerTests : ControllerTestBase
 
         // Assert
         result.Should().BeOfType<NoContentResult>();
-        
+
         var deleted = await Context.CustomFieldDefinitions.FindAsync(def.Id);
         deleted!.IsDeleted.Should().BeTrue();
     }

@@ -30,16 +30,16 @@ public class GlobalPaymentsController : ControllerBase
     // Supported regional payment methods by ISO 3166-1 alpha-2 country code
     private static readonly Dictionary<string, RegionalPaymentConfig> RegionalConfigs = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["IN"] = new("India",        new[] { "upi", "razorpay", "paytm" },                  "INR", "DPDP_2023", "en-IN"),
-        ["TH"] = new("Thailand",     new[] { "promptpay", "truemoney", "rabbit_linepay" },   "THB", "PDPA",      "th-TH"),
-        ["SG"] = new("Singapore",    new[] { "grabpay", "paynow", "nets" },                  "SGD", "PDPA",      "en-SG"),
-        ["ID"] = new("Indonesia",    new[] { "gopay", "ovo", "dana", "bca" },                "IDR", "UU_PDP",    "id-ID"),
-        ["SA"] = new("Saudi Arabia", new[] { "stcpay", "mada", "apple_pay" },               "SAR", "SAMA",      "ar-SA"),
-        ["AE"] = new("UAE",          new[] { "payfort", "tabby", "apple_pay" },              "AED", "CBUAE",     "ar-AE"),
-        ["EG"] = new("Egypt",        new[] { "fawry", "meeza", "vodafone_cash" },            "EGP", "NCBE",      "ar-EG"),
-        ["BR"] = new("Brazil",       new[] { "pix", "mercadopago", "boleto" },               "BRL", "LGPD",      "pt-BR"),
-        ["MX"] = new("Mexico",       new[] { "mercadopago", "oxxo", "spei" },                "MXN", "LFPDPPP",   "es-MX"),
-        ["JP"] = new("Japan",        new[] { "paypay", "konbini", "suica", "linepay" },      "JPY", "APPI",      "ja-JP"),
+        ["IN"] = new("India", new[] { "upi", "razorpay", "paytm" }, "INR", "DPDP_2023", "en-IN"),
+        ["TH"] = new("Thailand", new[] { "promptpay", "truemoney", "rabbit_linepay" }, "THB", "PDPA", "th-TH"),
+        ["SG"] = new("Singapore", new[] { "grabpay", "paynow", "nets" }, "SGD", "PDPA", "en-SG"),
+        ["ID"] = new("Indonesia", new[] { "gopay", "ovo", "dana", "bca" }, "IDR", "UU_PDP", "id-ID"),
+        ["SA"] = new("Saudi Arabia", new[] { "stcpay", "mada", "apple_pay" }, "SAR", "SAMA", "ar-SA"),
+        ["AE"] = new("UAE", new[] { "payfort", "tabby", "apple_pay" }, "AED", "CBUAE", "ar-AE"),
+        ["EG"] = new("Egypt", new[] { "fawry", "meeza", "vodafone_cash" }, "EGP", "NCBE", "ar-EG"),
+        ["BR"] = new("Brazil", new[] { "pix", "mercadopago", "boleto" }, "BRL", "LGPD", "pt-BR"),
+        ["MX"] = new("Mexico", new[] { "mercadopago", "oxxo", "spei" }, "MXN", "LFPDPPP", "es-MX"),
+        ["JP"] = new("Japan", new[] { "paypay", "konbini", "suica", "linepay" }, "JPY", "APPI", "ja-JP"),
     };
 
     public GlobalPaymentsController(AppDbContext context, ITenantProvider tenantProvider, ILogger<GlobalPaymentsController> logger)
@@ -187,19 +187,27 @@ public class GlobalPaymentsController : ControllerBase
 
     private static string GetRegionCode(string countryCode) => countryCode.ToUpper() switch
     {
-        "IN"                   => "1 (India)",
-        "TH" or "SG" or "ID"   => "2 (SEA)",
-        "SA" or "AE" or "EG"   => "3 (MENA)",
-        "BR" or "MX"           => "4 (LATAM)",
-        "JP"                   => "5 (Japan)",
-        _                      => "0 (Global)"
+        "IN" => "1 (India)",
+        "TH" or "SG" or "ID" => "2 (SEA)",
+        "SA" or "AE" or "EG" => "3 (MENA)",
+        "BR" or "MX" => "4 (LATAM)",
+        "JP" => "5 (Japan)",
+        _ => "0 (Global)"
     };
 
     private static string GetCurrencySymbol(string code) => code switch
     {
-        "INR" => "₹", "THB" => "฿", "SGD" => "S$", "IDR" => "Rp",
-        "SAR" => "﷼", "AED" => "د.إ", "EGP" => "E£", "BRL" => "R$",
-        "MXN" => "MX$", "JPY" => "¥", _ => "$"
+        "INR" => "₹",
+        "THB" => "฿",
+        "SGD" => "S$",
+        "IDR" => "Rp",
+        "SAR" => "﷼",
+        "AED" => "د.إ",
+        "EGP" => "E£",
+        "BRL" => "R$",
+        "MXN" => "MX$",
+        "JPY" => "¥",
+        _ => "$"
     };
 }
 

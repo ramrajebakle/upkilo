@@ -48,12 +48,12 @@ public static class ResilienceExtensions
     /// Add a resilient HttpClient using modern Polly v8 strategies
     /// </summary>
     public static IHttpClientBuilder AddResilientHttpClient(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         string name,
         Action<HttpClient>? configureClient = null)
     {
         var builder = services.AddHttpClient(name);
-        
+
         if (configureClient != null)
             builder.ConfigureHttpClient(configureClient);
 

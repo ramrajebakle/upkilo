@@ -72,7 +72,7 @@ public class TaxRatesController : ControllerBase
     public async Task<IActionResult> UpdateTaxRate(Guid id, [FromBody] TaxRate taxRate)
     {
         if (id != taxRate.Id) return BadRequest();
-        
+
         var tenantId = GetTenantId();
         var existing = await _taxService.GetTaxRateByIdAsync(tenantId, id);
         if (existing == null) return NotFound();
@@ -91,7 +91,7 @@ public class TaxRatesController : ControllerBase
         var tenantId = GetTenantId();
         var result = await _taxService.DeleteTaxRateAsync(tenantId, id);
         if (!result) return NotFound();
-        
+
         _logger.LogInformation("Tax rate deleted: {TaxRateId} for tenant {TenantId}", id, tenantId);
         return NoContent();
     }

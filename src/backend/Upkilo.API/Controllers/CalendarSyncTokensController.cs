@@ -27,16 +27,17 @@ public class CalendarSyncTokensController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         var staffMember = await _context.StaffMembers.FirstOrDefaultAsync(s => s.UserId.ToString() == userId);
         if (staffMember == null) return Unauthorized("Linked staff member not found.");
 
         var tokens = await _context.CalendarSyncTokens
             .Where(t => t.TenantId == tenantId && t.StaffId == staffMember.Id)
             .ToListAsync();
-            
+
         // Never return access/refresh tokens to the client directly, mask them
-        var masked = tokens.Select(t => new {
+        var masked = tokens.Select(t => new
+        {
             t.Id,
             t.Provider,
             t.ExternalAccountId,

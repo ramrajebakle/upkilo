@@ -25,8 +25,11 @@ public class ApiKeyUsageServiceTests : IDisposable
         ctx.Tenants.Add(new Tenant { Id = tenantId, Name = "T", Slug = "t" });
         var apiKey = new ApiKey
         {
-            Id = Guid.NewGuid(), TenantId = tenantId, Name = "TestKey",
-            KeyHash = "hash", Prefix = "sk_test"
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            Name = "TestKey",
+            KeyHash = "hash",
+            Prefix = "sk_test"
         };
         ctx.ApiKeys.Add(apiKey);
         await ctx.SaveChangesAsync();

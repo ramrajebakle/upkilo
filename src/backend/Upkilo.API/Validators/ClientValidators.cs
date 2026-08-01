@@ -13,7 +13,7 @@ public class CreateClientRequestValidator : AbstractValidator<CreateClientReques
         RuleFor(x => x.Phone).Matches(@"^\+?[1-9]\d{1,14}$")
             .WithMessage("Invalid phone number format.")
             .When(x => !string.IsNullOrEmpty(x.Phone));
-        
+
         RuleFor(x => x).Must(x => !string.IsNullOrEmpty(x.Email) || !string.IsNullOrEmpty(x.Phone))
             .WithMessage("Either Email or Phone must be provided.");
     }

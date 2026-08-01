@@ -22,12 +22,12 @@ namespace Upkilo.Infrastructure.Services
         public async Task SyncDataAsync()
         {
             _logger.LogInformation("Starting global analytics data synchronization...");
-            
+
             // In a real implementation, we would sync multiple tables
             await SyncIncrementalAsync("Bookings", DateTime.UtcNow.AddDays(-1));
             await SyncIncrementalAsync("Invoices", DateTime.UtcNow.AddDays(-1));
             await SyncIncrementalAsync("AuditLogs", DateTime.UtcNow.AddDays(-1));
-            
+
             _logger.LogInformation("Global analytics sync completed.");
         }
 
@@ -37,10 +37,10 @@ namespace Upkilo.Infrastructure.Services
 
             int count = tableName switch
             {
-                "Bookings"  => await _context.Bookings
+                "Bookings" => await _context.Bookings
                                    .Where(b => b.UpdatedAt >= lastSync)
                                    .CountAsync(),
-                "Invoices"  => await _context.Invoices
+                "Invoices" => await _context.Invoices
                                    .Where(i => i.UpdatedAt >= lastSync)
                                    .CountAsync(),
                 "AuditLogs" => await _context.AuditLogs

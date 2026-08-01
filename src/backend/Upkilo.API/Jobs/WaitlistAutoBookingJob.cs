@@ -60,9 +60,9 @@ public class WaitlistAutoBookingJob
             {
                 // 2. Check for availability on the preferred date
                 var availableSlots = await _schedulingService.GetAvailableSlotsAsync(
-                    entry.TenantId, 
-                    entry.ServiceId, 
-                    entry.StaffId, 
+                    entry.TenantId,
+                    entry.ServiceId,
+                    entry.StaffId,
                     entry.PreferredDate);
 
                 if (availableSlots.Any())

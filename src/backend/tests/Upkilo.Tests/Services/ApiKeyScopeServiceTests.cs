@@ -33,9 +33,14 @@ public class ApiKeyScopeServiceTests : IDisposable
         var plainKey = "sk_test_" + Guid.NewGuid().ToString("N");
         ctx.Set<ApiKey>().Add(new ApiKey
         {
-            Id = Guid.NewGuid(), TenantId = tenantId, Name = "Test",
-            KeyHash = HashKey(plainKey), Prefix = "sk_test",
-            IsActive = isActive, Scopes = scopes, ExpiresAt = expiresAt
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            Name = "Test",
+            KeyHash = HashKey(plainKey),
+            Prefix = "sk_test",
+            IsActive = isActive,
+            Scopes = scopes,
+            ExpiresAt = expiresAt
         });
         await ctx.SaveChangesAsync();
         return (new ApiKeyScopeService(ctx), plainKey);

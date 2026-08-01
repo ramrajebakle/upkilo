@@ -24,9 +24,9 @@ public class ApiDeprecationMiddleware
         {
             if (path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             {
-                context.Response.Headers["Deprecation"]    = "true";
-                context.Response.Headers["Sunset"]         = sunsetDate.ToUniversalTime().ToString("R");
-                context.Response.Headers["Cache-Control"]  = "no-store";
+                context.Response.Headers["Deprecation"] = "true";
+                context.Response.Headers["Sunset"] = sunsetDate.ToUniversalTime().ToString("R");
+                context.Response.Headers["Cache-Control"] = "no-store";
                 break;
             }
         }

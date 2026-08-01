@@ -15,7 +15,7 @@ public class CalendarSyncJob
     private readonly ILogger<CalendarSyncJob> _logger;
 
     public CalendarSyncJob(
-        AppDbContext context, 
+        AppDbContext context,
         IEnumerable<ICalendarService> calendarServices,
         ILogger<CalendarSyncJob> logger)
     {

@@ -144,7 +144,7 @@ public class MembershipService : IMembershipService
             // Set to end at current period
             sub.EndDate = sub.NextBillingDate;
             // We might need a "PendingCancellation" status or just use EndDate to handle it
-            sub.Status = MembershipStatus.Cancelled; 
+            sub.Status = MembershipStatus.Cancelled;
         }
 
         await _context.SaveChangesAsync();
@@ -180,7 +180,7 @@ public class MembershipService : IMembershipService
         if (sub == null || sub.Status != MembershipStatus.Active) return false;
 
         var plan = sub.MembershipPlan;
-        
+
         // If not unlimited (-1) and already at limit
         if (plan.ServicesIncluded != -1 && sub.ServicesUsedThisPeriod >= plan.ServicesIncluded)
         {

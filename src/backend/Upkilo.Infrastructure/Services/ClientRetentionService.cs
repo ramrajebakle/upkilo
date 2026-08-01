@@ -57,16 +57,16 @@ public class ClientRetentionService
             var riskScore = CalculateRiskScore(c, daysSince);
             return new AtRiskClient
             {
-                ClientId       = c.Id,
-                FullName       = c.FullName,
-                Email          = c.Email,
-                Phone          = c.Phone,
-                LifetimeValue  = c.LifetimeValue,
-                TotalBookings  = c.TotalBookings,
-                LastVisitAt    = c.LastVisitAt.Value,
+                ClientId = c.Id,
+                FullName = c.FullName,
+                Email = c.Email,
+                Phone = c.Phone,
+                LifetimeValue = c.LifetimeValue,
+                TotalBookings = c.TotalBookings,
+                LastVisitAt = c.LastVisitAt.Value,
                 DaysSinceLastVisit = daysSince,
-                RiskScore      = riskScore,
-                RiskLabel      = riskScore >= 80 ? "High" : riskScore >= 50 ? "Medium" : "Low"
+                RiskScore = riskScore,
+                RiskLabel = riskScore >= 80 ? "High" : riskScore >= 50 ? "Medium" : "Low"
             };
         }).ToList();
     }

@@ -38,7 +38,7 @@ public class SandboxService : ISandboxService
         };
 
         _context.Set<SandboxEnvironment>().Add(sandbox);
-        
+
         // 1. Find Template Tenant
         var templateTenant = await _context.Tenants
             .FirstOrDefaultAsync(t => t.Slug == "template") ?? await _context.Tenants.FirstOrDefaultAsync();
@@ -97,13 +97,13 @@ public class SandboxService : ISandboxService
         var serviceMap = new Dictionary<Guid, Guid>();
         foreach (var s in services)
         {
-            var newService = new Service 
-            { 
-                TenantId = targetTenantId, 
-                Name = s.Name, 
-                DurationMinutes = s.DurationMinutes, 
-                Price = s.Price, 
-                IsActive = true 
+            var newService = new Service
+            {
+                TenantId = targetTenantId,
+                Name = s.Name,
+                DurationMinutes = s.DurationMinutes,
+                Price = s.Price,
+                IsActive = true
             };
             _context.Services.Add(newService);
             serviceMap[s.Id] = newService.Id;
@@ -115,13 +115,13 @@ public class SandboxService : ISandboxService
             .ToListAsync();
         foreach (var st in staffList)
         {
-            var newStaff = new StaffMember 
-            { 
-                TenantId = targetTenantId, 
-                FirstName = st.FirstName, 
-                LastName = st.LastName, 
-                Email = "sandbox_" + st.Email, 
-                IsActive = true 
+            var newStaff = new StaffMember
+            {
+                TenantId = targetTenantId,
+                FirstName = st.FirstName,
+                LastName = st.LastName,
+                Email = "sandbox_" + st.Email,
+                IsActive = true
             };
             _context.StaffMembers.Add(newStaff);
         }
@@ -138,7 +138,7 @@ public class SandboxService : ISandboxService
 
         var staff = await _context.StaffMembers.Where(s => s.TenantId == tenantId).ToListAsync();
         _context.StaffMembers.RemoveRange(staff);
-        
+
         var locations = await _context.Set<Location>().Where(l => l.TenantId == tenantId).ToListAsync();
         _context.Set<Location>().RemoveRange(locations);
     }

@@ -45,7 +45,7 @@ public class CircuitBreakerService
                 ShouldHandle = new PredicateBuilder<T>().Handle<Exception>(),
                 OnOpened = args =>
                 {
-                    _logger.LogWarning("Circuit {Name} opened for {Duration} due to {Reason}", 
+                    _logger.LogWarning("Circuit {Name} opened for {Duration} due to {Reason}",
                         circuitName, args.BreakDuration, args.Outcome.Exception?.Message);
                     _metrics.RecordCircuitBreakerTrip(circuitName);
                     return default;

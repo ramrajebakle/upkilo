@@ -32,7 +32,7 @@ public class GiftCertificatesController : ControllerBase
     {
         var tenantId = GetTenantId();
         var certificates = await _giftCertificateService.GetTenantGiftCertificatesAsync(tenantId);
-        
+
         var result = certificates.Select(c => new
         {
             c.Id,
@@ -86,7 +86,7 @@ public class GiftCertificatesController : ControllerBase
     public async Task<IActionResult> IssueGiftCertificate([FromBody] IssueGiftCertificateRequest request)
     {
         var tenantId = GetTenantId();
-        
+
         var cert = await _giftCertificateService.IssueGiftCertificateAsync(
             tenantId,
             request.Amount,
@@ -106,7 +106,7 @@ public class GiftCertificatesController : ControllerBase
         // If the user is authorized, we can get tenantId from provider, 
         // but for public booking widget, we need it as a query param or header.
         var tid = tenantId == Guid.Empty ? GetTenantId() : tenantId;
-        
+
         if (tid == Guid.Empty) return BadRequest("TenantId is required.");
 
         var cert = await _giftCertificateService.ValidateCodeAsync(tid, code);
@@ -115,10 +115,10 @@ public class GiftCertificatesController : ControllerBase
 
         if (cert.Status == GiftCertificateStatus.Expired)
             return BadRequest(new { message = "Gift certificate has expired." });
-            
+
         if (cert.Status == GiftCertificateStatus.FullyRedeemed)
             return BadRequest(new { message = "Gift certificate has no remaining balance." });
-            
+
         if (cert.Status == GiftCertificateStatus.Void)
             return BadRequest(new { message = "Gift certificate is void." });
 
@@ -135,7 +135,7 @@ public class GiftCertificatesController : ControllerBase
     public async Task<IActionResult> RedeemCode([FromBody] RedeemGiftCertificateRequest request)
     {
         var tenantId = GetTenantId();
-        
+
         var success = await _giftCertificateService.RedeemAmountAsync(
             tenantId,
             request.Code,

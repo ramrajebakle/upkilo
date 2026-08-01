@@ -490,7 +490,7 @@ public class SalesPipelineController : ControllerBase
             var clientName = d.Client != null ? $"{d.Client.FirstName} {d.Client.LastName}" : "";
             var clientEmail = d.Client?.Email ?? "";
             var stageName = d.Stage?.Name ?? "";
-            
+
             builder.AppendLine($"\"{d.Title}\",{d.Value},{d.Currency},{d.Status},\"{stageName}\",\"{clientName}\",\"{clientEmail}\",{d.ExpectedCloseDate?.ToString("yyyy-MM-dd")},{d.CreatedAt:yyyy-MM-dd}");
         }
 

@@ -17,10 +17,10 @@ public class SystemLoadMonitorService : ISystemLoadMonitorService
     {
         _logger = logger;
         var section = configuration.GetSection("SystemLoadMonitor");
-        _degradedQueueThreshold  = section.GetValue("DegradedThreshold",  1000);
+        _degradedQueueThreshold = section.GetValue("DegradedThreshold", 1000);
         _overloadedQueueThreshold = section.GetValue("OverloadedThreshold", 5000);
-        _degradedMemoryMb        = section.GetValue("MemoryDegradedMb",  512L);
-        _overloadedMemoryMb      = section.GetValue("MemoryOverloadedMb", 768L);
+        _degradedMemoryMb = section.GetValue("MemoryDegradedMb", 512L);
+        _overloadedMemoryMb = section.GetValue("MemoryOverloadedMb", 768L);
     }
 
     public bool IsSystemDegraded()

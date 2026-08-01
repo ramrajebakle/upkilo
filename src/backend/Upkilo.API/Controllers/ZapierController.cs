@@ -32,7 +32,7 @@ public class ZapierController : ControllerBase
         _logger = logger;
     }
 
-    private Guid GetTenantId() => _tenantProvider.GetTenantId() 
+    private Guid GetTenantId() => _tenantProvider.GetTenantId()
         ?? throw new UnauthorizedAccessException("Tenant context not available");
 
     /// <summary>
@@ -88,7 +88,7 @@ public class ZapierController : ControllerBase
     public async Task<IActionResult> PerformList([FromQuery] string @event)
     {
         var tenantId = GetTenantId();
-        
+
         if (@event == WebhookEvents.BookingCreated || @event == "booking.created")
         {
             var bookings = await _context.Bookings
@@ -96,9 +96,10 @@ public class ZapierController : ControllerBase
                 .Include(b => b.Service)
                 .OrderByDescending(b => b.CreatedAt)
                 .Take(5)
-                .Select(b => new { 
-                    b.Id, 
-                    startTime = b.StartTime, 
+                .Select(b => new
+                {
+                    b.Id,
+                    startTime = b.StartTime,
                     endTime = b.EndTime,
                     status = b.Status.ToString(),
                     price = b.Price,
@@ -108,13 +109,14 @@ public class ZapierController : ControllerBase
                 .ToListAsync();
             return Ok(bookings);
         }
-        
+
         if (@event == WebhookEvents.ClientCreated || @event == "client.created")
         {
             var clients = await _context.Clients
                 .OrderByDescending(c => c.CreatedAt)
                 .Take(5)
-                .Select(c => new {
+                .Select(c => new
+                {
                     c.Id,
                     c.FirstName,
                     c.LastName,
@@ -136,7 +138,7 @@ public class ZapierController : ControllerBase
     public async Task<IActionResult> CreateClient([FromBody] ZapierCreateClientRequest request)
     {
         var tenantId = GetTenantId();
-        
+
         var client = new Client
         {
             Id = Guid.NewGuid(),
@@ -150,7 +152,7 @@ public class ZapierController : ControllerBase
 
         _context.Clients.Add(client);
         await _context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(AuthTest), new { id = client.Id }, client);
     }
 
@@ -163,7 +165,7 @@ public class ZapierController : ControllerBase
         var tenantId = GetTenantId();
         var client = await _context.Clients
             .FirstOrDefaultAsync(c => c.Email == email && c.TenantId == tenantId);
-        
+
         if (client == null) return Ok(new List<Client>());
         return Ok(new[] { client });
     }
@@ -175,7 +177,7 @@ public class ZapierController : ControllerBase
     public async Task<IActionResult> CreateBooking([FromBody] ZapierCreateBookingRequest request)
     {
         var tenantId = GetTenantId();
-        
+
         var service = await _context.Services.FindAsync(request.ServiceId);
         if (service == null) return BadRequest("Service not found");
 
@@ -196,7 +198,7 @@ public class ZapierController : ControllerBase
 
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(AuthTest), new { id = booking.Id }, booking);
     }
 }

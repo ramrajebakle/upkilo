@@ -29,7 +29,7 @@ public class MembershipPlansController : ControllerBase
             .Where(p => p.IsActive)
             .ToListAsync();
         var plans = plansList.OrderBy(p => p.Price);
-            
+
         return Ok(plans);
     }
 

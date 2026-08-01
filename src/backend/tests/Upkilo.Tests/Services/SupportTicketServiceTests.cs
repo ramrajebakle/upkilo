@@ -25,22 +25,22 @@ public class SupportTicketServiceTests : IDisposable
         var ctx = _dbFactory.CreateContext();
         var tenantId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        
+
         ctx.Tenants.Add(new Tenant { Id = tenantId, Name = "T", Slug = "t" });
-        ctx.Users.Add(new User 
-        { 
-            Id = userId, 
-            TenantId = tenantId, 
-            FirstName = "Staff", 
-            LastName = "Member", 
-            Email = $"staff-{userId}@test.com", 
-            PasswordHash = "hash" 
+        ctx.Users.Add(new User
+        {
+            Id = userId,
+            TenantId = tenantId,
+            FirstName = "Staff",
+            LastName = "Member",
+            Email = $"staff-{userId}@test.com",
+            PasswordHash = "hash"
         });
         ctx.SaveChanges();
 
         _emailServiceMock.Setup(e => e.SendSystemEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
-            
+
         return (new SupportTicketService(ctx, _emailServiceMock.Object, _loggerMock.Object), ctx, tenantId, userId);
     }
 
@@ -52,9 +52,9 @@ public class SupportTicketServiceTests : IDisposable
 
         var ticket = await sut.CreateTicketAsync(new SupportTicket
         {
-            TenantId = tenantId, 
+            TenantId = tenantId,
             SubmittedByUserId = userId,
-            Subject = "Help!", 
+            Subject = "Help!",
             ContactEmail = "user@test.com",
             Priority = TicketPriority.Normal
         });
@@ -71,9 +71,9 @@ public class SupportTicketServiceTests : IDisposable
 
         var ticket = await sut.CreateTicketAsync(new SupportTicket
         {
-            TenantId = tenantId, 
+            TenantId = tenantId,
             SubmittedByUserId = userId,
-            Subject = "URGENT!", 
+            Subject = "URGENT!",
             ContactEmail = "user@test.com",
             Priority = TicketPriority.High
         });
@@ -88,9 +88,9 @@ public class SupportTicketServiceTests : IDisposable
         var (sut, _, tenantId, userId) = CreateSut();
         var ticket = await sut.CreateTicketAsync(new SupportTicket
         {
-            TenantId = tenantId, 
+            TenantId = tenantId,
             SubmittedByUserId = userId,
-            Subject = "Test", 
+            Subject = "Test",
             ContactEmail = "x@t.com"
         });
 
@@ -106,9 +106,9 @@ public class SupportTicketServiceTests : IDisposable
         var (sut, _, tenantId, userId) = CreateSut();
         var ticket = await sut.CreateTicketAsync(new SupportTicket
         {
-            TenantId = tenantId, 
+            TenantId = tenantId,
             SubmittedByUserId = userId,
-            Subject = "Test", 
+            Subject = "Test",
             ContactEmail = "x@t.com"
         });
 
@@ -123,9 +123,9 @@ public class SupportTicketServiceTests : IDisposable
         var (sut, ctx, tenantId, userId) = CreateSut();
         var ticket = await sut.CreateTicketAsync(new SupportTicket
         {
-            TenantId = tenantId, 
+            TenantId = tenantId,
             SubmittedByUserId = userId,
-            Subject = "Fix me", 
+            Subject = "Fix me",
             ContactEmail = "x@t.com"
         });
 

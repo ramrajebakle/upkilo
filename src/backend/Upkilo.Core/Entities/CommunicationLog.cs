@@ -44,18 +44,18 @@ public class CommunicationLog : TenantEntity
 
     public CommunicationType Type { get; set; }
     public CommunicationDirection Direction { get; set; }
-    
+
     public string? Subject { get; set; }
     public string Body { get; set; } = string.Empty;
-    
+
     public CommunicationStatus Status { get; set; }
     public string? ErrorMessage { get; set; }
-    
+
     public string? ReferenceId { get; set; } // Internal reference
     public string? ExternalReference { get; set; } // External reference (e.g. Twilio SID)
-    
+
     public Dictionary<string, string> Metadata { get; set; } = new();
-    
+
     public DateTime? DeliveredAt { get; set; }
     public DateTime? ReadAt { get; set; }
 }

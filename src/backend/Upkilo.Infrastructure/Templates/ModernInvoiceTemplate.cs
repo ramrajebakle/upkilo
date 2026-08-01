@@ -25,10 +25,10 @@ public class ModernInvoiceTemplate : IInvoiceTemplate
                 row.RelativeItem().Column(col =>
                 {
                     col.Item().Text(tenant.Name).SemiBold().FontSize(20).FontColor(tenant.PrimaryColor ?? Colors.Blue.Medium);
-                    
+
                     if (tenant.Settings.TryGetValue("CompanyAddress", out var addr) && addr is string address && !string.IsNullOrEmpty(address))
                         col.Item().Text(address).FontSize(9).FontColor(Colors.Grey.Medium);
-                    
+
                     if (tenant.Settings.TryGetValue("TaxId", out var tax) && tax is string taxId && !string.IsNullOrEmpty(taxId))
                         col.Item().Text($"Tax ID: {taxId}").FontSize(9).FontColor(Colors.Grey.Medium);
 

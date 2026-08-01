@@ -12,7 +12,7 @@ public static class PaymentQrHelper
         using var qrGenerator = new QRCodeGenerator();
         using var qrCodeData = qrGenerator.CreateQrCode(upiUri, QRCodeGenerator.ECCLevel.Q);
         var qrCode = new PngByteQRCode(qrCodeData);
-        
+
         return qrCode.GetGraphic(20);
     }
 }

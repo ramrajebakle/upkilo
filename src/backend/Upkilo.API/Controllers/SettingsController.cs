@@ -29,8 +29,8 @@ public class SettingsController : ControllerBase
     private readonly IConfiguration _configuration;
 
     public SettingsController(
-        ILogger<SettingsController> logger, 
-        AppDbContext context, 
+        ILogger<SettingsController> logger,
+        AppDbContext context,
         ITenantProvider tenantProvider,
         IPasswordHasher<User> passwordHasher,
         IEmailService emailService,
@@ -69,28 +69,28 @@ public class SettingsController : ControllerBase
 
         return Ok(new
         {
-            name        = tenant.Name ?? "",
-            subdomain   = tenant.Slug ?? "",
+            name = tenant.Name ?? "",
+            subdomain = tenant.Slug ?? "",
             description = tenant.Description ?? metadata.GetValueOrDefault("seo_description")?.ToString() ?? "",
-            keywords    = metadata.GetValueOrDefault("seo_keywords")?.ToString() ?? "",
-            businessType= tenant.Industry ?? tenant.BusinessType ?? "",
-            timezone    = tenant.Timezone ?? "UTC",
-            currency    = tenant.Currency ?? "USD",
-            dateFormat  = metadata.GetValueOrDefault("dateFormat")?.ToString() ?? "MM/DD/YYYY",
-            timeFormat  = metadata.GetValueOrDefault("timeFormat")?.ToString() ?? "12h",
-            logoUrl     = tenant.LogoUrl,
-            primaryColor= tenant.PrimaryColor ?? "#06B6D4",
-            website     = tenant.Domain ?? "",
-            phone       = tenant.Phone ?? metadata.GetValueOrDefault("phone")?.ToString() ?? "",
-            email       = tenant.Email ?? metadata.GetValueOrDefault("email")?.ToString() ?? $"contact@{tenant.Slug ?? "business"}.com",
-            address     = new
+            keywords = metadata.GetValueOrDefault("seo_keywords")?.ToString() ?? "",
+            businessType = tenant.Industry ?? tenant.BusinessType ?? "",
+            timezone = tenant.Timezone ?? "UTC",
+            currency = tenant.Currency ?? "USD",
+            dateFormat = metadata.GetValueOrDefault("dateFormat")?.ToString() ?? "MM/DD/YYYY",
+            timeFormat = metadata.GetValueOrDefault("timeFormat")?.ToString() ?? "12h",
+            logoUrl = tenant.LogoUrl,
+            primaryColor = tenant.PrimaryColor ?? "#06B6D4",
+            website = tenant.Domain ?? "",
+            phone = tenant.Phone ?? metadata.GetValueOrDefault("phone")?.ToString() ?? "",
+            email = tenant.Email ?? metadata.GetValueOrDefault("email")?.ToString() ?? $"contact@{tenant.Slug ?? "business"}.com",
+            address = new
             {
-                line1      = metadata.GetValueOrDefault("address_line1")?.ToString() ?? "",
-                line2      = metadata.GetValueOrDefault("address_line2")?.ToString() ?? "",
-                city       = metadata.GetValueOrDefault("city")?.ToString() ?? "",
-                state      = metadata.GetValueOrDefault("state")?.ToString() ?? "",
+                line1 = metadata.GetValueOrDefault("address_line1")?.ToString() ?? "",
+                line2 = metadata.GetValueOrDefault("address_line2")?.ToString() ?? "",
+                city = metadata.GetValueOrDefault("city")?.ToString() ?? "",
+                state = metadata.GetValueOrDefault("state")?.ToString() ?? "",
                 postalCode = metadata.GetValueOrDefault("postal_code")?.ToString() ?? "",
-                country    = metadata.GetValueOrDefault("country")?.ToString() ?? ""
+                country = metadata.GetValueOrDefault("country")?.ToString() ?? ""
             }
         });
     }
@@ -107,7 +107,7 @@ public class SettingsController : ControllerBase
         var tenant = await _context.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId);
         if (tenant == null) return NotFound();
 
-        _logger.LogInformation("UpdateBusinessSettings called for Tenant {TenantId}. Payload: {Payload}", 
+        _logger.LogInformation("UpdateBusinessSettings called for Tenant {TenantId}. Payload: {Payload}",
             tenantId, JsonSerializer.Serialize(request));
 
         // Currency is not settable here. It is a property of the tenant's connected Stripe
@@ -133,9 +133,9 @@ public class SettingsController : ControllerBase
             });
         }
 
-        if (request.Name        != null) tenant.Name        = request.Name;
-        if (request.Timezone    != null) tenant.Timezone    = request.Timezone;
-        if (request.BusinessType!= null) tenant.Industry    = request.BusinessType;
+        if (request.Name != null) tenant.Name = request.Name;
+        if (request.Timezone != null) tenant.Timezone = request.Timezone;
+        if (request.BusinessType != null) tenant.Industry = request.BusinessType;
         if (request.Description != null) tenant.Description = request.Description;
 
         // Slug / subdomain (only update if non-empty and different)
@@ -153,10 +153,10 @@ public class SettingsController : ControllerBase
         if (request.Email != null) tenant.Email = request.Email;
 
         // Branding fields
-        if (request.LogoUrl      != null) tenant.LogoUrl      = request.LogoUrl;
+        if (request.LogoUrl != null) tenant.LogoUrl = request.LogoUrl;
         if (request.PrimaryColor != null) tenant.PrimaryColor = request.PrimaryColor;
-        if (request.Website      != null) tenant.Domain       = request.Website;
-        
+        if (request.Website != null) tenant.Domain = request.Website;
+
         if (request.Address != null || request.Keywords != null)
         {
             // Trigger EF change detection by creating a new dictionary
@@ -166,10 +166,10 @@ public class SettingsController : ControllerBase
             {
                 metadata["address_line1"] = request.Address.Line1 ?? "";
                 metadata["address_line2"] = request.Address.Line2 ?? "";
-                metadata["city"]          = request.Address.City ?? "";
-                metadata["state"]         = request.Address.State ?? "";
-                metadata["country"]       = request.Address.Country ?? "";
-                metadata["postal_code"]   = request.Address.PostalCode ?? "";
+                metadata["city"] = request.Address.City ?? "";
+                metadata["state"] = request.Address.State ?? "";
+                metadata["country"] = request.Address.Country ?? "";
+                metadata["postal_code"] = request.Address.PostalCode ?? "";
             }
 
             if (request.Keywords != null)
@@ -179,10 +179,13 @@ public class SettingsController : ControllerBase
             _logger.LogInformation("Updating address metadata for tenant {TenantId}: {Address}", tenantId, JsonSerializer.Serialize(request.Address));
         }
 
-        try {
+        try
+        {
             await _context.SaveChangesAsync();
             _logger.LogInformation("Successfully saved business settings for tenant {TenantId}", tenantId);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             _logger.LogError(ex, "Failed to save business settings for tenant {TenantId}", tenantId);
             throw;
         }
@@ -199,8 +202,8 @@ public class SettingsController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var fields = await _context.CustomFieldDefinitions
-            .Where(f => f.TenantId == tenantId && f.IsActive) 
-            .OrderBy(f => f.SortOrder)       
+            .Where(f => f.TenantId == tenantId && f.IsActive)
+            .OrderBy(f => f.SortOrder)
             .ToListAsync();
         return Ok(fields);
     }
@@ -237,7 +240,7 @@ public class SettingsController : ControllerBase
         var tenantId = _tenantProvider.GetTenantId();
         if (tenantId == null) return Unauthorized();
         var tenant = await _context.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId);
-        
+
         if (tenant?.Settings != null && tenant.Settings.TryGetValue("booking", out var settingsObj))
         {
             return Ok(settingsObj);
@@ -283,7 +286,7 @@ public class SettingsController : ControllerBase
         {
             return Ok(settingsObj);
         }
-        
+
         return Ok(new
         {
             emailBookings = true,
@@ -471,7 +474,7 @@ public class SettingsController : ControllerBase
             .Where(u => u.TenantId == tenantId.Value && u.Status != UserStatus.Inactive)
             .ToListAsync();
 
-        var team = users.Select(u => new 
+        var team = users.Select(u => new
         {
             id = u.Id,
             name = u.FullName,
@@ -516,7 +519,7 @@ public class SettingsController : ControllerBase
         var passwordChars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
         var randomBytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(16);
         var tempPassword = new string(randomBytes.Select(b => passwordChars[b % passwordChars.Length]).ToArray());
-        newUser.PasswordHash = _passwordHasher.HashPassword(newUser, tempPassword); 
+        newUser.PasswordHash = _passwordHasher.HashPassword(newUser, tempPassword);
 
         _context.Users.Add(newUser);
         await _context.SaveChangesAsync();
@@ -566,7 +569,7 @@ public class SettingsController : ControllerBase
         user.Status = UserStatus.Inactive;
         // Or actually delete if preferred, but auditing usually requires keeping record
         // _context.Users.Remove(user); 
-        
+
         await _context.SaveChangesAsync();
         return NoContent();
     }
@@ -606,7 +609,7 @@ public class SettingsController : ControllerBase
         if (tenantId == null) return Unauthorized();
 
         var fullKey = $"upk_{Guid.NewGuid().ToString("N")}";
-        
+
         var keyEntity = new ApiKey
         {
             TenantId = tenantId.Value,
@@ -621,7 +624,7 @@ public class SettingsController : ControllerBase
 
         _context.ApiKeys.Add(keyEntity);
         await _context.SaveChangesAsync();
-        
+
         return Ok(new { id = keyEntity.Id, key = fullKey, message = "Store this key safely, it will not be shown again." });
     }
 
@@ -642,19 +645,19 @@ public class SettingsController : ControllerBase
 // Request DTOs
 public class UpdateBusinessSettingsRequest
 {
-    public string? Name         { get; set; }
-    public string? Subdomain    { get; set; } // becomes tenant.Slug / booking page URL
-    public string? Description  { get; set; } // Google meta description + schema
-    public string? Keywords     { get; set; } // comma-separated SEO keywords
-    public string? Timezone     { get; set; }
-    public string? Currency     { get; set; }
-    public string? Phone        { get; set; }
-    public string? Email        { get; set; }
+    public string? Name { get; set; }
+    public string? Subdomain { get; set; } // becomes tenant.Slug / booking page URL
+    public string? Description { get; set; } // Google meta description + schema
+    public string? Keywords { get; set; } // comma-separated SEO keywords
+    public string? Timezone { get; set; }
+    public string? Currency { get; set; }
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
     public string? BusinessType { get; set; }
-    public string? LogoUrl      { get; set; }
+    public string? LogoUrl { get; set; }
     public string? PrimaryColor { get; set; }
-    public string? Website      { get; set; }
-    public AddressDto? Address  { get; set; }
+    public string? Website { get; set; }
+    public AddressDto? Address { get; set; }
 }
 
 public class AddressDto

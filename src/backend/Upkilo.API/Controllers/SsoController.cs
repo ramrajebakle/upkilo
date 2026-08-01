@@ -516,7 +516,7 @@ public class SsoController : ControllerBase
         var result = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(payload);
         return Ok(new
         {
-            token        = result.GetProperty("token").GetString(),
+            token = result.GetProperty("token").GetString(),
             refreshToken = result.GetProperty("refreshToken").GetString()
         });
     }

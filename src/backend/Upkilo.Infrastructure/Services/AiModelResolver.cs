@@ -19,8 +19,8 @@ namespace Upkilo.Infrastructure.Services;
 /// </summary>
 public class AiModelResolver : IAiModelResolver
 {
-    private const string HaikuModel   = "claude-haiku-4-5-20251001";
-    private const string SonnetModel  = "claude-sonnet-4-6";
+    private const string HaikuModel = "claude-haiku-4-5-20251001";
+    private const string SonnetModel = "claude-sonnet-4-6";
     private const string DefaultModel = HaikuModel;
 
     private readonly AppDbContext _db;
@@ -62,11 +62,11 @@ public class AiModelResolver : IAiModelResolver
     {
         return tier switch
         {
-            nameof(SubscriptionTier.Free)         => HaikuModel,
-            nameof(SubscriptionTier.Starter)      => HaikuModel,
+            nameof(SubscriptionTier.Free) => HaikuModel,
+            nameof(SubscriptionTier.Starter) => HaikuModel,
             nameof(SubscriptionTier.Professional) => SonnetModel,
-            nameof(SubscriptionTier.Business)     => SonnetModel,
-            nameof(SubscriptionTier.Enterprise)   => SonnetModel,
+            nameof(SubscriptionTier.Business) => SonnetModel,
+            nameof(SubscriptionTier.Enterprise) => SonnetModel,
             _ => DefaultModel
         };
     }

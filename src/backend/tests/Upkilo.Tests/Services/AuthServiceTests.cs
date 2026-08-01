@@ -266,7 +266,7 @@ public class AuthServiceTests : IDisposable
         // Assert
         result.Success.Should().BeTrue(because: result.Message);
         result.Token.Should().NotBeNullOrEmpty();
-        
+
         var context = _dbFactory.CreateContext();
         context.Users.Should().Contain(u => u.Email == "newuser@example.com");
         context.Tenants.Should().Contain(t => t.Name == "New Co");

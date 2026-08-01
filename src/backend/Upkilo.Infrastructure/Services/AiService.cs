@@ -123,7 +123,7 @@ public class AiService : IAIService
                 reservationLog.Cost = result.Cost;
                 reservationLog.Feature = "text-generation";
                 await _context.SaveChangesAsync();
-                
+
                 await ReportUsageToStripeAsync(tenantId, result.Cost);
             }
 
@@ -243,7 +243,7 @@ public class AiService : IAIService
             int inputTokens = prompt.Length / 4;
             int outputTokens = fullContent.Length / 4;
             var cost = CalculateCost(resolvedModel, inputTokens, outputTokens);
-            
+
             var reservationLog = await _context.AIUsageLogs.FindAsync(reservationId);
             if (reservationLog != null)
             {
@@ -252,7 +252,7 @@ public class AiService : IAIService
                 reservationLog.Cost = cost;
                 reservationLog.Feature = "text-generation-stream";
                 await _context.SaveChangesAsync();
-                
+
                 await ReportUsageToStripeAsync(tenantId, cost);
             }
         }
@@ -299,7 +299,7 @@ public class AiService : IAIService
     public async Task<AIGenerationResult> AnalyzeSentimentAsync(Guid tenantId, Guid? userId, string content)
     {
         var prompt = $"Analyze the sentiment of the following text and return a score between -1.0 (very negative) and 1.0 (very positive), followed by a brief 1-sentence reason. Format: [Score] | [Reason]\n\nText: {content}";
-        
+
         var result = await GenerateTextAsync(tenantId, userId, prompt);
         if (result.Success)
         {
@@ -313,7 +313,7 @@ public class AiService : IAIService
         var prompt = $"Act as an SEO and Market Discovery expert. Generate a comprehensive discovery report for a {businessType} business focusing on the {niche} niche. " +
                      "Include: 5 high-converting keywords, 3 content gaps in the current market, and 2 suggested marketing campaigns. " +
                      "Format as professional Markdown.";
-        
+
         return await GenerateTextAsync(tenantId, null, prompt);
     }
 
@@ -423,23 +423,23 @@ public class AiService : IAIService
 
         if (model.Contains("haiku"))
         {
-            inputRate  = 0.00000080m;
+            inputRate = 0.00000080m;
             outputRate = 0.00000400m;
         }
         else if (model.Contains("sonnet") || model.Contains("claude"))
         {
-            inputRate  = 0.00000300m;
+            inputRate = 0.00000300m;
             outputRate = 0.00001500m;
         }
         else if (model.Contains("gpt-3.5"))
         {
-            inputRate  = 0.00000050m;
+            inputRate = 0.00000050m;
             outputRate = 0.00000150m;
         }
         else
         {
             // Default: GPT-4 class
-            inputRate  = 0.00003000m;
+            inputRate = 0.00003000m;
             outputRate = 0.00006000m;
         }
 

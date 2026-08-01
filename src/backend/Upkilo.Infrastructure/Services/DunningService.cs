@@ -32,7 +32,7 @@ public class DunningService
             try
             {
                 _logger.LogInformation("DunningService: Processing cycle {Id} for tenant {TenantId}.", cycle.Id, cycle.TenantId);
-                
+
                 cycle.AttemptCount++;
                 cycle.LastAttemptAt = DateTime.UtcNow;
 

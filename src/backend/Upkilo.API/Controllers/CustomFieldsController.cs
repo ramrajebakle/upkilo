@@ -71,9 +71,18 @@ public class CustomFieldsController : ControllerBase
             .OrderBy(f => f.SortOrder)
             .Select(f => new
             {
-                f.Id, f.Name, f.Label, f.FieldType, f.EntityType,
-                f.IsRequired, f.IsSearchable, f.DefaultValue,
-                f.ValidationRules, f.Options, f.SortOrder, f.CreatedAt
+                f.Id,
+                f.Name,
+                f.Label,
+                f.FieldType,
+                f.EntityType,
+                f.IsRequired,
+                f.IsSearchable,
+                f.DefaultValue,
+                f.ValidationRules,
+                f.Options,
+                f.SortOrder,
+                f.CreatedAt
             })
             .ToListAsync();
 
@@ -268,7 +277,11 @@ public class CustomFieldsController : ControllerBase
                 fieldName = v.Definition != null ? v.Definition.Name : null,
                 fieldLabel = v.Definition != null ? v.Definition.Label : null,
                 fieldType = v.Definition != null ? v.Definition.FieldType.ToString() : null,
-                v.TextValue, v.NumberValue, v.DateValue, v.BooleanValue, v.JsonValue
+                v.TextValue,
+                v.NumberValue,
+                v.DateValue,
+                v.BooleanValue,
+                v.JsonValue
             })
             .ToListAsync();
 
@@ -332,7 +345,11 @@ public class CustomFieldsController : ControllerBase
                 fieldName = v.Definition != null ? v.Definition.Name : null,
                 fieldLabel = v.Definition != null ? v.Definition.Label : null,
                 fieldType = v.Definition != null ? v.Definition.FieldType.ToString() : null,
-                v.TextValue, v.NumberValue, v.DateValue, v.BooleanValue, v.JsonValue
+                v.TextValue,
+                v.NumberValue,
+                v.DateValue,
+                v.BooleanValue,
+                v.JsonValue
             })
             .ToListAsync();
 

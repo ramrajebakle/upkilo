@@ -16,10 +16,10 @@ public class TwoFactorService : ITwoFactorService
     private readonly IEmailService _emailService;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<TwoFactorService> _logger;
-    
+
     // TOTP verification allows ±1 time step (30 seconds) for clock drift
     private const int VerificationWindow = 1;
-    
+
     public TwoFactorService(AppDbContext context, ISmsService smsService, IEmailService emailService, IServiceProvider serviceProvider, ILogger<TwoFactorService> logger)
     {
         _context = context;
@@ -35,7 +35,7 @@ public class TwoFactorService : ITwoFactorService
         var secretBytes = KeyGeneration.GenerateRandomKey(20);
         // Trim padding for better app compatibility
         var secret = Base32Encoding.ToString(secretBytes).TrimEnd('=');
-        
+
         // Store in database (not enabled yet)
         var twoFa = _context.Set<User2FA>().FirstOrDefault(t => t.UserId == userId);
         if (twoFa == null)
@@ -72,10 +72,10 @@ public class TwoFactorService : ITwoFactorService
         {
             var secretBytes = Base32Encoding.ToBytes(twoFa.TotpSecret);
             var totp = new Totp(secretBytes, step: 30, mode: OtpHashMode.Sha1, totpSize: 6);
-            
+
             // Verify with time window tolerance (±1 step = ±30 seconds)
             var isValid = totp.VerifyTotp(code, out _, new VerificationWindow(VerificationWindow, VerificationWindow));
-            
+
             _logger.LogInformation("TOTP verification for user {UserId}: {Result}", userId, isValid);
             return await Task.FromResult(isValid);
         }
@@ -158,7 +158,7 @@ public class TwoFactorService : ITwoFactorService
 
         var hashedCodes = System.Text.Json.JsonSerializer.Deserialize<List<string>>(twoFa.BackupCodes);
         var hashedInput = HashCode(code);
-        
+
         if (hashedCodes?.Contains(hashedInput) == true)
         {
             hashedCodes.Remove(hashedInput);
@@ -209,7 +209,7 @@ public class TwoFactorService : ITwoFactorService
 
         // Generate a 6-digit random code
         var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
-        
+
         // Store hashed code
         twoFa.SmsCode = HashCode(code);
         twoFa.SmsCodeExpiresAt = DateTime.UtcNow.AddMinutes(10);
@@ -218,7 +218,7 @@ public class TwoFactorService : ITwoFactorService
 
         // Send via SMS
         var result = await _smsService.SendVerificationCodeAsync(user.TenantId, twoFa.PhoneNumber, code);
-        
+
         _logger.LogInformation("SMS 2FA code sent to user {UserId}. Success: {Result}", userId, result.Success);
         return result.Success;
     }
@@ -269,7 +269,7 @@ public class TwoFactorService : ITwoFactorService
 
         // Generate a 6-digit random code
         var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
-        
+
         // Store hashed code
         twoFa.EmailCode = HashCode(code);
         twoFa.EmailCodeExpiresAt = DateTime.UtcNow.AddMinutes(15);
@@ -277,7 +277,7 @@ public class TwoFactorService : ITwoFactorService
         await _context.SaveChangesAsync();
 
         // Send via Email
-        try 
+        try
         {
             await _emailService.SendTwoFactorCodeAsync(user.Email, code);
             _logger.LogInformation("Email 2FA code sent to user {UserId}.", userId);

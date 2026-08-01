@@ -23,7 +23,7 @@ public class DeviceLoggingService
     public async Task LogDeviceAccessAsync(Guid userId, string ipAddress, string userAgent)
     {
         var hash = GenerateDeviceHash(ipAddress, userAgent);
-        
+
         var existing = await _context.Set<UserDevice>()
             .FirstOrDefaultAsync(d => d.UserId == userId && d.DeviceHash == hash);
 

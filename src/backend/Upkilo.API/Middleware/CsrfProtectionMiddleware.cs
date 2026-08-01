@@ -142,8 +142,8 @@ public class CsrfProtectionMiddleware
         var csrfToken = context.Request.Headers["X-CSRF-TOKEN"].FirstOrDefault();
         var csrfCookie = context.Request.Cookies["XSRF-TOKEN"];
 
-        var hasCookieAuth = context.Request.Cookies.ContainsKey("token") && 
-            !context.Request.Headers.ContainsKey("Authorization") && 
+        var hasCookieAuth = context.Request.Cookies.ContainsKey("token") &&
+            !context.Request.Headers.ContainsKey("Authorization") &&
             !context.Request.Headers.ContainsKey("X-API-Key");
 
         if (hasCookieAuth)
@@ -167,7 +167,7 @@ public class CsrfProtectionMiddleware
                 return;
             }
         }
-        
+
         await _next(context);
     }
 

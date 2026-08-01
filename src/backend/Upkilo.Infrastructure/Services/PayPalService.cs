@@ -19,12 +19,12 @@ public class PayPalService
     public PayPalService(HttpClient httpClient, IConfiguration configuration, ILogger<PayPalService> logger)
     {
         _httpClient = httpClient;
-        
+
         var isSandboxStr = configuration["PayPal:IsSandbox"];
         var isSandbox = string.IsNullOrEmpty(isSandboxStr) || !bool.TryParse(isSandboxStr, out var parsed) || parsed;
         var baseUrl = isSandbox ? "https://api-m.sandbox.paypal.com/" : "https://api-m.paypal.com/";
         _httpClient.BaseAddress = new Uri(baseUrl);
-        
+
         _configuration = configuration;
         _logger = logger;
     }
@@ -71,7 +71,7 @@ public class PayPalService
 
             var result = await response.Content.ReadAsStringAsync();
             var doc = JsonDocument.Parse(result);
-            
+
             // Return order ID
             return doc.RootElement.GetProperty("id").GetString();
         }

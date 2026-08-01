@@ -19,7 +19,7 @@ public class RedisLockProvider : IDistributedLockProvider
     {
         var db = _redis.GetDatabase();
         var lockKey = $"lock:{resource}";
-        
+
         var waitTime = wait ?? TimeSpan.Zero;
         var retryInterval = retry ?? TimeSpan.FromMilliseconds(100);
         var startTime = DateTime.UtcNow;
@@ -34,7 +34,7 @@ public class RedisLockProvider : IDistributedLockProvider
             if (waitTime == TimeSpan.Zero) break;
 
             await Task.Delay(retryInterval);
-            
+
         } while (DateTime.UtcNow - startTime < waitTime);
 
         return null;

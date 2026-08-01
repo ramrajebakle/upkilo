@@ -19,8 +19,8 @@ public class RazorpayService
     private readonly ISecretProvider _secretProvider;
 
     public RazorpayService(
-        HttpClient httpClient, 
-        IConfiguration configuration, 
+        HttpClient httpClient,
+        IConfiguration configuration,
         ILogger<RazorpayService> logger,
         ISecretProvider secretProvider)
     {
@@ -73,7 +73,7 @@ public class RazorpayService
 
             var result = await response.Content.ReadAsStringAsync();
             var doc = JsonDocument.Parse(result);
-            
+
             return doc.RootElement.GetProperty("id").GetString();
         }
         catch (Exception ex)

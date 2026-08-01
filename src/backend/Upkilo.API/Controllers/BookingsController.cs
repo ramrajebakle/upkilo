@@ -30,9 +30,9 @@ public class BookingsController : ControllerBase
     private readonly IMediator _mediator;
 
     public BookingsController(
-        ILogger<BookingsController> logger, 
-        IEventService eventService, 
-        AppDbContext context, 
+        ILogger<BookingsController> logger,
+        IEventService eventService,
+        AppDbContext context,
         ITenantProvider tenantProvider,
         ISchedulingService schedulingService,
         IBookingService bookingService,
@@ -96,7 +96,8 @@ public class BookingsController : ControllerBase
             .OrderByDescending(b => b.StartTime)
             .Skip((page - 1) * limit)
             .Take(limit)
-            .Select(b => new {
+            .Select(b => new
+            {
                 b.Id,
                 clientName = b.Client != null ? b.Client.FirstName + " " + b.Client.LastName : "Unknown",
                 clientEmail = b.Client != null ? b.Client.Email : string.Empty,
@@ -227,7 +228,7 @@ public class BookingsController : ControllerBase
             if (request.StaffId.HasValue) booking.StaffId = request.StaffId.Value;
             if (request.Status.HasValue) booking.Status = request.Status.Value;
             if (request.Notes != null) booking.Notes = request.Notes;
-            
+
             booking.UpdatedAt = DateTime.UtcNow;
             booking.Version++;
 
@@ -324,7 +325,7 @@ public class BookingsController : ControllerBase
 
         var csv = new System.Text.StringBuilder();
         csv.AppendLine("Booking ID,Client,Service,Staff,Start,End,Status,Price");
-        
+
         foreach (var b in bookings)
         {
             // C-6 FIX: Sanitize fields to prevent CSV formula injection
@@ -341,16 +342,16 @@ public class BookingsController : ControllerBase
     private static string SanitizeCsvField(string? value)
     {
         if (string.IsNullOrEmpty(value)) return string.Empty;
-        
+
         // Escape fields containing commas, quotes, or newlines
         var needsQuoting = value.Contains(',') || value.Contains('"') || value.Contains('\n') || value.Contains('\r');
-        
+
         // Prefix formula-injection characters with a single quote
         if (value.Length > 0 && "=+-@\t\r".Contains(value[0]))
         {
             value = "'" + value;
         }
-        
+
         // Escape internal quotes and wrap in quotes if needed
         value = value.Replace("\"", "\"\"");
         return needsQuoting ? $"\"{value}\"" : value;
@@ -502,12 +503,13 @@ public class BookingsController : ControllerBase
         try
         {
             var result = await _bookingService.CreateRecurringBookingAsync(tenantId.Value, model);
-            
+
             if (result.SuccessCount == 0)
             {
-                return BadRequest(new { 
-                    error = "None of the requested time slots are available.", 
-                    conflicts = result.ConflictedDates 
+                return BadRequest(new
+                {
+                    error = "None of the requested time slots are available.",
+                    conflicts = result.ConflictedDates
                 });
             }
 
@@ -657,7 +659,7 @@ public class BookingsController : ControllerBase
             .Include(b => b.Payments)
             .Where(b => b.TenantId == tenantId && b.StartTime >= date && b.Status != BookingStatus.Cancelled)
             .ToListAsync();
-            
+
         var discrepancies = bookedItems
             .Select(b => new
             {
@@ -790,11 +792,11 @@ public class BookingsController : ControllerBase
 
     private async Task ProcessWaitlistPromotion(Booking booking)
     {
-        try 
+        try
         {
             var nextEntry = await _context.WaitlistEntries
-                .Where(w => w.TenantId == booking.TenantId 
-                            && w.ServiceId == booking.ServiceId 
+                .Where(w => w.TenantId == booking.TenantId
+                            && w.ServiceId == booking.ServiceId
                             && w.Status == WaitlistStatus.Waiting
                             && (w.PreferredDate == DateTime.MinValue || w.PreferredDate.Date == booking.StartTime.Date))
                 .OrderByDescending(w => w.Priority)
@@ -804,7 +806,7 @@ public class BookingsController : ControllerBase
             if (nextEntry != null)
             {
                 _logger.LogInformation("Auto-promoting waitlist entry {EntryId} for cancelled booking {BookingId}", nextEntry.Id, booking.Id);
-                
+
                 // Notify them via Event Service
                 await _eventService.PublishAsync("waitlist.auto_promotion", new
                 {
