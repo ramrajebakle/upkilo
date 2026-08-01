@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Upkilo.Core.Entities;
 
@@ -198,7 +198,11 @@ public class DataWarehouseExport : TenantEntity
 public class SdkRelease : TenantEntity
 {
     public string Language { get; set; } = "JavaScript"; // JavaScript, Python, PHP
-    public string Version { get; set; } = "1.0.0";
+    // `new`: this is a domain version STRING (e.g. "1.2.0"), deliberately distinct from
+    // BaseEntity.Version, which is an int concurrency counter. Declaring it `new` documents
+    // the shadowing and silences CS0108. NOTE: this entity therefore has no usable
+    // BaseEntity.Version concurrency token — see docs/PRODUCTION_DEPLOYMENT.md §4.
+    public new string Version { get; set; } = "1.0.0";
     public string? DownloadUrl { get; set; }
     public string? ChangelogUrl { get; set; }
     public int DownloadCount { get; set; }

@@ -30,5 +30,6 @@ public class AIEscalation : TenantEntity
     public bool IsApproved { get; set; }
     public string? ActionTaken { get; set; } // Approved, Rejected, Overridden
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    // CreatedAt is inherited from BaseEntity (same type, same default). The redundant
+    // redeclaration here shadowed it and produced CS0108; removing it changes no schema.
 }

@@ -88,7 +88,6 @@ public class StripeWebhookController : ControllerBase
         var connectSecret = await _secretProvider.GetSecretAsync("Stripe:ConnectWebhookSecret");
 
         Stripe.Event? stripeEvent = null;
-        bool isConnectWebhook = false;
         try
         {
             stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, platformSecret, throwOnApiVersionMismatch: false);
@@ -99,8 +98,11 @@ public class StripeWebhookController : ControllerBase
             {
                 try
                 {
+                    // Verified against the Connect secret rather than the platform secret.
+                    // The distinction is not currently acted on downstream — every event is
+                    // handled identically regardless of origin. If Connect events ever need
+                    // different routing, reintroduce a flag here and branch on it.
                     stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, connectSecret, throwOnApiVersionMismatch: false);
-                    isConnectWebhook = true;
                 }
                 catch (StripeException e)
                 {

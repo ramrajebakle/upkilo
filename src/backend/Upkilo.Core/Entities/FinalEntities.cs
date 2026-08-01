@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Upkilo.Core.Entities;
 
@@ -57,7 +57,11 @@ public class ApiErrorCode : TenantEntity
 public class MigrationRecord : TenantEntity
 {
     public string MigrationId { get; set; } = string.Empty;
-    public string Version { get; set; } = string.Empty;
+    // `new`: this is a domain version STRING (e.g. "1.2.0"), deliberately distinct from
+    // BaseEntity.Version, which is an int concurrency counter. Declaring it `new` documents
+    // the shadowing and silences CS0108. NOTE: this entity therefore has no usable
+    // BaseEntity.Version concurrency token — see docs/PRODUCTION_DEPLOYMENT.md §4.
+    public new string Version { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Script { get; set; } = string.Empty; // SQL
     public string? RollbackScript { get; set; } // SQL
@@ -72,7 +76,11 @@ public class MigrationRecord : TenantEntity
 /// </summary>
 public class DeploymentRecord : TenantEntity
 {
-    public string Version { get; set; } = string.Empty;
+    // `new`: this is a domain version STRING (e.g. "1.2.0"), deliberately distinct from
+    // BaseEntity.Version, which is an int concurrency counter. Declaring it `new` documents
+    // the shadowing and silences CS0108. NOTE: this entity therefore has no usable
+    // BaseEntity.Version concurrency token — see docs/PRODUCTION_DEPLOYMENT.md §4.
+    public new string Version { get; set; } = string.Empty;
     public string Environment { get; set; } = "Production"; // Staging, Production
     public string Strategy { get; set; } = "BlueGreen"; // BlueGreen, Canary, Rolling
     public string Status { get; set; } = "Deploying"; // Deploying, Active, RolledBack, Archived

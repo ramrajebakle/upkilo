@@ -285,7 +285,11 @@ public class ServicesControllerTests : ControllerTestBase
         var aiService = new Mock<IAIService>();
         var cacheMock = new Mock<ICacheService>();
         cacheMock.Setup(c => c.GetOrSetAsync<List<object>>(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<Func<Task<List<object>>>>(), It.IsAny<TimeSpan?>()))
-            .Returns<Guid, string, Func<Task<List<object>>>, TimeSpan?>((_, _, factory, _) => factory());
+            // ICacheService.GetOrSetAsync returns Task<T?>, so the lambda must yield
+            // Task<List<object>?>. Returning factory() directly gives Task<List<object>>,
+            // a different generic instantiation, which raised CS8619.
+            .Returns<Guid, string, Func<Task<List<object>>>, TimeSpan?>(
+                async (_, _, factory, _) => (List<object>?)await factory());
         _sut = new ServicesController(logger.Object, Context, TenantProvider.Object, aiService.Object, cacheMock.Object);
         WithAuth(_sut);
     }

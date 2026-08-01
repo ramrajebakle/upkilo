@@ -288,7 +288,10 @@ public class OnboardingController : ControllerBase
 
         const int freeClientLimit = 100;
         const int freeStaffLimit = 1;
-        const int freeBookingMonthlyLimit = 50;
+        // NOTE: a monthly booking limit (50) was declared here but never used — unlike
+        // freeClientLimit and freeStaffLimit, no corresponding nudge was ever built. Removed
+        // to keep the build warning-free. If Free-plan booking limits are meant to be
+        // enforced, that nudge still needs implementing (requires a monthly booking count).
 
         var nudges = new List<object>();
 

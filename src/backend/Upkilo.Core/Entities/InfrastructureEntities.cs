@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Upkilo.Core.Entities;
@@ -127,7 +127,11 @@ public class LegalDocument : TenantEntity
     public string DocumentType { get; set; } = string.Empty; // TermsOfService, PrivacyPolicy, CookiePolicy, CCPA, DPA
     public string Title { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty; // HTML
-    public string Version { get; set; } = "1.0";
+    // `new`: this is a domain version STRING (e.g. "1.2.0"), deliberately distinct from
+    // BaseEntity.Version, which is an int concurrency counter. Declaring it `new` documents
+    // the shadowing and silences CS0108. NOTE: this entity therefore has no usable
+    // BaseEntity.Version concurrency token — see docs/PRODUCTION_DEPLOYMENT.md §4.
+    public new string Version { get; set; } = "1.0";
     public bool IsPublished { get; set; }
     public DateTime? PublishedAt { get; set; }
     public string? Locale { get; set; } = "en";

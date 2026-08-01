@@ -14,7 +14,8 @@ public class DigitalWaiver : BaseEntity
     public bool IsActive { get; set; } = true;
     public int? ExpiryDays { get; set; }                       // Re-sign after N days (null = never)
     public string? ApplicableServiceIds { get; set; }           // Comma-separated (null = all)
-    public int Version { get; set; } = 1;
+    // Version is inherited from BaseEntity (int, defaults to 1). The redundant
+    // redeclaration here shadowed it and produced CS0108; removing it changes no schema.
 
     // Navigation
     public Tenant? Tenant { get; set; }

@@ -46,6 +46,18 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.0" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
     <PackageReference Include="Npgsql.OpenTelemetry" Version="8.0.2" />
+
+    <!-- Security pins for transitive dependencies flagged HIGH by Trivy.
+         These are not referenced directly; the pins force the patched versions that
+         the parent packages would otherwise resolve below.
+           Npgsql                       8.0.2   -> 8.0.3   CVE-2024-32655
+           MessagePack                  2.5.108 -> 2.5.301 CVE-2026-48109, CVE-2026-48506
+           Microsoft.Kiota.Abstractions 1.21.1  -> 1.22.0  CVE-2026-44503
+         Remove a pin once its parent package ships a version that already resolves
+         to at least these — keeping stale pins blocks future upgrades. -->
+    <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="MessagePack" Version="2.5.301" />
+    <PackageReference Include="Microsoft.Kiota.Abstractions" Version="1.22.0" />
   </ItemGroup>
 
   <ItemGroup>
