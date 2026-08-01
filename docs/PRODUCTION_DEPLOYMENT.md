@@ -258,6 +258,42 @@ Three further defects, all of which would have failed the first pipeline run:
 Note the Azure CLI flag shape here: `--server-name <server> --name <rule>`. Using
 `--name` for the server (as the docs' shorthand suggests) silently fails.
 
+### 3.7 Email quota — campaigns share the transactional allowance
+
+SendGrid is on the **free tier: 100 emails/day**, and that single allowance covers
+everything.
+
+Campaign and broadcast sends do **not** use SendGrid's Marketing Campaigns product.
+[`BroadcastController`](../src/backend/Upkilo.API/Controllers/BroadcastController.cs)
+loops over clients calling `IEmailService.SendEmailAsync` — the same Mail Send API as
+signup verification and password resets.
+
+```
+MaxAudiencePerSend (CampaignsController)  5,000
+Free-tier daily limit                       100
+```
+
+> 🔴 **Failure mode:** a tenant sending one campaign to 200 clients exhausts the daily
+> quota. The broadcast loop catches per-recipient exceptions and increments `failed`, so
+> the campaign reports partial success — while **new users silently cannot register** for
+> the rest of the day. You would discover this from a failed signup, not from SendGrid.
+
+**Decision (deliberate):** ship as-is. There are no tenants yet, so the risk is
+theoretical. The campaign feature will not be promoted until users are onboarded, and
+the SendGrid plan will be upgraded at that point.
+
+**Before promoting campaigns to tenants:**
+
+1. Upgrade to SendGrid Essentials 50K (~$19.95/month) — this is the meaningful unlock,
+   not the Marketing Campaigns plan, which remains unused.
+2. Consider making `MaxAudiencePerSend` configuration-driven so it can be raised without
+   a redeploy.
+3. Consider a separate API key or subuser for bulk sends, so a campaign cannot starve
+   transactional mail.
+
+**Monitoring trigger:** SendGrid → Stats. Upgrade at ~60–70 emails/day, before the cap
+is reached — hitting it fails closed and silently.
+
 ## 4. Outstanding issues (not deployment blockers)
 
 - [`docker-compose.yml:32`](../docker-compose.yml#L32) pins `edoburu/pgbouncer:1.23.1`,
