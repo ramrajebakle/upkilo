@@ -260,16 +260,47 @@ jobs:
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
 
-      # CRITICAL-06: Backup database BEFORE every migration
-      - name: Backup database before migration
+      # CRITICAL-06: establish a recoverable restore point BEFORE every migration.
+      #
+      # This previously called `az postgres flexible-server backup create`, which CANNOT
+      # work here — Azure rejects it on Burstable tier:
+      #   (CustomerOnDemandBackupCannotBePerformedOnBurstableServer)
+      # It also used the wrong flags (--name for the server, plus a non-existent
+      # --backup-name). It failed every run.
+      #
+      # The server has automated backups with 7-day point-in-time restore, which covers
+      # this scenario properly: PITR can rewind to any moment in the window, including the
+      # instant before these migrations ran. Record that timestamp so an incident does not
+      # require guessing it. See §9 of docs/PRODUCTION_DEPLOYMENT.md for the restore steps.
+      - name: Record pre-migration restore point
         uses: azure/CLI@v2
         with:
           inlineScript: |
-            az postgres flexible-server backup create \
-              --resource-group upkilo-prod-rg \
-              --name upkilo-prod-db \
-              --backup-name "pre-deploy-${{ github.sha }}"
-            echo "✅ Database backup created: pre-deploy-${{ github.sha }}"
+            RESTORE_POINT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            EARLIEST=$(az postgres flexible-server show \
+              --resource-group upkilo-prod-rg --name upkilo-prod-db \
+              --query "backup.earliestRestoreDate" -o tsv)
+            RETENTION=$(az postgres flexible-server show \
+              --resource-group upkilo-prod-rg --name upkilo-prod-db \
+              --query "backup.backupRetentionDays" -o tsv)
+            if [ -z "$EARLIEST" ]; then
+              echo "::error::Could not read backup configuration — refusing to migrate without a verified restore point."
+              exit 1
+            fi
+            echo "✅ Pre-migration restore point: $RESTORE_POINT"
+            echo "   PITR window: $EARLIEST → now (${RETENTION}-day retention)"
+            {
+              echo "### Database restore point"
+              echo ""
+              echo "Restore to **$RESTORE_POINT** to rewind the migrations in this deploy:"
+              echo '```bash'
+              echo "az postgres flexible-server restore \\"
+              echo "  --resource-group upkilo-prod-rg \\"
+              echo "  --name upkilo-prod-db-restored \\"
+              echo "  --source-server upkilo-prod-db \\"
+              echo "  --restore-time $RESTORE_POINT"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
 
       # CRITICAL-06: Generate idempotent SQL script for review/audit
       - name: Generate migration SQL script

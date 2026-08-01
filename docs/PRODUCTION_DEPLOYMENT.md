@@ -671,6 +671,41 @@ noticeably longer than on subsequent deploys.
 
 ## 9. Rollback
 
+### 9.0 Database recovery — point-in-time restore
+
+⚠️ **There are no on-demand backups.** Azure rejects them on Burstable tier:
+`CustomerOnDemandBackupCannotBePerformedOnBurstableServer`. Recovery relies entirely on
+**automated backups with point-in-time restore**:
+
+| Setting | Value |
+|---|---|
+| Retention | 7 days |
+| Geo-redundant | Disabled |
+| Tier | Burstable B1ms |
+
+Every `migrate-database` run prints a **pre-migration restore point** to the job summary.
+To rewind a bad migration, restore to that timestamp:
+
+```bash
+az postgres flexible-server restore \
+  --resource-group upkilo-prod-rg \
+  --name upkilo-prod-db-restored \
+  --source-server upkilo-prod-db \
+  --restore-time 2026-08-01T12:34:56Z
+```
+
+This creates a **new server**; it does not overwrite the original. After verifying the
+restored data, repoint `AZURE_PROD_DB_CONNECTION` (GitHub secret *and* the App Service
+setting) at the new server, then redeploy.
+
+> Restore is not instant — expect several minutes, and the app stays down or serves the
+> old schema until the connection string is switched. This is the cost of the Burstable
+> tier; higher tiers support on-demand backups and faster recovery.
+
+**Retention is only 7 days.** A problem discovered on day 8 is not recoverable this way.
+
+
+
 The `rollback` job fires automatically when `deploy-production` fails: it swaps both
 slots back, then reverts the schema.
 
