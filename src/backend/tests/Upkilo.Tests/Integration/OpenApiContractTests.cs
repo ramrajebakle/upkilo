@@ -23,6 +23,12 @@ public class OpenApiContractTests : IClassFixture<OpenApiContractTests.ApiFactor
     public OpenApiContractTests(ApiFactory factory)
     {
         _client = factory.CreateClient();
+        // HttpClient defaults to a 100s timeout. Generating the full Swagger document for
+        // this API (500+ endpoints) can exceed that on a cold CI runner — the first request
+        // pays JIT plus reflection over every controller. When it timed out, each of the 12
+        // tests retried and timed out in turn, taking the CI job past 20 minutes before
+        // failing with TaskCanceledException. The same tests pass in ~8s on a warm machine.
+        _client.Timeout = TimeSpan.FromMinutes(5);
     }
 
     private async Task<JsonDocument> GetSpecAsync()
