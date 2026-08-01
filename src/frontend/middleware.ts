@@ -8,6 +8,38 @@ const PUBLIC_SEGMENTS = ['login', 'register', 'reset-password', 'verify-email', 
 // Top-level app segments that intentionally have no locale prefix
 const NON_LOCALE_SEGMENTS = new Set(['book', 'discover', 'powered-by', 'enterprise', 'offline', 'test', 'au', 'ca', 'uk', 'uae']);
 
+// ── Domain split ────────────────────────────────────────────────────────────
+// Marketing + public SEO pages live on the apex (upkilo.com); the dashboard, portal
+// and auth flows live on app.upkilo.com. Marketing is ALLOWLISTED rather than the
+// dashboard being denylisted: there are ~47 dashboard segments and only a handful of
+// marketing routes, so adding a dashboard route must not require editing this file.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.upkilo.com';
+
+// Locale-prefixed marketing paths, i.e. /en/pricing. '' covers the /en landing page.
+const MARKETING_LOCALE_SEGMENTS = new Set([
+  '', 'pricing', 'marketplace', 'medical-spa', 'docs',
+  'terms-of-service', 'privacy-policy', 'cookie-policy', 'book',
+]);
+
+// Marketing paths that carry no locale prefix, i.e. /discover, /uk
+const MARKETING_ROOT_SEGMENTS = new Set([
+  'book', 'discover', 'powered-by', 'enterprise', 'au', 'ca', 'uk', 'uae',
+]);
+
+function isMarketingPath(pathname: string): boolean {
+  if (pathname === '/') return true;
+
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length === 0) return true;
+
+  // Strip a leading locale so /en/pricing and /pricing are treated alike.
+  const rest = SUPPORTED_LOCALES.includes(segments[0]) ? segments.slice(1) : segments;
+  if (rest.length === 0) return true;               // bare /en → landing page
+
+  return MARKETING_LOCALE_SEGMENTS.has(rest[0]) || MARKETING_ROOT_SEGMENTS.has(rest[0]);
+}
+
 function extractLocale(pathname: string): string {
   const segment = pathname.split('/')[1];
   return SUPPORTED_LOCALES.includes(segment) ? segment : 'en';
@@ -50,6 +82,30 @@ function roleDefaultRoute(role: string | undefined, locale: string): string {
 export default auth((req) => {
   const { nextUrl } = req;
   const pathname = nextUrl.pathname;
+
+  // ── Host routing, before any auth logic ──────────────────────────────────
+  // Only applies to real upkilo.com traffic. localhost, *.azurewebsites.net and
+  // staging fall straight through, so dev and staging behave exactly as before.
+  const host = (req.headers.get('host') ?? '').toLowerCase().split(':')[0];
+  if (host === 'upkilo.com' || host === 'www.upkilo.com' || host === 'app.upkilo.com') {
+    // Canonicalise www → apex so SEO does not split across two hostnames.
+    if (host === 'www.upkilo.com') {
+      return NextResponse.redirect(new URL(`${pathname}${nextUrl.search}`, SITE_URL), 308);
+    }
+
+    const onAppHost = host === 'app.upkilo.com';
+    const marketing = isMarketingPath(pathname);
+
+    // Dashboard/portal/auth requested on the apex → send to the app subdomain.
+    if (!onAppHost && !marketing) {
+      return NextResponse.redirect(new URL(`${pathname}${nextUrl.search}`, APP_URL), 308);
+    }
+    // Marketing requested on the app subdomain → send to the apex, which is the
+    // canonical host in sitemap.ts and robots.ts.
+    if (onAppHost && marketing) {
+      return NextResponse.redirect(new URL(`${pathname}${nextUrl.search}`, SITE_URL), 308);
+    }
+  }
 
   // Auto-prefix locale: if the first segment is neither a supported locale nor a
   // known locale-free route, prepend /en/ so /tenant/command → /en/tenant/command.
@@ -97,5 +153,9 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icons|screenshots|sw.js|manifest.json).*)'],
+  // `.well-known` MUST be excluded. Apple does not follow redirects when fetching
+  // apple-app-site-association, and Google requires assetlinks.json to be served
+  // directly — if host routing 308s these to another origin, universal links,
+  // App Links and password autofill all silently stop working.
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icons|screenshots|sw.js|manifest.json|\\.well-known).*)'],
 };
