@@ -52,8 +52,16 @@ public class SubscriptionService : ISubscriptionService
 
         // C-02 FIX: Do NOT set global StripeConfiguration.ApiKey — it is process-wide
         // and creates race conditions. Store locally for per-request RequestOptions.
-        _stripeApiKey = _secretProvider.GetSecret("Stripe--SecretKey")
-            ?? throw new InvalidOperationException("Stripe API key (Stripe--SecretKey) is not configured.");
+        // Deliberately does NOT throw when unset. This runs in the CONSTRUCTOR, and
+        // SubscriptionService is resolved on the health-check path — so throwing here made a
+        // missing Stripe key return HTTP 400 for /health and /ready, i.e. the whole API looked
+        // down when only billing was unconfigured. That blocks every deployment, because the
+        // readiness gate can never pass before Stripe is activated.
+        //
+        // Billing is an optional capability: bookings, CRM and auth must work without it.
+        // Stripe calls now fail at the point of use with Stripe's own authentication error,
+        // which is scoped to the billing endpoints that actually need it.
+        _stripeApiKey = _secretProvider.GetSecret("Stripe--SecretKey") ?? string.Empty;
     }
 
     private static string SubCacheKey(Guid tenantId) => $"sub:{tenantId}";

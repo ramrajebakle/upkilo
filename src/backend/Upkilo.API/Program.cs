@@ -54,6 +54,37 @@ using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// appsettings.Production.json declares every secret as a "${VAR}" placeholder, but .NET does
+// NOT expand ${...} — a value only becomes real if App Service (or the environment) supplies
+// it. Anything still holding a literal placeholder was never configured, yet it is neither
+// null nor whitespace, so `string.IsNullOrWhiteSpace(...)` guards on optional features happily
+// treat it as a real value.
+//
+// That crashed production: AzureServiceBus:ConnectionString kept its placeholder, the
+// in-memory-transport fallback never triggered, and MassTransit tried to parse
+// "${AZURE_SERVICE_BUS_CONNECTION_STRING}" as a Service Bus connection string —
+// FormatException, unhandled, container exited 139 before Kestrel ever bound a port.
+//
+// Blanking them here makes "unset" actually look unset, so every optional-feature guard and
+// fail-fast check behaves as written. Applied to all keys rather than the one that bit us,
+// because the same trap is armed on Elasticsearch and anything added later.
+var unexpandedPlaceholders = builder.Configuration.AsEnumerable()
+    .Where(kv => kv.Value is not null &&
+                 System.Text.RegularExpressions.Regex.IsMatch(kv.Value, @"^\$\{[A-Za-z_][A-Za-z0-9_]*\}"))
+    .Select(kv => kv.Key)
+    .ToList();
+
+if (unexpandedPlaceholders.Count > 0)
+{
+    builder.Configuration.AddInMemoryCollection(
+        unexpandedPlaceholders.Select(k => new KeyValuePair<string, string?>(k, null)));
+    Log.Warning(
+        "Ignoring {Count} configuration key(s) still holding an unexpanded ${{...}} placeholder: {Keys}. " +
+        "These are treated as NOT configured. Set them as App Service application settings if the " +
+        "corresponding feature is required.",
+        unexpandedPlaceholders.Count, string.Join(", ", unexpandedPlaceholders));
+}
+
 // Fail fast at startup if required connection strings are absent.
 var redisConn = builder.Configuration.GetConnectionString("Redis")
     ?? throw new InvalidOperationException("ConnectionStrings:Redis is not configured.");
@@ -498,9 +529,40 @@ builder.Services.AddScoped<IMarketingAutomationService, MarketingAutomationServi
 builder.Services.AddScoped<IMarketingIntegrationService, MarketingIntegrationService>();
 // Warn at startup when key observability/alerting config is missing — prevents silent failure.
 var aiConnStr = builder.Configuration["ApplicationInsights:ConnectionString"];
-if (string.IsNullOrWhiteSpace(aiConnStr) || aiConnStr.StartsWith("${", StringComparison.Ordinal))
+var aiConfigured = !string.IsNullOrWhiteSpace(aiConnStr)
+                   && !aiConnStr.StartsWith("${", StringComparison.Ordinal);
+
+if (!aiConfigured)
+{
     Log.Warning("ApplicationInsights:ConnectionString is not configured — error telemetry will not be sent to Azure Monitor.");
-builder.Services.AddApplicationInsightsTelemetry(builder.Configuration);
+
+    // AddApplicationInsightsTelemetry also registers TelemetryClient, which TelemetryService
+    // (and transitively GlobalExceptionHandler) require. Skipping registration entirely
+    // breaks DI validation at startup, so supply a DISABLED client: telemetry calls become
+    // no-ops instead of an unresolvable dependency.
+    // DisableTelemetry alone is not enough: TelemetryConfiguration still parses its
+    // ConnectionString, and a null one throws NullReferenceException inside
+    // ConnectionString.Parse. Supply a syntactically valid all-zero key — nothing is
+    // transmitted because DisableTelemetry short-circuits every send.
+    builder.Services.AddSingleton(_ => new Microsoft.ApplicationInsights.TelemetryClient(
+        new Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration
+        {
+            ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000",
+            DisableTelemetry = true
+        }));
+}
+else
+{
+    // Registration is GUARDED. Microsoft.ApplicationInsights.AspNetCore 3.x is
+    // OpenTelemetry-based, so AddApplicationInsightsTelemetry registers an
+    // AzureMonitorMetricExporter that throws at DI-resolution time when no connection
+    // string is present:
+    //   InvalidOperationException: A connection string was not found.
+    // That is an UNHANDLED startup exception — the container exits 139 before Kestrel
+    // binds a port, so the app is simply unreachable rather than degraded. Telemetry is
+    // optional; it must never be able to take the API down.
+    builder.Services.AddApplicationInsightsTelemetry(builder.Configuration);
+}
 
 var pdKey = builder.Configuration["PagerDuty:IntegrationKey"];
 if (string.IsNullOrWhiteSpace(pdKey))
