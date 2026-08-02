@@ -738,10 +738,19 @@ builder.Services.AddHealthChecks()
     // Pricing fails silently — a missing price list still returns 200 and renders "Contact us"
     // on every plan, so nothing alerts while the site has quietly stopped selling.
     .AddCheck<Upkilo.Infrastructure.HealthChecks.PricingHealthCheck>("pricing", tags: new[] { "ready", "billing" })
+    // Elasticsearch is OPTIONAL — search degrades to plain SQL when it is absent, and it is
+    // deliberately not provisioned. It must therefore NOT carry the "ready" tag: readiness
+    // decides whether this instance serves traffic at all, and deploy.yml aborts (then rolls
+    // back) when /ready is Unhealthy.
+    //
+    // Tagged "ready" it made an unprovisioned, non-essential component fail every deployment
+    // while postgresql, redis, hangfire, pricing and the bus were all Healthy. deploy.yml even
+    // has a separate step that inspects Elasticsearch *non-fatally* — the intent was always
+    // that it should not block. Reported under "search" so it stays visible on /health.
     .AddElasticsearch(
         builder.Configuration["Elasticsearch:Uri"] ?? "http://localhost:9200",
         name: "elasticsearch",
-        tags: new[] { "ready", "search" },
+        tags: new[] { "search" },
         timeout: TimeSpan.FromSeconds(5));
 
 var app = builder.Build();
