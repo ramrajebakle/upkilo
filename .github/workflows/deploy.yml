@@ -377,7 +377,17 @@ jobs:
     runs-on: ubuntu-latest
     # MANUAL GATE — see migrate-database above. Production is only ever deployed by an
     # explicit "Run workflow", never by a push to main.
-    if: github.event_name == 'workflow_dispatch'
+    #
+    # `always()` is required for the same reason as migrate-database: deploy-staging is
+    # skipped while STAGING_ENABLED is unset, and that skip propagates DOWN the needs graph.
+    # Without always() this job inherited the skip and silently did nothing — the run
+    # reported "Success" having only migrated the database and never deployed. The explicit
+    # result checks keep a genuine failure upstream blocking the deploy.
+    if: >-
+      always()
+      && github.event_name == 'workflow_dispatch'
+      && needs.build-and-push.result == 'success'
+      && needs.migrate-database.result == 'success'
     # The environment restricts deployments to the `main` branch. On GitHub Free with a
     # private repo it cannot enforce required reviewers; upgrading to Pro/Team (or making
     # the repo public) enables that, at which point the `if:` above becomes redundant.
