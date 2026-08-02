@@ -18,7 +18,7 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.upkilo.com';
 
 // Locale-prefixed marketing paths, i.e. /en/pricing. '' covers the /en landing page.
 const MARKETING_LOCALE_SEGMENTS = new Set([
-  '', 'pricing', 'marketplace', 'medical-spa', 'docs',
+  '', 'pricing', 'features', 'marketplace', 'medical-spa', 'docs',
   'terms-of-service', 'privacy-policy', 'cookie-policy', 'book',
 ]);
 
@@ -55,7 +55,7 @@ function isPublicPath(pathname: string): boolean {
     }
   }
   // Also allow the root landing page and public marketing pages
-  const publicPrefixes = ['/', '/pricing', '/marketplace', '/docs', '/cookie-policy', '/privacy-policy', '/terms-of-service'];
+  const publicPrefixes = ['/', '/pricing', '/features', '/marketplace', '/docs', '/cookie-policy', '/privacy-policy', '/terms-of-service'];
   for (const locale of SUPPORTED_LOCALES) {
     for (const prefix of publicPrefixes) {
       if (pathname === `/${locale}${prefix === '/' ? '' : prefix}` || pathname === `/${locale}`) {
@@ -76,7 +76,7 @@ function isPublicPath(pathname: string): boolean {
 
 function roleDefaultRoute(role: string | undefined, locale: string): string {
   if (role?.startsWith('platform')) return `/${locale}/platform/command`;
-  return `/${locale}/tenant/command`;
+  return `/${locale}/dashboard`;
 }
 
 export default auth((req) => {
@@ -128,15 +128,15 @@ export default auth((req) => {
   if (isLoggedIn) {
     const role = req.auth?.user?.role as string | undefined;
     const isPlatformPath = pathname.includes('/platform');
-    const isTenantPath = pathname.includes('/tenant');
 
     if ((role === 'tenant_owner' || role === 'team_member') && isPlatformPath) {
-      return Response.redirect(new URL(`/${locale}/tenant/command`, nextUrl));
+      return Response.redirect(new URL(`/${locale}/dashboard`, nextUrl));
     }
 
-    if ((role === 'platform_owner' || role === 'platform_admin') && isTenantPath) {
-      return Response.redirect(new URL(`/${locale}/platform/command`, nextUrl));
-    }
+    // The mirrored guard that used to bounce platform staff off `/tenant` paths is gone
+    // with those routes. It was matching on `pathname.includes('/tenant')`, which also
+    // matched `/platform/tenants` — so platform owners were redirected away from their
+    // own tenant list and could never open it.
 
     // Redirect away from auth pages when already logged in
     if (isPublicPath(pathname) && PUBLIC_SEGMENTS.some(s => pathname.includes(`/${s}`))) {

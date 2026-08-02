@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useUIStore } from "@/stores/ui";
-import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
@@ -12,14 +11,16 @@ import {
   ChevronLeft,
   ChevronRight,
   Activity,
-  Briefcase,
-  Wrench,
 } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/navigation";
 
-// Mock data for Orbit items based on role
-const platformNavItems = [
+// Platform staff only. Tenants use the full application shell in app/[locale]/(dashboard),
+// which carries onboarding, global search, notifications, realtime and translations.
+//
+// These hrefs are locale-free by design: `@/navigation`'s Link prefixes the active locale.
+// Using plain next/link here sent every click through the middleware's locale redirect,
+// costing a 307 on each navigation.
+const navItems = [
   { id: "command", label: "Command", icon: LayoutDashboard, href: "/platform/command" },
   { id: "tenants", label: "Tenants", icon: Users, href: "/platform/tenants" },
   { id: "revenue", label: "Platform Revenue", icon: CreditCard, href: "/platform/revenue" },
@@ -28,23 +29,9 @@ const platformNavItems = [
   { id: "settings", label: "Settings", icon: Settings, href: "/platform/settings" },
 ];
 
-const tenantNavItems = [
-  { id: "command", label: "Workspace", icon: LayoutDashboard, href: "/tenant/command" },
-  { id: "customers", label: "Customers", icon: Users, href: "/tenant/customers" },
-  { id: "revenue", label: "Your Revenue", icon: CreditCard, href: "/tenant/revenue" },
-  { id: "ai-tools", label: "AI Tools", icon: Wrench, href: "/tenant/ai-tools" },
-  { id: "team", label: "Team", icon: Briefcase, href: "/tenant/team" },
-  { id: "settings", label: "Settings", icon: Settings, href: "/tenant/settings" },
-];
-
 export const OrbitPanel = () => {
   const { orbitCollapsed, toggleOrbit } = useUIStore();
-  const { data: session } = useSession();
-  const role = session?.user?.role;
   const pathname = usePathname();
-
-  const isPlatform = role === "platform_owner" || role === "platform_admin";
-  const navItems = isPlatform ? platformNavItems : tenantNavItems;
 
   return (
     <aside

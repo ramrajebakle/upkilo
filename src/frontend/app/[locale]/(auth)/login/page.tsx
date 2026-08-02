@@ -12,8 +12,8 @@ import Link from "next/link";
 const ROLE_ROUTES: Record<string, string> = {
   platform_owner: "platform/command",
   platform_admin: "platform/command",
-  tenant_owner: "tenant/command",
-  team_member: "tenant/command",
+  tenant_owner: "dashboard",
+  team_member: "dashboard",
   customer: "dashboard",
 };
 
@@ -87,7 +87,7 @@ function LoginForm() {
       await signIn("credentials", {
         username: role,
         password: "password",
-        callbackUrl: role === "platform" ? `/${locale}/platform/command` : `/${locale}/tenant/command`,
+        callbackUrl: role === "platform" ? `/${locale}/platform/command` : `/${locale}/dashboard`,
       });
     } catch {
       setMockLoading(null);

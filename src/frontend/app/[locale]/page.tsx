@@ -688,8 +688,11 @@ export default async function HomePage() {
             <div>
               <h3 className="text-sm font-semibold text-white">Product</h3>
               <ul className="mt-4 space-y-3 text-sm">
-                <li><a href="#features" className="transition-colors hover:text-white">Features</a></li>
-                <li><a href="#pricing" className="transition-colors hover:text-white">Pricing</a></li>
+                {/* Real pages, not #anchors. A fragment is stripped before the request is
+                    sent, so /en#pricing is just /en to Google — linking here starved the
+                    dedicated pages that are actually trying to rank. */}
+                <li><Link href="/features" className="transition-colors hover:text-white">Features</Link></li>
+                <li><Link href="/pricing" className="transition-colors hover:text-white">Pricing</Link></li>
                 <li><Link href="/marketplace" className="transition-colors hover:text-white">Marketplace</Link></li>
                 <li><Link href="/docs" className="transition-colors hover:text-white">Docs</Link></li>
               </ul>
