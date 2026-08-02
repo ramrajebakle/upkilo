@@ -509,6 +509,25 @@ jobs:
           done
           echo "✅ API READY (DB + Redis + Hangfire green)"
 
+      # NextAuth v5 refuses to start without a signing secret and returns
+      # "There was a problem with the server configuration" from every /api/auth/* route —
+      # so login fails even though the API issues valid JWTs. These are RUNTIME settings
+      # (unlike NEXT_PUBLIC_* which are baked at build), so they must live here.
+      - name: Configure Frontend App Service application settings
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az webapp config appsettings set \
+              --name upkilo-frontend-prod \
+              --resource-group upkilo-prod-rg \
+              --settings \
+                AUTH_SECRET="${{ secrets.AUTH_SECRET }}" \
+                NEXTAUTH_SECRET="${{ secrets.AUTH_SECRET }}" \
+                AUTH_TRUST_HOST="true" \
+                NEXTAUTH_URL="https://app.upkilo.com" \
+              --output none
+            echo "✅ Frontend App Service settings configured"
+
       - name: Deploy Frontend
         uses: azure/webapps-deploy@v3
         with:
