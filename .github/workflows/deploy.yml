@@ -260,6 +260,13 @@ jobs:
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
 
+      # `dotnet ef` builds the startup project before it can read the model, and building
+      # requires restored packages. Without this the EF steps fail with:
+      #   Assets file '.../Upkilo.Infrastructure/obj/project.assets.json' not found.
+      # Restoring the whole solution once here covers both EF steps below.
+      - name: Restore backend dependencies
+        run: dotnet restore src/backend/Upkilo.sln
+
       # CRITICAL-06: establish a recoverable restore point BEFORE every migration.
       #
       # This previously called `az postgres flexible-server backup create`, which CANNOT

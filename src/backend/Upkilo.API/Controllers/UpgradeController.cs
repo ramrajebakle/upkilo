@@ -52,9 +52,12 @@ public class UpgradeController : ControllerBase
             RequiresStaffUpgrade = plan == "Free" && staffCount >= 2,
             RequiresLocationUpgrade = plan != "Enterprise" && locationCount >= 3,
             RequiresMarketingUpgrade = (plan == "Free" || plan == "Starter") && hasSmsCampaigns,
-            RequiresApiAccess = plan != "Enterprise" && hasApiKeys, // Real logic check
-            RequiresAdvancedReports = plan != "Professional" && plan != "Enterprise",
-            RequiresWhiteLabel = plan != "Enterprise"
+            // API access, advanced reports and white-label all unlock at Growth (see
+            // PricingSeeder). Legacy plan names are included so tenants on pre-consolidation
+            // rows are not nagged to upgrade to something they already have.
+            RequiresApiAccess = plan is not ("Growth" or "Business" or "Agency" or "Enterprise") && hasApiKeys,
+            RequiresAdvancedReports = plan is not ("Growth" or "Professional" or "Business" or "Agency" or "Enterprise"),
+            RequiresWhiteLabel = plan is not ("Growth" or "Business" or "Agency" or "Enterprise")
         };
 
         return Ok(triggers);

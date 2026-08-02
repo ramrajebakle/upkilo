@@ -35,11 +35,14 @@ public class TenantConcurrencyLimiterMiddleware
 
     private static readonly ConcurrentDictionary<string, TenantGate> _tenantSemaphores = new();
 
+    // Keep in step with PricingSeeder and TierRateLimitMiddleware. An unmapped plan silently
+    // falls back to the lowest limit, which is how a paying tier can end up throttled to free
+    // capacity without anything being logged.
     private static readonly Dictionary<string, int> TierConcurrencyLimits = new()
     {
         { "Free", 10 },
         { "Starter", 30 },
-        { "Professional", 100 },
+        { "Growth", 150 },
         { "Enterprise", 1000 }
     };
 
@@ -60,7 +63,22 @@ public class TenantConcurrencyLimiterMiddleware
 
         var tierObj = context.Items["TenantTier"];
         var tier = tierObj?.ToString() ?? "Free";
-        var limit = TierConcurrencyLimits.GetValueOrDefault(tier, 10);
+
+        // Legacy plan names from before the tier consolidation, kept as a safety net for any
+        // subscription row still carrying one.
+        tier = tier switch
+        {
+            "Professional" or "Business" or "Agency" => "Growth",
+            _ => tier
+        };
+
+        if (!TierConcurrencyLimits.TryGetValue(tier, out var limit))
+        {
+            limit = 10;
+            _logger.LogWarning(
+                "Unmapped plan '{Tier}' in TenantConcurrencyLimiterMiddleware — falling back to {Limit} concurrent. Add it to TierConcurrencyLimits.",
+                tier, limit);
+        }
 
         // AddOrUpdate rather than GetOrAdd: when the stored gate was sized for a different tier the
         // entry is replaced, so a plan change takes effect on the next request instead of at the

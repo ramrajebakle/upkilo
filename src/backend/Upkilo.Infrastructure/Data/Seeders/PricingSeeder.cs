@@ -38,18 +38,23 @@ public static class PricingSeeder
         );
 
         // 2. Create Plans
-        var free = new PricingPlan { Name = "Free", Description = "Get started with online booking at no cost", IsActive = true, TrialDays = 0 };
-        var starter = new PricingPlan { Name = "Starter", Description = "Everything you need to run your business", IsActive = true, TrialDays = 14 };
-        var pro = new PricingPlan { Name = "Professional", Description = "AI-powered growth for serious businesses", IsActive = true, TrialDays = 14 };
-        var business = new PricingPlan { Name = "Business", Description = "Scale faster with autonomous AI and white-label", IsActive = true, TrialDays = 14 };
-        var agency = new PricingPlan { Name = "Agency", Description = "Manage multiple client businesses from one account", IsActive = true, TrialDays = 14 };
+        // Three purchasable tiers, not six. Professional/Business/Agency were consolidated
+        // into a single Growth plan: Business and Agency previously carried IDENTICAL limits
+        // and feature flags, differing only by 20 sub-accounts for $100/mo more, which is not
+        // a defensible tier boundary. Overflow is now sold as add-ons (extra seats, extra
+        // locations, AI/SMS credits) rather than by adding tiers.
+        var free = new PricingPlan { Name = "Free", Description = "Get started with online booking at no cost", IsActive = true, TrialDays = 14 };
+        var starter = new PricingPlan { Name = "Starter", Description = "Everything a small team needs to run bookings and clients", IsActive = true, TrialDays = 14 };
+        var growth = new PricingPlan { Name = "Growth", Description = "AI-powered growth, white-label and API for scaling businesses", IsActive = true, TrialDays = 14 };
         // Enterprise: custom quote — no fixed price, sales-led
         var enterprise = new PricingPlan { Name = "Enterprise", Description = "Security, Compliance, and Scale — custom pricing for your team", IsActive = true, TrialDays = 30, IsCustom = true };
 
-        context.PricingPlans.AddRange(free, starter, pro, business, agency, enterprise);
+        context.PricingPlans.AddRange(free, starter, growth, enterprise);
 
         // 3. Add Prices (Monthly & Annual).
-        // Annual prices reflect a 21% discount vs paying monthly for 12 months.
+        // Annual = monthly × 10, i.e. "2 months free" (16.67% off). Pricing it as an exact
+        // multiple means the offer states itself on the pricing page and the customer can
+        // verify the arithmetic at a glance — clearer than "save 15%" or "save 20%".
         // Free plan has no price rows — $0 = no Stripe subscription needed.
         // Enterprise: IsCustom=true, no fixed price rows — billing page shows "Contact us".
         // Upkilo bills exclusively in USD. Multi-currency subscription pricing was removed:
@@ -62,15 +67,17 @@ public static class PricingSeeder
         //
         // Re-adding a currency later is a data change here plus rows in Stripe; no code change
         // is needed, because GetPlans falls back to USD for any currency it has no rows for.
+        // Benchmarked against the market (Aug 2026): Growth $499 sits on Mindbody Ultimate
+        // ($479–499) and inside Zenoti's multi-location band ($400–1,000+), while working out
+        // to ~$50/location vs Boulevard's $140. Starter $149 undercuts Mindbody Starter
+        // ($139–169). $199 was rejected for Starter — it sat above Mindbody's entry tier while
+        // the real entry market (Square, Fresha, Vagaro) is $20–49, which would have made
+        // Free → paid conversion implausible for the small salons most likely to try us first.
         context.PlanPrices.AddRange(
-            new PlanPrice { PricingPlan = starter, Amount = 39, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = starter, Amount = 370, CurrencyCode = "USD", Cycle = BillingCycle.Annual }, // $39×12=$468 → save $98
-            new PlanPrice { PricingPlan = pro, Amount = 89, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = pro, Amount = 844, CurrencyCode = "USD", Cycle = BillingCycle.Annual }, // $89×12=$1,068 → save $224
-            new PlanPrice { PricingPlan = business, Amount = 199, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = business, Amount = 1887, CurrencyCode = "USD", Cycle = BillingCycle.Annual }, // $199×12=$2,388 → save $501
-            new PlanPrice { PricingPlan = agency, Amount = 249, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
-            new PlanPrice { PricingPlan = agency, Amount = 2361, CurrencyCode = "USD", Cycle = BillingCycle.Annual }  // $249×12=$2,988 → save $627
+            new PlanPrice { PricingPlan = starter, Amount = 149, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
+            new PlanPrice { PricingPlan = starter, Amount = 1490, CurrencyCode = "USD", Cycle = BillingCycle.Annual }, // $149×10 → 2 months free ($124.17/mo)
+            new PlanPrice { PricingPlan = growth, Amount = 499, CurrencyCode = "USD", Cycle = BillingCycle.Monthly },
+            new PlanPrice { PricingPlan = growth, Amount = 4990, CurrencyCode = "USD", Cycle = BillingCycle.Annual }   // $499×10 → 2 months free ($415.83/mo)
         );
 
         // 4. Feature Mappings — Free
@@ -93,82 +100,57 @@ public static class PricingSeeder
             new PlanFeatureMapping { PricingPlan = free, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
         );
 
-        // Feature Mappings — Starter
-        // fAiCopilot was previously false despite having 500 AI action quota — corrected.
+        // Feature Mappings — Starter ($149/mo)
+        // Limits raised from the old $39 tier (3 staff / 1 location / 500 AI / 1,000 clients).
+        // At $149 a 3-staff cap would price the entry tier at ~$50/seat — worse value per seat
+        // than Growth, and uncompetitive against Fresha (~$14.95/staff). At 10 staff this is
+        // $14.90/seat, which reads as fair next to Growth's $19.96.
+        // Branding is OFF here: only Free advertises "Powered by Upkilo". A paying customer
+        // should not be marketing for us.
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxStaff, NumericLimit = 3, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxLocations, NumericLimit = 1, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxClients, NumericLimit = 1000, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiActions, NumericLimit = 500, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxStaff, NumericLimit = 10, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxLocations, NumericLimit = 3, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxClients, NumericLimit = 5000, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiActions, NumericLimit = 2000, IsEnabled = true },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fOnlineBooking, IsEnabled = true },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fSmsReminders, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiCopilot, IsEnabled = true }, // unlocks the 500 AI actions quota
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiCopilot, IsEnabled = true }, // unlocks the AI actions quota
+            // The advanced AI trio, white-label and API are the Growth upgrade story.
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiWorkflows, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiInsights, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fWhiteLabel, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fApiAccess, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAdvancedSecurity, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMarketingAutomation, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fShowBranding, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fShowBranding, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
         );
 
-        // Feature Mappings — Professional
-        // AI Workflow Builder moved down from Business: biggest upgrade trigger from Starter.
+        // Feature Mappings — Growth ($499/mo)
+        // Consolidates the former Professional, Business and Agency tiers. Keeps Business's
+        // limits (25 staff / 10 locations / 10,000 AI actions) and unlocks the full feature
+        // set: advanced AI, marketing automation, white-label and API.
+        //
+        // Agency's 20 sub-accounts are NOT bundled here — that becomes a paid add-on, mirroring
+        // ExtraStaffCount/ExtraLocationCount. Agency previously differed from Business only by
+        // those sub-accounts and +5,000 AI actions, for $100/mo more, which is not a defensible
+        // tier boundary. Anything beyond these limits is sold as an add-on rather than a tier.
         context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxStaff, NumericLimit = 10, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxLocations, NumericLimit = 3, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true }, // Unlimited
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiActions, NumericLimit = 3000, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fOnlineBooking, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fSmsReminders, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiCopilot, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiWorkflows, IsEnabled = true }, // moved down from Business
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAiInsights, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fWhiteLabel, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fApiAccess, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAdvancedSecurity, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fMarketingAutomation, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fShowBranding, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = pro, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
-        );
-
-        // Feature Mappings — Business
-        context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxStaff, NumericLimit = 25, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxLocations, NumericLimit = 10, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiActions, NumericLimit = 10000, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fOnlineBooking, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fSmsReminders, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiCopilot, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiWorkflows, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAiInsights, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fWhiteLabel, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fApiAccess, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAdvancedSecurity, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fMarketingAutomation, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fShowBranding, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = business, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
-        );
-
-        // Feature Mappings — Agency (Business features + sub-tenant management, up to 20 sub-accounts)
-        context.PlanFeatureMappings.AddRange(
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxStaff, NumericLimit = 25, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxLocations, NumericLimit = 10, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiActions, NumericLimit = 15000, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fOnlineBooking, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fSmsReminders, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiCopilot, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiWorkflows, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAiInsights, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fWhiteLabel, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fApiAccess, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAdvancedSecurity, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fMarketingAutomation, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fShowBranding, IsEnabled = false },
-            new PlanFeatureMapping { PricingPlan = agency, PricingFeature = fAgencyManagement, NumericLimit = 20, IsEnabled = true }
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fMaxStaff, NumericLimit = 25, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fMaxLocations, NumericLimit = 10, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fMaxClients, NumericLimit = null, IsEnabled = true }, // Unlimited
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fAiActions, NumericLimit = 10000, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fOnlineBooking, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fSmsReminders, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fAiCopilot, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fAiWorkflows, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fAiInsights, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fWhiteLabel, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fApiAccess, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fAdvancedSecurity, IsEnabled = false }, // Enterprise only
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fMarketingAutomation, IsEnabled = true },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fShowBranding, IsEnabled = false },
+            new PlanFeatureMapping { PricingPlan = growth, PricingFeature = fAgencyManagement, NumericLimit = 0, IsEnabled = false }
         );
 
         // Feature Mappings — Enterprise

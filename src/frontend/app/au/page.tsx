@@ -12,9 +12,12 @@ const features = [
 ];
 
 const plans = [
-  { name: 'Starter', price: 'A$49', period: '/mo', features: ['500 bookings/mo', 'SMS reminders', 'Online payments', '1 staff'] },
-  { name: 'Growth', price: 'A$99', period: '/mo', features: ['Unlimited bookings', 'AI Fill My Calendar', 'Memberships', '5 staff'], highlight: true },
-  { name: 'Business', price: 'A$199', period: '/mo', features: ['Everything in Growth', 'Franchise dashboard', 'Custom branding', 'Priority support'] },
+  // Priced in USD because that is what tenants are actually charged — Upkilo bills
+  // exclusively in USD (see PricingIntegrityService.BillingCurrency). Advertising A$ amounts
+  // here meant quoting a currency the system cannot charge in.
+  { name: 'Starter', price: '$149', period: '/mo', features: ['Up to 10 staff', 'Up to 3 locations', 'AI Copilot (2,000 actions/mo)', 'SMS & email reminders'] },
+  { name: 'Growth', price: '$499', period: '/mo', features: ['Up to 25 staff', 'Up to 10 locations', 'AI Workflows & Insights', 'White-label & API'], highlight: true },
+  { name: 'Enterprise', price: 'Custom', period: '', features: ['Unlimited staff & locations', 'SSO / SAML', 'Agency sub-accounts', 'Dedicated support'] },
 ];
 
 export default function AustraliaPage() {

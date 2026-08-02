@@ -284,9 +284,10 @@ public class AgencyController : ControllerBase
             resellerPricing = pricing,
             basePlans = new[]
             {
-                new { plan = "Starter", baseCost = 29, suggestedMarkup = "30-50%", suggestedPrice = "40-45" },
-                new { plan = "Professional", baseCost = 79, suggestedMarkup = "20-40%", suggestedPrice = "95-110" },
-                new { plan = "Business", baseCost = 149, suggestedMarkup = "15-30%", suggestedPrice = "170-195" }
+                // baseCost mirrors the monthly amounts in PricingSeeder. These were stale
+                // ($29/$79/$149 against seeded $39/$89/$149) before the tier consolidation.
+                new { plan = "Starter", baseCost = 149, suggestedMarkup = "20-40%", suggestedPrice = "180-210" },
+                new { plan = "Growth", baseCost = 499, suggestedMarkup = "15-30%", suggestedPrice = "575-650" }
             },
             hint = "Call PATCH /agency/reseller-pricing to save your custom pricing."
         });

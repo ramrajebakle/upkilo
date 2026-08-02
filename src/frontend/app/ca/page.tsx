@@ -12,9 +12,10 @@ const features = [
 ];
 
 const plans = [
-  { name: 'Starter', price: 'CA$59', period: '/mo', features: ['500 bookings/mo', 'SMS reminders', 'Online payments', '1 staff'] },
-  { name: 'Growth', price: 'CA$119', period: '/mo', features: ['Unlimited bookings', 'AI Fill My Calendar', 'Memberships', '5 staff'], highlight: true },
-  { name: 'Business', price: 'CA$239', period: '/mo', features: ['Everything in Growth', 'Franchise dashboard', 'Custom branding', 'Priority support'] },
+  // USD — Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency).
+  { name: 'Starter', price: '$149', period: '/mo', features: ['Up to 10 staff', 'Up to 3 locations', 'AI Copilot (2,000 actions/mo)', 'SMS & email reminders'] },
+  { name: 'Growth', price: '$499', period: '/mo', features: ['Up to 25 staff', 'Up to 10 locations', 'AI Workflows & Insights', 'White-label & API'], highlight: true },
+  { name: 'Enterprise', price: 'Custom', period: '', features: ['Unlimited staff & locations', 'SSO / SAML', 'Agency sub-accounts', 'Dedicated support'] },
 ];
 
 export default function CanadaPage() {

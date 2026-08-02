@@ -5,47 +5,77 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
+// ⚠️ These figures MUST match PricingSeeder.cs. They are currently duplicated: the seeder
+// is the billing source of truth, this array only renders the page. That duplication is
+// exactly how Business once advertised $149 here while the database charged $199.
+// Tracked follow-up: expose GET /api/v1/pricing/plans and render from it instead.
+//
+// priceAnnually is the EFFECTIVE MONTHLY cost when billed annually. The seeder stores the
+// annual TOTAL (monthly × 10 — "2 months free"), so: 149→1,490 ($124.17) and
+// 499→4,990 ($415.83).
 const plans = [
   {
     id: "starter",
     name: "Starter",
-    description: "Perfect for solo professionals just starting out.",
-    priceMonthly: 39,
-    priceAnnually: 31,
-    features: ["1 Staff Member", "Up to 1,000 Clients", "Basic CRM", "Online Booking Widget", "AI Copilot (500 actions/mo)", "Email Support"],
-  },
-  {
-    id: "professional",
-    name: "Professional",
-    description: "Most popular for growing teams and clinics.",
-    priceMonthly: 89,
-    priceAnnually: 70,
-    popular: true,
-    features: ["Up to 5 Staff", "Unlimited Clients", "AI Workflows + Copilot", "SMS & Email Campaigns", "Stripe Payments", "Priority Support"],
-  },
-  {
-    id: "business",
-    name: "Business",
-    description: "Advanced controls for multi-location businesses.",
+    description: "For small teams running bookings and clients in one place.",
     priceMonthly: 149,
-    priceAnnually: 118,
-    features: ["Up to 20 Staff", "Multi-Location Support", "Advanced API Access", "White-label Booking Pages", "Dedicated Success Manager"],
-  }
+    priceAnnually: 124,
+    features: [
+      "Up to 10 Staff",
+      "Up to 3 Locations",
+      "Up to 5,000 Clients",
+      "Online Booking Widget",
+      "AI Copilot (2,000 actions/mo)",
+      "SMS & Email Reminders",
+      "Email Support",
+    ],
+  },
+  {
+    id: "growth",
+    name: "Growth",
+    description: "Most popular — AI automation, white-label and API for scaling businesses.",
+    priceMonthly: 499,
+    priceAnnually: 416,
+    popular: true,
+    features: [
+      "Up to 25 Staff",
+      "Up to 10 Locations",
+      "Unlimited Clients",
+      "AI Copilot, Workflows & Insights (10,000 actions/mo)",
+      "Marketing Automation & Campaigns",
+      "White-label Booking Pages",
+      "API & Webhooks",
+      "Priority Support",
+    ],
+  },
 ];
 
-const agencyPlan = {
-  id: "agency",
-  name: "Agency",
-  description: "Manage multiple client businesses from one account.",
-  priceMonthly: 249,
-  priceAnnually: 197,
+// Sold alongside the tiers so customers scale without being forced into a higher plan.
+// Extra staff, extra locations, AI credits and SMS credits are wired end-to-end today
+// (ExtraStaffCount / ExtraLocationCount and Stripe metered usage). The rest are roadmap.
+const addOns = [
+  { name: "Extra Staff", billing: "per seat / month" },
+  { name: "Extra Locations", billing: "per location / month" },
+  { name: "AI Credits", billing: "usage based" },
+  { name: "SMS Credits", billing: "usage based" },
+  { name: "Agency Sub-Accounts", billing: "per account / month" },
+  { name: "Premium Support", billing: "monthly" },
+];
+
+// Replaces the former Agency tier. Agency carried identical limits to Business and differed
+// only by 20 sub-accounts for $100/mo more — not a defensible tier. Sub-accounts are now an
+// add-on, and larger organisations route to sales instead.
+const enterprisePlan = {
+  id: "enterprise",
+  name: "Enterprise",
+  description: "Security, compliance and scale — for multi-brand and large organisations.",
   features: [
-    "Everything in Business",
-    "Up to 20 Client Sub-Accounts",
-    "Unified Agency Dashboard",
-    "15,000 AI Actions / Month",
-    "White-label for Clients",
-    "Agency Commission Tracking",
+    "Everything in Growth",
+    "Unlimited Staff & Locations",
+    "SSO / SAML & Extended Audit Logs",
+    "100,000 AI Actions / Month",
+    "Agency Sub-Account Management",
+    "Custom Integrations & SLA",
     "Dedicated Account Manager",
   ],
 };
@@ -118,14 +148,14 @@ export default function PricingPage() {
           <div className="px-8 py-10 sm:px-12 sm:py-12 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
             <div className="flex-1">
               <span className="inline-flex items-center rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-300 mb-3">
-                For Agencies & Consultants
+                For Agencies & Large Organisations
               </span>
               <h2 className="text-3xl font-extrabold text-white tracking-tight">
-                {agencyPlan.name} Plan
+                {enterprisePlan.name} Plan
               </h2>
-              <p className="mt-2 text-gray-300 text-sm max-w-lg">{agencyPlan.description}</p>
+              <p className="mt-2 text-gray-300 text-sm max-w-lg">{enterprisePlan.description}</p>
               <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {agencyPlan.features.map((f, i) => (
+                {enterprisePlan.features.map((f, i) => (
                   <li key={i} className="flex items-center text-sm text-gray-200">
                     <Check className="h-4 w-4 mr-2 text-amber-400 flex-shrink-0" />
                     {f}
@@ -135,19 +165,35 @@ export default function PricingPage() {
             </div>
             <div className="flex flex-col items-center md:items-end gap-4 min-w-[180px]">
               <div className="text-center md:text-right">
-                <div className="text-4xl font-extrabold text-white">
-                  ${annual ? agencyPlan.priceAnnually : agencyPlan.priceMonthly}
-                  <span className="text-lg font-medium text-gray-400">/mo</span>
-                </div>
-                <p className="text-xs text-gray-400 mt-1">{annual ? 'Billed annually' : 'Billed monthly'}</p>
+                <div className="text-4xl font-extrabold text-white">Custom</div>
+                <p className="text-xs text-gray-400 mt-1">Tailored to your organisation</p>
               </div>
-              <Link href={`/checkout/${agencyPlan.id}?billing=${annual ? 'annual' : 'monthly'}`} className="w-full md:w-auto">
+              {/* Enterprise is IsCustom in PricingSeeder — no price rows, so no self-serve
+                  checkout. Routing to sales instead of /checkout keeps the page honest. */}
+              <Link href="/enterprise" className="w-full md:w-auto">
                 <Button className="w-full bg-amber-400 hover:bg-amber-300 text-gray-900 font-bold py-4 px-8 text-base">
-                  Start Agency Trial
+                  Contact Sales
                 </Button>
               </Link>
-              <p className="text-xs text-gray-500 text-center">14-day free trial · No credit card</p>
+              <p className="text-xs text-gray-500 text-center">30-day trial · Custom onboarding</p>
             </div>
+          </div>
+        </div>
+
+        {/* Add-ons keep the tier count low. Rather than a plan for every combination of
+            staff/locations/credits, customers scale the plan they already have. */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold text-center tracking-tight">Scale without changing plan</h2>
+          <p className="mt-2 text-center text-sm text-gray-500 max-w-2xl mx-auto">
+            Need more than your plan includes? Add exactly what you use — no forced upgrade.
+          </p>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {addOns.map((a) => (
+              <div key={a.name} className="rounded-xl border border-gray-200 dark:border-gray-800 px-5 py-4 flex items-center justify-between">
+                <span className="font-medium text-sm">{a.name}</span>
+                <span className="text-xs text-gray-500">{a.billing}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

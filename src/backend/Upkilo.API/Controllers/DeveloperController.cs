@@ -101,10 +101,12 @@ namespace Upkilo.API.Controllers
                 tier = tenant?.SubscriptionTier.ToString() ?? "Starter";
             }
 
+            // API access is a Growth+ feature; legacy names map to Growth after the tier
+            // consolidation so existing rows keep their entitlements.
             var limits = tier switch
             {
-                "Business" => new RateLimitInfo(10000, 500, 100),
-                "Pro" => new RateLimitInfo(5000, 200, 50),
+                "Enterprise" => new RateLimitInfo(10000, 500, 100),
+                "Growth" or "Business" or "Professional" or "Pro" or "Agency" => new RateLimitInfo(5000, 200, 50),
                 _ => new RateLimitInfo(1000, 60, 10)
             };
 

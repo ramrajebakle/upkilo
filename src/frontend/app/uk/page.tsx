@@ -20,10 +20,12 @@ const UK_FEATURES = [
   { icon: '🤝', title: 'UK Support Hours', desc: 'Dedicated UK support team available 9am–6pm GMT, Mon–Fri.' },
 ];
 
+// USD — Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency), so
+// quoting £ here advertised a currency the system cannot charge in.
 const UK_PLANS = [
-  { name: 'Starter', price: '£29', period: '/mo', desc: 'Perfect for solo therapists and small salons' },
-  { name: 'Pro', price: '£69', period: '/mo', desc: 'For growing businesses with a team' },
-  { name: 'Business', price: '£159', period: '/mo', desc: 'Multi-location chains and franchise groups' },
+  { name: 'Starter', price: '$149', period: '/mo', desc: 'Small teams running bookings and clients in one place' },
+  { name: 'Growth', price: '$499', period: '/mo', desc: 'Scaling businesses needing AI automation, white-label and API' },
+  { name: 'Enterprise', price: 'Custom', period: '', desc: 'Multi-location chains and franchise groups' },
 ];
 
 export default function UKLandingPage() {

@@ -10,8 +10,15 @@ import { apiClient } from "@/lib/api";
 
 export default function CheckoutPage({ params }: { params: Promise<{ planId: string }> }) {
   const { planId } = use(params);
-  const planName = planId === "pro" ? "Professional" : planId === "enterprise" ? "Enterprise" : "Starter";
-  const price = planId === "pro" ? 65 : planId === "enterprise" ? 165 : 24;
+  // ⚠️ MUST match PricingSeeder.cs — this is the payment screen. These were previously
+  // hardcoded at 24/65/165 against seeded prices of 39/89/149, so the checkout page showed
+  // a price the customer was never charged. Enterprise is IsCustom (no price rows) and is
+  // sales-led, so it has no self-serve amount.
+  // Tracked follow-up: source these from GET /api/v1/pricing/plans instead of duplicating.
+  const planName =
+    planId === "growth" ? "Growth" :
+    planId === "enterprise" ? "Enterprise" : "Starter";
+  const price = planId === "growth" ? 499 : planId === "enterprise" ? 0 : 149;
 
   const [loading, setLoading] = useState(false);
   const [nameOnCard, setNameOnCard] = useState('');

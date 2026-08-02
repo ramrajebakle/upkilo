@@ -653,10 +653,30 @@ public class SubscriptionService : ISubscriptionService
         bool GetFlag(string key) =>
             mappings.TryGetValue(key, out var m) && m.IsEnabled;
 
+        // Trial expiry / non-payment gate. Bookings are unlimited (-1) while the subscription
+        // entitles the tenant to service, and 0 once it does not — blocking NEW bookings without
+        // touching existing data, the dashboard, or the tenant's ability to sign in.
+        //
+        // This is the whole enforcement mechanism: BookingsLimit was previously hardcoded to -1,
+        // so the [ChecksUsage(UsageType.Bookings)] attribute already on BookingsController could
+        // never actually refuse anything. CanConsumeAsync evaluates
+        // `BookingsLimit == -1 || used + amount <= BookingsLimit`, so returning 0 here makes the
+        // existing path do the work — no new middleware, no new attribute.
+        //
+        // PastDue is deliberately ALLOWED. DunningAutomationJob runs a 14-day recovery timeline
+        // (retry at day 3 and 7, auto-suspend at day 14, cancel at day 30). Cutting bookings the
+        // moment a card declines would defeat that: a salon would stop trading over a single
+        // failed charge, producing churn instead of a successful retry. Service stops when the
+        // job flips the status to Suspended, not before.
+        var bookingsAllowed = subscription?.Status is SubscriptionStatus.Active
+                                                  or SubscriptionStatus.Trialing
+                                                  or SubscriptionStatus.Trial     // Stripe-mapping alias
+                                                  or SubscriptionStatus.PastDue;  // within dunning grace
+
         return new UsageSummary
         {
             BookingsUsed = subscription?.BookingsUsed ?? 0,
-            BookingsLimit = -1,
+            BookingsLimit = bookingsAllowed ? -1 : 0,
             SmsUsed = subscription?.SmsUsed ?? 0,
             SmsLimit = GetFlag("sms_reminders") ? -1 : 0,
             AiCreditsUsed = subscription?.AiCreditsUsed ?? 0,

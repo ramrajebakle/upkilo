@@ -11,10 +11,12 @@ const features = [
   { title: 'DED License Display', desc: 'Show your Dubai trade license number on client receipts and booking pages.' },
 ];
 
+// USD — Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency), so
+// quoting AED advertised a currency the system cannot charge in.
 const plans = [
-  { name: 'Starter', price: 'AED 179', period: '/شهر', features: ['500 حجوزات/شهر', 'تذكيرات SMS', 'المدفوعات أونلاين', 'موظف واحد'] },
-  { name: 'نمو', price: 'AED 369', period: '/شهر', features: ['حجوزات غير محدودة', 'AI تعبئة التقويم', 'الاشتراكات', '5 موظفين'], highlight: true },
-  { name: 'Business', price: 'AED 729', period: '/شهر', features: ['كل مزايا النمو', 'تقارير الفروع', 'العلامة التجارية المخصصة', 'دعم أولوية'] },
+  { name: 'Starter', price: '$149', period: '/شهر', features: ['حتى 10 موظفين', 'حتى 3 فروع', 'AI Copilot (2,000 إجراء/شهر)', 'تذكيرات SMS والبريد'] },
+  { name: 'نمو', price: '$499', period: '/شهر', features: ['حتى 25 موظفاً', 'حتى 10 فروع', 'AI Workflows والتحليلات', 'العلامة البيضاء وواجهة API'], highlight: true },
+  { name: 'Enterprise', price: 'Custom', period: '', features: ['موظفون وفروع غير محدودة', 'SSO / SAML', 'حسابات فرعية للوكالات', 'دعم مخصص'] },
 ];
 
 export default function UAEPage() {

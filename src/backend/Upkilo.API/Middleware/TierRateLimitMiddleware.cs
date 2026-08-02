@@ -22,13 +22,21 @@ public class TierRateLimitMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<TierRateLimitMiddleware> _logger;
 
+    // Requests per minute per tenant, keyed by plan name.
+    //
+    // ⚠️ Every plan in PricingSeeder MUST appear here. This map previously omitted "Agency"
+    // entirely, so the $249/mo tier fell through to the 100/min Free default — a paying
+    // customer silently throttled to free-tier limits, with nothing logged. The unknown-plan
+    // warning below exists so that failure mode cannot recur silently.
     private static readonly Dictionary<string, int> TierLimits = new()
     {
         { "Free", 100 },
         { "Starter", 300 },
-        { "Professional", 600 },
+        { "Growth", 900 },
         { "Enterprise", 1500 }
     };
+
+    private const int DefaultLimitPerMinute = 100;
 
     public TierRateLimitMiddleware(RequestDelegate next, ILogger<TierRateLimitMiddleware> logger)
     {
@@ -65,10 +73,23 @@ public class TierRateLimitMiddleware
         var tierObj = context.Items["TenantTier"];
         var tierName = tierObj?.ToString() ?? "Free";
 
-        // Normalize: map 'Business' tier to 'Professional' rate limits (Business is a legacy tier)
-        if (tierName == "Business") tierName = "Professional";
+        // Legacy names from before the tier consolidation. Kept as a safety net for any
+        // subscription row still carrying an old plan name; new data will not hit these.
+        tierName = tierName switch
+        {
+            "Professional" or "Business" or "Agency" => "Growth",
+            _ => tierName
+        };
 
-        var limitPerMin = TierLimits.GetValueOrDefault(tierName, 100);
+        if (!TierLimits.TryGetValue(tierName, out var limitPerMin))
+        {
+            limitPerMin = DefaultLimitPerMinute;
+            // Loud on purpose: an unmapped plan means a paying tenant is being throttled to
+            // free-tier limits. This is exactly how the Agency gap went unnoticed.
+            _logger.LogWarning(
+                "Unmapped plan '{Tier}' in TierRateLimitMiddleware — falling back to {Limit} req/min. Add it to TierLimits.",
+                tierName, DefaultLimitPerMinute);
+        }
 
         var isAllowed = await rateLimitService.IsAllowedAsync(
             $"tenant:{tenantId}",
