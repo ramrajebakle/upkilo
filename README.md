@@ -1,17 +1,30 @@
-# Upkilo — AI-Powered Booking & CRM Platform
+<div align="center">
 
-> Multi-tenant SaaS platform for service businesses. Bookings, CRM, billing, AI automation, and analytics in one stack.
+# Upkilo
 
-![.NET 8](https://img.shields.io/badge/.NET-8_LTS-512BD4?logo=dotnet&logoColor=white)
-![Next.js 15](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs&logoColor=white)
-![React Native](https://img.shields.io/badge/React_Native-Expo_54-61DAFB?logo=react&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2F17-4169E1?logo=postgresql&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-7.x-DC382D?logo=redis&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-multi--stage-2496ED?logo=docker&logoColor=white)
-![License](https://img.shields.io/badge/license-proprietary-lightgrey)
-![CI](https://github.com/upkilo/upkilo/actions/workflows/ci.yml/badge.svg)
+### AI-Powered Booking & CRM Platform
 
-## Architecture
+**Multi-tenant SaaS for service businesses.** Bookings, CRM, billing, AI automation and analytics in one stack.
+
+[![.NET 8](https://img.shields.io/badge/.NET-8_LTS-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Next.js 15](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React Native](https://img.shields.io/badge/React_Native-Expo_54-61DAFB?logo=react&logoColor=white)](https://expo.dev/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-7.x-DC382D?logo=redis&logoColor=white)](https://redis.io/)
+[![Docker](https://img.shields.io/badge/Docker-multi--stage-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+
+[![Tests](https://img.shields.io/badge/tests-776_passing-brightgreen)](#-testing)
+[![Coverage](https://img.shields.io/badge/coverage-88.77%25-brightgreen)](#-testing)
+[![Build](https://img.shields.io/badge/warnings-0-brightgreen)](#-testing)
+[![License](https://img.shields.io/badge/license-proprietary-lightgrey)](#-license)
+
+[Quick Start](#-quick-start) · [Architecture](#-architecture) · [Pricing Model](#-pricing-model) · [Deployment](#-deployment) · [Docs](docs/PRODUCTION_DEPLOYMENT.md)
+
+</div>
+
+---
+
+## 🏗 Architecture
 
 ```mermaid
 flowchart TB
@@ -21,141 +34,178 @@ flowchart TB
         SDK["JS SDK"]
     end
 
-    CDN["Cloudflare / Azure Front Door<br/>CDN + WAF"]
+    CF["Cloudflare<br/>DNS · CDN · WAF"]
 
-    subgraph Backend["Upkilo.API — .NET 8"]
+    subgraph Backend["Upkilo.API — .NET 8 · single container"]
         direction TB
-        AuthN["Auth: JWT + WebAuthn + TOTP + SAML SSO"]
+        AuthN["Auth: JWT · WebAuthn · TOTP · SAML SSO"]
         RT["SignalR Hub — realtime notifications"]
         Jobs["Hangfire — background jobs & cron"]
     end
 
     subgraph Data["Data Layer"]
-        PG[("PostgreSQL<br/>row-level security, multi-tenant")]
+        PG[("PostgreSQL 17<br/>row-level security · multi-tenant")]
         Redis[("Redis<br/>cache · sessions · rate limits · SignalR backplane")]
-        Blob[("Azure Blob Storage<br/>files, photos, PDFs")]
-        ES[("Elasticsearch<br/>optional — search degrades gracefully without it")]
+        Blob[("Azure Blob Storage<br/>files · photos · PDFs")]
     end
 
     subgraph External["Third-Party Services"]
-        Stripe["Stripe<br/>billing & payouts"]
-        Twilio["Twilio<br/>SMS / WhatsApp"]
-        SendGrid["SendGrid<br/>transactional email"]
-        AOAI["Azure OpenAI<br/>GPT-4o — receptionist, pricing, chat"]
+        Stripe["Stripe — billing & payouts"]
+        Twilio["Twilio — SMS / WhatsApp"]
+        SendGrid["SendGrid — transactional email"]
+        AOAI["Azure OpenAI — GPT-4o"]
     end
 
-    Web --> CDN --> Backend
-    Mobile --> CDN
-    SDK --> CDN
+    Web --> CF --> Backend
+    Mobile --> CF
+    SDK --> CF
     Backend --> PG
     Backend --> Redis
     Backend --> Blob
-    Backend -.optional.-> ES
     Backend --> Stripe
     Backend --> Twilio
     Backend --> SendGrid
     Backend --> AOAI
 ```
 
-Everything in **Backend** above runs in a single container — the API, the SignalR hub, and the Hangfire job server all share one process. There is no separate worker deployment to operate.
+> The API, SignalR hub and Hangfire job server all share **one process in one container**.
+> There is no separate worker deployment to operate.
 
-## Features
+### Domain split
 
-- **Bookings & CRM** — scheduling, waitlists, packages, memberships, client records, multi-location support
-- **Billing** — Stripe subscriptions, usage-based invoicing, payouts, dunning automation
-- **AI automation** (`Upkilo.AI`) — AI receptionist, voice agent, dynamic pricing, chatbot, churn-retention prompts, all backed by Azure OpenAI
-- **Multi-tenant integrations** — a 14-provider catalog (Stripe, Razorpay, PayPal, SendGrid, Mailgun, Twilio, Google Calendar, Outlook, AWS S3, Google Analytics, Mixpanel, HubSpot, Slack, Zapier) with tenant-supplied credentials encrypted via AES-256-GCM — zero platform cost, bring-your-own-key
-- **Security** — JWT auth, WebAuthn/Fido2 biometric login, TOTP MFA, per-tenant SAML SSO, tenant-scoped rate limiting and distributed locks
-- **Realtime** — SignalR notifications backed by Redis, so it scales across multiple API instances
-- **Background processing** — Hangfire (Postgres-backed, no extra infrastructure) runs 14+ recurring jobs: billing reconciliation, booking reminders, dunning, digests, audit-log retention, and more
-- **Internationalization** — `next-intl`-driven locale routing on the web frontend
-- **PWA + push** — installable web app with an offline-capable service worker, Web Push (VAPID) on the web, Expo Push Service on mobile (no direct Firebase/APNs integration required)
-- **Search** — optional Elasticsearch; the app runs fine without it, search just falls back to plain SQL
+Three hostnames, **one App Service** — [`middleware.ts`](src/frontend/middleware.ts) routes by `Host` header.
 
-## Tech Stack
+| Host | Serves |
+|---|---|
+| `upkilo.com` | Marketing, SEO pages, public booking widget |
+| `www.upkilo.com` | 308 → apex |
+| `app.upkilo.com` | Dashboard, portal, auth |
+| `api.upkilo.com` | .NET API, SignalR, webhooks |
+
+Marketing routes are **allowlisted**; everything else routes to the app. With ~47 dashboard
+segments against ~14 marketing routes, adding a dashboard page never requires touching the
+middleware.
+
+---
+
+## ✨ Features
+
+| | |
+|---|---|
+| 📅 **Bookings & CRM** | Scheduling, waitlists, packages, memberships, client records, multi-location |
+| 💳 **Billing** | Stripe subscriptions, usage-based invoicing, payouts, dunning automation |
+| 🤖 **AI automation** | AI receptionist, voice agent, dynamic pricing, chatbot, churn-retention — Azure OpenAI |
+| 🔌 **Integrations** | 14-provider catalogue with tenant-supplied credentials, AES-256-GCM encrypted — bring-your-own-key, zero platform cost |
+| 🔐 **Security** | JWT, WebAuthn/Fido2, TOTP MFA, per-tenant SAML SSO, tenant-scoped rate limiting, distributed locks |
+| ⚡ **Realtime** | SignalR over Redis — scales across multiple API instances |
+| ⏱ **Background jobs** | Hangfire (Postgres-backed): billing reconciliation, reminders, dunning, digests, audit retention |
+| 🌍 **i18n** | `next-intl` locale routing (English shipped; other locales partially translated) |
+| 📱 **PWA + push** | Installable, offline-capable service worker, Web Push (VAPID), Expo Push on mobile |
+| 🔍 **Search** | Optional Elasticsearch — degrades gracefully to SQL when absent |
+
+---
+
+## 💰 Pricing Model
+
+Three purchasable tiers plus a trial. Overflow is sold as **add-ons** rather than more tiers.
+
+| Plan | Monthly | Annual | Staff | Locations | AI actions |
+|---|---|---|---|---|---|
+| **Free** | $0 | — | 1 | 1 | 50 |
+| **Starter** | $149 | $1,490 | 10 | 3 | 2,000 |
+| **Growth** ⭐ | $499 | $4,990 | 25 | 10 | 10,000 |
+| **Enterprise** | Contact sales | — | ∞ | ∞ | 100,000 |
+
+**Annual = monthly × 10** — "2 months free" states itself, no arithmetic required.
+
+Add-ons: extra staff · extra locations · AI credits · SMS credits · agency sub-accounts · premium support.
+
+Seeded by [`PricingSeeder`](src/backend/Upkilo.Infrastructure/Data/Seeders/PricingSeeder.cs) on
+first boot, guarded by `AnyAsync()` so it is idempotent. A `PricingIntegrityService` health
+check enforces the catalogue at `/ready`: both billing cycles present, USD only, no duplicate
+(currency, cycle) rows, positive amounts, annual genuinely discounted, unambiguous tier
+ordering.
+
+---
+
+## 🧰 Tech Stack
 
 | Layer | Technology | Notes |
-|-------|-----------|---------|
-| Backend API | ASP.NET Core (C#) | .NET 8 LTS, 5 projects: API / Application / Infrastructure / Core / AI |
-| Frontend | Next.js (TypeScript, App Router) | 15.x, React 19, `output: standalone` for Docker |
-| Mobile | React Native + Expo | Expo SDK 54, RN 0.81, managed workflow, EAS Build/Submit |
-| Database | PostgreSQL | 16 (dev) / 17 (prod), row-level security for multi-tenancy |
-| Connection Pool | PgBouncer | 1.23.x, transaction pooling |
-| Cache / Sessions / Realtime backplane | Redis | 7.x |
-| Search (optional) | Elasticsearch | 8.11.x — non-blocking health check |
-| Background Jobs | Hangfire | PostgreSQL-backed, in-process with the API |
-| Auth | JWT, WebAuthn (Fido2), TOTP, SAML SSO, Google OAuth | Per-tenant SSO configuration |
-| AI / LLM | Azure OpenAI (GPT-4o) | Receptionist, voice agent, dynamic pricing, chat |
-| Billing | Stripe | Subscriptions, Connect payouts, webhooks |
-| Email | SendGrid | + SMTP fallback provider |
-| SMS / WhatsApp | Twilio | |
-| File Storage | Azure Blob Storage | |
-| CDN / WAF | Cloudflare or Azure Front Door | |
-| Error Monitoring | Sentry (frontend/mobile) + Application Insights (backend) | |
-| Secrets | Azure Key Vault | |
+|---|---|---|
+| Backend API | ASP.NET Core (C#) | .NET 8 LTS — API / Application / Infrastructure / Core / AI |
+| Frontend | Next.js (TypeScript, App Router) | 15.x, React 19, `output: standalone` |
+| Mobile | React Native + Expo | SDK 54, RN 0.81, EAS Build/Submit |
+| Database | PostgreSQL | 16 (dev) / 17 (prod), row-level security |
+| Cache · Sessions · Realtime | Redis | 7.x |
+| Background jobs | Hangfire | PostgreSQL-backed, in-process |
+| Auth | JWT · WebAuthn · TOTP · SAML · Google OAuth | Per-tenant SSO |
+| AI | Azure OpenAI (GPT-4o) | Optional — features degrade cleanly if unconfigured |
+| Billing | Stripe | Subscriptions, Connect payouts, 25 webhook events |
+| Email · SMS | SendGrid · Twilio | SMTP fallback provider |
+| Storage · CDN | Azure Blob · Cloudflare | |
+| Monitoring | Sentry · Application Insights | |
 
-## Quick Start
+---
 
-### Prerequisites
+## 🚀 Quick Start
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download)
-- [Node.js 20 LTS](https://nodejs.org/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
-
-### 1. Clone and configure
+**Prerequisites:** [.NET 8 SDK](https://dotnet.microsoft.com/download) · [Node.js 20 LTS](https://nodejs.org/) · [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
 ```bash
-git clone https://github.com/upkilo/upkilo.git
+# 1. Clone and configure
+git clone https://github.com/ramrajebakle/upkilo.git
 cd upkilo
-cp .env.example .env
-# Edit .env and fill in required values (see docs/DEVELOPER_GUIDE.md §5)
-```
+cp .env.example .env          # fill in required values
 
-### 2. Start infrastructure
+# 2. Start infrastructure
+docker compose up -d postgres redis
 
-```bash
-docker compose up -d
-# Starts: PostgreSQL 16, PgBouncer, Redis 7, pgAdmin, Redis Commander
-```
-
-### 3. Apply database migrations
-
-```bash
+# 3. Apply migrations
 dotnet ef database update \
   --project src/backend/Upkilo.Infrastructure \
   --startup-project src/backend/Upkilo.API
+
+# 4. Backend
+cd src/backend && dotnet run --project Upkilo.API
+
+# 5. Frontend (new terminal)
+cd src/frontend && npm install && npm run dev
 ```
 
-### 4. Start the backend
-
-```bash
-cd src/backend
-dotnet restore && dotnet run --project Upkilo.API
-```
-
-### 5. Start the frontend
-
-```bash
-cd src/frontend
-npm install && npm run dev
-```
+> ⚠️ Use `docker compose up -d postgres redis` rather than bare `docker compose up -d` —
+> the `pgbouncer` service pins an image tag that no longer exists upstream.
 
 ### Local URLs
 
 | Service | URL |
-|---------|-----|
+|---|---|
 | Frontend | <http://localhost:3000> |
 | Backend API | <http://localhost:5000> |
 | Swagger UI | <http://localhost:5000/swagger> |
-| Health check | <http://localhost:5000/health> |
-| Hangfire dashboard | <http://localhost:5000/hangfire> |
-| Postgres (via PgBouncer, pooled) | `localhost:6432` |
-| pgAdmin | <http://localhost:5050> |
-| Redis Commander | <http://localhost:8081> |
+| Liveness | <http://localhost:5000/health> |
+| Readiness | <http://localhost:5000/ready> |
+| Hangfire | <http://localhost:5000/hangfire> |
+| Postgres | `localhost:5432` |
 
-> Mailhog (SMTP capture for local email testing) isn't part of the root `docker-compose.yml` — use `infrastructure/docker/docker-compose.yml`'s `dev` profile if you need it.
+---
 
-## Project Structure
+## 🧪 Testing
+
+```bash
+cd src/backend
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+**776 passing · 1 skipped · 88.77% line coverage · 0 build warnings.**
+
+> Integration tests (`BookingIntegrationTests`, `OpenApiContractTests`) need PostgreSQL on
+> `localhost:5432`. Without it they fail with `NpgsqlException` — start Docker first. These
+> cover multi-tenant isolation, concurrent booking and Stripe webhook handling, so they are
+> not optional.
+
+---
+
+## 📁 Project Structure
 
 ```
 upkilo/
@@ -163,59 +213,69 @@ upkilo/
 │   ├── backend/
 │   │   ├── Upkilo.API/             # Controllers, middleware, startup
 │   │   ├── Upkilo.Application/     # CQRS handlers, validators
-│   │   ├── Upkilo.Infrastructure/  # EF Core, Redis, integrations, migrations
+│   │   ├── Upkilo.Infrastructure/  # EF Core, Redis, integrations, 74 migrations
 │   │   ├── Upkilo.Core/            # Domain entities, interfaces
 │   │   ├── Upkilo.AI/              # Azure OpenAI, agent orchestration
-│   │   └── tests/Upkilo.Tests/     # 520 tests, 83% coverage
+│   │   └── tests/Upkilo.Tests/     # 777 tests
 │   ├── frontend/                   # Next.js 15 App Router
 │   ├── mobile/                     # React Native (Expo)
 │   └── tools/                      # SDK, certificate generator
-├── infrastructure/
-│   ├── azure/                      # Bicep IaC (App Service, Postgres, Redis, Key Vault)
-│   ├── docker/                     # Production-flavored Docker Compose
-│   ├── prometheus/ · grafana/ · alertmanager/  # Self-hosted observability (optional)
-│   └── load-testing/               # k6 performance tests
 ├── database/                       # Seed & perf-init SQL scripts
-├── docs/                           # Architecture, API, deployment, and wiki docs
-│   ├── DEVELOPER_GUIDE.md          # Full onboarding + deployment guide
-│   ├── PROJECT_OVERVIEW.md         # Full architecture and feature reference
-│   ├── deployment/                 # Deployment runbooks
-│   └── wiki/                       # Auto-generated architecture wiki
-├── _archive/                       # Superseded/historical docs, kept not deleted
-├── .github/workflows/              # CI/CD (ci.yml, deploy.yml)
+├── docs/
+│   └── PRODUCTION_DEPLOYMENT.md    # Deployment runbook — start here
+├── .github/workflows/              # ci.yml · deploy.yml (+ 4 parked)
 ├── docker-compose.yml              # Dev infrastructure
 └── Dockerfile                      # Multi-stage .NET 8 build
 ```
 
-## Running Tests
+---
 
-```bash
-cd src/backend
-dotnet test --logger trx --collect:"XPlat Code Coverage"
+## 🚢 Deployment
+
+Azure App Service (Central US), fronted by Cloudflare. Full runbook:
+**[docs/PRODUCTION_DEPLOYMENT.md](docs/PRODUCTION_DEPLOYMENT.md)**
+
+```text
+push to main            →  build & push images to ACR (nothing live is touched)
+Run workflow (manual)   →  migrate → deploy API → readiness → deploy frontend → smoke test
 ```
 
-520 tests, 83.45% line coverage. All must pass before merging.
+**Production deploys are manual by design.** GitHub Free does not offer environment
+protection rules on private repos, so `migrate-database` and `deploy-production` are gated on
+`github.event_name == 'workflow_dispatch'`. That condition **is** the approval gate — a push
+builds images and stops.
 
-## Deployment
+| | |
+|---|---|
+| **Zero-downtime?** | ❌ B1 tier has no deployment slots — expect ~30–60s per release |
+| **Rollback** | Redeploys the previously running image tag, captured before any mutation |
+| **DB recovery** | 7-day point-in-time restore; each run records a restore point |
 
-`deploy.yml` builds both Docker images, pushes them to Azure Container Registry, then deploys via **Azure App Service** using a staging-slot blue/green swap:
+> ⚠️ Burstable Postgres does **not** support on-demand backups
+> (`CustomerOnDemandBackupCannotBePerformedOnBurstableServer`). Recovery relies on PITR.
+> Extensions must be allow-listed via `azure.extensions` — `hstore` and `pg_trgm` are required.
 
-1. Build and test the backend, build the frontend
-2. Push images to Azure Container Registry
-3. Back up the production database, then run EF Core migrations
-4. Deploy to the staging slot, poll for health, swap into production
-5. Automatic rollback (slot swap-back + schema rollback) if any step fails
+Upgrade path to zero-downtime deploys:
 
-See [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for the full deployment runbook, environment variable reference, migration strategy, rollback procedure, and troubleshooting guide.
+```bash
+az appservice plan update -g upkilo-prod-rg -n upkilo-prod-plan --sku S1
+```
 
-## Documentation
+---
+
+## 📚 Documentation
 
 | Document | Purpose |
-|----------|---------|
-| [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | New developer onboarding + production deployment |
-| [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md) | Full architecture and feature reference |
-| [docs/](docs/) | API docs, architecture diagrams, wiki |
+|---|---|
+| [docs/PRODUCTION_DEPLOYMENT.md](docs/PRODUCTION_DEPLOYMENT.md) | Deployment runbook, architecture decisions, known risks, rollback |
+| [/swagger](http://localhost:5000/swagger) | Live API reference |
 
-## License
+---
+
+## 📄 License
 
 Copyright © 2026 Upkilo. All rights reserved.
+
+<div align="center">
+<sub>Built with .NET 8 · Next.js 15 · PostgreSQL 17</sub>
+</div>
