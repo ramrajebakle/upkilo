@@ -36,9 +36,15 @@ public class DbConnectionSelector : IDbConnectionSelector
             ?? configuration["Database:PrimaryConnectionString"]
             ?? throw new InvalidOperationException(
                 "Database connection string is not configured. Set ConnectionStrings:DefaultConnection.");
-        _replicaConnection = configuration.GetConnectionString("ReplicaConnection")
-            ?? configuration["Database:ReplicaConnectionString"]
-            ?? _primaryConnection;
+        // Treat empty as missing, not as a valid connection string. `??` only catches null,
+        // and an App Service setting written from an absent GitHub secret arrives as "" —
+        // so the fallback to the primary never fired and reads ran against an empty
+        // connection string. ReadReplica:Enabled is true in production, so every read
+        // routed here. The primary above throws loudly when unset; this one failed quietly.
+        _replicaConnection = Coalesce(
+            configuration.GetConnectionString("ReplicaConnection"),
+            configuration["Database:ReplicaConnectionString"],
+            _primaryConnection);
         _logger = logger;
         _healthMonitor = healthMonitor;
         _tenantProvider = tenantProvider;
@@ -109,5 +115,20 @@ public class DbConnectionSelector : IDbConnectionSelector
     public async Task<T> ExecuteResilientlyAsync<T>(Func<Task<T>> action)
     {
         return await _resiliencePipeline.ExecuteAsync(async _ => await action());
+    }
+
+    /// <summary>
+    /// First non-blank value. Configuration providers surface an unset key as an empty
+    /// string rather than null, so <c>??</c> chains silently accept "" as configured.
+    /// </summary>
+    private static string Coalesce(params string?[] values)
+    {
+        foreach (var value in values)
+        {
+            if (!string.IsNullOrWhiteSpace(value)) return value;
+        }
+
+        throw new InvalidOperationException(
+            "No usable database connection string was supplied to DbConnectionSelector.");
     }
 }
