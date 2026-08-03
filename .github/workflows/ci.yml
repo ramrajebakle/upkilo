@@ -131,9 +131,15 @@ jobs:
       # output then produced a second, misleading "cat: No such file" failure.
       - name: Migration gate — no un-migrated model changes
         run: |
+          # --configuration Release is REQUIRED alongside --no-build. Without it the EF tool
+          # defaults to Debug, looks for bin/Debug/net8.0/Upkilo.API.deps.json — which this
+          # workflow never builds — and exits non-zero with "The specified deps.json does not
+          # exist". The `if !` then reports it as un-migrated model changes, so a missing
+          # build artifact masqueraded as a schema drift failure.
           if ! dotnet ef migrations has-pending-model-changes \
               --project Upkilo.Infrastructure/Upkilo.Infrastructure.csproj \
-              --startup-project Upkilo.API/Upkilo.API.csproj --no-build; then
+              --startup-project Upkilo.API/Upkilo.API.csproj \
+              --configuration Release --no-build; then
             echo "::error::EF model has changes with no corresponding migration. Run: dotnet ef migrations add <Name>"
             exit 1
           fi
