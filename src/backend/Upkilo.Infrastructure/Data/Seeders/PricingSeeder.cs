@@ -106,7 +106,10 @@ public static class PricingSeeder
         // than Growth, and uncompetitive against Fresha (~$14.95/staff). At 10 staff this is
         // $14.90/seat, which reads as fair next to Growth's $19.96.
         // Branding is OFF here: only Free advertises "Powered by Upkilo". A paying customer
-        // should not be marketing for us.
+        // should not be marketing for us. fAiCopilot is what unlocks the AI actions quota set
+        // below it; the advanced AI trio, white-label and API stay off as the Growth upgrade
+        // story. (Comments sit above this call rather than between the arguments — dotnet
+        // format re-indents comments interleaved in an argument list and fails CI.)
         context.PlanFeatureMappings.AddRange(
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxStaff, NumericLimit = 10, IsEnabled = true },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fMaxLocations, NumericLimit = 3, IsEnabled = true },
@@ -114,8 +117,7 @@ public static class PricingSeeder
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiActions, NumericLimit = 2000, IsEnabled = true },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fOnlineBooking, IsEnabled = true },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fSmsReminders, IsEnabled = true },
-            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiCopilot, IsEnabled = true }, // unlocks the AI actions quota
-            // The advanced AI trio, white-label and API are the Growth upgrade story.
+            new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiCopilot, IsEnabled = true },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiWorkflows, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fAiInsights, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = starter, PricingFeature = fWhiteLabel, IsEnabled = false },
