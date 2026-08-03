@@ -23,12 +23,18 @@ public class WorkflowService : IWorkflowService
     private readonly INotificationService _notificationService;
     private readonly IEnumerable<IWorkflowStepExecutor> _stepExecutors;
 
-    // Tier-based execution limits for tenant isolation
+    // Tier-based execution limits for tenant isolation.
+    // Keys MUST match SubscriptionTier member names lowercased — the lookup below uses
+    // tenant.SubscriptionTier.ToString().ToLower(), and a miss falls back to Free's limits.
+    // "professional" was a dead key after the tier rename, so Growth tenants silently ran
+    // with Free's 5-concurrent ceiling. Every enum member needs an entry here.
     private static readonly Dictionary<string, TenantExecutionLimits> TierLimits = new()
     {
         ["free"] = new(MaxConcurrent: 5, MaxStepsPerExecution: 20, StepTimeoutSeconds: 15, MaxExecutionDurationMinutes: 5),
         ["starter"] = new(MaxConcurrent: 15, MaxStepsPerExecution: 50, StepTimeoutSeconds: 30, MaxExecutionDurationMinutes: 15),
-        ["professional"] = new(MaxConcurrent: 50, MaxStepsPerExecution: 100, StepTimeoutSeconds: 60, MaxExecutionDurationMinutes: 30),
+        ["growth"] = new(MaxConcurrent: 50, MaxStepsPerExecution: 100, StepTimeoutSeconds: 60, MaxExecutionDurationMinutes: 30),
+        ["business"] = new(MaxConcurrent: 50, MaxStepsPerExecution: 100, StepTimeoutSeconds: 60, MaxExecutionDurationMinutes: 30),  // legacy
+        ["agency"] = new(MaxConcurrent: 50, MaxStepsPerExecution: 100, StepTimeoutSeconds: 60, MaxExecutionDurationMinutes: 30),    // legacy
         ["enterprise"] = new(MaxConcurrent: 200, MaxStepsPerExecution: 500, StepTimeoutSeconds: 120, MaxExecutionDurationMinutes: 60),
     };
 

@@ -21,8 +21,11 @@ public class TenantRateLimitMiddleware
     {
         [SubscriptionTier.Free] = (200, 10),
         [SubscriptionTier.Starter] = (1000, 30),
-        [SubscriptionTier.Professional] = (5000, 60),
-        [SubscriptionTier.Business] = (10000, 120),
+        // Growth absorbed both Professional and Business and costs more than either did,
+        // so it takes Business's higher ceiling rather than Professional's old 5000/60.
+        [SubscriptionTier.Growth] = (10000, 120),
+        [SubscriptionTier.Business] = (10000, 120), // legacy
+        [SubscriptionTier.Agency] = (10000, 120),   // legacy
         [SubscriptionTier.Enterprise] = (0, 0), // unlimited
     };
 

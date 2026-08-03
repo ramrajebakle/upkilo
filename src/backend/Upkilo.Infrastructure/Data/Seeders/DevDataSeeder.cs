@@ -51,7 +51,7 @@ public static class DevDataSeeder
             Country = "US",
             Currency = "USD",
             Timezone = "America/Denver",
-            SubscriptionTier = SubscriptionTier.Professional,
+            SubscriptionTier = SubscriptionTier.Growth,
             Status = TenantStatus.Active,
             IsActive = true,
             SubscriptionPeriodEnd = DateTime.UtcNow.AddDays(60)

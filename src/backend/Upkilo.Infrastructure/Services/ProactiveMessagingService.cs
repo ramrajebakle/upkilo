@@ -233,7 +233,12 @@ public class ProactiveMessagingService : IProactiveMessagingService
         string body;
         try
         {
-            var aiResult = await _ai.GenerateTextAsync(tenantId, null, aiPrompt, "gpt-4o-mini");
+            // Pass null so AiModelResolver picks the tenant's tier model. This used to hardcode
+            // "gpt-4o-mini" to keep the cost down, but a literal here goes stale silently: that
+            // deployment no longer exists and is no longer in any AllowedAiModels list, so the
+            // call would have been rejected outright and every message fallen back to the
+            // canned text below.
+            var aiResult = await _ai.GenerateTextAsync(tenantId, null, aiPrompt, null);
             body = aiResult.Content ?? GenerateLapsedClientMessage(client.FirstName, 60, 5);
         }
         catch

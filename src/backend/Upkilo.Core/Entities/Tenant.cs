@@ -68,12 +68,24 @@ public enum TenantStatus
     Cancelled
 }
 
+/// <summary>
+/// Persisted as an <c>integer</c> column, so the ORDER of these members is data.
+/// Never reorder or remove one — renaming in place is safe, moving is not.
+///
+/// Professional was renamed to Growth (ordinal 2) when pricing consolidated to
+/// Free / Starter / Growth / Enterprise. Business and Agency are no longer sold and
+/// were folded into Growth, but they stay here because rows persisted as 3 and 4 would
+/// otherwise deserialize to an undefined enum value and silently fail every comparison.
+/// </summary>
 public enum SubscriptionTier
 {
     Free,
     Starter,
-    Professional,
+    Growth,
+
+    // Legacy — not sold. Retained so existing integer values keep resolving.
     Business,
     Agency,
+
     Enterprise
 }

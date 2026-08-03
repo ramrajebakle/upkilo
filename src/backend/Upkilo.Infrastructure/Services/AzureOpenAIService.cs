@@ -17,6 +17,10 @@ namespace Upkilo.Infrastructure.Services;
 
 public class AzureOpenAIService : IAIService
 {
+    // Deployment used when the tier-appropriate model fails. Must exist in the Azure OpenAI
+    // resource and be present in every AllowedAiModels list, or the fallback fails too.
+    private const string FallbackModel = "gpt-5-mini";
+
     private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
     private readonly ISecretProvider _secretProvider;
@@ -78,7 +82,11 @@ public class AzureOpenAIService : IAIService
             }
 
             int estimatedInputTokens = prompt.Length / 4;
-            int estimatedOutputTokens = model.Contains("sonnet") || model.Contains("gpt-4") ? 4096 : 2048;
+            // Full-size models get the larger estimate; "mini"/"nano" variants the smaller one.
+            // This previously keyed off Contains("gpt-4"), which silently stopped matching once
+            // the models moved to the gpt-5 family.
+            bool isCompactModel = model.Contains("mini") || model.Contains("nano");
+            int estimatedOutputTokens = isCompactModel ? 2048 : 4096;
             estimatedCost = CalculateCost(model, estimatedInputTokens, estimatedOutputTokens);
 
             if (!await ReserveQuotaAsync(tenantId, estimatedCost))
@@ -113,10 +121,14 @@ public class AzureOpenAIService : IAIService
             {
                 result = await ExecuteApiCallAsync(tenantId, prompt, model);
             }
-            catch (Exception ex) when (model.StartsWith("gpt-4"))
+            // Degrade to the economy deployment when the richer model fails. The guard used to
+            // be model.StartsWith("gpt-4") falling back to gpt-3.5-turbo — after the move to the
+            // gpt-5 family that condition never matched, so the fallback was dead code, and
+            // gpt-3.5-turbo has no deployment in the Azure resource to fall back TO.
+            catch (Exception ex) when (model != FallbackModel)
             {
-                _logger.LogWarning(ex, "API call failed for {Model}. Attempting fallback to gpt-3.5-turbo.", model);
-                model = "gpt-3.5-turbo";
+                _logger.LogWarning(ex, "API call failed for {Model}. Falling back to {Fallback}.", model, FallbackModel);
+                model = FallbackModel;
                 isFallback = true;
                 result = await ExecuteApiCallAsync(tenantId, prompt, model);
             }
@@ -215,7 +227,11 @@ public class AzureOpenAIService : IAIService
             var requestBody = new
             {
                 messages = new[] { new { role = "user", content = safePrompt } },
-                max_tokens = 2000,
+                // The gpt-5 family REJECTS max_tokens outright:
+                //   "Unsupported parameter: 'max_tokens' is not supported with this model.
+                //    Use 'max_completion_tokens' instead."  (HTTP 400, code unsupported_parameter)
+                // Verified against the live gpt-5.4-mini deployment. temperature is still accepted.
+                max_completion_tokens = 2000,
                 temperature = 0.7,
                 stream = true
             };
@@ -365,7 +381,7 @@ public class AzureOpenAIService : IAIService
         var requestBody = new
         {
             messages = new[] { new { role = "user", content = safePrompt } },
-            max_tokens = maxTokens,
+            max_completion_tokens = maxTokens,  // gpt-5 family rejects max_tokens — see GenerateTextAsync
             temperature = 0.7
         };
 
@@ -667,13 +683,15 @@ public class AzureOpenAIService : IAIService
             // If no specifically allowed models are listed, allow all Upkilo-tier models
             if (subscription.AllowedAiModels == null || !subscription.AllowedAiModels.Any())
             {
+                // Must stay in sync with AiModelResolver — a model it returns but this list
+                // omits is rejected here before dispatch. gpt-4o was missing while the
+                // resolver named Claude models, so nothing surfaced it.
                 var defaults = new[]
                 {
-                    "claude-haiku-4-5-20251001",
-                    "claude-sonnet-4-6",
-                    "gpt-3.5-turbo",
+                    "gpt-5.4-mini",
+                    "gpt-5-mini",
                     "gpt-4",
-                    "gpt-4o-mini"
+                    "gpt-3.5-turbo"
                 };
                 return defaults.Contains(model.ToLower());
             }

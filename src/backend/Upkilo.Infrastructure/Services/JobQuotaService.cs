@@ -52,8 +52,11 @@ public class JobQuotaService
     {
         SubscriptionTier.Free => 1,
         SubscriptionTier.Starter => 5,
-        SubscriptionTier.Professional => 20,
-        SubscriptionTier.Business => 100,
+        // Growth inherits Business's allowance, matching the rate limits in
+        // TenantRateLimitMiddleware — it replaced Business at a higher price.
+        SubscriptionTier.Growth => 100,
+        SubscriptionTier.Business => 100,  // legacy
+        SubscriptionTier.Agency => 100,    // legacy
         SubscriptionTier.Enterprise => int.MaxValue,
         _ => 1
     };

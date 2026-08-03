@@ -35,7 +35,10 @@ public class PlanFeatures
 
     // Governance
     public int AuditLogRetentionDays { get; set; } = 90;
-    public List<string> AllowedAiModels { get; set; } = new() { "claude-haiku-4-5-20251001", "claude-sonnet-4-6" };
+    // Azure OpenAI deployment names — these are matched against what AiModelResolver returns.
+    // Whatever is stored here wins over the fallback list in IsModelAllowedAsync, so leaving
+    // Claude names here would reject every request even once the resolver was corrected.
+    public List<string> AllowedAiModels { get; set; } = new() { "gpt-5-mini", "gpt-5.4-mini" };
 
     // Usage credits
     public int MonthlySmsTier { get; set; } = 0; // 0, 100, 500, unlimited (-1)
@@ -92,7 +95,10 @@ public class Subscription : BaseEntity
     public decimal AiMonthlyBudget { get; set; } = 0; // <=0 means no access, must be strictly positive for access
     public int AiLastAlertThreshold { get; set; }
     public int AuditLogRetentionDays { get; set; } = 90;
-    public List<string> AllowedAiModels { get; set; } = new() { "claude-haiku-4-5-20251001", "claude-sonnet-4-6" };
+    // Azure OpenAI deployment names — these are matched against what AiModelResolver returns.
+    // Whatever is stored here wins over the fallback list in IsModelAllowedAsync, so leaving
+    // Claude names here would reject every request even once the resolver was corrected.
+    public List<string> AllowedAiModels { get; set; } = new() { "gpt-5-mini", "gpt-5.4-mini" };
 
     // Navigation
     public Tenant? Tenant { get; set; }

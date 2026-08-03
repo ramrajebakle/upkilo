@@ -536,12 +536,18 @@ public class SubscriptionService : ISubscriptionService
                         // Set AI model allowlist based on plan tier
                         if (localSub.AllowedAiModels.Count == 1 && localSub.AllowedAiModels[0] == "gpt-3.5-turbo")
                         {
+                            // Every list MUST contain the model AiModelResolver returns for that
+                            // tier, or IsModelAllowedAsync rejects the request before dispatch:
+                            // Free/Starter → gpt-5-mini, Growth/Enterprise → gpt-5.4-mini.
+                            // The old fallback handed out gpt-3.5-turbo alone, which the resolver
+                            // never returns — so any plan not named here had AI blocked outright.
                             localSub.AllowedAiModels = pricingPlan.Name.ToLowerInvariant() switch
                             {
-                                "enterprise" => new List<string> { "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo" },
-                                "business" => new List<string> { "gpt-4o", "gpt-4", "gpt-3.5-turbo" },
-                                "professional" => new List<string> { "gpt-4o-mini", "gpt-3.5-turbo" },
-                                _ => new List<string> { "gpt-3.5-turbo" }
+                                "enterprise" => new List<string> { "gpt-5.4-mini", "gpt-5-mini" },
+                                "growth" => new List<string> { "gpt-5.4-mini", "gpt-5-mini" },
+                                // Legacy plan names, folded into Growth
+                                "business" or "professional" or "agency" => new List<string> { "gpt-5.4-mini", "gpt-5-mini" },
+                                _ => new List<string> { "gpt-5-mini" }
                             };
                         }
                     }
@@ -592,13 +598,22 @@ public class SubscriptionService : ISubscriptionService
                     var resolvedPlan = await _context.PricingPlans.FindAsync(localSub.PricingPlanId.Value);
                     if (resolvedPlan != null)
                     {
+                        // "growth" was missing here after the pricing consolidation, so a paying
+                        // Growth customer fell through to the Starter fallback below and was
+                        // silently downgraded — cheaper AI model, lower rate limits, fewer jobs.
+                        // Professional/Business/Agency are kept as aliases: those plans were
+                        // folded into Growth, so any subscription still naming one resolves there.
                         var tier = resolvedPlan.Name.ToLowerInvariant() switch
                         {
                             "free" => SubscriptionTier.Free,
                             "starter" => SubscriptionTier.Starter,
-                            "professional" => SubscriptionTier.Professional,
-                            "business" => SubscriptionTier.Business,
+                            "growth" => SubscriptionTier.Growth,
+                            "professional" => SubscriptionTier.Growth,
+                            "business" => SubscriptionTier.Growth,
+                            "agency" => SubscriptionTier.Growth,
                             "enterprise" => SubscriptionTier.Enterprise,
+                            // Still a downgrade, but now only reachable via a genuinely unknown
+                            // plan name rather than one of our own tiers.
                             _ => SubscriptionTier.Starter
                         };
                         var tenantToUpdate = await _context.Tenants.FindAsync(tenantId);

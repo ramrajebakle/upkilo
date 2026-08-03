@@ -10,18 +10,34 @@ namespace Upkilo.Infrastructure.Services;
 /// Routes AI requests to the correct model based on subscription tier.
 ///
 /// Cost tiers:
-///   Free / Starter  → claude-haiku-4-5-20251001  (~10x cheaper than Sonnet)
-///   Professional    → claude-sonnet-4-6           (balanced cost/quality)
-///   Business        → claude-sonnet-4-6           (same as Pro, higher quota)
-///   Enterprise      → claude-sonnet-4-6           (configurable per contract)
+///   Free / Starter  → gpt-5-mini    (GlobalStandard, the larger quota)
+///   Growth          → gpt-5.4-mini  (DataZoneStandard, newer generation)
+///   Enterprise      → gpt-5.4-mini  (configurable per contract)
+///   Business/Agency → gpt-5.4-mini  (legacy tiers, folded into Growth)
+///
+/// Both paid and free tiers currently run "mini" models because the subscription has
+/// ZERO quota for every full-size model — gpt-5.5, gpt-5.4 and gpt-5 are all limit 0.
+/// Once a quota increase is granted, StandardModel should move to a full-size model and
+/// a deployment of that name must be created in the Azure OpenAI resource.
+///
+/// IMPORTANT: these strings are used directly as Azure OpenAI **deployment names** —
+/// AzureOpenAIService builds `{endpoint}/openai/deployments/{model}/chat/completions`,
+/// falling back to the raw model name when no AzureOpenAI:Deployments:{model} mapping
+/// exists. So a deployment with each of these exact names must exist in the Azure OpenAI
+/// resource, or every call 404s. They previously named Claude models, which no deployment
+/// could ever match and for which there is no Anthropic client in this solution.
+///
+/// Any new value added here must also be allowed in
+/// AzureOpenAIService.IsModelAllowedAsync, which rejects unlisted models before dispatch.
+///
 ///
 /// Enterprise contracts can override the model via Tenant.Settings["ai_model_override"].
 /// </summary>
 public class AiModelResolver : IAiModelResolver
 {
-    private const string HaikuModel = "claude-haiku-4-5-20251001";
-    private const string SonnetModel = "claude-sonnet-4-6";
-    private const string DefaultModel = HaikuModel;
+    private const string EconomyModel = "gpt-5-mini";
+    private const string StandardModel = "gpt-5.4-mini";
+    private const string DefaultModel = EconomyModel;
 
     private readonly AppDbContext _db;
     private readonly ILogger<AiModelResolver> _logger;
@@ -62,11 +78,12 @@ public class AiModelResolver : IAiModelResolver
     {
         return tier switch
         {
-            nameof(SubscriptionTier.Free) => HaikuModel,
-            nameof(SubscriptionTier.Starter) => HaikuModel,
-            nameof(SubscriptionTier.Professional) => SonnetModel,
-            nameof(SubscriptionTier.Business) => SonnetModel,
-            nameof(SubscriptionTier.Enterprise) => SonnetModel,
+            nameof(SubscriptionTier.Free) => EconomyModel,
+            nameof(SubscriptionTier.Starter) => EconomyModel,
+            nameof(SubscriptionTier.Growth) => StandardModel,
+            nameof(SubscriptionTier.Business) => StandardModel,   // legacy
+            nameof(SubscriptionTier.Agency) => StandardModel,     // legacy
+            nameof(SubscriptionTier.Enterprise) => StandardModel,
             _ => DefaultModel
         };
     }

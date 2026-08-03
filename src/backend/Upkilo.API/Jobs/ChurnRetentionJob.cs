@@ -53,7 +53,13 @@ public class ChurnRetentionJob
         _logger.LogInformation("ChurnRetentionJob started at {Time}", DateTime.UtcNow);
 
         // Only process AI-enabled tiers
-        var eligibleTiers = new[] { SubscriptionTier.Professional, SubscriptionTier.Business, SubscriptionTier.Enterprise };
+        var eligibleTiers = new[]
+        {
+            SubscriptionTier.Growth,
+            SubscriptionTier.Enterprise,
+            SubscriptionTier.Business,  // legacy
+            SubscriptionTier.Agency     // legacy
+        };
 
         var tenantIds = await _context.Tenants
             .Where(t => t.Status == TenantStatus.Active && eligibleTiers.Contains(t.SubscriptionTier))
