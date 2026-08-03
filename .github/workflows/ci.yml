@@ -72,6 +72,26 @@ jobs:
       # (Advanced Security), which is unavailable for private repos on the Free plan.
       # Dedicated analysis lives in codeql.yml, parked as manual-only for the same reason.
 
+      # The integration tests boot the real app through WebApplicationFactory, and startup
+      # seeds the pricing catalogue. Against an empty database that seeder's AnyAsync()
+      # guard throws 42P01 'relation "PricingPlans" does not exist', the host never starts,
+      # and every OpenApiContractTests case fails. Nothing else here creates the schema.
+      #
+      # This gap was invisible until now: the Format Check above used to fail first, so the
+      # test step never ran to expose it.
+      - name: Apply migrations to test database
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.* || dotnet tool update --global dotnet-ef --version 8.*
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet ef database update \
+            --project Upkilo.Infrastructure \
+            --startup-project Upkilo.API \
+            --configuration Release \
+            --no-build
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=upkilo_test;Username=upkilo_test;Password=testpassword"
+          ASPNETCORE_ENVIRONMENT: Development
+
       - name: Run tests with coverage
         run: |
           dotnet test Upkilo.sln --no-build --configuration Release \
