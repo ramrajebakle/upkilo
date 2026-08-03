@@ -1,6 +1,22 @@
 namespace Upkilo.Core.Entities;
 
 /// <summary>
+/// The tenant that owns platform staff (SuperAdmin), who belong to Upkilo itself rather
+/// than to any customer business.
+///
+/// Deliberately NOT Guid.Empty: AppDbContext's SaveChanges treats Guid.Empty on a
+/// TenantEntity as "not yet assigned" and overwrites it with the ambient tenant. Using it
+/// as a real identifier would conflate the two meanings, and a platform user saved inside
+/// any tenant context would silently be reassigned to that customer's tenant.
+/// </summary>
+public static class PlatformTenant
+{
+    public static readonly Guid Id = new("00000000-0000-0000-0000-000000000001");
+    public const string Name = "Upkilo Platform";
+    public const string Slug = "upkilo-platform";
+}
+
+/// <summary>
 /// Tenant entity - represents a business/organization
 /// </summary>
 public class Tenant : BaseEntity

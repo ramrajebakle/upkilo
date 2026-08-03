@@ -223,6 +223,27 @@ public class SuperAdminController : ControllerBase
             var exists = await _context.Users.IgnoreQueryFilters().AnyAsync(u => u.Role == UserRole.SuperAdmin);
             if (exists) return BadRequest("Registration is closed. A platform owner already exists.");
 
+            // Users.TenantId has a foreign key to Tenants. This previously inserted Guid.Empty,
+            // for which no row exists, so every attempt failed with
+            //   23503: violates foreign key constraint "FK_Users_Tenants_TenantId"
+            // and no platform owner could ever be created. Platform staff belong to Upkilo
+            // itself, so they hang off a dedicated tenant created here on first bootstrap.
+            var platformTenantExists = await _context.Tenants.IgnoreQueryFilters()
+                .AnyAsync(t => t.Id == PlatformTenant.Id);
+
+            if (!platformTenantExists)
+            {
+                _context.Tenants.Add(new Tenant
+                {
+                    Id = PlatformTenant.Id,
+                    Name = PlatformTenant.Name,
+                    Slug = PlatformTenant.Slug,
+                    Status = TenantStatus.Active,
+                    SubscriptionTier = SubscriptionTier.Enterprise,
+                    IsActive = true
+                });
+            }
+
             var user = new User
             {
                 Id = Guid.NewGuid(),
@@ -232,7 +253,7 @@ public class SuperAdminController : ControllerBase
                 Role = UserRole.SuperAdmin,
                 IsActive = true,
                 EmailVerified = true,
-                TenantId = Guid.Empty,
+                TenantId = PlatformTenant.Id,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
