@@ -2,26 +2,33 @@ name: Dependabot Auto-Merge
 
 # The Security & Dependency Agent's autonomy boundary (see
 # "_archive/planning/pre-launch-research-and-audits/autonomous_production_agents_plan.md" section 1).
-# .github/dependabot.yml already opens weekly PRs for nuget + npm; this workflow
-# is what actually removes the human from merging the safe ones. It only ever
-# auto-merges patch/minor version bumps, and only after this repo's full ci.yml
-# suite has passed on the PR — a major bump always waits for a human.
-
-# ⚠️ AUTO-MERGE DISABLED — manual-only for now.
+# .github/dependabot.yml already opens weekly PRs for nuget + npm + github-actions; this
+# workflow is what actually removes the human from merging the safe ones. It only ever
+# merges patch/minor version bumps, and only after this repo's full ci.yml suite has
+# passed on the PR — a major bump always waits for a human.
 #
-# The safety argument above depends on "only after this repo's full ci.yml suite has
-# passed". That premise does not currently hold: ci.yml has been failing, and a single
-# maintainer means nobody reviews what merges. Combined with `pull_request_target` +
-# `contents: write`, this would merge dependency bumps into `main` unread — and `main`
-# builds the production images.
+# ── Why this is shaped the way it is ─────────────────────────────────────────────────
+# Three repo/plan constraints were checked against the API before re-enabling this. Each
+# one would have silently broken the previous version of this workflow, which is why it
+# never worked even during the window it was enabled:
 #
-# Dependabot still opens its weekly PRs (.github/dependabot.yml); they simply wait for a
-# human. RE-ENABLE by restoring the trigger below once ci.yml is reliably green.
+#  1. `allow_auto_merge` is false on this repository, so `gh pr merge --auto` fails with
+#     "Auto-merge is not allowed for this repository". The merge below is a plain
+#     `--squash`, gated by the explicit wait-for-CI step rather than by --auto.
+#  2. `can_approve_pull_request_reviews` is false, so a GITHUB_TOKEN `gh pr review
+#     --approve` is rejected. There is no branch protection requiring an approval either
+#     (GitHub Free cannot protect branches on a private repo), so the approve step bought
+#     nothing and has been removed rather than left to fail.
+#  3. The previous trigger was `pull_request_target`, which runs in the base-repo context
+#     with write-scoped secrets. Dependabot PRs originate in this repository rather than a
+#     fork, so the documented `pull_request` trigger plus an explicit `permissions:` block
+#     does the same job without exposing that context.
 #
-#  pull_request_target:
-#    branches: [main]
+# The safety argument rests on ci.yml passing first, which the wait step enforces. Merging
+# to `main` builds and pushes images but does NOT deploy — deploy.yml requires a manual
+# run — so an auto-merged bump cannot reach production unattended.
 on:
-  workflow_dispatch:
+  pull_request:
 
 permissions:
   contents: write
@@ -31,16 +38,18 @@ jobs:
   auto-merge:
     name: Evaluate Dependabot PR
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    # The PR author, not github.actor: github.actor is whoever caused the event, which on
+    # a re-run is the person who pressed the button rather than Dependabot.
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@v3
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Wait for CI (ci.yml) to report success on this PR
-        uses: lewagon/wait-on-check-action@v1.3.4
+        uses: lewagon/wait-on-check-action@v1.9.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -48,11 +57,10 @@ jobs:
           running-workflow-name: "Evaluate Dependabot PR"
           allowed-conclusions: success
 
-      - name: Auto-approve and auto-merge patch/minor bumps
+      - name: Merge patch/minor bumps
         if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
         run: |
-          gh pr review "$PR_URL" --approve -b "Auto-approved: ${{ steps.metadata.outputs.update-type }} bump, ci.yml passed."
-          gh pr merge "$PR_URL" --auto --squash
+          gh pr merge "$PR_URL" --squash
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -26,20 +26,20 @@ jobs:
       image-tag: ${{ github.sha }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
+        uses: docker/login-action@v4
         with:
-          login-server: ${{ env.REGISTRY }}
+          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build & Push API Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./Dockerfile
@@ -51,7 +51,7 @@ jobs:
           cache-to: type=inline
 
       - name: Build & Push Frontend Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: ./src/frontend
           file: ./src/frontend/Dockerfile
@@ -103,10 +103,10 @@ jobs:
     if: vars.STAGING_ENABLED == 'true'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -135,7 +135,7 @@ jobs:
 
     steps:
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS_STAGING }}
 
@@ -146,7 +146,7 @@ jobs:
       # application settings are the only mechanism that reaches every consumer.
       # Without this the container crash-loops on the Jwt:Secret minimum-length check.
       - name: Configure Staging App Service application settings
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             az webapp config appsettings set \
@@ -222,12 +222,12 @@ jobs:
       && (needs.deploy-staging.result == 'success' || needs.deploy-staging.result == 'skipped')
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Required before any azure/CLI step. The azure/CLI action does NOT authenticate
       # from an AZURE_CREDENTIALS env var — it relies on the session established here.
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -237,7 +237,7 @@ jobs:
       # rule for this run and remove it afterwards (see the always() cleanup step).
       - name: Allow runner IP through Postgres firewall
         id: fw
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             RUNNER_IP=$(curl -s https://api.ipify.org)
@@ -253,7 +253,7 @@ jobs:
             echo "✅ Temporary firewall rule $RULE opened for $RUNNER_IP"
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -280,7 +280,7 @@ jobs:
       # instant before these migrations ran. Record that timestamp so an incident does not
       # require guessing it. See §9 of docs/PRODUCTION_DEPLOYMENT.md for the restore steps.
       - name: Record pre-migration restore point
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             RESTORE_POINT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -323,7 +323,7 @@ jobs:
           AzureKeyVault__VaultUri: ""
 
       - name: Upload migration script as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: migration-sql-${{ github.sha }}
           path: migration-${{ github.sha }}.sql
@@ -346,7 +346,7 @@ jobs:
       # permanently reachable from a stale public IP. always() is deliberate here.
       - name: Remove temporary Postgres firewall rule
         if: always() && steps.fw.outputs.rule_name != ''
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             az postgres flexible-server firewall-rule delete \
@@ -399,7 +399,7 @@ jobs:
 
     steps:
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -407,7 +407,7 @@ jobs:
       # only way to roll back, and it must happen before any mutation.
       - name: Capture current image tags for rollback
         id: prev
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             API_IMG=$(az webapp config container show --name upkilo-api-prod \
@@ -425,7 +425,7 @@ jobs:
       # Without this step, APPLICATIONINSIGHTS_CONNECTION_STRING and PAGERDUTY_INTEGRATION_KEY
       # never reach the running container — AppInsights and PagerDuty silently do nothing.
       - name: Configure App Service application settings
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             az webapp config appsettings set \
@@ -463,7 +463,7 @@ jobs:
       #   System.ArgumentException: Couldn't set ${database_url};ssl mode
       # Fail fast here rather than discovering it from a crash-looping container.
       - name: Verify DB connection settings reached App Service
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             VALUE=$(az webapp config appsettings list \
@@ -514,7 +514,7 @@ jobs:
       # so login fails even though the API issues valid JWTs. These are RUNTIME settings
       # (unlike NEXT_PUBLIC_* which are baked at build), so they must live here.
       - name: Configure Frontend App Service application settings
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             az webapp config appsettings set \
@@ -589,10 +589,10 @@ jobs:
     # impossible to execute automatically during an incident.
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -601,7 +601,7 @@ jobs:
       # If a tag is empty this was the first-ever deploy — there is nothing to roll
       # back to, and the container is left as-is for manual inspection.
       - name: Rollback API to previous image
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             PREV="${{ needs.deploy-production.outputs.api_image }}"
@@ -617,7 +617,7 @@ jobs:
             fi
 
       - name: Rollback frontend to previous image
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             PREV="${{ needs.deploy-production.outputs.frontend_image }}"
@@ -635,7 +635,7 @@ jobs:
       # Schema rollback: revert to the migration that was current before this deploy.
       # Without this, old code runs against a schema that may have dropped columns it reads.
       - name: Setup .NET for schema rollback
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
