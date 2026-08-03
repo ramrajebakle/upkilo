@@ -354,9 +354,19 @@ jobs:
     runs-on: ubuntu-latest
     # gitleaks-action reads workflow-run metadata; without `actions: read` it fails with
     # "Resource not accessible by integration" before scanning anything.
+    #
+    # `pull-requests: read` is the same failure on a different endpoint, and it only shows
+    # up on pull_request events: gitleaks lists the PR's commits to decide what to scan, so
+    # without it the step dies on
+    #   GET /repos/.../pulls/N/commits -> 403 "Resource not accessible by integration"
+    # while push builds pass untouched. That asymmetry meant ci.yml could never go green on
+    # ANY pull request — which is what actually blocked Dependabot PR #33 (run 30792312594
+    # failed here, not on the dependency bump), and what made the auto-merge workflow
+    # unreachable, since it waits for a successful ci.yml run on the PR.
     permissions:
       contents: read
       actions: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v5
         with:
