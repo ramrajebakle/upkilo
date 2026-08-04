@@ -60,6 +60,43 @@
   --color-danger-500: #dc2626;
   --color-info-500: #2563eb;
 
+  /* ── Primary brand scale ──────────────────────────────────────────────────
+     These were referenced everywhere but defined nowhere. Tailwind v4 only emits a
+     utility when the matching theme token exists, so `bg-primary-500` (570 uses),
+     `text-text-primary` (554) and `border-surface-200` (325) all compiled to nothing
+     and their elements rendered unstyled. The login page's primary "Sign in" button
+     was white-on-transparent at 1.06:1 contrast — axe flagged it as a serious
+     violation, which is what surfaced this.
+
+     Anchored on the existing platform accent so nothing visually shifts: 400/500/600
+     and 50/100/900 are the --color-platform-* values verbatim; the remaining steps are
+     interpolated to complete the ramp. White on primary-500 measures 5.53:1, clearing
+     WCAG AA. */
+  --color-primary-50:  #eef0ff;
+  --color-primary-100: #dde1ff;
+  --color-primary-200: #c4c8ff;
+  --color-primary-300: #a5a3fb;
+  --color-primary-400: #8b7cf8;
+  --color-primary-500: #5b4cf5;
+  --color-primary-600: #4535d4;
+  --color-primary-700: #3728ab;
+  --color-primary-800: #2a1f85;
+  --color-primary-900: #1c1568;
+  --color-primary-950: #120d45;
+
+  /* Surfaces and text resolve THROUGH the semantic vars in @layer base rather than
+     holding literal colours, so `bg-surface-50` and `text-text-primary` follow
+     light/dark automatically. A static hex here would lock the whole app to light. */
+  --color-surface-50:  var(--surface-raised);
+  --color-surface-100: var(--surface-overlay);
+  --color-surface-200: var(--surface-border);
+  --color-surface-300: var(--surface-border-strong);
+
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary:  var(--text-tertiary);
+  --color-text-inverse:   var(--text-inverse);
+
   /* Spacing */
   --spacing-0: 0px;
   --spacing-1: 4px;
@@ -175,11 +212,19 @@
     --surface-overlay: var(--color-neutral-100);
     --surface-sunken: var(--color-neutral-100);
 
+    /* Border tones, referenced by --color-surface-200/300 above so borders track the
+       theme instead of being hard-coded light. */
+    --surface-border: var(--color-neutral-200);
+    --surface-border-strong: var(--color-neutral-300);
+
     --text-primary: var(--color-neutral-900);
     --text-secondary: var(--color-neutral-500);
-    --text-tertiary: var(--color-neutral-400);
+    /* Not neutral-400 (#9999b0): that measures 2.62:1 on --surface-raised, well under
+       the 4.5:1 WCAG AA floor, and axe failed the login page on it. #6e6e85 measures
+       4.68:1 while staying visibly lighter than --text-secondary. */
+    --text-tertiary: #6e6e85;
     --text-inverse: var(--color-neutral-0);
-    
+
     background-color: var(--surface-base);
     color: var(--text-primary);
     font-family: var(--font-sans);
@@ -190,6 +235,9 @@
     --surface-raised: var(--color-neutral-900);
     --surface-overlay: var(--color-neutral-800);
     --surface-sunken: #060610;
+
+    --surface-border: var(--color-neutral-800);
+    --surface-border-strong: var(--color-neutral-700);
 
     --text-primary: var(--color-neutral-50);
     --text-secondary: var(--color-neutral-400);
