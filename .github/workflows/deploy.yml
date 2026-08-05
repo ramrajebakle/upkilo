@@ -323,7 +323,7 @@ jobs:
           AzureKeyVault__VaultUri: ""
 
       - name: Upload migration script as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: migration-sql-${{ github.sha }}
           path: migration-${{ github.sha }}.sql

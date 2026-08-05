@@ -148,7 +148,7 @@ jobs:
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=upkilo_test;Username=upkilo_test;Password=testpassword"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: backend-test-results
@@ -294,7 +294,7 @@ jobs:
           # PR run.  Artifacts are uploaded to GitHub (private) via uploadArtifacts: true.
         # No continue-on-error — budget violations block the PR (performance ≥ 90, accessibility ≥ 95)
       - name: Upload Lighthouse artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: lighthouse-results
@@ -342,7 +342,7 @@ jobs:
         env:
           BASE_URL: http://localhost:3000
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report
