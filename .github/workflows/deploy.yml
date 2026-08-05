@@ -106,7 +106,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -253,7 +253,7 @@ jobs:
             echo "✅ Temporary firewall rule $RULE opened for $RUNNER_IP"
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -635,7 +635,7 @@ jobs:
       # Schema rollback: revert to the migration that was current before this deploy.
       # Without this, old code runs against a schema that may have dropped columns it reads.
       - name: Setup .NET for schema rollback
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
