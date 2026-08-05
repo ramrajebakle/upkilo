@@ -33,6 +33,13 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  # `checks: read` is required by the wait-on-check-action step below, which lists check
+  # runs for the PR head SHA. Without it that call returns
+  #   GET /repos/.../commits/<sha>/check-runs -> 403 Resource not accessible by integration
+  # and the job dies before evaluating anything. This is not implied by contents/pull-requests:
+  # declaring a `permissions:` block drops every scope that is not named, so the check-runs
+  # API stays unreachable no matter how broad the other two are.
+  checks: read
 
 jobs:
   auto-merge:
