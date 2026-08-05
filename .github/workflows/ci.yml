@@ -37,6 +37,16 @@ jobs:
   detect-changes:
     name: Detect Changed Areas
     runs-on: ubuntu-latest
+    # dorny/paths-filter behaves differently per trigger: on pull_request it calls
+    # `GET /repos/.../pulls/{n}/files` (documented requirement: pull-requests: read); on a
+    # plain push it instead diffs locally via git, needing contents: read to fetch history.
+    # The first run of this job failed with "Resource not accessible by integration" until
+    # both were declared explicitly — the third time in this workflow's history a call
+    # needed a scope that relying on default token permissions did not cover (gitleaks and
+    # wait-on-check-action were the other two), so it is named here rather than assumed.
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
