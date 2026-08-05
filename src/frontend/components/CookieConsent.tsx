@@ -418,9 +418,13 @@ const btnOutline: React.CSSProperties = {
     color: '#e2e8f0',
 };
 
+// Indigo-600, not indigo-500 (#6366f1). White on #6366f1 measures 4.46:1, which misses
+// the WCAG 2.1 AA minimum of 4.5:1 for text this size — axe flagged it as a serious
+// color-contrast violation on the landing, login and register pages. #4f46e5 measures
+// 6.29:1 against white. Please keep any change to this pair above 4.5:1.
 const btnPrimary: React.CSSProperties = {
     ...btnBase,
-    border: '1px solid #6366f1',
-    background: '#6366f1',
+    border: '1px solid #4f46e5',
+    background: '#4f46e5',
     color: '#fff',
 };

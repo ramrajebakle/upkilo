@@ -717,7 +717,10 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-slate-500">
+          {/* slate-400, not slate-500: #64748b on the slate-950 footer measures 4.23:1,
+              just under the 4.5:1 WCAG AA minimum, and axe failed the landing page on it.
+              slate-400 measures 7.87:1. */}
+          <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-slate-400">
             <p>© 2026 Upkilo Technologies Pvt. Ltd. All rights reserved.</p>
           </div>
         </div>

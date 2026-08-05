@@ -13,11 +13,15 @@ name: DR Restore Drill
 #     (billable) scratch Postgres server every month. The production budget is
 #     ₹5,000/month total; an unattended monthly server is a material share of that.
 #  2. NOTHING TO DRILL. There is no customer data yet, so restoring a backup verifies
-#     very little. It also needs the DR_DRILL_CONNECTION_PREFIX / _SUFFIX secrets and a
-#     `production-readonly` environment, none of which exist — so it fails every run.
+#     very little.
+#
+# The `production-readonly` environment now exists. What is still missing is the three
+# secrets the preflight step below checks for — AZURE_CREDENTIALS_DR_DRILL,
+# DR_DRILL_CONNECTION_PREFIX and DR_DRILL_CONNECTION_SUFFIX — none of which are set at
+# either repo or environment scope.
 #
 # An untested backup is genuinely not a backup, so RE-ENABLE THIS once real customer
-# data exists: restore the `schedule:` block below and create the missing secrets.
+# data exists: create those three secrets, then restore the `schedule:` block below.
 #
 #  schedule:
 #    - cron: "0 4 1 * *"  # 04:00 UTC on the 1st of every month
@@ -30,16 +34,36 @@ jobs:
     runs-on: ubuntu-latest
     environment: production-readonly  # scoped credentials: create/read/delete scratch resources only
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      # Fail before Azure login rather than after. Without this the run reaches the
+      # restore step, bills a real Postgres server, and only then dies at `psql` with an
+      # opaque connection error — leaving the scratch instance to be cleaned up by the
+      # teardown step's error path. Checking first costs nothing and names what is missing.
+      - name: Preflight — required secrets are present
+        env:
+          CREDS: ${{ secrets.AZURE_CREDENTIALS_DR_DRILL }}
+          CONN_PREFIX: ${{ secrets.DR_DRILL_CONNECTION_PREFIX }}
+          CONN_SUFFIX: ${{ secrets.DR_DRILL_CONNECTION_SUFFIX }}
+        run: |
+          missing=""
+          [ -z "$CREDS" ]       && missing="$missing AZURE_CREDENTIALS_DR_DRILL"
+          [ -z "$CONN_PREFIX" ] && missing="$missing DR_DRILL_CONNECTION_PREFIX"
+          [ -z "$CONN_SUFFIX" ] && missing="$missing DR_DRILL_CONNECTION_SUFFIX"
+          if [ -n "$missing" ]; then
+            echo "::error::DR drill cannot run — missing secret(s):$missing. Create them on the 'production-readonly' environment (or at repo scope) before dispatching this workflow. No Azure resources were created."
+            exit 1
+          fi
+          echo "All required DR drill secrets are present."
 
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS_DR_DRILL }}
 
       - name: Create scratch server from latest backup (PITR)
         id: restore
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             SCRATCH_NAME="upkilo-dr-drill-$(date +%Y%m%d)"
@@ -57,15 +81,24 @@ jobs:
             -c "SELECT count(*) FROM bookings WHERE created_at > now() - interval '7 days';" \
             -c "SELECT max(created_at) FROM audit_entries;"
 
+      # Guarded on a non-empty name: if the restore step never ran (failed login, cancelled
+      # run) the output is empty, and an unguarded `delete --name ""` fails with an
+      # argument error that reads like a teardown failure. The real risk this protects
+      # against is the opposite case being missed — a scratch server that was created and
+      # then NOT deleted keeps billing, so that path is escalated loudly rather than
+      # swallowed.
       - name: Tear down scratch instance
-        if: always()
-        uses: azure/CLI@v2
+        if: always() && steps.restore.outputs.scratch_name != ''
+        uses: azure/CLI@v3
         with:
           inlineScript: |
-            az postgres flexible-server delete \
+            if ! az postgres flexible-server delete \
               --resource-group upkilo-prod-rg \
               --name "${{ steps.restore.outputs.scratch_name }}" \
-              --yes
+              --yes; then
+              echo "::error::Failed to delete scratch server '${{ steps.restore.outputs.scratch_name }}'. It may still exist and is BILLABLE — delete it manually from upkilo-prod-rg."
+              exit 1
+            fi
 
       - name: Report drill result
         if: always()

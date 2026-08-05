@@ -1,26 +1,28 @@
 name: "CodeQL Advanced"
 
-# ⚠️ DISABLED on push/PR — this workflow cannot succeed on the current plan.
+# ── Why this does not upload to code scanning ────────────────────────────────────────
+# Uploading SARIF to GitHub code scanning requires GitHub Advanced Security, which is not
+# available for private repositories on the Free plan. Verified against the API: the
+# code-scanning endpoint returns
+#   403 "Code scanning is not enabled for this repository."
+# so every run that tried to upload failed at the final step, and a permanently-red check
+# trains people to ignore red checks.
 #
-# CodeQL uploads results to GitHub code scanning, which requires GitHub Advanced
-# Security. That is not available for private repositories on the Free plan, so every
-# run failed with:
-#   "Code scanning is not enabled for this repository."
+# The analysis itself does NOT need Advanced Security — only the upload does. So this runs
+# CodeQL for real and keeps the SARIF locally (`upload: never` + `output:`), publishing it
+# as a build artifact instead. The findings are produced and retrievable today; they are
+# just reviewed by downloading the artifact rather than in the Security tab.
 #
-# A permanently-red required check trains people to ignore red checks, which is worse
-# than having no check. Left as manual-only so it is one line away from returning.
+# TO RESTORE THE SECURITY TAB once Advanced Security is available (GitHub Team/Enterprise,
+# or making the repository public): drop the `upload`/`output` inputs and the artifact
+# step, and the action reverts to its default of uploading.
 #
-# TO RE-ENABLE once Advanced Security is available (GitHub Team/Enterprise, or make the
-# repository public): restore the push/pull_request/schedule triggers below.
-#
-#  on:
-#    push:
-#      branches: [ "main" ]
-#    pull_request:
-#      branches: [ "main" ]
-#    schedule:
-#      - cron: '30 1 * * 0'
+# Scheduled weekly rather than per-push on purpose: a CodeQL run builds the whole C#
+# solution, and Actions minutes on a private repo are a limited budget. Use the manual
+# trigger when a specific change warrants a scan sooner.
 on:
+  schedule:
+    - cron: '30 1 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -39,10 +41,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
         queries: security-extended,security-and-quality
@@ -51,7 +53,7 @@ jobs:
     # suitable build method"), so C# is built explicitly. JavaScript needs no build step.
     - name: Setup .NET
       if: matrix.language == 'csharp'
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '8.0.x'
 
@@ -60,6 +62,16 @@ jobs:
       run: dotnet build src/backend/Upkilo.sln --configuration Release
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{matrix.language}}"
+        upload: never
+        output: sarif-results
+
+    - name: Publish SARIF as an artifact
+      uses: actions/upload-artifact@v6
+      if: always()
+      with:
+        name: codeql-sarif-${{ matrix.language }}
+        path: sarif-results
+        if-no-files-found: warn

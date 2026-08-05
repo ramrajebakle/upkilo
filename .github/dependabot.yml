@@ -1,17 +1,133 @@
 version: 2
+
+# Dependabot previously ran a single nuget job across all of /src/backend. That job died
+# with `out_of_disk` (run 30789820827): resolving every project in one ephemeral container
+# made the updater download ~40 Elastic.Clients.Elasticsearch nupkgs (8.19.x → 9.1.5) plus
+# the whole transitive graph, and it ran out of space before opening a single PR. There is
+# no disk knob to turn, so the fix is to shrink each job's scope — one entry per project
+# means one container per project, each resolving a fraction of the graph.
+#
+# `groups` keeps the resulting PR volume sane: without it, splitting into six backend jobs
+# would open six near-identical PRs for every shared transitive bump.
+#
+# Two coverage gaps are also closed here:
+#   - github-actions was never listed at all, which is why every action in
+#     .github/workflows/ sat on v4 / the Node 20 runtime until it was bumped by hand.
+#     Node 20 is removed from GitHub-hosted runners on 2026-09-16, so this ecosystem
+#     needs to stay watched.
+#   - /src/mobile has its own package.json and was not covered either, so the Expo app
+#     received no security updates.
+
 updates:
-  - package-ecosystem: "nuget"
-    directory: "/src/backend"
+  # ── GitHub Actions ──────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # ── Backend: one job per project, to stay inside the updater's disk budget ──
+  - package-ecosystem: "nuget"
+    directory: "/src/backend/Upkilo.API"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      api-minor-patch:
+        update-types: ["minor", "patch"]
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
         update-types: ["version-update:semver-major"]
 
+  - package-ecosystem: "nuget"
+    directory: "/src/backend/Upkilo.Infrastructure"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      infrastructure-minor-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "nuget"
+    directory: "/src/backend/Upkilo.Core"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      core-minor-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "nuget"
+    directory: "/src/backend/Upkilo.Application"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      application-minor-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "nuget"
+    directory: "/src/backend/Upkilo.AI"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      ai-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "nuget"
+    directory: "/src/backend/tests/Upkilo.Tests"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      tests-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # ── Frontend (Next.js) ──────────────────────────────────────────────────
   - package-ecosystem: "npm"
     directory: "/src/frontend"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      frontend-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # ── Mobile (Expo / React Native) ────────────────────────────────────────
+  # Expo pins the React Native version its SDK supports, so a major bump here is an SDK
+  # migration rather than a dependency update — those wait for a human.
+  - package-ecosystem: "npm"
+    directory: "/src/mobile"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      mobile-minor-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "expo"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-native"
+        update-types: ["version-update:semver-major"]

@@ -1,5 +1,11 @@
 name: Mobile CI (Detox)
 
+# workflow_dispatch is REQUIRED here, not a convenience. Every other workflow in this
+# repo is registered with Actions because it either has run or is manually dispatchable.
+# This one had neither: its push/pull_request triggers are both path-filtered to
+# src/mobile/**, and nothing has touched src/mobile since the initial commit — so GitHub
+# never listed it and it has never run once. A manual trigger keeps it visible and
+# runnable even during periods when the mobile app is not being changed.
 on:
   push:
     branches: [main, develop, ramraje]
@@ -10,6 +16,7 @@ on:
     branches: [main, develop]
     paths:
       - 'src/mobile/**'
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '20.x'
@@ -25,10 +32,10 @@ jobs:
         working-directory: src/mobile
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -54,24 +61,24 @@ jobs:
         working-directory: src/mobile
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: src/mobile/package-lock.json
 
       - name: Setup Java ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: temurin
           cache: gradle
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Install dependencies
         run: npm ci
@@ -87,7 +94,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Cache Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build Detox debug APK
         run: |
@@ -108,7 +115,7 @@ jobs:
           working-directory: .
 
       - name: Upload Detox artifacts on failure
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: detox-android-artifacts
@@ -123,10 +130,10 @@ jobs:
         working-directory: src/mobile
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -135,11 +142,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate app.json schema
+      - name: Validate eas.json schema
         run: |
           node -e "
-            const cfg = require('./app.json');
-            const builds = cfg?.eas?.build ?? {};
+            const cfg = require('./eas.json');
+            const builds = cfg?.build ?? {};
             const required = ['development', 'preview', 'production'];
             for (const env of required) {
               if (!builds[env]) { console.error('Missing EAS build profile: ' + env); process.exit(1); }
@@ -155,8 +162,20 @@ jobs:
 
       - name: Check for hardcoded localhost in API client
         run: |
-          if grep -r "localhost:5000" src/api/ --include="*.ts" | grep -v "??" | grep -v "//"; then
-            echo "::error::Hardcoded localhost found in API client (should use env var)"
-            exit 1
+          # The safe pattern is an env-var fallback spanning two lines:
+          #   process.env.EXPO_PUBLIC_API_URL ??
+          #   'http://localhost:5000/api/v1';
+          # so the invariant is per-FILE, not per-line. The previous line-based filter
+          # piped through `grep -v "//"`, which discarded every `http://localhost` match —
+          # i.e. exactly what it was meant to catch — so the check could never fail.
+          status=0
+          for file in $(grep -rl "localhost:5000" src/api/ --include="*.ts" || true); do
+            if ! grep -q "EXPO_PUBLIC_API_URL" "$file"; then
+              echo "::error file=$file::Hardcoded localhost:5000 with no EXPO_PUBLIC_API_URL fallback"
+              status=1
+            fi
+          done
+          if [ "$status" -eq 0 ]; then
+            echo "All localhost:5000 references sit behind an EXPO_PUBLIC_API_URL fallback."
           fi
-          echo "No hardcoded localhost URLs found."
+          exit $status
