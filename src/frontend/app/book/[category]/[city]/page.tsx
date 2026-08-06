@@ -66,19 +66,44 @@ export async function generateStaticParams() {
   );
 }
 
+// generateStaticParams above cross-produces 10 categories × 10 cities = 100 combinations,
+// and any other category/city pair is additionally reachable via ISR — but a page only has
+// something to show once real businesses have listed in that exact pair. Until then the body
+// renders "No businesses found yet" (see the empty state below) while still returning HTTP 200.
+//
+// Serving a large set of near-identical, auto-generated, empty pages is what Google's spam
+// policy describes as scaled content abuse / doorway pages, and the penalty for it is not
+// scoped to the offending URLs — it can suppress the whole domain. So empty combinations are
+// explicitly noindexed until they have real content.
+//
+// `follow: true` is deliberate: the empty state still links to /register, and there is no
+// reason to stop crawlers walking those links. This gate needs no maintenance — pages become
+// indexable on their own as real listings arrive.
+function hasListings(data: PageData | null): boolean {
+  return !!data && data.listings.length > 0;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category, city } = await params;
   const data = await fetchListings(category, city);
-  if (!data) {
-    return { title: `Book ${category} in ${city} | Upkilo` };
+
+  // Mirrors the render's own empty check exactly (`!data || data.listings.length === 0`),
+  // so what the crawler is told can never drift from what the page actually shows.
+  if (!hasListings(data)) {
+    return {
+      title: `Book ${category} in ${city} | Upkilo`,
+      robots: { index: false, follow: true },
+    };
   }
+
   return {
-    title: data.seo.title,
-    description: data.seo.description,
-    alternates: { canonical: data.seo.canonicalUrl },
+    title: data!.seo.title,
+    description: data!.seo.description,
+    alternates: { canonical: data!.seo.canonicalUrl },
+    robots: { index: true, follow: true },
     openGraph: {
-      title: data.seo.title,
-      description: data.seo.description,
+      title: data!.seo.title,
+      description: data!.seo.description,
       type: 'website',
     },
   };

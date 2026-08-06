@@ -33,8 +33,12 @@ import EmailCapture from '@/components/landing/EmailCapture';
 
 export const metadata: Metadata = {
   title: 'Upkilo — Grow Your Service Business on Autopilot',
+  // "Trusted by 500+ service businesses" was removed from the end of this description.
+  // It is unverifiable today, and a meta description is the worst place to carry an
+  // unsupportable claim — it is the text shown in the search result itself, read by people
+  // who have not visited the site yet.
   description:
-    'AI-powered booking, CRM, payments, and marketing for salons, spas, fitness studios, and clinics. Start free, no credit card needed. Trusted by 500+ service businesses.',
+    'AI-powered booking, CRM, payments, and marketing for salons, spas, fitness studios, and clinics. Start free, no credit card needed.',
   openGraph: {
     title: 'Upkilo — Grow Your Service Business on Autopilot',
     description:

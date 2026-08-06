@@ -41,7 +41,9 @@ export default function CanadaPage() {
               Book a Demo
             </Link>
           </div>
-          <p className="mt-4 text-sm opacity-75">Trusted by salons, spas, and clinics across Canada</p>
+          {/* "Trusted by salons, spas, and clinics across Canada" was removed — implies an
+              existing Canadian customer base. Replaced with a product fact. */}
+          <p className="mt-4 text-sm opacity-75">Booking pages available in English and French, with automated client reminders</p>
         </div>
       </section>
 

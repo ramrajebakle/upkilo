@@ -43,7 +43,10 @@ export default function AustraliaPage() {
               Book a Demo
             </Link>
           </div>
-          <p className="mt-4 text-sm opacity-75">Trusted by 1,200+ Australian salons, gyms, and clinics</p>
+          {/* "Trusted by 1,200+ Australian salons, gyms, and clinics" was removed — an
+              unverifiable customer count, same issue as the landing page's meta description
+              and the medical-spa testimonial. Replaced with a product fact. */}
+          <p className="mt-4 text-sm opacity-75">Online booking, client records, and automated reminders in one system</p>
         </div>
       </section>
 
