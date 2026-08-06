@@ -61,7 +61,8 @@ public class SubscriptionService : ISubscriptionService
         // Billing is an optional capability: bookings, CRM and auth must work without it.
         // Stripe calls now fail at the point of use with Stripe's own authentication error,
         // which is scoped to the billing endpoints that actually need it.
-        _stripeApiKey = _secretProvider.GetSecret("Stripe--SecretKey") ?? string.Empty;
+        // Colon form — see PaymentService.cs for why "Stripe--SecretKey" never resolved.
+        _stripeApiKey = _secretProvider.GetSecret("Stripe:SecretKey") ?? string.Empty;
     }
 
     private static string SubCacheKey(Guid tenantId) => $"sub:{tenantId}";

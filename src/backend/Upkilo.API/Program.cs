@@ -619,6 +619,14 @@ builder.Services.AddHttpClient<MarketingIntegrationService>()
 // SC4: Circuit breaker for Discord webhook
 builder.Services.AddHttpClient<DiscordNotificationService>()
     .AddStandardResilienceHandler();
+// RazorpayService was never registered here — PaymentsController's razorpay/order and
+// razorpay/verify actions resolve it via HttpContext.RequestServices.GetRequiredService,
+// which throws InvalidOperationException for an unregistered concrete type. Every existing
+// call to those actions would have failed before reaching Razorpay at all. Given the same
+// resilience treatment as the other external HTTP integrations above — this is a real-money
+// payment API, not less critical than SendGrid or Discord.
+builder.Services.AddHttpClient<RazorpayService>()
+    .AddStandardResilienceHandler();
 builder.Services.AddScoped<MarketingAutomationOrchestratorJob>();
 builder.Services.AddScoped<BillingAlertJob>();
 builder.Services.AddScoped<EscalationFollowupJob>();
