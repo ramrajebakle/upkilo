@@ -30,6 +30,11 @@ import Reveal from '@/components/landing/Reveal';
 import FaqAccordion from '@/components/landing/FaqAccordion';
 import LandingNav from '@/components/landing/LandingNav';
 import EmailCapture from '@/components/landing/EmailCapture';
+import { safeJsonLd } from '@/lib/jsonLd';
+
+// Apex host. Must match sitemap.ts / robots.ts and middleware.ts's SITE_URL — the JSON-LD
+// entity below is identified by a URL, so a mismatch here would describe a different entity.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
 export const metadata: Metadata = {
   title: 'Upkilo — Grow Your Service Business on Autopilot',
@@ -238,10 +243,80 @@ async function fetchPlans(): Promise<Record<string, string>> {
   }
 }
 
+// ── Structured data ─────────────────────────────────────────────────────────
+// Entity clarity — a consistent, machine-readable statement of what Upkilo is — is the
+// most firmly established of the levers that make a site eligible to be cited by search
+// engines and answer engines alike. Until now JSON-LD existed only on the two /book
+// templates; the landing page, which is the page most likely to be the cited source for
+// "what is Upkilo", carried none.
+//
+// The `name`, `url` and `logo` here must stay identical to every other place the entity is
+// described (footer, OG tags, any future About page). Inconsistent facts about the same
+// entity are what prevent it from being resolved as one thing.
+const ORGANIZATION_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${SITE_URL}/#organization`,
+  name: 'Upkilo',
+  url: SITE_URL,
+  // A real asset in public/icons/. /images/logo.png — referenced elsewhere in this app as a
+  // fallback — does not exist on disk, and a logo URL that 404s is worse than omitting the
+  // field, since it is what a Knowledge Panel would try to render.
+  logo: `${SITE_URL}/icons/icon-512x512.png`,
+  description:
+    'AI-powered booking, CRM, payments and marketing software for service businesses — salons, spas, fitness studios and clinics.',
+};
+
+// SoftwareApplication rather than Product: this is software accessed over the web, and the
+// type carries the fields that actually describe it (category, platform). No aggregateRating
+// is declared — there are no genuine reviews yet, and inventing one would be both a policy
+// violation and the same integrity problem as the testimonial removed in the previous commit.
+const SOFTWARE_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Upkilo',
+  applicationCategory: 'BusinessApplication',
+  applicationSubCategory: 'Appointment Scheduling Software',
+  operatingSystem: 'Web',
+  url: SITE_URL,
+  publisher: { '@id': `${SITE_URL}/#organization` },
+  description:
+    'Booking, client CRM, payments, reminders and marketing automation for service businesses in one platform.',
+  offers: {
+    '@type': 'Offer',
+    category: 'free trial',
+    priceSpecification: {
+      '@type': 'UnitPriceSpecification',
+      price: '0',
+      priceCurrency: 'USD',
+      description: '14-day free trial, no credit card required',
+    },
+  },
+};
+
+// Built from the same FAQS array the visible accordion renders, so the two can never drift
+// apart — a mismatch between rendered content and structured data is a policy violation.
+//
+// Google phased out the visual FAQ rich result during 2026, so this will not produce a
+// SERP snippet. It is still read by Bing and by retrieval-style AI crawlers, and costs
+// nothing beyond mapping an array that already exists.
+const FAQ_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+
 export default async function HomePage() {
   const livePrices = await fetchPlans();
   return (
     <div className="min-h-screen bg-white text-slate-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(ORGANIZATION_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(SOFTWARE_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_JSON_LD) }} />
       <LandingNav />
 
       {/* ───────────────────────── HERO (dark gradient) ───────────────────────── */}

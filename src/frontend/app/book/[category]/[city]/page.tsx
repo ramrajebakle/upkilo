@@ -1,9 +1,5 @@
 import { Metadata } from 'next';
-
-// Prevents </script> injection when data lands in JSON-LD blocks.
-function safeJsonLd(obj: unknown): string {
-  return JSON.stringify(obj).replace(/</g, '\\u003c');
-}
+import { safeJsonLd } from '@/lib/jsonLd';
 
 interface Listing {
   id: string;
