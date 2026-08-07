@@ -6,14 +6,68 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Actions bills the SUM of every job's minutes, not wall-clock, so one full run of this
+# workflow costs ~37 minutes: backend 19, playwright 7, lighthouse 6, frontend 5.
+# Without this block each push to a branch started a fresh run and left the superseded
+# one burning to completion — five pushes to one PR cost ~185 minutes instead of ~37.
+# GitHub Free allows 2,000 minutes/month on private repos, and this workflow alone had
+# consumed 1,558 of them.
+#
+# cancel-in-progress is deliberately false on main: superseded PR runs are throwaway, but
+# a main build is the artifact deploy.yml promotes, so it must be allowed to finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 env:
   DOTNET_VERSION: '8.0.x'
   NODE_VERSION: '20.x'
 
 jobs:
+  # ── Detect which side changed ───────────────────────────────────────
+  # Backend (.NET) and frontend (Next.js) are independent build/test pipelines with no
+  # cross-directory dependency (verified: nothing in either job's steps reads outside its
+  # own src/backend or src/frontend), yet every job ran on every push regardless of what
+  # changed — a README edit paid the full ~37 minutes: backend 19, playwright 7,
+  # lighthouse 6, frontend 5. This job decides which of those are actually relevant so the
+  # rest can skip when they are not.
+  #
+  # A change to this workflow file itself counts as touching BOTH sides, since it can
+  # alter either job's behavior and both need to be validated by the run that changes them.
+  detect-changes:
+    name: Detect Changed Areas
+    runs-on: ubuntu-latest
+    # dorny/paths-filter behaves differently per trigger: on pull_request it calls
+    # `GET /repos/.../pulls/{n}/files` (documented requirement: pull-requests: read); on a
+    # plain push it instead diffs locally via git, needing contents: read to fetch history.
+    # The first run of this job failed with "Resource not accessible by integration" until
+    # both were declared explicitly — the third time in this workflow's history a call
+    # needed a scope that relying on default token permissions did not cover (gitleaks and
+    # wait-on-check-action were the other two), so it is named here rather than assumed.
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v4.0.2
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'src/backend/**'
+              - '.github/workflows/ci.yml'
+            frontend:
+              - 'src/frontend/**'
+              - '.github/workflows/ci.yml'
+
   # ── Backend Build & Test ───────────────────────────────────────────
   backend-build:
     name: Backend Build & Test
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -183,6 +237,8 @@ jobs:
   # ── Frontend Build, Lint & TypeCheck ──────────────────────────────
   frontend-build:
     name: Frontend Build & Lint
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -253,8 +309,21 @@ jobs:
   lighthouse:
     name: T5 Lighthouse CI
     runs-on: ubuntu-latest
-    needs: [frontend-build]
-    if: github.event_name == 'pull_request'
+    needs: [detect-changes, frontend-build]
+    # Skipped on Dependabot PRs. This job costs ~6 minutes and enforces a performance and
+    # accessibility budget against rendered pages — worth it for changes that touch markup
+    # or styling, but a transitive patch bump cannot move a Lighthouse score, and 25 of the
+    # last 39 runs of this workflow came from Dependabot. Playwright E2E deliberately still
+    # runs on those PRs: a dependency bump absolutely can break the app at runtime, and
+    # catching that is the whole point of auto-merging them.
+    #
+    # Also skipped when frontend-build itself was skipped (nothing under src/frontend
+    # changed) — a Lighthouse score cannot move without a frontend change to move it, and
+    # frontend-build being skipped means there is no fresh build for this job to measure.
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      needs.detect-changes.outputs.frontend == 'true'
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -304,8 +373,19 @@ jobs:
   playwright:
     name: T3 Playwright E2E
     runs-on: ubuntu-latest
-    needs: [frontend-build, backend-build]
-    if: github.event_name == 'pull_request'
+    needs: [detect-changes, frontend-build, backend-build]
+    # Runs on backend OR frontend changes, not just frontend: it needs: both build jobs
+    # (an E2E run against a broken backend build is meaningless), so it must stay live
+    # whenever either could have skipped the other's reason for existing. Grouped with
+    # `needs.*.result` rather than `== 'true'` checks on backend-build/frontend-build
+    # directly, because a job that IS in `needs:` but was skipped by its own `if:` reports
+    # result "skipped", not "success" — treating "skipped" as equivalent to "did not
+    # regress" here is what actually preserves current behavior.
+    if: |
+      github.event_name == 'pull_request' &&
+      (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true') &&
+      (needs.backend-build.result == 'success' || needs.backend-build.result == 'skipped') &&
+      (needs.frontend-build.result == 'success' || needs.frontend-build.result == 'skipped')
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
