@@ -160,6 +160,8 @@ jobs:
                 Stripe__SecretKey="${{ secrets.STAGING_STRIPE_SECRET_KEY }}" \
                 Stripe__WebhookSecret="${{ secrets.STAGING_STRIPE_WEBHOOK_SECRET }}" \
                 Stripe__PublishableKey="${{ secrets.STAGING_STRIPE_PUBLISHABLE_KEY }}" \
+                Razorpay__KeyId="${{ secrets.STAGING_RAZORPAY_KEY_ID }}" \
+                Razorpay__KeySecret="${{ secrets.STAGING_RAZORPAY_KEY_SECRET }}" \
                 SendGrid__ApiKey="${{ secrets.STAGING_SENDGRID_API_KEY }}" \
                 Twilio__AccountSid="${{ secrets.STAGING_TWILIO_ACCOUNT_SID }}" \
                 Twilio__AuthToken="${{ secrets.STAGING_TWILIO_AUTH_TOKEN }}" \
@@ -442,6 +444,8 @@ jobs:
                 Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY }}" \
                 Stripe__WebhookSecret="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
                 Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
+                Razorpay__KeyId="${{ secrets.RAZORPAY_KEY_ID }}" \
+                Razorpay__KeySecret="${{ secrets.RAZORPAY_KEY_SECRET }}" \
                 SendGrid__ApiKey="${{ secrets.SENDGRID_API_KEY }}" \
                 Twilio__AccountSid="${{ secrets.TWILIO_ACCOUNT_SID }}" \
                 Twilio__AuthToken="${{ secrets.TWILIO_AUTH_TOKEN }}" \

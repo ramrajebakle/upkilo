@@ -34,12 +34,27 @@ public class RazorpayService
     /// <summary>
     /// Creates an order in Razorpay (must be done from server-side before client checkout).
     /// </summary>
+    // Colon form, not "Razorpay--KeyId": ISecretProvider implementations only translate a
+    // literal ':' into '--' (Key Vault) or '__' (env var fallback) — a string that already
+    // contains '--' passes through untouched. deploy.yml sets the App Service setting as
+    // Razorpay__KeyId (double underscore), so the old literal never matched it once Key
+    // Vault (confirmed empty in production — AzureKeyVault__VaultUri="") fell through to
+    // the env var path. Same bug, same fix, as Stripe's "Stripe--SecretKey" below.
+    private const string KeyIdSecretName = "Razorpay:KeyId";
+    private const string KeySecretSecretName = "Razorpay:KeySecret";
+
+    /// <summary>
+    /// The Key ID (not the secret) is safe to hand to the frontend — same trust model as a
+    /// Stripe publishable key. Checkout.js needs it client-side to open the payment modal.
+    /// </summary>
+    public string? GetPublicKeyId() => _secretProvider.GetSecret(KeyIdSecretName);
+
     public async Task<string?> CreateOrderAsync(decimal amount, string currency, string receiptId)
     {
         try
         {
-            var keyId = _secretProvider.GetSecret("Razorpay--KeyId");
-            var keySecret = _secretProvider.GetSecret("Razorpay--KeySecret");
+            var keyId = _secretProvider.GetSecret(KeyIdSecretName);
+            var keySecret = _secretProvider.GetSecret(KeySecretSecretName);
 
             if (string.IsNullOrEmpty(keyId) || string.IsNullOrEmpty(keySecret))
             {
@@ -87,7 +102,7 @@ public class RazorpayService
     {
         try
         {
-            var keySecret = _secretProvider.GetSecret("Razorpay--KeySecret");
+            var keySecret = _secretProvider.GetSecret(KeySecretSecretName);
             if (string.IsNullOrEmpty(keySecret)) return false;
 
             var payload = orderId + "|" + paymentId;
@@ -110,8 +125,8 @@ public class RazorpayService
     {
         try
         {
-            var keyId = _secretProvider.GetSecret("Razorpay--KeyId");
-            var keySecret = _secretProvider.GetSecret("Razorpay--KeySecret");
+            var keyId = _secretProvider.GetSecret(KeyIdSecretName);
+            var keySecret = _secretProvider.GetSecret(KeySecretSecretName);
             var authHeader = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{keyId}:{keySecret}"));
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
 
