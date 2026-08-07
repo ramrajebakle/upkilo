@@ -46,6 +46,11 @@ publish/
 *.txt
 !api_errors_final.txt
 !api_errors_final_utf8.txt
+# public/ holds web-served assets, not build output. The blanket *.txt above silently
+# excluded llms.txt — a file whose entire purpose is to be fetched from the deployed site,
+# so being ignored made it useless. Any future .txt served from public/ (ads.txt,
+# security.txt, a static robots.txt) would have been dropped the same way, without error.
+!src/frontend/public/*.txt
 
 # ================================================================
 # Node.js / Frontend

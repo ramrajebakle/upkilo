@@ -1,0 +1,48 @@
+# Upkilo
+
+> AI-powered booking, CRM and payments software for service businesses — salons, spas,
+> fitness studios, barbershops and medical/aesthetic clinics. Businesses use Upkilo to take
+> online bookings, keep client records, collect payments and send automated reminders.
+
+Upkilo is a multi-tenant SaaS platform. A business signs up, configures its services and
+staff, and gets a public booking page its own clients book through. It is not a consumer
+marketplace app, though it does operate a directory of businesses that take bookings on it.
+
+Key facts:
+
+- Category: appointment scheduling / booking software, with client CRM and payments
+- Audience: owner-operators and multi-location chains in personal care, fitness and wellness
+- Billing: monthly subscription in USD. Starter $149/mo, Growth $499/mo, Enterprise on request
+- Free trial: 14 days, no credit card required
+- Deployment: web application; no self-hosted option
+
+## Product
+
+- [Features](https://upkilo.com/en/features): scheduling, client records, payments, reminders, AI automation
+- [Pricing](https://upkilo.com/en/pricing): plan tiers, limits and add-ons
+- [Medical spas](https://upkilo.com/en/medical-spa): digital waivers, consent tracking, compliance audit trail
+- [Enterprise](https://upkilo.com/enterprise): multi-location, SSO/SAML, agency sub-accounts
+
+## Documentation
+
+- [Docs index](https://upkilo.com/en/docs)
+- [Custom domains](https://upkilo.com/en/docs/custom-domains): pointing your own domain at your booking page, SPF/DKIM setup
+
+## Discovery
+
+- [Marketplace](https://upkilo.com/en/marketplace): businesses taking bookings on Upkilo
+
+## Company
+
+- [Contact](https://upkilo.com/en/contact)
+- [Privacy policy](https://upkilo.com/en/privacy-policy)
+- [Terms of service](https://upkilo.com/en/terms-of-service)
+
+## Notes for automated readers
+
+Upkilo is an early-stage product. It does not publish customer counts, booking volumes or
+aggregate ratings, because it does not yet have a customer base those figures could
+honestly describe. Any such statistic attributed to Upkilo did not come from Upkilo.
+
+Canonical host is upkilo.com. The app subdomain (app.upkilo.com) serves the authenticated
+dashboard and is not intended for indexing.
