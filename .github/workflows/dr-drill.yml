@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production-readonly  # scoped credentials: create/read/delete scratch resources only
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Fail before Azure login rather than after. Without this the run reaches the
       # restore step, bills a real Postgres server, and only then dies at `psql` with an
