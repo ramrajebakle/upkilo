@@ -1,10 +1,24 @@
-'use client';
-
+// Not a Client Component — see the note in app/au/page.tsx. No state, no effects, no
+// handlers; the directive only blocked metadata export, leaving this page with no <title>.
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Upkilo UAE — Booking Software for UAE Service Businesses',
+  description: 'Booking, client records and payments for UAE salons, spas, gyms and clinics. Arabic RTL interface, 5% VAT-compliant invoicing and WhatsApp reminders.',
+  alternates: { canonical: 'https://upkilo.com/uae' },
+  openGraph: {
+    title: 'Upkilo UAE — Booking Software for UAE Businesses',
+    description: 'Arabic-ready, VAT-compliant booking and client management built for the UAE market.',
+    type: 'website',
+  },
+};
 
 const features = [
   { title: 'Arabic RTL Interface', desc: 'Full right-to-left UI in Arabic. Staff and clients can switch languages seamlessly.' },
-  { title: 'AED Pricing', desc: 'Plans in UAE Dirhams. No hidden currency fees.' },
+  // "AED Pricing / Plans in UAE Dirhams" contradicted the plan cards below, which are USD —
+  // Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency).
+  { title: 'Transparent Pricing', desc: 'Flat monthly plans with no per-booking commission and no setup fee.' },
   { title: 'VAT Invoicing (5%)', desc: 'UAE VAT-compliant invoices and receipts. Export for FTA filing.' },
   { title: 'WhatsApp-First Reminders', desc: 'Send booking reminders and confirmations via WhatsApp — the #1 platform in UAE.' },
   { title: 'UAE Public Holiday Aware', desc: 'Scheduling engine respects UAE public holidays and Islamic calendar events.' },

@@ -1,13 +1,19 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
+// Two corrections here, both visible to searchers rather than buried in the page:
+//  - "The #1 booking and client management platform" was an unverifiable superlative sitting
+//    in the meta description, which is the text shown in the search result itself.
+//  - "Prices in GBP" contradicted the page's own plan cards, which were already corrected to
+//    USD because Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency).
+//    The snippet was advertising a currency the system cannot charge in.
 export const metadata: Metadata = {
   title: 'Upkilo UK — Booking Software for UK Service Businesses',
-  description: 'The #1 booking and client management platform for UK salons, spas, gyms, and service businesses. GDPR compliant. Prices in GBP.',
+  description: 'Booking, client records and payments for UK salons, spas, gyms and service businesses. GDPR compliant, with UK SMS sender IDs and VAT-ready invoicing.',
   alternates: { canonical: 'https://upkilo.com/uk' },
   openGraph: {
     title: 'Upkilo UK — Booking Software for UK Businesses',
-    description: 'GDPR-compliant booking software built for the UK market. Prices in GBP.',
+    description: 'GDPR-compliant booking software built for the UK market.',
   },
 };
 
@@ -17,7 +23,8 @@ const UK_FEATURES = [
   { icon: '📱', title: 'UK Phone Support', desc: 'SMS sent from UK numbers via Twilio. No international prefix issues.' },
   { icon: '🏦', title: 'Stripe UK', desc: 'Payments processed through Stripe UK with full VAT support.' },
   { icon: '📋', title: 'Companies House Ready', desc: 'Invoice templates with UK business number and VAT number fields.' },
-  { icon: '🤝', title: 'UK Support Hours', desc: 'Dedicated UK support team available 9am–6pm GMT, Mon–Fri.' },
+  // "Dedicated UK support team available 9am–6pm GMT" claimed staffing that does not exist.
+  { icon: '🤝', title: 'UK Time Zone Support', desc: 'Support requests handled in UK business hours, with GMT/BST-aware scheduling throughout.' },
 ];
 
 // USD — Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency), so

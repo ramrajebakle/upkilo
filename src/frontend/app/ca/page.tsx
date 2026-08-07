@@ -1,10 +1,24 @@
-'use client';
-
+// Not a Client Component — see the note in app/au/page.tsx. No state, no effects, no
+// handlers; the directive only blocked metadata export, leaving this page with no <title>.
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Upkilo Canada — Booking Software for Canadian Service Businesses',
+  description: 'Booking, client records and payments for Canadian salons, spas, gyms and clinics. Province-aware tax handling, CASL-compliant messaging and English/French booking pages.',
+  alternates: { canonical: 'https://upkilo.com/ca' },
+  openGraph: {
+    title: 'Upkilo Canada — Booking Software for Canadian Businesses',
+    description: 'Province-aware, CASL-compliant booking and client management for Canadian businesses.',
+    type: 'website',
+  },
+};
 
 const features = [
   { title: 'HST/GST/PST Invoicing', desc: 'Province-aware tax calculation for Ontario, BC, Quebec, and all other provinces automatically.' },
-  { title: 'CAD Pricing', desc: 'Plans priced in Canadian Dollars. No USD conversion fees.' },
+  // "CAD Pricing / No USD conversion fees" contradicted the plan cards directly below, which
+  // are USD because Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency).
+  { title: 'Canadian Tax Handling', desc: 'Province-aware HST/GST/PST calculation applied automatically on every invoice.' },
   { title: 'French Language Support', desc: 'Full French UI for Quebec businesses. Switch between en-CA and fr-CA seamlessly.' },
   { title: 'Interac-Friendly Payments', desc: 'Accept Visa Debit and Canadian cards via Stripe Canada.' },
   { title: 'CASL-Compliant SMS', desc: "Opt-in consent flows that meet Canada's Anti-Spam Legislation requirements." },

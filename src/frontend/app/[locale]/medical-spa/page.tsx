@@ -1,9 +1,31 @@
-"use client";
-
+// Not a Client Component. This page has no state, no effects and no event handlers — the
+// 'use client' directive that stood here only prevented the file from exporting metadata,
+// so the page fell back to app/[locale]/layout.tsx's generic site-wide title and
+// description, identical to every other page under [locale].
+import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
 import { Check, Shield, Lock, FileCheck, Heart, Users, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://upkilo.com";
+
+// Canonical is pinned to /en rather than built from the visitor's locale, matching the
+// middleware rule that folds non-English marketing URLs onto English while those pages
+// carry no real translations. When a locale passes the content gate, this becomes
+// locale-aware in the same change that removes it from that redirect.
+export const metadata: Metadata = {
+  title: "Upkilo for Medical Spas — HIPAA-Ready Booking, Waivers & Consent",
+  description:
+    "Booking and client management for medical spas and aesthetic clinics. Digital waivers, contraindication tracking, treatment photos and a full compliance audit trail.",
+  alternates: { canonical: `${SITE_URL}/en/medical-spa` },
+  openGraph: {
+    title: "Upkilo for Medical Spas — HIPAA-Ready Booking & Consent",
+    description:
+      "Digital waivers, contraindication tracking and compliance audit logs, in the same system that runs your bookings.",
+    type: "website",
+  },
+};
 
 const complianceFeatures = [
   { icon: Shield, title: "HIPAA-Ready Infrastructure", description: "BAA available, encrypted data at rest and in transit, audit logs retained 90 days." },

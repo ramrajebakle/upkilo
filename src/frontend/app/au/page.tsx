@@ -1,10 +1,27 @@
-'use client';
-
+// Not a Client Component. This page has no state, no effects and no event handlers — the
+// 'use client' directive that stood here was doing nothing except preventing the file from
+// exporting metadata, which is why the page shipped with no <title> or <meta description>
+// at all. app/au has its own root layout that exports no metadata either, so unlike the
+// pages nested under [locale] there was not even a generic fallback to inherit.
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Upkilo Australia — Booking Software for Australian Service Businesses',
+  description: 'Booking, client records and payments for Australian salons, spas, gyms and clinics. GST-ready invoicing, AEST/AEDT scheduling and local SMS sender IDs.',
+  alternates: { canonical: 'https://upkilo.com/au' },
+  openGraph: {
+    title: 'Upkilo Australia — Booking Software for Australian Businesses',
+    description: 'GST-ready booking and client management built for the Australian market.',
+    type: 'website',
+  },
+};
 
 const features = [
   { title: 'GST-Ready Invoicing', desc: 'Automatic 10% GST calculation on all invoices. Compliant with ATO requirements.' },
-  { title: 'AUD Pricing', desc: 'All plans priced in Australian Dollars. No conversion surprises.' },
+  // "AUD Pricing / All plans priced in Australian Dollars" contradicted the plan cards below,
+  // which are USD — Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency).
+  { title: 'Transparent Pricing', desc: 'Flat monthly plans with no per-booking commission and no setup fee.' },
   { title: 'AEDT/AEST Scheduling', desc: 'Timezone-aware booking system for all Australian states and territories.' },
   { title: 'Local SMS via Twilio AU', desc: 'Australian sender IDs for higher open rates and SPAM Act compliance.' },
   { title: 'Medicare Rebate Notes', desc: 'Add Allied Health rebate information to client receipts and invoices.' },
