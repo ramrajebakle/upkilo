@@ -3,15 +3,10 @@ import type { ReactNode } from 'react';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
-// Carries metadata on behalf of app/[locale]/marketplace/page.tsx, which is a Client
-// Component (it fetches and filters listings client-side) and therefore cannot export
-// metadata itself. Without this the page inherited app/[locale]/layout.tsx's generic
-// site-wide title and description.
-//
-// Note the page also fetches its listings in a post-mount effect, so the server-rendered
-// HTML a crawler sees first is an empty shell. Correct metadata does not fix that; moving
-// the initial fetch server-side is tracked separately and is the larger of the two issues
-// for this page specifically.
+// Carries metadata for the marketplace route. The page itself is now a Server Component and
+// could export this directly, but it stays here so metadata sits in one predictable place
+// alongside the route's other page-level concerns, and so a future move back to a client
+// page cannot silently drop the title again.
 //
 // Canonical is pinned to /en, matching the middleware rule that folds non-English marketing
 // URLs onto English while those pages carry no real translations.
