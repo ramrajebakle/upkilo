@@ -74,6 +74,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ['/features',           0.9, 'monthly'],
     ['/marketplace',        0.7, 'weekly'],
     ['/medical-spa',        0.8, 'monthly'],
+    // robots.ts has allowed /docs since it was written, but the path had no sitemap entry
+    // and, until now, no index page either — so the one signal pointing at it led to a 404.
+    ['/docs',               0.6, 'monthly'],
     ['/terms-of-service',   0.3, 'yearly'],
     ['/privacy-policy',     0.3, 'yearly'],
     ['/cookie-policy',      0.3, 'yearly'],
