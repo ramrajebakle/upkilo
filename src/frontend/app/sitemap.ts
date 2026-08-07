@@ -77,22 +77,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // robots.ts has allowed /docs since it was written, but the path had no sitemap entry
     // and, until now, no index page either — so the one signal pointing at it led to a 404.
     ['/docs',               0.6, 'monthly'],
+    // Linked from the landing footer since it was written, but the page did not exist until
+    // now — the footer sent crawlers to a 404 from the site's highest-authority page.
+    ['/contact',            0.4, 'yearly'],
     ['/terms-of-service',   0.3, 'yearly'],
     ['/privacy-policy',     0.3, 'yearly'],
     ['/cookie-policy',      0.3, 'yearly'],
   ];
 
+  // lastModified was previously set only on tenant booking pages. Crawlers use it to decide
+  // what to re-fetch, so omitting it on static pages meant no signal either way about
+  // whether they had changed. Build time is the honest available approximation — these pages
+  // change when the app is redeployed, and nothing in the repo tracks per-page edit dates.
+  const lastModified = new Date();
+
   const staticPages: MetadataRoute.Sitemap = [
     ...locales.flatMap((locale) =>
       localedPages.map(([path, priority, changeFrequency]) => ({
         url: `${SITE_URL}/${locale}${path}`,
+        lastModified,
         priority,
         changeFrequency,
       }))
     ),
     // Genuinely locale-free routes.
-    { url: `${SITE_URL}/enterprise`,           priority: 0.7, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/discover`,             priority: 0.7, changeFrequency: 'daily' },
+    { url: `${SITE_URL}/enterprise`, lastModified, priority: 0.7, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/discover`,   lastModified, priority: 0.7, changeFrequency: 'daily' },
   ];
 
   // One sitemap entry per tenant × locale
@@ -108,6 +118,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Programmatic SEO: category × city discovery pages, only where real listings exist.
   const discoveryPages: MetadataRoute.Sitemap = discoveryUrls.map((path) => ({
     url: `${SITE_URL}${path}`,
+    lastModified,
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
