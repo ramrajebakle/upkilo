@@ -54,18 +54,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getDiscoveryUrls(),
   ]);
 
-  // Static public pages
+  // Static public pages.
+  //
+  // These URLs must be the FINAL destination, not a URL that redirects to it — a sitemap
+  // entry that 3xx's wastes crawl budget and delays indexing of the page it points at.
+  //
+  // Every one of these except /enterprise and /discover previously omitted the locale
+  // prefix. navigation.ts sets localePrefix: 'always' and these routes only exist on disk
+  // under app/[locale]/..., so /pricing, /features, /marketplace, /medical-spa,
+  // /terms-of-service, /privacy-policy, /cookie-policy and the bare root all redirected
+  // to their /en/... equivalent — 8 of 10 entries.
+  //
+  // /enterprise and /discover are genuinely bare: they live at app/enterprise and
+  // app/discover, and appear in middleware.ts's NON_LOCALE_SEGMENTS. They are correct
+  // without a prefix and must NOT gain one.
+  const localedPages: Array<[string, number, 'weekly' | 'monthly' | 'yearly']> = [
+    ['',                    1.0, 'weekly'],   // the /en landing page
+    ['/pricing',            0.9, 'monthly'],
+    ['/features',           0.9, 'monthly'],
+    ['/marketplace',        0.7, 'weekly'],
+    ['/medical-spa',        0.8, 'monthly'],
+    ['/terms-of-service',   0.3, 'yearly'],
+    ['/privacy-policy',     0.3, 'yearly'],
+    ['/cookie-policy',      0.3, 'yearly'],
+  ];
+
   const staticPages: MetadataRoute.Sitemap = [
-    { url: SITE_URL,                           priority: 1.0, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/pricing`,              priority: 0.9, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/features`,             priority: 0.9, changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/marketplace`,          priority: 0.7, changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/medical-spa`,          priority: 0.8, changeFrequency: 'monthly' },
+    ...locales.flatMap((locale) =>
+      localedPages.map(([path, priority, changeFrequency]) => ({
+        url: `${SITE_URL}/${locale}${path}`,
+        priority,
+        changeFrequency,
+      }))
+    ),
+    // Genuinely locale-free routes.
     { url: `${SITE_URL}/enterprise`,           priority: 0.7, changeFrequency: 'monthly' },
     { url: `${SITE_URL}/discover`,             priority: 0.7, changeFrequency: 'daily' },
-    { url: `${SITE_URL}/terms-of-service`,     priority: 0.3, changeFrequency: 'yearly' },
-    { url: `${SITE_URL}/privacy-policy`,       priority: 0.3, changeFrequency: 'yearly' },
-    { url: `${SITE_URL}/cookie-policy`,        priority: 0.3, changeFrequency: 'yearly' },
   ];
 
   // One sitemap entry per tenant × locale
