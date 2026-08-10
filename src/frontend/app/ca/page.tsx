@@ -38,7 +38,7 @@ export default function CanadaPage() {
       {/* Hero */}
       <section className="bg-gradient-to-br from-red-700 to-red-900 text-white py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="text-5xl mb-4">🍁</div>
+          {/* Emoji removed as hero decoration — see the equivalent note in app/au/page.tsx. */}
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Booking software designed for Canadian service businesses
           </h1>
@@ -107,11 +107,14 @@ export default function CanadaPage() {
       {/* CTA */}
       <section className="py-16 px-4 text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-8 text-gray-900">Canadian businesses trust Upkilo</h2>
-          <blockquote className="text-lg text-gray-700 italic mb-4">
-            "The HST calculation and French interface made switching from our old system a no-brainer."
-          </blockquote>
-          <p className="text-gray-500 text-sm">— Marc B., Salon Beauté, Montréal</p>
+          {/* Replaced a fabricated testimonial attributed to "Marc B., Salon Beauté, Montréal".
+              No such customer exists. See the equivalent note in app/au/page.tsx. */}
+          <h2 className="text-2xl font-bold mb-6 text-gray-900">What you get on day one</h2>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+            Online booking, client records and automated reminders, with province-aware
+            HST/GST/PST applied to every invoice and CASL-compliant opt-in built into the
+            messaging flow.
+          </p>
           <div className="mt-12">
             <Link href="/register?locale=en-CA&currency=CAD"
               className="bg-red-700 text-white font-bold px-10 py-4 rounded-lg hover:bg-red-600 transition text-lg">

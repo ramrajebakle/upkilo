@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Link } from '@/navigation';
-import { Mail, ShieldCheck, Building2, LifeBuoy } from 'lucide-react';
+import { ShieldCheck, Building2, LifeBuoy } from 'lucide-react';
 import { safeJsonLd } from '@/lib/jsonLd';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
@@ -91,11 +91,8 @@ export default function ContactPage() {
 
       <section className="mx-auto max-w-3xl px-4 py-20">
         <div className="mb-14">
-          <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
-            <Mail className="h-4 w-4" aria-hidden="true" />
-            Contact
-          </span>
-          <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-slate-900">
+          {/* No eyebrow pill above the heading — see the equivalent note in docs/page.tsx. */}
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
             Talk to us
           </h1>
           <p className="mt-4 text-lg text-slate-600">

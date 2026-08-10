@@ -39,7 +39,9 @@ export default function UAEPage() {
       {/* Hero */}
       <section className="bg-gradient-to-br from-green-800 to-red-900 text-white py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="text-5xl mb-4">🇦🇪</div>
+          {/* Emoji removed as hero decoration — see the equivalent note in app/au/page.tsx.
+              Flag emoji are the worst case of it: several platforms render them as two-letter
+              country codes rather than a flag at all. */}
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             نظام الحجز المثالي للأعمال الخدمية في الإمارات
           </h1>
@@ -110,10 +112,14 @@ export default function UAEPage() {
       {/* Trust CTA */}
       <section className="py-16 px-4 text-center">
         <div className="max-w-3xl mx-auto">
-          <blockquote className="text-lg text-gray-700 italic mb-4">
-            "نظام Upkilo غيّر طريقة إدارة حجوزاتنا — الآن 90% من عملائنا يحجزون أونلاين."
-          </blockquote>
-          <p className="text-gray-500 text-sm">— ليلى الحمدان، صالون بيوتي لاونج، دبي</p>
+          {/* Replaced a fabricated testimonial attributed to "ليلى الحمدان، صالون بيوتي لاونج، دبي"
+              claiming "90% من عملائنا يحجزون أونلاين" (90% of our clients book online). No such
+              customer and no such measurement exist. See the equivalent note in app/au/page.tsx. */}
+          <h2 className="text-2xl font-bold mb-6 text-gray-900">ما الذي تحصل عليه من اليوم الأول</h2>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+            حجوزات أونلاين، سجلات عملاء، وتذكيرات تلقائية عبر واتساب — مع فواتير متوافقة مع
+            ضريبة القيمة المضافة الإماراتية بنسبة 5% وواجهة عربية بالكامل.
+          </p>
           <div className="mt-12">
             <Link href="/register?locale=ar-AE&currency=AED"
               className="bg-green-800 text-white font-bold px-10 py-4 rounded-lg hover:bg-green-700 transition text-lg">

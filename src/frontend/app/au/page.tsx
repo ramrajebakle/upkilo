@@ -43,7 +43,9 @@ export default function AustraliaPage() {
       {/* Hero */}
       <section className="bg-gradient-to-br from-green-900 to-yellow-700 text-white py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="text-5xl mb-4">🦘</div>
+          {/* A 48px 🦘 above the headline was decoration standing in for an icon system —
+              it carried no meaning the heading does not already state, and emoji render
+              differently on every platform, so it was never a controlled visual either. */}
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Booking software built for Australian service businesses
           </h1>
@@ -113,11 +115,18 @@ export default function AustraliaPage() {
       {/* Trust */}
       <section className="py-16 px-4 text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-8 text-gray-900">Australian businesses love Upkilo</h2>
-          <blockquote className="text-lg text-gray-700 italic mb-4">
-            "Upkilo cut our no-shows by 40% and the GST invoicing saves us hours every BAS period."
-          </blockquote>
-          <p className="text-gray-500 text-sm">— Sarah M., Skin & Body Studio, Melbourne</p>
+          {/* Replaced a fabricated testimonial: a quote attributed to "Sarah M., Skin & Body
+              Studio, Melbourne" claiming Upkilo "cut our no-shows by 40%". There is no such
+              customer and no such measurement — a named endorsement with an invented metric is
+              the most exposed form of the unverifiable-claim problem being cleaned up across
+              these pages, not merely an SEO issue.
+
+              Restore a testimonial here only with a real, consenting, named customer. */}
+          <h2 className="text-2xl font-bold mb-6 text-gray-900">What you get on day one</h2>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+            Online booking, client records, automated reminders and GST-ready invoicing —
+            configured for Australian tax and time zones from the first booking you take.
+          </p>
           <div className="mt-12">
             <Link href="/register?locale=en-AU&currency=AUD"
               className="bg-green-900 text-white font-bold px-10 py-4 rounded-lg hover:bg-green-800 transition text-lg">

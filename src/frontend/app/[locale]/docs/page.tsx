@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Link } from '@/navigation';
-import { Globe, ArrowRight, BookOpen } from 'lucide-react';
+import { Globe, ArrowRight } from 'lucide-react';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
@@ -41,11 +41,10 @@ export default function DocsIndexPage() {
     <main className="min-h-screen bg-white">
       <section className="mx-auto max-w-3xl px-4 py-20">
         <div className="mb-12">
-          <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
-            <BookOpen className="h-4 w-4" aria-hidden="true" />
-            Documentation
-          </span>
-          <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-slate-900">
+          {/* No eyebrow pill above the heading. A "Documentation" label sitting above a
+              heading that already reads "Upkilo documentation" restates it in smaller type —
+              the heading carries its own weight. */}
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
             Upkilo documentation
           </h1>
           <p className="mt-4 text-lg text-slate-600">
