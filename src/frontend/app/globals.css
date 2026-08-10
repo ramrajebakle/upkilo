@@ -253,6 +253,79 @@
       transition-duration: 0.01ms !important;
     }
   }
+
+  /* ── Browser surfaces ────────────────────────────────────────────────────
+     The parts of the page nobody draws still carry the design. Selection
+     highlight, the text caret, focus rings and scrollbars all shipped as browser
+     defaults here — which meant a product built around an indigo brand rendered
+     its selection highlight in Chrome's stock blue, and its focus ring in the
+     platform's, on every page.
+
+     Every value below resolves from tokens already defined above rather than
+     introducing new colour, so this follows the palette automatically, including
+     into dark mode. */
+
+  ::selection {
+    /* 0.22 alpha keeps selected body text above the 4.5:1 contrast floor against
+       both --surface-base values; a solid brand fill would drop it below. */
+    background-color: color-mix(in srgb, var(--color-primary-500) 22%, transparent);
+    color: var(--text-primary);
+  }
+
+  /* Inputs inherit the caret from the browser, which is always the platform's
+     text colour and never the theme's. */
+  input,
+  textarea,
+  [contenteditable] {
+    caret-color: var(--color-primary-500);
+  }
+
+  /* A global focus ring, not just the one on .btn — every interactive element
+     needs a visible keyboard state, and until now anything that was not a .btn
+     fell back to the UA default (or nothing, where a reset removed it). */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Firefox honours these two; the WebKit rules below cover Chrome and Safari. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--surface-border-strong);
+    border-radius: 999px;
+    /* Transparent border + background-clip insets the thumb without needing a
+       second element, so it reads as a rail rather than filling the gutter. */
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-tertiary);
+    background-clip: content-box;
+  }
+
+  /* Digits that sit in columns — prices, counts, dates — must not shift width as
+     they change. Applied to the elements that carry tabular data rather than
+     globally, since proportional figures are correct in running prose. */
+  table,
+  time,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* ===========================================

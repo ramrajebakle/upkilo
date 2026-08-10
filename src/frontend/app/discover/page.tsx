@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { SearchX } from 'lucide-react';
 
 interface Business {
   id: string;
@@ -115,7 +116,9 @@ export default function DiscoverPage() {
 
         {!loading && searched && results.length === 0 && (
           <div className="text-center py-16">
-            <div className="text-5xl mb-3">🔍</div>
+            {/* A drawn icon rather than the 🔍 emoji that stood here — emoji render
+                per-platform and belong to no design system. */}
+            <SearchX className="mx-auto mb-3 h-10 w-10 text-gray-300" aria-hidden="true" />
             <h2 className="text-lg font-semibold text-gray-700">No results found</h2>
             <p className="text-gray-500 mt-1">Try a different search or browse featured businesses below.</p>
           </div>

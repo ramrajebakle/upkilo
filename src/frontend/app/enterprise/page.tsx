@@ -1,16 +1,36 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  CheckCircle2, Building2, KeyRound, BarChart3, Headset, Plug, FileText, Globe, Bot,
+} from 'lucide-react';
 
+// Drawn icons from the library the rest of the app uses, replacing eight emoji that were
+// serving as this page's icon system.
+//
+// Three descriptions also changed, because they described things that do not exist:
+//
+//   "SOC 2 Type II" — a specific third-party audit with a report a buyer can request. It
+//   was claimed twice on this page. Enterprise buyers treat it as a procurement gate, so
+//   asserting it unaudited is materially worse than ordinary marketing overreach.
+//
+//   "A named account manager ... available 24/7" — there is no such role and no rota.
+//
+//   "regional compliance across 40+ countries" — an unsupported number.
+//
+// What remains is what the codebase can actually back: GDPR and DPDP handling (there is a
+// Grievance Officer contact and data-erasure tooling), and HIPAA-oriented features on the
+// medical-spa path. These are stated as what the product is built for, not as certifications
+// it holds.
 const FEATURES = [
-  { icon: '🏢', title: 'Multi-Location Management', desc: 'Run unlimited locations from a single dashboard with per-location reporting.' },
-  { icon: '🔐', title: 'SSO & SAML', desc: 'Enterprise-grade single sign-on with your existing identity provider.' },
-  { icon: '📊', title: 'Advanced Analytics', desc: 'Custom dashboards, data exports, and BI integrations for enterprise reporting.' },
-  { icon: '🤝', title: 'Dedicated Success Manager', desc: 'A named account manager who knows your business and is available 24/7.' },
-  { icon: '🔌', title: 'Custom Integrations', desc: 'We build the integrations you need — CRM, ERP, payroll, and more.' },
-  { icon: '📜', title: 'Custom SLA & BAA', desc: 'HIPAA BAAs, custom uptime SLAs, and enterprise security assessments.' },
-  { icon: '🌍', title: 'Global Compliance', desc: 'GDPR, SOC 2 Type II, and regional compliance across 40+ countries.' },
-  { icon: '🤖', title: 'AI Customization', desc: 'White-labelled AI receptionist and custom AI workflows built for your brand.' },
+  { icon: Building2, title: 'Multi-Location Management', desc: 'Run unlimited locations from a single dashboard with per-location reporting.' },
+  { icon: KeyRound, title: 'SSO & SAML', desc: 'Single sign-on with your existing identity provider.' },
+  { icon: BarChart3, title: 'Advanced Analytics', desc: 'Custom dashboards, data exports, and BI integrations for reporting.' },
+  { icon: Headset, title: 'Direct Line to the Team', desc: 'Talk to the people who build the product, not a ticket queue.' },
+  { icon: Plug, title: 'Custom Integrations', desc: 'CRM, ERP and payroll integrations built to fit your existing stack.' },
+  { icon: FileText, title: 'Custom SLA & BAA', desc: 'HIPAA BAAs and custom uptime SLAs available on enterprise agreements.' },
+  { icon: Globe, title: 'Privacy & Data Protection', desc: 'Built for GDPR and India DPDP Act obligations, with data export and erasure tooling.' },
+  { icon: Bot, title: 'AI Customization', desc: 'White-labelled AI receptionist and custom AI workflows built for your brand.' },
 ];
 
 export default function EnterprisePage() {
@@ -69,9 +89,15 @@ export default function EnterprisePage() {
       {/* Social proof */}
       <section className="bg-slate-50 py-8 px-4 border-b">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8">
-          {['10+ locations', 'HIPAA compliant', 'SOC 2 Type II', 'Custom SLA', '24/7 support'].map(t => (
+          {/* Was: '10+ locations', 'HIPAA compliant', 'SOC 2 Type II', 'Custom SLA', '24/7 support'
+              — presented as a trust bar, but SOC 2 Type II is an audit Upkilo has not had, and
+              24/7 support describes a rota that does not exist. Both are claims a buyer can
+              ask you to evidence.
+
+              Replaced with capabilities the codebase supports. ✓ became a drawn icon. */}
+          {['Unlimited locations', 'SSO / SAML', 'Agency sub-accounts', 'Custom SLA available', 'HIPAA BAA available'].map(t => (
             <div key={t} className="flex items-center gap-2 text-slate-600 text-sm font-medium">
-              <span className="text-green-500">✓</span> {t}
+              <CheckCircle2 className="h-4 w-4 text-green-600" aria-hidden="true" /> {t}
             </div>
           ))}
         </div>
@@ -83,11 +109,11 @@ export default function EnterprisePage() {
           Everything enterprise teams need
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURES.map(f => (
-            <div key={f.title} className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
-              <div className="text-3xl mb-3">{f.icon}</div>
-              <h3 className="font-bold text-slate-900 mb-1">{f.title}</h3>
-              <p className="text-sm text-slate-600">{f.desc}</p>
+          {FEATURES.map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+              <Icon className="mb-3 h-7 w-7 text-slate-700" aria-hidden="true" />
+              <h3 className="font-bold text-slate-900 mb-1">{title}</h3>
+              <p className="text-sm text-slate-600">{desc}</p>
             </div>
           ))}
         </div>
@@ -97,13 +123,23 @@ export default function EnterprisePage() {
       <section id="contact" className="bg-slate-50 py-20 px-4 border-t">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Let's talk about your business</h2>
-          <p className="text-slate-500 mb-8">Fill in the form and our enterprise team will reach out within 24 hours.</p>
+          {/* Was "our enterprise team will reach out within 24 hours" — same two unkeepable
+              claims as the success state below. */}
+          <p className="text-slate-500 mb-8">Tell us what you need and we&apos;ll get back to you by email.</p>
 
           {submitted ? (
             <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center">
-              <div className="text-5xl mb-4">✅</div>
-              <h3 className="text-xl font-bold text-green-800 mb-2">We'll be in touch soon!</h3>
-              <p className="text-green-700">Expect a reply within 24 hours from our enterprise team.</p>
+              {/* Drawn icon, not the ✅ emoji. */}
+              <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-green-600" aria-hidden="true" />
+              <h3 className="text-xl font-bold text-green-800 mb-2">Thanks — we&apos;ve got your details</h3>
+              {/* Was "Expect a reply within 24 hours from our enterprise team." Both halves were
+                  claims the business cannot currently keep: there is no enterprise team, and no
+                  staffed rota behind a 24-hour guarantee. A promise a visitor can time you
+                  against is worse than no promise. */}
+              <p className="text-green-700">
+                We&apos;ll reply by email to the address you gave us. If it&apos;s urgent,
+                write to enterprise@upkilo.com directly.
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-4">
