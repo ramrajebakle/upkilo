@@ -1,8 +1,17 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// How long the closing animation runs before the modal unmounts. Must match the duration on
+// the exit classes below; it is a constant rather than a literal in two places so they cannot
+// drift apart.
+//
+// 200ms sits at the fast end of the 200-500ms budget for modals. A dialog the user has just
+// dismissed should get out of the way — the slow half of that range is for entrances, where
+// the user is arriving rather than leaving.
+const EXIT_MS = 200;
 
 interface ModalProps {
     isOpen: boolean;
@@ -23,6 +32,32 @@ export function Modal({
     size = 'md',
     showCloseButton = true,
 }: ModalProps) {
+    // The modal used to unmount the instant isOpen went false, so it entered with a scale-up
+    // and left by vanishing. An element that arrives one way and leaves another reads as a
+    // glitch rather than a dismissal, and the abrupt half is the one the user notices — it is
+    // the frame right after they acted.
+    //
+    // `rendered` keeps the markup alive for EXIT_MS after isOpen flips, purely so the closing
+    // animation has something to animate. `closing` drives which classes apply.
+    const [rendered, setRendered] = useState(isOpen);
+    const [closing, setClosing] = useState(false);
+
+    useEffect(() => {
+        if (isOpen) {
+            setRendered(true);
+            setClosing(false);
+            return;
+        }
+        if (!rendered) return;
+
+        setClosing(true);
+        const t = setTimeout(() => {
+            setRendered(false);
+            setClosing(false);
+        }, EXIT_MS);
+        return () => clearTimeout(t);
+    }, [isOpen, rendered]);
+
     // Close on escape key
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
@@ -40,7 +75,7 @@ export function Modal({
         };
     }, [isOpen, onClose]);
 
-    if (!isOpen) return null;
+    if (!rendered) return null;
 
     const sizes = {
         sm: 'max-w-sm',
@@ -51,9 +86,15 @@ export function Modal({
 
     return (
         <div className="fixed inset-0 z-50">
-            {/* Backdrop */}
+            {/* Backdrop. It previously had no transition at all, so the whole screen darkened
+                between one frame and the next — the "preventing a jarring change" case, and
+                the more noticeable of the two gaps here because it covers the entire viewport.
+                Opacity only: it is one of the two properties that skip layout and paint. */}
             <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                className={cn(
+                    'absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200 ease-out motion-reduce:transition-none',
+                    closing ? 'opacity-0' : 'opacity-100 motion-safe:animate-fade-in'
+                )}
                 onClick={onClose}
             />
 
@@ -61,7 +102,14 @@ export function Modal({
             <div className="flex items-center justify-center min-h-full p-4">
                 <div
                     className={cn(
-                        'relative bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full animate-modal-in border border-gray-100 dark:border-slate-800',
+                        'relative bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full border border-gray-100 dark:border-slate-800',
+                        'transition-all duration-200 ease-out motion-reduce:transition-none',
+                        // Exits back along the path it entered — down to 0.97 and out, rather
+                        // than disappearing. Not scale-0: nothing in the real world shrinks to
+                        // a point, and the entrance already establishes 0.95 as the near edge.
+                        closing
+                            ? 'opacity-0 scale-[0.97]'
+                            : 'opacity-100 scale-100 motion-safe:animate-modal-in',
                         sizes[size]
                     )}
                 >

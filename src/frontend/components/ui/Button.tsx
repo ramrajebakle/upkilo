@@ -33,7 +33,23 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none";
+      // active:scale-[0.97] is press feedback — the interface acknowledging it heard the
+      // click. Buttons are pressed tens of times a day, which is the frequency tier where
+      // motion has to be near-imperceptible or not exist: 0.97 and 160ms is deliberately at
+      // the subtle end (the useful range is 0.95–0.98) so it registers as responsiveness
+      // rather than as an animation.
+      //
+      // The duration is split from the blanket transition-all/200ms because press feedback
+      // wants to be faster than colour transitions, and because transitioning `all` means
+      // the browser watches every animatable property. transform and opacity are the two
+      // that skip layout and paint, so scoping the transform to its own short duration keeps
+      // the press on the compositor.
+      //
+      // motion-reduce:active:scale-100 opts the movement out under prefers-reduced-motion
+      // while leaving the colour and shadow states intact — gentler, not zero.
+      "inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 " +
+      "active:scale-[0.97] active:duration-[160ms] motion-reduce:active:scale-100 " +
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none";
 
     const variants = {
       primary: "bg-primary-500 text-white hover:bg-primary-600 shadow-sm hover:shadow-md",

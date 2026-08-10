@@ -204,6 +204,22 @@
 }
 
 @theme {
+  /* ── Easing vocabulary ───────────────────────────────────────────────────
+     The stylesheet had no easing tokens, so every animation reached for a CSS
+     built-in. Those curves are deliberately gentle and read as slightly slack on
+     UI: a strong ease-out leaves fast and settles, so the element is where the
+     user expects it well before the animation formally ends — which is why a
+     200ms ease-out feels quicker than a 200ms ease-in of identical length.
+
+     Never ease-in on UI. It starts slow, delaying the exact moment the user is
+     watching for.
+
+     Naming these once means new motion extends one vocabulary instead of each
+     component inventing its own curve. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);       /* entering / exiting */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* moving on screen */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);    /* iOS-like drawer travel */
+
   /* Custom animation tokens — enables animate-* Tailwind utilities */
   --animate-fade-in: fade-in 0.25s ease-out both;
   --animate-fade-in-up: fade-in-up 0.35s ease-out both;
