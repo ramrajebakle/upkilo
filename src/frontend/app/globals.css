@@ -454,13 +454,10 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
-  /* ---- Text effects ---- */
-  .gradient-text {
-    background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+  /* .gradient-text removed. It clipped a violet-to-blue gradient into text, which is
+     decorative rather than meaningful and makes the lightest stop set the effective contrast
+     for whatever it wraps. Its single caller was the dashboard greeting, where it was applied
+     to the user's own name. Emphasis in text comes from weight, size or a solid accent. */
 
   /* ---- Texture overlay ---- */
   .grain {

@@ -300,10 +300,16 @@ export default function DashboardPage() {
                                 <Sparkles className="w-4 h-4" />
                                 {greeting}
                             </p>
+                            {/* The name below used .gradient-text, now removed from globals.css —
+                                this was its only caller. A person's own name is poor material for
+                                a legibility trade. primary-300 rather than a mid tone because this
+                                heading sits on the dark hero, alongside text-white and
+                                text-slate-400; a 600-weight accent here would be darker than the
+                                surface it sits on. */}
                             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
                                 Welcome back,{' '}
                                 {user?.firstName ? (
-                                    <span className="gradient-text">{user.firstName}</span>
+                                    <span className="text-primary-300">{user.firstName}</span>
                                 ) : (
                                     <span className="inline-block w-28 h-8 bg-white/20 rounded-lg animate-pulse align-middle" aria-hidden="true" />
                                 )}

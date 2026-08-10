@@ -95,7 +95,10 @@ export default function CouponsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-600" style={{ fontFamily: 'var(--font-display)' }}>
+                    {/* Solid colour, not bg-clip-text over a gradient. A page title is the one
+                        piece of text on the screen that must be unambiguous, and the gradient's
+                        lighter stop set the effective contrast for part of the word. */}
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
                         {t('coupons')}
                     </h1>
                     <p className="text-sm text-slate-500">{t('manageDescription')}</p>

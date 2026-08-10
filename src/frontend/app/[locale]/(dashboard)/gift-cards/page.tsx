@@ -108,7 +108,9 @@ export default function GiftCardsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600" style={{ fontFamily: 'var(--font-display)' }}>
+                    {/* Solid colour — see the note in coupons/page.tsx. This one faded slate-900
+                        to slate-600, so the heading literally got fainter as it read on. */}
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
                         {t('giftCards')}
                     </h1>
                     <p className="text-sm text-slate-500">Manage digital and physical gift cards</p>

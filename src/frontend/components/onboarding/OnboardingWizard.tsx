@@ -89,7 +89,10 @@ export function OnboardingWizard() {
                             <Rocket className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-slate-900 dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text dark:text-transparent">
+                            {/* Was gradient-clipped in dark mode only, fading white to
+                                slate-400 — so the greeting was legible in light mode and
+                                progressively less so in dark. Solid in both. */}
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                                 Welcome to Upkilo!
                             </h2>
                             <p className="text-slate-500 dark:text-slate-400 text-sm">Let's get your business ready for bookings</p>
