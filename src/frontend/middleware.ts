@@ -247,5 +247,26 @@ export const config = {
   // apple-app-site-association, and Google requires assetlinks.json to be served
   // directly — if host routing 308s these to another origin, universal links,
   // App Links and password autofill all silently stop working.
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icons|screenshots|sw.js|manifest.json|\\.well-known).*)'],
+  //
+  // robots.txt and sitemap.xml MUST be excluded for the same class of reason, and their
+  // absence here was doing real damage. Neither is a locale-prefixed route, so the
+  // auto-prefix rule above rewrote /robots.txt to /en/robots.txt; that is not a public path,
+  // so the auth check then bounced it to /en/login. Measured against a production build:
+  //
+  //   /robots.txt   307 -> /en/robots.txt   302 -> /en/login
+  //   /sitemap.xml  307 -> /en/sitemap.xml  302 -> /en/login
+  //
+  // So both files have been unreachable. A crawler asking for robots.txt got a redirect to a
+  // login page, and a sitemap submitted to Search Console could never be fetched — which
+  // silently voided every crawl directive and every URL this app publishes.
+  //
+  // opengraph-image and twitter-image are excluded too: Next serves them as routes under the
+  // segment that declares them, and a social scraper fetching a card image does not follow
+  // redirects into an auth flow either.
+  //
+  // This is why the list is deny-by-default with named exceptions — anything served as a
+  // file rather than a page belongs here.
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|icons|screenshots|sw.js|manifest.json|robots.txt|sitemap.xml|opengraph-image|twitter-image|\\.well-known).*)',
+  ],
 };
