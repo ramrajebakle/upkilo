@@ -181,7 +181,7 @@ export default function CampaignsPage() {
                         </div>
                         <h1
                             className="text-2xl lg:text-3xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Marketing Campaigns
                         </h1>

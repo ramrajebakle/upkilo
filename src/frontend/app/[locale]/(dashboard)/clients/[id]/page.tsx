@@ -312,7 +312,7 @@ export default function EditClientPage() {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
                                     {client.firstName} {client.lastName}
                                 </h1>
                                 <span className={cn(

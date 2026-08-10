@@ -171,7 +171,7 @@ export default function CalendarView() {
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-4 px-1">
                 <div className="flex items-center gap-4">
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>Calendar</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>Calendar</h1>
                     <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                         <button 
                             onClick={() => { const d = new Date(currentDate); d.setDate(d.getDate() - 7); setCurrentDate(d); }} 

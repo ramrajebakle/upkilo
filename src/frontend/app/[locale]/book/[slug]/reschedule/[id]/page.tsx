@@ -78,7 +78,7 @@ export default function PublicReschedulePage({ params }: { params: Promise<{ loc
                     <CheckCircle2 className="h-10 w-10 text-emerald-600" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Rescheduled!</h1>
+                    <h1 className="text-2xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Rescheduled!</h1>
                     <p className="text-slate-500 mt-2 font-medium">Your appointment has been successfully updated.</p>
                 </div>
                 <div className="bg-slate-50 rounded-xl p-5 text-left border border-slate-100 space-y-3">
@@ -122,7 +122,7 @@ export default function PublicReschedulePage({ params }: { params: Promise<{ loc
 
             <main className="flex-1 max-w-2xl mx-auto w-full px-4 pt-8 md:pt-16 pb-12 space-y-8">
                 <div className="text-center space-y-3">
-                    <h2 className="text-4xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <h2 className="text-4xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                         Reschedule Session
                     </h2>
                     <p className="text-slate-500 font-bold tracking-widest text-xs uppercase opacity-60">Booking ID: {booking.confirmationNumber}</p>

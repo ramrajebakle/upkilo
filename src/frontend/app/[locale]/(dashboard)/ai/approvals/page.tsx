@@ -173,18 +173,19 @@ export default function AIApprovalsPage() {
         <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 uppercase">Upkilo Autonomous Core v1.4.2</p>
       </footer>
 
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
-        
-        body {
-          font-family: 'Outfit', sans-serif;
-        }
-        
-        .font-mono {
-          font-family: 'JetBrains+Mono', monospace;
-        }
-      `}</style>
+      {/* A <style jsx global> block used to live here. It was the only place Outfit and
+          JetBrains Mono were ever loaded — via @import from fonts.googleapis.com — while 58
+          files across the app referenced Outfit and got a silent fallback.
+
+          It also did two things a single route has no business doing: reassigning `body`
+          font-family app-wide, so body text changed face depending on whether this page was
+          mounted, and redefining Tailwind's own `.font-mono` utility to 'JetBrains+Mono' —
+          a name that is not a font. The `+` is URL encoding from the Google Fonts query
+          string, valid in the URL and meaningless in a font-family, so that rule never
+          matched anything and every .font-mono element fell through to the next candidate.
+
+          All three faces are now loaded by next/font in app/[locale]/layout.tsx and exposed
+          as CSS variables that globals.css consumes. */}
     </div>
   );
 }

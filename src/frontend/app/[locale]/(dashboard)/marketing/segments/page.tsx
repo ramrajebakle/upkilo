@@ -102,7 +102,7 @@ export default function ClientSegmentsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8 animate-fade-in-up">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
                         Client Segments
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400">Filter and segment your client base specifically for marketing campaigns.</p>

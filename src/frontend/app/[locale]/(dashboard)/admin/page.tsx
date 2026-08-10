@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
             <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/20">
               <ShieldCheck className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Platform Administration
             </h1>
           </div>
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>Platform Revenue</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>Platform Revenue</h2>
               <p className="text-sm text-slate-500">Gross revenue across all active tenants.</p>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
         {/* Tier Distribution */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>Subscription Tiers</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>Subscription Tiers</h2>
             <p className="text-sm text-slate-500">Breakdown of tenants by plan.</p>
           </div>
           <ServiceDonutChart data={tierDistributionData} height={200} />
@@ -120,7 +120,7 @@ export default function AdminDashboardPage() {
       {/* Tenant Management */}
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2" style={{ fontFamily: 'var(--font-display)' }}>
             <Building2 className="h-6 w-6 text-slate-400" />
             Tenant Management
           </h2>

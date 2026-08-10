@@ -207,7 +207,7 @@ export default function GrowthPage() {
                         <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg shadow-emerald-500/25">
                             <Rocket className="h-5 w-5 text-white" />
                         </div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
                             Growth & SEO
                         </h1>
                     </div>

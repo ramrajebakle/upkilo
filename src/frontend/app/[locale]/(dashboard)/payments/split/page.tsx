@@ -121,7 +121,7 @@ export default function SplitPaymentPage() {
                         </div>
                         <h1
                             className="text-2xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Split Payment
                         </h1>

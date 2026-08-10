@@ -108,7 +108,7 @@ export default function InvoicePage() {
                                     <Building2 className="h-8 w-8 text-white" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>
                                         UPKILO <span className="text-indigo-600">SaaS</span>
                                     </h1>
                                     <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">Operations Unit</p>
@@ -131,7 +131,7 @@ export default function InvoicePage() {
                         </div>
 
                         <div className="text-right space-y-4">
-                            <h2 className="text-7xl font-black text-slate-100 dark:text-slate-800/60 uppercase tracking-tighter leading-none" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            <h2 className="text-7xl font-black text-slate-100 dark:text-slate-800/60 uppercase tracking-tighter leading-none" style={{ fontFamily: 'var(--font-display)' }}>
                                 Receipt
                             </h2>
                             <div className="bg-white dark:bg-slate-800 inline-block px-6 py-4 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">

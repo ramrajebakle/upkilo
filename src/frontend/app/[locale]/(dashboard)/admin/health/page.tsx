@@ -93,7 +93,7 @@ export default function AdminHealthPage() {
             <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/20">
               <Activity className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               System Health
             </h1>
           </div>
@@ -111,7 +111,7 @@ export default function AdminHealthPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Services Status */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6" style={{ fontFamily: 'Outfit, sans-serif' }}>Service Status</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6" style={{ fontFamily: 'var(--font-display)' }}>Service Status</h2>
           <div className="space-y-6">
             <ServiceStatusItem 
               name="Main Database (PostgreSQL)" 
@@ -142,7 +142,7 @@ export default function AdminHealthPage() {
         {/* Uptime & Incidents */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>System Uptime</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>System Uptime</h2>
             <div className="flex items-center gap-2 text-emerald-500 text-sm font-semibold">
               <CheckCircle2 className="h-4 w-4" />
               99.98%

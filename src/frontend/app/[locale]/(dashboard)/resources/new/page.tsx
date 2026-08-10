@@ -88,7 +88,7 @@ export default function NewResourcePage() {
                         </div>
                         <h1
                             className="text-2xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Add New Resource
                         </h1>

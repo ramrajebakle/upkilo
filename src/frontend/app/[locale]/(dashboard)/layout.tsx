@@ -357,7 +357,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-md shadow-primary-500/30 group-hover:shadow-primary-500/50 transition-shadow">
                                     <Sparkles className="w-4 h-4 text-white" />
                                 </div>
-                                <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                     Upkilo
                                 </span>
                             </Link>

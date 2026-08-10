@@ -11,7 +11,7 @@ export default function Loading() {
                 <div className="space-y-2">
                     <h2
                         className="text-xl font-semibold text-slate-700"
-                        style={{ fontFamily: 'Outfit, sans-serif' }}
+                        style={{ fontFamily: 'var(--font-display)' }}
                     >
                         Loading...
                     </h2>

@@ -189,7 +189,7 @@ export default function DashboardPage() {
             </div>
             <h1
               className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white"
-              style={{ fontFamily: "Outfit, sans-serif" }}
+              style={{ fontFamily: "var(--font-display)" }}
             >
               Dashboard
             </h1>
@@ -226,7 +226,7 @@ export default function DashboardPage() {
                       </p>
                       <p
                         className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight"
-                        style={{ fontFamily: "Outfit, sans-serif" }}
+                        style={{ fontFamily: "var(--font-display)" }}
                       >
                         {s.value}
                       </p>

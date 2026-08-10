@@ -134,7 +134,7 @@ export default function NewWaitlistPage() {
                         </div>
                         <h1
                             className="text-2xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Add to Waitlist
                         </h1>

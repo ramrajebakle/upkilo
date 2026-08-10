@@ -95,7 +95,7 @@ export default function CouponsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-600" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-600" style={{ fontFamily: 'var(--font-display)' }}>
                         {t('coupons')}
                     </h1>
                     <p className="text-sm text-slate-500">{t('manageDescription')}</p>
@@ -228,7 +228,7 @@ export default function CouponsPage() {
                                 <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
                                     <Ticket className="h-5 w-5 text-white" />
                                 </div>
-                                <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>{t('createCoupon')}</h2>
+                                <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>{t('createCoupon')}</h2>
                             </div>
                             <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition-all">
                                 <X className="h-4 w-4" />

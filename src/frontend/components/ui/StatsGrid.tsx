@@ -70,7 +70,7 @@ export const StatsGrid = memo(function StatsGrid({ stats, loading = false, colum
                                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1 truncate">{stat.label}</p>
                                 <p
                                     className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight truncate"
-                                    style={{ fontFamily: 'Outfit, sans-serif' }}
+                                    style={{ fontFamily: 'var(--font-display)' }}
                                 >
                                     {stat.value}
                                 </p>

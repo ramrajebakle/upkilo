@@ -74,7 +74,7 @@ export default function AdminSettingsPage() {
             <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/20">
               <Settings className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Global Platform Settings
             </h1>
           </div>
@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
         {/* Content Area */}
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6" style={{ fontFamily: 'Outfit, sans-serif' }}>Platform Appearance</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6" style={{ fontFamily: 'var(--font-display)' }}>Platform Appearance</h2>
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -129,7 +129,7 @@ export default function AdminSettingsPage() {
 
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>System Status Controls</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>System Status Controls</h2>
                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Global</Badge>
             </div>
             <div className="space-y-6">

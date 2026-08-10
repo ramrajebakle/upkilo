@@ -191,7 +191,7 @@ export default function EditFormPage() {
                         </div>
                         <h1
                             className="text-2xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Edit Form: {formName}
                         </h1>

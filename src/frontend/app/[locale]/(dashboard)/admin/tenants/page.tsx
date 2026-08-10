@@ -64,7 +64,7 @@ export default function AdminTenantsPage() {
             <div className="p-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/20">
               <Building2 className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Tenant Management
             </h1>
           </div>

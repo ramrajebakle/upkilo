@@ -139,7 +139,7 @@ export default function NewCampaignPage() {
                         </div>
                         <h1
                             className="text-2xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Create Campaign
                         </h1>

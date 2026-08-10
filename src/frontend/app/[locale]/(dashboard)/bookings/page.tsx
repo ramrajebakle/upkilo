@@ -156,7 +156,7 @@ export default function BookingsPage() {
                         </div>
                         <h1
                             className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Bookings
                         </h1>
@@ -191,7 +191,7 @@ export default function BookingsPage() {
                             <div className="flex items-start justify-between">
                                 <div className="min-w-0">
                                     <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1 truncate">{stat.label}</p>
-                                    <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                    <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                         {stat.value}
                                     </p>
                                 </div>

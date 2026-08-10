@@ -25,7 +25,7 @@ export default function DashboardError({
                 <div className="space-y-2">
                     <h2
                         className="text-xl font-bold text-slate-800"
-                        style={{ fontFamily: 'Outfit, sans-serif' }}
+                        style={{ fontFamily: 'var(--font-display)' }}
                     >
                         Something went wrong
                     </h2>

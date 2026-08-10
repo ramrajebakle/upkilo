@@ -37,7 +37,7 @@ export default function CustomDomainsGuidePage() {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Hero Section */}
                 <div className="mb-12">
-                    <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                         Custom Domains Guide
                     </h1>
                     <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">

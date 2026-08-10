@@ -83,7 +83,7 @@ export default function CustomerProfilePage() {
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
             <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                     Profile Settings
                 </h1>
                 <p className="text-slate-500 mt-1">Manage your personal information and preferences</p>

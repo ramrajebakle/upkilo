@@ -63,7 +63,7 @@ export function LiveBookingFeed() {
                         <Clock className="h-5 w-5 text-emerald-500" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                        <h2 className="text-lg font-semibold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
                             Live Activity
                         </h2>
                         <p className="text-sm text-slate-500 font-medium flex items-center gap-1.5">

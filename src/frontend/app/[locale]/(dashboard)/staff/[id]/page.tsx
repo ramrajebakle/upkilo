@@ -224,7 +224,7 @@ export default function StaffProfilePage() {
                             {staff.firstName[0]}{staff.lastName[0]}
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
                                 {staff.firstName} {staff.lastName}
                             </h1>
                             <div className="flex items-center gap-2 text-slate-500">

@@ -5,7 +5,7 @@ export default function CookiePolicyPage() {
     return (
         <div className="min-h-screen bg-slate-50 py-16 px-4 sm:px-6 lg:px-8 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
             <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden p-8 sm:p-12">
-                <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>Cookie Policy</h1>
+                <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4" style={{ fontFamily: 'var(--font-display)' }}>Cookie Policy</h1>
                 <p className="text-slate-500 dark:text-slate-400 mb-1 font-medium">Last Updated: June 2026 · Version 2.0</p>
                 <p className="text-slate-500 dark:text-slate-400 mb-8 text-sm">
                     <strong>Upkilo Technologies Private Limited</strong> · Incorporated in India ·

@@ -6,8 +6,19 @@
    =========================================== */
 
 @theme {
-  --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  /* These now point at the next/font variables defined in app/[locale]/layout.tsx, so the
+     names here and the faces actually downloaded cannot drift apart.
+
+     --font-sans previously read "Inter Variable", which was never loaded under that name —
+     next/font loads the family as "Inter". Anything using the `font-sans` utility therefore
+     fell through to -apple-system while body text got Inter from a className, so the page
+     mixed two faces without either being chosen.
+
+     --font-display is new: Outfit is used as the display face in 58 files that had no
+     supported way to reach it. */
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: var(--font-outfit), var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "Fira Code", monospace;
 
   /* Typography */
   --text-xs: 11px;

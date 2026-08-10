@@ -149,7 +149,7 @@ export default function ReportsPage() {
                         <div>
                             <h1
                                 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight"
-                                style={{ fontFamily: 'Outfit, sans-serif' }}
+                                style={{ fontFamily: 'var(--font-display)' }}
                             >
                                 Intelligence Center
                             </h1>
@@ -290,7 +290,7 @@ export default function ReportsPage() {
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 blur-3xl rounded-full -mr-32 -mt-32 pointer-events-none" />
                     <div className="flex items-center justify-between mb-8 relative">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                 Performance Velocity
                             </h3>
                             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Daily revenue capitalization metrics</p>
@@ -330,7 +330,7 @@ export default function ReportsPage() {
                 <div className="card-elevated p-8 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800 shadow-xl" style={{ animationDelay: '450ms' }}>
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                 Premier Services
                             </h3>
                             <p className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mt-1">Growth Tier List</p>

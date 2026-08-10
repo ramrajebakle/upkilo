@@ -119,7 +119,7 @@ export default function MarketingAutomationPage() {
             <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-lg shadow-primary-500/25">
               <Zap className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
               {t('title')}
             </h1>
           </div>
@@ -402,7 +402,7 @@ function StatCard({ label, value, icon: Icon, color, trend }: any) {
       </div>
       <div className="mt-4 relative z-10">
         <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</h4>
-        <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1" style={{ fontFamily: 'Outfit, sans-serif' }}>{value}</p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1" style={{ fontFamily: 'var(--font-display)' }}>{value}</p>
       </div>
     </div>
   );
@@ -497,7 +497,7 @@ function OnboardingView({ onComplete }: { onComplete: () => void }) {
         <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-3xl shadow-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-6">
           <Zap className="h-10 w-10 text-white" />
         </div>
-        <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+        <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4" style={{ fontFamily: 'var(--font-display)' }}>
           {t('title')}
         </h2>
         <p className="text-lg text-slate-500 dark:text-slate-400">{t('description')}</p>
