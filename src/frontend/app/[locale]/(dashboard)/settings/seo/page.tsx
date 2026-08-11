@@ -181,7 +181,7 @@ export default function SeoSettingsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex items-center gap-6">
-                        <div className="p-4 bg-gradient-to-br from-primary-600 to-indigo-900 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
+                        <div className="p-4 bg-gradient-to-br from-primary-600 to-primary-900 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                             <Search className="h-8 w-8 text-white" />
                         </div>
                         <div>
@@ -552,7 +552,7 @@ export default function SeoSettingsPage() {
                     </div>
 
                     {/* Operational Protocols (Refined to match screenshot) */}
-                    <div className="p-8 bg-gradient-to-br from-slate-900 to-indigo-950 border border-slate-800 rounded-[40px] space-y-8 shadow-2xl">
+                    <div className="p-8 bg-gradient-to-br from-slate-900 to-primary-950 border border-slate-800 rounded-[40px] space-y-8 shadow-2xl">
                         <div className="flex items-center gap-3">
                             <ShieldCheck className="h-4 w-4 text-primary-400" />
                             <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Operational Protocols</span>
@@ -563,7 +563,7 @@ export default function SeoSettingsPage() {
                                 { icon: CheckCircle, color: 'text-emerald-500', text: 'Booking parameters synchronized instantly' },
                                 { icon: Globe, color: 'text-blue-400', text: 'Regional spatial data re-validation' },
                                 { icon: Target, color: 'text-red-400', text: 'Global sitemap re-indexing triggered' },
-                                { icon: Share2, color: 'text-violet-400', text: 'Social anchors and OG headers updated' },
+                                { icon: Share2, color: 'text-primary-400', text: 'Social anchors and OG headers updated' },
                                 { icon: RefreshCw, color: 'text-amber-400', text: 'Broadcast picked up within 1–3 days' },
                             ].map((item, i) => (
                                 <div key={i} className="flex items-start gap-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-loose">

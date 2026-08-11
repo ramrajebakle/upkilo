@@ -87,7 +87,7 @@ export default function AdminPlansPage() {
           {plans.map((plan) => (
             <div 
               key={plan.id} 
-              className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300"
+              className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
             >
               {!plan.isActive && (
                 <div className="absolute top-4 right-4">

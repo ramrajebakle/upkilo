@@ -99,10 +99,10 @@ export default function MigrationWizardPage() {
       <div className="flex items-center gap-2 mb-8">
         {['Upload', 'Preview', 'Confirm', 'Done'].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${i === stepIdx ? 'bg-indigo-600 text-white' : i < stepIdx ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${i === stepIdx ? 'bg-primary-600 text-white' : i < stepIdx ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}>
               {i < stepIdx ? '✓' : i + 1}
             </div>
-            <span className={`text-sm hidden sm:block ${i === stepIdx ? 'text-indigo-700 dark:text-indigo-400 font-semibold' : 'text-gray-400'}`}>{label}</span>
+            <span className={`text-sm hidden sm:block ${i === stepIdx ? 'text-primary-700 dark:text-primary-400 font-semibold' : 'text-gray-400'}`}>{label}</span>
             {i < 3 && <div className="w-6 h-px bg-gray-300 dark:bg-gray-700" />}
           </div>
         ))}
@@ -131,7 +131,7 @@ export default function MigrationWizardPage() {
 
           <div
             onClick={() => fileRef.current?.click()}
-            className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-10 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-all"
+            className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-10 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-all"
           >
             <div className="text-4xl mb-2">📁</div>
             <p className="text-sm text-gray-600 dark:text-gray-400">Click to select CSV, or drag and drop</p>
@@ -140,7 +140,7 @@ export default function MigrationWizardPage() {
           </div>
 
           <button onClick={handleUpload}
-            className="w-full mt-6 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
+            className="w-full mt-6 bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors">
             Upload & Analyse →
           </button>
 
@@ -161,9 +161,9 @@ export default function MigrationWizardPage() {
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-5">Review Import</h2>
 
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-4 text-center">
-              <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">{preview.totalParsed}</p>
-              <p className="text-xs text-indigo-600 dark:text-indigo-500 mt-1">Total in CSV</p>
+            <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4 text-center">
+              <p className="text-2xl font-bold text-primary-700 dark:text-primary-400">{preview.totalParsed}</p>
+              <p className="text-xs text-primary-600 dark:text-primary-500 mt-1">Total in CSV</p>
             </div>
             <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 text-center">
               <p className="text-2xl font-bold text-green-700 dark:text-green-400">{preview.toImport}</p>
@@ -179,7 +179,7 @@ export default function MigrationWizardPage() {
           <div className="space-y-2 mb-6">
             {preview.sample.map((c, i) => (
               <div key={i} className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-lg px-4 py-2">
-                <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-xs font-bold">
+                <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 flex items-center justify-center text-xs font-bold">
                   {(c.firstName?.[0] ?? '?')}{(c.lastName?.[0] ?? '')}
                 </div>
                 <div>
@@ -199,7 +199,7 @@ export default function MigrationWizardPage() {
             <button onClick={() => setStep('upload')} className="flex-1 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-800">
               ← Back
             </button>
-            <button onClick={() => setStep('execute')} className="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700">
+            <button onClick={() => setStep('execute')} className="flex-1 bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700">
               Import {preview.toImport} Clients →
             </button>
           </div>
@@ -230,7 +230,7 @@ export default function MigrationWizardPage() {
             {importedCount} client{importedCount !== 1 ? 's' : ''} imported. Check your email for confirmation.
           </p>
           <div className="flex gap-3 justify-center">
-            <a href="/dashboard/clients" className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+            <a href="/dashboard/clients" className="bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700">
               View Clients
             </a>
             <button onClick={reset} className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-800">

@@ -220,7 +220,7 @@ export default function StaffProfilePage() {
                         <ArrowLeft className="h-5 w-5 text-slate-600" />
                     </Link>
                     <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-violet-500/20">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary-500/20">
                             {staff.firstName[0]}{staff.lastName[0]}
                         </div>
                         <div>
@@ -268,8 +268,8 @@ export default function StaffProfilePage() {
                         {/* Profile Info */}
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-violet-100 rounded-lg">
-                                    <User className="h-5 w-5 text-violet-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <User className="h-5 w-5 text-primary-600" />
                                 </div>
                                 <h2 className="text-lg font-semibold text-slate-900">Profile Information</h2>
                             </div>

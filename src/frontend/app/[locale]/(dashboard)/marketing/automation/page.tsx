@@ -385,7 +385,7 @@ function StatCard({ label, value, icon: Icon, color, trend }: any) {
   const colors: any = {
     blue: 'from-blue-50 to-blue-100/50 dark:from-blue-900/10 dark:to-blue-900/5 text-blue-600 dark:text-blue-400 icon-bg:bg-blue-600/10',
     emerald: 'from-emerald-50 to-emerald-100/50 dark:from-emerald-900/10 dark:to-emerald-900/5 text-emerald-600 dark:text-emerald-400 icon-bg:bg-emerald-600/10',
-    violet: 'from-violet-50 to-violet-100/50 dark:from-violet-900/10 dark:to-violet-900/5 text-violet-600 dark:text-violet-400 icon-bg:bg-violet-600/10',
+    violet: 'from-primary-50 to-primary-100/50 dark:from-primary-900/10 dark:to-primary-950/5 text-primary-600 dark:text-primary-400 icon-bg:bg-primary-600/10',
     amber: 'from-amber-50 to-amber-100/50 dark:from-amber-900/10 dark:to-amber-900/5 text-amber-600 dark:text-amber-400 icon-bg:bg-amber-600/10',
   };
 
@@ -494,7 +494,7 @@ function OnboardingView({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="max-w-3xl mx-auto py-12 px-6">
       <div className="text-center mb-12">
-        <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-3xl shadow-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-6">
+        <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-3xl shadow-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-6">
           <Zap className="h-10 w-10 text-white" />
         </div>
         <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4" style={{ fontFamily: 'var(--font-display)' }}>

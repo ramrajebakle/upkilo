@@ -142,7 +142,7 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
         <div className="mt-40">
           <div className="flex items-center gap-4 mb-12">
             <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Popular Categories</h2>
-            <span className="h-0.5 w-12 bg-indigo-500 rounded-full" />
+            <span className="h-0.5 w-12 bg-primary-500 rounded-full" />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">

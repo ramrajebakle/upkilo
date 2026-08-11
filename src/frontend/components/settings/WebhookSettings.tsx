@@ -155,7 +155,7 @@ export function WebhookSettings() {
                             <div key={ep.id} className="p-8 hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all group">
                                 <div className="flex flex-col xl:flex-row justify-between items-start gap-8">
                                     <div className="flex gap-6 flex-1 min-w-0">
-                                        <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl h-fit border border-indigo-100 dark:border-indigo-400/20 shadow-sm">
+                                        <div className="p-4 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-2xl h-fit border border-primary-100 dark:border-primary-400/20 shadow-sm">
                                             <Webhook className="h-6 w-6" />
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -179,7 +179,7 @@ export function WebhookSettings() {
                                                         <span key={e} className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 dark:border-slate-700">{e}</span>
                                                     ))
                                                 )}
-                                                {ep.events?.length > 3 && <span className="bg-indigo-50 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-400/20">+{ep.events.length - 3} Overflow</span>}
+                                                {ep.events?.length > 3 && <span className="bg-primary-50 dark:bg-primary-400/10 text-primary-600 dark:text-primary-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-primary-100 dark:border-primary-400/20">+{ep.events.length - 3} Overflow</span>}
                                             </div>
                                         </div>
                                     </div>
@@ -269,7 +269,7 @@ export function WebhookSettings() {
                             required
                             type="text"
                             placeholder="e.g. ZYLINE_RECEIVER"
-                            className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none"
+                            className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         />
@@ -280,7 +280,7 @@ export function WebhookSettings() {
                             required
                             type="url"
                             placeholder="https://uplink.io/api/v1/sync"
-                            className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-mono font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none"
+                            className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-mono font-bold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none"
                             value={formData.url}
                             onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                         />
@@ -291,7 +291,7 @@ export function WebhookSettings() {
                             <label className="flex items-center gap-4 text-sm p-5 border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 cursor-pointer transition-all">
                                 <input
                                     type="checkbox"
-                                    className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800"
+                                    className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500 bg-white dark:bg-slate-800"
                                     checked={formData.events.includes('*')}
                                     onChange={() => {
                                         if (formData.events.includes('*')) {
@@ -311,13 +311,13 @@ export function WebhookSettings() {
                             <div className="max-h-80 overflow-y-auto border border-slate-100 dark:border-slate-800 rounded-2xl p-4 space-y-6 bg-slate-50/50 dark:bg-slate-950/20 custom-scrollbar">
                                 {eventTypes.map((category) => (
                                     <div key={category.category} className="space-y-3">
-                                        <h4 className="text-[9px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-[0.3em] pl-2">{category.category} Matrix</h4>
+                                        <h4 className="text-[9px] font-black text-primary-500 dark:text-primary-400 uppercase tracking-[0.3em] pl-2">{category.category} Matrix</h4>
                                         <div className="grid grid-cols-1 gap-2">
                                             {category.events.map((evt: string) => (
                                                 <label key={evt} className="flex items-center gap-3 text-sm p-3 hover:bg-white dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700 group">
                                                     <input
                                                         type="checkbox"
-                                                        className="h-4 w-4 rounded-md border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800"
+                                                        className="h-4 w-4 rounded-md border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500 bg-white dark:bg-slate-800"
                                                         checked={formData.events.includes(evt)}
                                                         onChange={() => toggleEvent(evt)}
                                                     />

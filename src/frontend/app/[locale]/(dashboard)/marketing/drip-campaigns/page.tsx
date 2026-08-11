@@ -50,7 +50,7 @@ const CHANNEL_ICONS: Record<ChannelType, React.ReactNode> = {
 const CHANNEL_COLORS: Record<ChannelType, string> = {
     email: 'bg-blue-100 text-blue-700',
     sms: 'bg-emerald-100 text-emerald-700',
-    push: 'bg-purple-100 text-purple-700',
+    push: 'bg-primary-100 text-primary-700',
     whatsapp: 'bg-green-100 text-green-700',
 };
 
@@ -237,7 +237,7 @@ export default function DripCampaignsPage() {
                 {[
                     { label: 'Active Campaigns', value: activeCampaigns, icon: <Zap className="h-5 w-5 text-emerald-500" />, color: 'text-emerald-700 dark:text-emerald-400' },
                     { label: 'Total Enrolled', value: totalEnrolled.toLocaleString(), icon: <Users className="h-5 w-5 text-blue-500" />, color: 'text-blue-700 dark:text-blue-400' },
-                    { label: 'Avg Open Rate', value: `${avgOpen}%`, icon: <TrendingUp className="h-5 w-5 text-indigo-500" />, color: 'text-indigo-700 dark:text-indigo-400' },
+                    { label: 'Avg Open Rate', value: `${avgOpen}%`, icon: <TrendingUp className="h-5 w-5 text-primary-500" />, color: 'text-primary-700 dark:text-primary-400' },
                 ].map(s => (
                     <div key={s.label} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center gap-3">
                         <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">{s.icon}</div>
@@ -267,7 +267,7 @@ export default function DripCampaignsPage() {
                             <select
                                 value={newTrigger}
                                 onChange={e => setNewTrigger(e.target.value as TriggerType)}
-                                className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:text-white"
+                                className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 dark:text-white"
                             >
                                 {Object.entries(TRIGGER_LABELS).map(([v, l]) => (
                                     <option key={v} value={v}>{l}</option>
@@ -280,7 +280,7 @@ export default function DripCampaignsPage() {
                     <div>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Steps ({newSteps.length})</h3>
-                            <button onClick={addStep} className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 flex items-center gap-1">
+                            <button onClick={addStep} className="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 flex items-center gap-1">
                                 <Plus className="h-3 w-3" /> Add Step
                             </button>
                         </div>
@@ -290,7 +290,7 @@ export default function DripCampaignsPage() {
                                 <div key={i} className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-3">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold">{i + 1}</div>
+                                            <div className="w-6 h-6 rounded-full bg-primary-600 text-white text-xs flex items-center justify-center font-bold">{i + 1}</div>
                                             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Step {i + 1}</span>
                                         </div>
                                         {newSteps.length > 1 && (
@@ -304,7 +304,7 @@ export default function DripCampaignsPage() {
                                             <select
                                                 value={step.channel}
                                                 onChange={e => updateStep(i, { channel: e.target.value as ChannelType })}
-                                                className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:text-white"
+                                                className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white dark:bg-slate-800 dark:text-white"
                                             >
                                                 <option value="email">Email</option>
                                                 <option value="sms">SMS</option>
@@ -325,7 +325,7 @@ export default function DripCampaignsPage() {
                                             <select
                                                 value={step.condition}
                                                 onChange={e => updateStep(i, { condition: e.target.value as any })}
-                                                className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:text-white"
+                                                className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white dark:bg-slate-800 dark:text-white"
                                             >
                                                 <option value="always">Always</option>
                                                 <option value="if_not_opened">If not opened</option>
@@ -345,7 +345,7 @@ export default function DripCampaignsPage() {
                                         <textarea
                                             value={step.body}
                                             onChange={e => updateStep(i, { body: e.target.value })}
-                                            className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm h-16 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:text-white"
+                                            className="w-full border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm h-16 resize-none focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white dark:bg-slate-800 dark:text-white"
                                             placeholder="Message content... Use {{firstName}}, {{bookingLink}}, etc."
                                         />
                                     </div>
@@ -382,7 +382,7 @@ export default function DripCampaignsPage() {
                         <div key={campaign.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                             {/* Campaign Header */}
                             <div className="p-4 flex items-start gap-4">
-                                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white shrink-0">
+                                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white shrink-0">
                                     <GitBranch className="h-5 w-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -415,7 +415,7 @@ export default function DripCampaignsPage() {
                                         </div>
                                         <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
                                             <BarChart2 className="h-3 w-3 text-slate-400 dark:text-slate-500" />
-                                            <span className="font-medium text-indigo-600 dark:text-indigo-400">{campaign.clickRate}%</span> click
+                                            <span className="font-medium text-primary-600 dark:text-primary-400">{campaign.clickRate}%</span> click
                                         </div>
                                         <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                                             <GitBranch className="h-3 w-3 text-slate-400 dark:text-slate-500" />

@@ -71,7 +71,7 @@ export default function AdminSettingsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/20">
+            <div className="p-2.5 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl shadow-lg shadow-primary-500/20">
               <Settings className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
@@ -161,7 +161,7 @@ export default function AdminSettingsPage() {
 
 function SettingsSectionButton({ icon: Icon, label, active = false }: { icon: any; label: string; active?: boolean }) {
     return (
-        <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${active ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5'}`}>
+        <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${active ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/20' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5'}`}>
             <Icon className="h-5 w-5" />
             <span className="font-semibold text-sm">{label}</span>
         </button>
@@ -177,7 +177,7 @@ function SettingsToggle({ label, description, enabled, onToggle }: { label: stri
             </div>
             <button 
                 onClick={onToggle}
-                className={`flex-shrink-0 w-12 h-6 rounded-full p-1 transition-colors ${enabled ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}
+                className={`flex-shrink-0 w-12 h-6 rounded-full p-1 transition-colors ${enabled ? 'bg-primary-600' : 'bg-slate-300 dark:bg-slate-700'}`}
             >
                 <div className={`h-4 w-4 rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-0'}`} />
             </button>

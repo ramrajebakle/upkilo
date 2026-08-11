@@ -33,7 +33,7 @@ const TRIGGER_ICONS: Record<string, React.ReactNode> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
     'Onboarding': 'bg-blue-50 text-blue-700',
-    'Retention': 'bg-purple-50 text-purple-700',
+    'Retention': 'bg-primary-50 text-primary-700',
     'Sales': 'bg-emerald-50 text-emerald-700',
     'Marketing': 'bg-amber-50 text-amber-700',
     'Support': 'bg-rose-50 text-rose-700',
@@ -160,7 +160,7 @@ export default function WorkflowTemplatesPage() {
                         <button
                             key={cat}
                             onClick={() => setCategory(cat)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${category === cat ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${category === cat ? 'bg-primary-600 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                         >
                             {cat}
                         </button>
@@ -185,7 +185,7 @@ export default function WorkflowTemplatesPage() {
                         <div key={template.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 hover:shadow-md transition-shadow flex flex-col">
                             {/* Top */}
                             <div className="flex items-start justify-between mb-3">
-                                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
+                                <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-primary-600 dark:text-primary-400">
                                     {TRIGGER_ICONS[template.triggerType] || <Zap className="h-4 w-4" />}
                                 </div>
                                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${CATEGORY_COLORS[template.category] || 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>

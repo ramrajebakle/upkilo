@@ -93,9 +93,9 @@ export default function PublicReschedulePage({ params }: { params: Promise<{ loc
                         <span className="text-sm font-bold text-slate-700">{successData.newTime}</span>
                     </div>
                 </div>
-                <div className="bg-indigo-50/50 p-3 rounded-lg flex items-start gap-2 text-left">
-                    <AlertCircle className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-indigo-700 font-medium">A new confirmation email with these details has been sent to your inbox.</p>
+                <div className="bg-primary-50/50 p-3 rounded-lg flex items-start gap-2 text-left">
+                    <AlertCircle className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-primary-700 font-medium">A new confirmation email with these details has been sent to your inbox.</p>
                 </div>
                 <Button onClick={() => window.location.href = `/book/${slug}`} className="w-full font-bold h-12 shadow-lg shadow-primary/20">
                     Done
@@ -114,7 +114,7 @@ export default function PublicReschedulePage({ params }: { params: Promise<{ loc
                         </Link>
                         <h1 className="font-bold text-lg tracking-tight text-slate-900">{booking.location}</h1>
                     </div>
-                    <Badge variant="outline" className="bg-indigo-50 text-indigo-600 border-indigo-100 px-3 py-1 font-bold">
+                    <Badge variant="outline" className="bg-primary-50 text-primary-600 border-primary-100 px-3 py-1 font-bold">
                         SELF-SERVICE
                     </Badge>
                 </div>

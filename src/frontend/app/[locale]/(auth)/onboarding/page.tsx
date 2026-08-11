@@ -116,11 +116,11 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-purple-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 flex flex-col">
       {/* Header */}
       <header className="px-6 py-5 flex items-center justify-between border-b border-white/60 bg-white/70 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center shadow-lg shadow-violet-500/30">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/30">
             <span className="text-white font-bold text-lg leading-none">U</span>
           </div>
           <span className="font-semibold text-gray-900 text-lg">Upkilo</span>
@@ -133,7 +133,7 @@ export default function OnboardingPage() {
       <main className="flex-1 flex flex-col items-center justify-start px-4 py-12 max-w-2xl mx-auto w-full">
         {/* Hero text */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
             <Sparkles size={14} />
             Welcome to Upkilo
           </div>
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
               <span className="text-sm font-medium text-gray-700">
                 {completedCount} of {total} complete
               </span>
-              <span className="text-sm font-bold text-violet-600">{pct}%</span>
+              <span className="text-sm font-bold text-primary-600">{pct}%</span>
             </div>
             <div
               role="progressbar"
@@ -163,7 +163,7 @@ export default function OnboardingPage() {
               className="h-2 bg-gray-100 rounded-full overflow-hidden"
             >
               <div
-                className="h-full bg-gradient-to-r from-violet-500 to-purple-600 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -192,7 +192,7 @@ export default function OnboardingPage() {
                         ? 'bg-white border-green-200 cursor-default'
                         : isLocked
                         ? 'bg-gray-50 border-gray-100 cursor-not-allowed opacity-60'
-                        : 'bg-white border-gray-200 hover:border-violet-300 hover:shadow-md hover:shadow-violet-500/10'
+                        : 'bg-white border-gray-200 hover:border-primary-300 hover:shadow-md hover:shadow-primary-500/10'
                     )}
                     onClick={isLocked ? (e) => e.preventDefault() : undefined}
                   >
@@ -204,7 +204,7 @@ export default function OnboardingPage() {
                           ? 'bg-green-100 text-green-600'
                           : isLocked
                           ? 'bg-gray-100 text-gray-400'
-                          : 'bg-violet-100 text-violet-600 group-hover:bg-violet-200'
+                          : 'bg-primary-100 text-primary-600 group-hover:bg-primary-200'
                       )}
                     >
                       {step.completed ? (
@@ -237,7 +237,7 @@ export default function OnboardingPage() {
                     {!step.completed && !isLocked && (
                       <ChevronRight
                         size={18}
-                        className="text-gray-400 flex-shrink-0 group-hover:text-violet-500 transition-colors"
+                        className="text-gray-400 flex-shrink-0 group-hover:text-primary-500 transition-colors"
                       />
                     )}
                   </Link>

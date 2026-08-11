@@ -149,7 +149,7 @@ export default function WaiversPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Total Waivers', value: waivers.length, icon: <FileText className="h-5 w-5 text-indigo-500" /> },
+                    { label: 'Total Waivers', value: waivers.length, icon: <FileText className="h-5 w-5 text-primary-500" /> },
                     { label: 'Active', value: waivers.filter(w => w.isActive).length, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
                     { label: 'Total Signatures', value: totalSigs, icon: <Users className="h-5 w-5 text-blue-500" /> },
                 ].map(s => (
@@ -242,8 +242,8 @@ export default function WaiversPage() {
                 <div className="space-y-3">
                     {waivers.map(waiver => (
                         <div key={waiver.id} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 hover:shadow-sm transition-shadow">
-                            <div className={`p-2.5 rounded-xl ${waiver.isActive ? 'bg-indigo-50' : 'bg-slate-100'}`}>
-                                <Shield className={`h-5 w-5 ${waiver.isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                            <div className={`p-2.5 rounded-xl ${waiver.isActive ? 'bg-primary-50' : 'bg-slate-100'}`}>
+                                <Shield className={`h-5 w-5 ${waiver.isActive ? 'text-primary-600' : 'text-slate-400'}`} />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
@@ -265,7 +265,7 @@ export default function WaiversPage() {
                             <div className="flex items-center gap-1 shrink-0">
                                 <button
                                     onClick={() => setPreviewWaiver(waiver)}
-                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"
+                                    className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
                                     title="Preview"
                                 >
                                     <Eye className="h-4 w-4" />

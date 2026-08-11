@@ -82,7 +82,7 @@ function MetricCard({
     icon: React.ElementType; trend?: number; color?: string;
 }) {
     const colorMap: Record<string, string> = {
-        violet: 'bg-violet-50 text-violet-600',
+        violet: 'bg-primary-50 text-primary-600',
         emerald: 'bg-emerald-50 text-emerald-600',
         blue: 'bg-blue-50 text-blue-500',
         amber: 'bg-amber-50 text-amber-600',
@@ -212,7 +212,7 @@ export default function AdPerformancePage() {
                         </Link>
                         <div>
                             <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                <Megaphone className="w-5 h-5 text-violet-600" />
+                                <Megaphone className="w-5 h-5 text-primary-600" />
                                 Ad Performance
                             </h1>
                             <p className="text-sm text-gray-500">
@@ -227,7 +227,7 @@ export default function AdPerformancePage() {
                             <select
                                 value={dateRange}
                                 onChange={e => setDateRange(e.target.value)}
-                                className="appearance-none pl-3 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                className="appearance-none pl-3 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-400"
                             >
                                 {DATE_RANGES.map(r => (
                                     <option key={r.value} value={r.value}>{r.label}</option>
@@ -302,7 +302,7 @@ export default function AdPerformancePage() {
                                 onClick={() => setPlatformFilter(null)}
                                 className={cn(
                                     'px-3 py-1.5 rounded-full text-sm font-medium border transition-all',
-                                    !platformFilter ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-gray-600 border-gray-200'
+                                    !platformFilter ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-600 border-gray-200'
                                 )}
                             >
                                 All Platforms
@@ -314,7 +314,7 @@ export default function AdPerformancePage() {
                                     className={cn(
                                         'px-3 py-1.5 rounded-full text-sm font-medium border transition-all',
                                         platformFilter === key
-                                            ? 'bg-violet-600 text-white border-violet-600'
+                                            ? 'bg-primary-600 text-white border-primary-600'
                                             : 'bg-white text-gray-600 border-gray-200'
                                     )}
                                 >

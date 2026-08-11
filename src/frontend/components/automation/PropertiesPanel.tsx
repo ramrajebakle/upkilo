@@ -83,9 +83,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
     return (
         <div className="w-96 border-l border-gray-200 bg-white h-full shadow-2xl fixed right-0 top-0 bottom-0 z-50 flex flex-col animate-in slide-in-from-right duration-300">
             {/* Header */}
-            <div className={`p-6 border-b border-gray-100 flex justify-between items-center ${isTrigger ? 'bg-amber-50/50' : isAction ? 'bg-blue-50/50' : 'bg-purple-50/50'}`}>
+            <div className={`p-6 border-b border-gray-100 flex justify-between items-center ${isTrigger ? 'bg-amber-50/50' : isAction ? 'bg-blue-50/50' : 'bg-primary-50/50'}`}>
                 <div className="flex items-center">
-                    <div className={`p-2 rounded-lg mr-3 ${isTrigger ? 'bg-amber-100 text-amber-600' : isAction ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'}`}>
+                    <div className={`p-2 rounded-lg mr-3 ${isTrigger ? 'bg-amber-100 text-amber-600' : isAction ? 'bg-blue-100 text-blue-600' : 'bg-primary-100 text-primary-600'}`}>
                         <Settings size={20} />
                     </div>
                     <div>

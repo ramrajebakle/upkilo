@@ -132,7 +132,7 @@ export function TenantTable({ tenants, loading }: TenantTableProps) {
 
 function getColorForTier(tier: string) {
   switch (tier.toLowerCase()) {
-    case 'enterprise': return 'border-purple-200 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400';
+    case 'enterprise': return 'border-primary-200 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400';
     case 'business': return 'border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400';
     case 'professional': return 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400';
     default: return 'border-slate-200 bg-slate-50 text-slate-700';

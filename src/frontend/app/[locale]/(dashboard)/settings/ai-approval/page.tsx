@@ -158,7 +158,7 @@ function SystemEscalationsContent() {
             ) : (
                 <div className="space-y-3">
                     {items.map(item => (
-                        <div key={item.id} className={`bg-white border rounded-2xl transition-all ${expandedId === item.id ? 'ring-2 ring-indigo-100 border-indigo-200' : 'border-slate-200 hover:border-slate-300'}`}>
+                        <div key={item.id} className={`bg-white border rounded-2xl transition-all ${expandedId === item.id ? 'ring-2 ring-primary-100 border-primary-200' : 'border-slate-200 hover:border-slate-300'}`}>
                             <div className="p-5 flex items-start gap-4">
                                 <div className={`p-2.5 rounded-xl ${SEVERITY_COLORS[item.severity].split(' ')[1]}`}>
                                     {MODULE_ICONS[item.module]}
@@ -199,17 +199,17 @@ function SystemEscalationsContent() {
                                         )}
 
                                         {item.module === 'Billing' && (
-                                            <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-center justify-between">
+                                            <div className="bg-primary-50 border border-primary-100 rounded-xl p-4 flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <CreditCard className="h-5 w-5 text-indigo-600" />
+                                                    <CreditCard className="h-5 w-5 text-primary-600" />
                                                     <div>
-                                                        <div className="text-sm font-semibold text-indigo-900">Credit Restoration Required</div>
-                                                        <div className="text-xs text-indigo-700">Add top-up or upgrade plan to resume services.</div>
+                                                        <div className="text-sm font-semibold text-primary-900">Credit Restoration Required</div>
+                                                        <div className="text-xs text-primary-700">Add top-up or upgrade plan to resume services.</div>
                                                     </div>
                                                 </div>
                                                 <Button 
                                                     size="sm" 
-                                                    className="bg-indigo-600 hover:bg-indigo-700"
+                                                    className="bg-primary-600 hover:bg-primary-700"
                                                     onClick={() => router.push('/settings/billing')}
                                                 >
                                                     <LinkIcon className="h-3.5 w-3.5 mr-1.5" /> Fix Billing

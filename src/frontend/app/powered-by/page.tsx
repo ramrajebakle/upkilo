@@ -49,22 +49,22 @@ function PoweredByContent() {
   }, [src, ref, router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-violet-700 flex flex-col items-center justify-center px-4 text-white text-center">
+    <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-700 flex flex-col items-center justify-center px-4 text-white text-center">
       <div className="max-w-md">
         <div className="mb-6 text-6xl">⚡</div>
         <h1 className="text-3xl font-extrabold mb-3">Want online booking like this?</h1>
-        <p className="text-indigo-100 text-lg mb-6">
+        <p className="text-primary-100 text-lg mb-6">
           This business runs on Upkilo — the AI-powered booking platform for service businesses.
           Get set up in under 10 minutes.
         </p>
-        <ul className="text-left text-indigo-100 text-sm space-y-2 mb-8 max-w-xs mx-auto">
+        <ul className="text-left text-primary-100 text-sm space-y-2 mb-8 max-w-xs mx-auto">
           <li className="flex items-center gap-2">✓ Online booking widget in 5 minutes</li>
           <li className="flex items-center gap-2">✓ AI Copilot that writes client messages for you</li>
           <li className="flex items-center gap-2">✓ Automated reminders — no more no-shows</li>
           <li className="flex items-center gap-2">✓ Free plan — no credit card required</li>
         </ul>
-        <p className="text-indigo-200 text-sm">Taking you to sign up…</p>
-        <div className="mt-4 h-1 bg-indigo-500 rounded-full overflow-hidden">
+        <p className="text-primary-200 text-sm">Taking you to sign up…</p>
+        <div className="mt-4 h-1 bg-primary-500 rounded-full overflow-hidden">
           <div className="h-full bg-white rounded-full animate-[progress_2.5s_ease-in-out_forwards]" style={{ width: "0%" }} />
         </div>
       </div>

@@ -466,8 +466,8 @@ export default function EditClientPage() {
                         {/* Tags */}
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-violet-100 rounded-lg">
-                                    <Tag className="h-5 w-5 text-violet-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Tag className="h-5 w-5 text-primary-600" />
                                 </div>
                                 <h2 className="text-lg font-semibold text-slate-900">Tags</h2>
                             </div>

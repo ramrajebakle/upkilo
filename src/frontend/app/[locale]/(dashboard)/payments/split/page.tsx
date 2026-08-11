@@ -116,7 +116,7 @@ export default function SplitPaymentPage() {
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/25">
+                        <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg shadow-primary-500/25">
                             <Users className="h-5 w-5 text-white" />
                         </div>
                         <h1
@@ -136,12 +136,12 @@ export default function SplitPaymentPage() {
                     <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                                <Receipt className="h-5 w-5 text-indigo-500" />
+                                <Receipt className="h-5 w-5 text-primary-500" />
                                 Payment Splits
                             </h2>
                             <button
                                 onClick={distributeEvenly}
-                                className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors"
+                                className="text-xs font-semibold text-primary-600 hover:text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg transition-colors"
                             >
                                 Distribute Evenly
                             </button>
@@ -160,7 +160,7 @@ export default function SplitPaymentPage() {
                                             type="text"
                                             value={split.label}
                                             onChange={(e) => updateSplit(split.id, { label: e.target.value })}
-                                            className="w-full bg-white border-transparent focus:border-indigo-500 rounded-xl px-4 py-2 text-sm shadow-sm"
+                                            className="w-full bg-white border-transparent focus:border-primary-500 rounded-xl px-4 py-2 text-sm shadow-sm"
                                         />
                                     </div>
                                     <div className="w-full md:w-32">
@@ -168,7 +168,7 @@ export default function SplitPaymentPage() {
                                         <select
                                             value={split.method}
                                             onChange={(e) => updateSplit(split.id, { method: e.target.value as any })}
-                                            className="w-full bg-white border-transparent focus:border-indigo-500 rounded-xl px-3 py-2 text-sm shadow-sm appearance-none"
+                                            className="w-full bg-white border-transparent focus:border-primary-500 rounded-xl px-3 py-2 text-sm shadow-sm appearance-none"
                                         >
                                             <option value="card">Card</option>
                                             <option value="cash">Cash</option>
@@ -184,7 +184,7 @@ export default function SplitPaymentPage() {
                                                 step="0.01"
                                                 value={split.amount || ''}
                                                 onChange={(e) => updateSplit(split.id, { amount: parseFloat(e.target.value) || 0 })}
-                                                className="w-full bg-white border-transparent focus:border-indigo-500 rounded-xl pl-9 pr-4 py-2 text-sm font-bold text-slate-900 shadow-sm"
+                                                className="w-full bg-white border-transparent focus:border-primary-500 rounded-xl pl-9 pr-4 py-2 text-sm font-bold text-slate-900 shadow-sm"
                                                 placeholder="0.00"
                                             />
                                         </div>
@@ -201,7 +201,7 @@ export default function SplitPaymentPage() {
 
                             <button
                                 onClick={addSplit}
-                                className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-500 hover:border-indigo-200 hover:bg-white transition-all flex items-center justify-center gap-2 group"
+                                className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 hover:text-primary-500 hover:border-primary-200 hover:bg-white transition-all flex items-center justify-center gap-2 group"
                             >
                                 <Plus className="h-5 w-5 group-hover:scale-110 transition-transform" />
                                 <span className="font-semibold uppercase tracking-widest text-xs">Add Payment Split</span>
@@ -300,7 +300,7 @@ export default function SplitPaymentPage() {
 
                     <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                         <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
-                            <Info className="h-4 w-4 text-indigo-500" />
+                            <Info className="h-4 w-4 text-primary-500" />
                             Split Instructions
                         </h2>
                         <ul className="text-xs text-slate-500 space-y-3 leading-relaxed">

@@ -85,7 +85,7 @@ export default function BookingSettings() {
                                 type="checkbox"
                                 checked={settings.booking_allow_online}
                                 onChange={e => setSettings({ ...settings, booking_allow_online: e.target.checked })}
-                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800"
+                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500 bg-white dark:bg-slate-800"
                             />
                             <div className="space-y-0.5">
                                 <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight block">Online Terminal Enabled</span>
@@ -98,7 +98,7 @@ export default function BookingSettings() {
                                 type="checkbox"
                                 checked={settings.booking_require_payment}
                                 onChange={e => setSettings({ ...settings, booking_require_payment: e.target.checked })}
-                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800"
+                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500 bg-white dark:bg-slate-800"
                             />
                             <div className="space-y-0.5">
                                 <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight block">Pre-emptive settlement</span>
@@ -142,7 +142,7 @@ export default function BookingSettings() {
                                 type="checkbox"
                                 checked={settings.booking_allow_cancel}
                                 onChange={e => setSettings({ ...settings, booking_allow_cancel: e.target.checked })}
-                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800"
+                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500 bg-white dark:bg-slate-800"
                             />
                             <div className="space-y-0.5">
                                 <span className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight block">Termination Rights</span>
@@ -155,7 +155,7 @@ export default function BookingSettings() {
                                 type="checkbox"
                                 checked={settings.booking_allow_reschedule}
                                 onChange={e => setSettings({ ...settings, booking_allow_reschedule: e.target.checked })}
-                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800"
+                                className="h-5 w-5 rounded-lg border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500 bg-white dark:bg-slate-800"
                             />
                             <div className="space-y-0.5">
                                 <span className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight block">Temporal Shifting</span>
@@ -178,7 +178,7 @@ export default function BookingSettings() {
                     <div className="space-y-4">
                         <Label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">Policy Legalist Text</Label>
                         <textarea
-                            className="w-full min-h-[160px] p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none resize-none leading-relaxed"
+                            className="w-full min-h-[160px] p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none resize-none leading-relaxed"
                             value={settings.booking_policy_text}
                             onChange={e => setSettings({ ...settings, booking_policy_text: e.target.value })}
                         />

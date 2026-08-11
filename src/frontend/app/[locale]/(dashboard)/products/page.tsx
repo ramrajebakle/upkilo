@@ -104,7 +104,7 @@ export default function ProductsPage() {
 
     const getCategoryColor = (category: string) => {
         switch (category) {
-            case 'Hair Care': return 'from-violet-500 to-purple-600';
+            case 'Hair Care': return 'from-primary-500 to-primary-600';
             case 'Skin Care': return 'from-rose-500 to-pink-600';
             case 'Aromatherapy': return 'from-emerald-500 to-teal-600';
             case 'Nail Care': return 'from-amber-500 to-orange-600';

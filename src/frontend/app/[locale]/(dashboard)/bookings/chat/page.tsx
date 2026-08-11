@@ -190,7 +190,7 @@ export default function ConversationalBookingPage() {
                         <h2 className="font-semibold text-slate-900">AI Booking Chat</h2>
                         <p className="text-xs text-slate-500 mt-0.5">Conversational booking assistant</p>
                     </div>
-                    <button onClick={startNewSession} className="p-1.5 bg-indigo-50 rounded-lg text-indigo-600 hover:bg-indigo-100">
+                    <button onClick={startNewSession} className="p-1.5 bg-primary-50 rounded-lg text-primary-600 hover:bg-primary-100">
                         <Plus className="h-4 w-4" />
                     </button>
                 </div>
@@ -217,7 +217,7 @@ export default function ConversationalBookingPage() {
                                 // For demo: load the welcome message for any session
                                 if (messages.length === 0) startNewSession();
                             }}
-                            className={`w-full text-left p-3 rounded-lg border transition-all ${activeSessionId === session.id ? 'bg-indigo-50 border-indigo-200' : 'border-transparent hover:bg-slate-50'}`}
+                            className={`w-full text-left p-3 rounded-lg border transition-all ${activeSessionId === session.id ? 'bg-primary-50 border-primary-200' : 'border-transparent hover:bg-slate-50'}`}
                         >
                             <div className="flex items-center gap-2 mb-1">
                                 <span className={`px-1.5 py-0.5 rounded-full text-xs font-medium ${statusColor[session.status]}`}>
@@ -234,7 +234,7 @@ export default function ConversationalBookingPage() {
                 </div>
 
                 <div className="p-3 border-t border-slate-100">
-                    <button onClick={startNewSession} className="w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center justify-center gap-2">
+                    <button onClick={startNewSession} className="w-full py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 flex items-center justify-center gap-2">
                         <Plus className="h-4 w-4" /> New Chat Session
                     </button>
                 </div>
@@ -245,8 +245,8 @@ export default function ConversationalBookingPage() {
                 {activeSessionId && messages.length > 0 ? (
                     <>
                         {/* Chat Header */}
-                        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3 bg-gradient-to-r from-primary-50 to-primary-100">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
                                 <Bot className="h-5 w-5 text-white" />
                             </div>
                             <div>
@@ -266,7 +266,7 @@ export default function ConversationalBookingPage() {
                         <div className="flex-1 overflow-y-auto p-5 space-y-4">
                             {messages.map(msg => (
                                 <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                                    <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center ${msg.role === 'assistant' ? 'bg-gradient-to-br from-indigo-500 to-purple-600' : 'bg-slate-200'}`}>
+                                    <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center ${msg.role === 'assistant' ? 'bg-gradient-to-br from-primary-500 to-primary-600' : 'bg-slate-200'}`}>
                                         {msg.role === 'assistant'
                                             ? <Bot className="h-4 w-4 text-white" />
                                             : <User className="h-4 w-4 text-slate-600" />}
@@ -275,7 +275,7 @@ export default function ConversationalBookingPage() {
                                         <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
                                             msg.role === 'assistant'
                                                 ? 'bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-sm'
-                                                : 'bg-indigo-600 text-white rounded-tr-sm'
+                                                : 'bg-primary-600 text-white rounded-tr-sm'
                                         }`}>
                                             {msg.isTyping ? (
                                                 <div className="flex gap-1.5 items-center py-1">
@@ -288,8 +288,8 @@ export default function ConversationalBookingPage() {
 
                                         {/* Booking suggestion card */}
                                         {msg.suggestedBooking && (
-                                            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-3 space-y-2 w-full">
-                                                <p className="text-xs font-semibold text-indigo-700 flex items-center gap-1">
+                                            <div className="bg-primary-50 border border-primary-200 rounded-xl p-3 space-y-2 w-full">
+                                                <p className="text-xs font-semibold text-primary-700 flex items-center gap-1">
                                                     <Calendar className="h-3.5 w-3.5" /> Suggested Booking
                                                 </p>
                                                 {msg.suggestedBooking.service && (
@@ -302,7 +302,7 @@ export default function ConversationalBookingPage() {
                                                 )}
                                                 <button
                                                     onClick={() => handleConfirmBooking(msg.suggestedBooking)}
-                                                    className="w-full py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 flex items-center justify-center gap-1"
+                                                    className="w-full py-2 bg-primary-600 text-white rounded-lg text-xs font-semibold hover:bg-primary-700 flex items-center justify-center gap-1"
                                                 >
                                                     <CheckCircle className="h-3.5 w-3.5" /> Confirm Booking
                                                 </button>
@@ -323,7 +323,7 @@ export default function ConversationalBookingPage() {
                                     key={p}
                                     onClick={() => sendMessage(p)}
                                     disabled={sending}
-                                    className="shrink-0 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-full text-slate-600 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700 transition-colors"
+                                    className="shrink-0 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-full text-slate-600 hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700 transition-colors"
                                 >
                                     {p}
                                 </button>
@@ -337,13 +337,13 @@ export default function ConversationalBookingPage() {
                                 onChange={e => setInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
                                 placeholder="Type a message... (Press Enter to send)"
-                                className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                                 disabled={sending || handedOff}
                             />
                             <button
                                 onClick={() => sendMessage()}
                                 disabled={!input.trim() || sending || handedOff}
-                                className="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+                                className="p-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-40 transition-colors"
                             >
                                 {sending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                             </button>
@@ -351,14 +351,14 @@ export default function ConversationalBookingPage() {
                     </>
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-4">
                             <Bot className="h-8 w-8 text-white" />
                         </div>
                         <h3 className="text-lg font-semibold text-slate-700">AI Booking Assistant</h3>
                         <p className="text-sm text-slate-500 mt-1 mb-6 text-center max-w-sm">
                             An AI-powered chat interface that helps clients book appointments through natural conversation
                         </p>
-                        <button onClick={startNewSession} className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700">
+                        <button onClick={startNewSession} className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700">
                             <Sparkles className="h-4 w-4" /> Start New Chat Session
                         </button>
                     </div>

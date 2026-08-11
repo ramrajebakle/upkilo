@@ -30,7 +30,7 @@ interface ReviewStats {
 const PLATFORM_COLORS: Record<string, string> = {
     Google:   'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
     Yelp:     'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
-    Facebook: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
+    Facebook: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
     Upkilo:   'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
 };
 

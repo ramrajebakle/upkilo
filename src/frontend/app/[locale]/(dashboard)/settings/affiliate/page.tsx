@@ -45,7 +45,7 @@ export default function AffiliateDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default function AffiliateDashboardPage() {
           Earn 20% recurring commission on every business you refer to Upkilo.
           Paid monthly via Stripe.
         </p>
-        <a href="/enterprise" className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+        <a href="/enterprise" className="bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700">
           Contact Us to Join
         </a>
       </div>
@@ -80,7 +80,7 @@ export default function AffiliateDashboardPage() {
         {[
           { label: 'Total Earned', value: `$${stats.totalEarnings.toFixed(2)}`, color: 'text-green-700 dark:text-green-400' },
           { label: 'Pending Payout', value: `$${stats.pendingPayout.toFixed(2)}`, color: 'text-amber-700 dark:text-amber-400' },
-          { label: 'Referrals', value: stats.managedAccounts, color: 'text-indigo-700 dark:text-indigo-400' },
+          { label: 'Referrals', value: stats.managedAccounts, color: 'text-primary-700 dark:text-primary-400' },
           { label: 'Commission Rate', value: `${stats.revenueSharePercent}%`, color: 'text-gray-800 dark:text-white' },
         ].map(s => (
           <div key={s.label} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
@@ -99,7 +99,7 @@ export default function AffiliateDashboardPage() {
           </div>
           <button
             onClick={copyLink}
-            className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${copied ? 'bg-green-600 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+            className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${copied ? 'bg-green-600 text-white' : 'bg-primary-600 text-white hover:bg-primary-700'}`}
           >
             {copied ? '✓ Copied' : 'Copy Link'}
           </button>

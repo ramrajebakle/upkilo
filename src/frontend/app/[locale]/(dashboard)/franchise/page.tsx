@@ -71,7 +71,7 @@ export default function FranchisePage() {
               { label: "Locations", value: data.totalLocations, icon: <Building2 size={16} className="text-blue-500" /> },
               { label: "Total Revenue", value: fmt(data.totalRevenue), icon: <TrendingUp size={16} className="text-green-500" /> },
               { label: "Total Bookings", value: data.totalBookings.toLocaleString(), icon: <CheckCircle2 size={16} className="text-ai-500" /> },
-              { label: "Avg Occupancy", value: `${(data.avgOccupancy ?? 0).toFixed(1)}%`, icon: <Share2 size={16} className="text-purple-500" /> },
+              { label: "Avg Occupancy", value: `${(data.avgOccupancy ?? 0).toFixed(1)}%`, icon: <Share2 size={16} className="text-primary-500" /> },
             ].map((m) => (
               <Card key={m.label}><CardContent className="pt-4 pb-4">
                 <div className="flex items-center gap-2 mb-1">{m.icon}<p className="text-xs text-text-tertiary font-medium">{m.label}</p></div>

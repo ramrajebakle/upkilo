@@ -202,7 +202,7 @@ export default function WebhooksIntegrationsPage() {
       {/* Header Bundle */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
         <div className="flex items-center gap-6">
-            <div className="p-4 bg-gradient-to-br from-primary-600 to-indigo-900 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
+            <div className="p-4 bg-gradient-to-br from-primary-600 to-primary-900 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                 <Share2 className="h-8 w-8 text-white" />
             </div>
             <div>
@@ -229,7 +229,7 @@ export default function WebhooksIntegrationsPage() {
                 className="grid grid-cols-1 md:grid-cols-3 gap-8"
             >
                 {[
-                    { label: 'Total Endpoints', value: endpoints.length, icon: Globe, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+                    { label: 'Total Endpoints', value: endpoints.length, icon: Globe, color: 'text-primary-500', bg: 'bg-primary-500/10' },
                     { label: 'Active Channels', value: endpoints.filter(e => e.isActive).length, icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
                     { label: 'Packet Volume', value: endpoints.reduce((sum, e) => sum + (e.deliveryCount || 0), 0).toLocaleString(), icon: Activity, color: 'text-primary-500', bg: 'bg-primary-500/10' }
                 ].map((stat, i) => (

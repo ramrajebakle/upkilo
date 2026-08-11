@@ -186,7 +186,7 @@ export default function EditFormPage() {
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25">
+                        <div className="p-2 bg-gradient-to-br from-blue-500 to-primary-600 rounded-xl shadow-lg shadow-blue-500/25">
                             <FileText className="h-5 w-5 text-white" />
                         </div>
                         <h1
@@ -226,7 +226,7 @@ export default function EditFormPage() {
                     >
                         <Trash2 className="h-5 w-5" />
                     </button>
-                    <button type="button" className="p-2 hover:bg-slate-100 text-slate-400 hover:text-indigo-600 rounded-xl transition-colors">
+                    <button type="button" className="p-2 hover:bg-slate-100 text-slate-400 hover:text-primary-600 rounded-xl transition-colors">
                         <Eye className="h-5 w-5" />
                     </button>
                 </div>
@@ -286,7 +286,7 @@ export default function EditFormPage() {
                                     <input
                                         {...register('isRequired')}
                                         type="checkbox"
-                                        className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500"
+                                        className="w-4 h-4 rounded text-primary-600 focus:ring-primary-500"
                                     />
                                     <span className="text-xs font-medium text-slate-700">Require before booking</span>
                                 </label>
@@ -309,10 +309,10 @@ export default function EditFormPage() {
 
                     {/* Main Builder */}
                     <div className="lg:col-span-3 space-y-6">
-                        <div className="card-elevated p-6 animate-fade-in-up shadow-indigo-500/5 border-indigo-100" style={{ animationDelay: '150ms' }}>
+                        <div className="card-elevated p-6 animate-fade-in-up shadow-primary-500/5 border-primary-100" style={{ animationDelay: '150ms' }}>
                             <div className="flex items-center justify-between mb-8">
                                 <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                    <Layout className="h-5 w-5 text-indigo-500" />
+                                    <Layout className="h-5 w-5 text-primary-500" />
                                     Form Layout
                                 </h2>
                                 <button
@@ -329,7 +329,7 @@ export default function EditFormPage() {
                                 {fields.map((field, index) => (
                                     <div 
                                         key={field.id}
-                                        className="group p-5 bg-white border border-slate-200 rounded-2xl hover:border-indigo-300 hover:shadow-md transition-all relative animate-fade-in-up"
+                                        className="group p-5 bg-white border border-slate-200 rounded-2xl hover:border-primary-300 hover:shadow-md transition-all relative animate-fade-in-up"
                                         style={{ animationDelay: `${index * 50}ms` }}
                                     >
                                         <div className="flex flex-col md:flex-row gap-4 items-start">
@@ -340,7 +340,7 @@ export default function EditFormPage() {
                                                         <input
                                                             {...register(`fields.${index}.label`)}
                                                             type="text"
-                                                            className={cn("w-full bg-slate-50 border-transparent focus:bg-white focus:border-indigo-500 rounded-xl px-4 py-2 text-sm transition-all", errors.fields?.[index]?.label && "border-red-500")}
+                                                            className={cn("w-full bg-slate-50 border-transparent focus:bg-white focus:border-primary-500 rounded-xl px-4 py-2 text-sm transition-all", errors.fields?.[index]?.label && "border-red-500")}
                                                         />
                                                         {errors.fields?.[index]?.label && <p className="text-[10px] text-red-500 mt-1">{errors.fields[index]?.label?.message}</p>}
                                                     </div>
@@ -348,7 +348,7 @@ export default function EditFormPage() {
                                                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Field Type <span className="text-red-500">*</span></label>
                                                         <select
                                                             {...register(`fields.${index}.type`)}
-                                                            className={cn("w-full bg-slate-50 border-transparent focus:bg-white focus:border-indigo-500 rounded-xl px-4 py-2 text-sm transition-all appearance-none", errors.fields?.[index]?.type && "border-red-500")}
+                                                            className={cn("w-full bg-slate-50 border-transparent focus:bg-white focus:border-primary-500 rounded-xl px-4 py-2 text-sm transition-all appearance-none", errors.fields?.[index]?.type && "border-red-500")}
                                                         >
                                                             <option value="text">Text Input</option>
                                                             <option value="textarea">Text Area</option>
@@ -368,7 +368,7 @@ export default function EditFormPage() {
                                                             placeholder="Red, Green, Blue"
                                                             defaultValue={field.options?.join(', ') || ''}
                                                             onChange={(e) => setValue(`fields.${index}.options`, e.target.value.split(',').map(s => s.trim()))}
-                                                            className="w-full bg-slate-50 border-transparent focus:bg-white focus:border-indigo-500 rounded-xl px-4 py-2 text-sm transition-all"
+                                                            className="w-full bg-slate-50 border-transparent focus:bg-white focus:border-primary-500 rounded-xl px-4 py-2 text-sm transition-all"
                                                         />
                                                     </div>
                                                 )}
@@ -399,9 +399,9 @@ export default function EditFormPage() {
                                                         <input 
                                                             {...register(`fields.${index}.required`)}
                                                             type="checkbox"
-                                                            className="w-3.5 h-3.5 rounded text-indigo-600 focus:ring-indigo-500" 
+                                                            className="w-3.5 h-3.5 rounded text-primary-600 focus:ring-primary-500" 
                                                         />
-                                                        <span className="text-[10px] font-bold text-slate-400 group-hover/req:text-indigo-400 transition-colors uppercase tracking-widest">Required</span>
+                                                        <span className="text-[10px] font-bold text-slate-400 group-hover/req:text-primary-400 transition-colors uppercase tracking-widest">Required</span>
                                                     </label>
                                                     <button 
                                                         type="button"
@@ -423,7 +423,7 @@ export default function EditFormPage() {
                                 <button
                                     type="button"
                                     onClick={addField}
-                                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-500 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all flex items-center justify-center gap-2 group"
+                                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 hover:text-primary-500 hover:border-primary-200 hover:bg-primary-50/30 transition-all flex items-center justify-center gap-2 group"
                                 >
                                     <PlusCircle className="h-5 w-5 group-hover:scale-110 transition-transform" />
                                     <span className="font-semibold uppercase tracking-widest text-xs">Add New Form Field</span>

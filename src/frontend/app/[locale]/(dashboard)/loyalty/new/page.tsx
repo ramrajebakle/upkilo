@@ -226,14 +226,14 @@ export default function NewLoyaltyRewardPage() {
                             </div>
                         </div>
 
-                        <div className="p-6 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl text-white shadow-xl animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+                        <div className="p-6 bg-gradient-to-br from-primary-900 to-slate-900 rounded-2xl text-white shadow-xl animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-2 bg-white/10 rounded-lg">
                                     <Crown className="h-5 w-5 text-amber-400" />
                                 </div>
                                 <h3 className="font-bold text-lg">VIP Experience</h3>
                             </div>
-                            <p className="text-indigo-200/70 text-sm leading-relaxed mb-4">
+                            <p className="text-primary-200/70 text-sm leading-relaxed mb-4">
                                 Create tiered rewards to encourage clients to reach higher loyalty statuses. Premium rewards drive long-term retention.
                             </p>
                             <div className="flex items-center gap-2 text-xs font-medium text-amber-400">

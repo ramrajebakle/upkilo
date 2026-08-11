@@ -70,7 +70,7 @@ export default function InvoicePage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-10 print:hidden animate-fade-in-up">
                 <Link
                     href="/payments"
-                    className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 font-bold uppercase tracking-widest text-[10px] transition-all group"
+                    className="flex items-center gap-2 text-slate-500 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 font-bold uppercase tracking-widest text-[10px] transition-all group"
                 >
                     <ArrowLeft className="h-4 w-4 transform transition-transform group-hover:-translate-x-1" />
                     Archive Directory
@@ -95,28 +95,28 @@ export default function InvoicePage() {
             </div>
 
             {/* Invoice Document */}
-            <div className="bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl shadow-indigo-500/10 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-800 animate-fade-in-up relative">
+            <div className="bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl shadow-primary-500/10 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-800 animate-fade-in-up relative">
                 {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 dark:bg-indigo-500/10 blur-[100px] -mr-48 -mt-48 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/5 dark:bg-primary-500/10 blur-[100px] -mr-48 -mt-48 pointer-events-none" />
                 
                 {/* Header Section */}
                 <div className="p-10 sm:p-16 border-b border-slate-100 dark:border-slate-800/50 bg-slate-50/30 dark:bg-slate-950/20 relative">
                     <div className="flex flex-col sm:flex-row justify-between gap-12">
                         <div className="space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="p-3.5 bg-indigo-600 rounded-2xl shadow-2xl shadow-indigo-600/30">
+                                <div className="p-3.5 bg-primary-600 rounded-2xl shadow-2xl shadow-primary-600/30">
                                     <Building2 className="h-8 w-8 text-white" />
                                 </div>
                                 <div>
                                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>
-                                        UPKILO <span className="text-indigo-600">SaaS</span>
+                                        UPKILO <span className="text-primary-600">SaaS</span>
                                     </h1>
                                     <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">Operations Unit</p>
                                 </div>
                             </div>
                             <div className="text-xs font-bold text-slate-500 dark:text-slate-400 leading-relaxed uppercase tracking-widest bg-white dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm inline-block">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
                                     123 Business Avenue, Suite 400
                                 </div>
                                 <div className="flex items-center gap-2 mb-1">
@@ -146,7 +146,7 @@ export default function InvoicePage() {
                 <div className="p-10 sm:p-16 grid grid-cols-1 sm:grid-cols-2 gap-16 relative">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <h3 className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-[0.3em]">Capital Recipient</h3>
+                            <h3 className="text-[10px] font-black text-primary-500 dark:text-primary-400 uppercase tracking-[0.3em]">Capital Recipient</h3>
                         </div>
                         <div className="space-y-2">
                             <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{invoice.clientName}</p>
@@ -200,7 +200,7 @@ export default function InvoicePage() {
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                                 <tr className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/10 transition-colors">
                                     <td className="px-8 py-8">
-                                        <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                        <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                             {invoice.serviceName || 'Strategic Business Deployment'}
                                         </p>
                                         <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase mt-1.5 tracking-widest">Enterprise Class Infrastructure</p>
@@ -219,10 +219,10 @@ export default function InvoicePage() {
                     <div className="flex flex-col lg:flex-row justify-between gap-16">
                         <div className="flex-1 space-y-10">
                             <div className="p-8 bg-white dark:bg-slate-900 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl inline-block min-w-[340px] relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 dark:bg-indigo-500/10 blur-2xl rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 dark:bg-primary-500/10 blur-2xl rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
                                 <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-6">Payment Protocol</h3>
                                 <div className="flex items-center gap-5 relative">
-                                    <div className="p-4 bg-indigo-50 dark:bg-indigo-400/10 rounded-2xl text-indigo-600 dark:text-indigo-400 shadow-inner">
+                                    <div className="p-4 bg-primary-50 dark:bg-primary-400/10 rounded-2xl text-primary-600 dark:text-primary-400 shadow-inner">
                                         <CreditCard className="h-6 w-6" />
                                     </div>
                                     <div>
@@ -249,7 +249,7 @@ export default function InvoicePage() {
                                 <span className="font-mono text-slate-900 dark:text-white">$0.00</span>
                             </div>
                             <div className="h-px bg-slate-200 dark:bg-slate-800 my-6 mx-2" />
-                            <div className="flex justify-between items-center bg-indigo-600 dark:bg-indigo-500 p-8 rounded-[32px] shadow-[0_20px_40px_rgba(79,70,229,0.3)] dark:shadow-none text-white transform hover:scale-[1.02] transition-transform">
+                            <div className="flex justify-between items-center bg-primary-600 dark:bg-primary-500 p-8 rounded-[32px] shadow-[0_20px_40px_rgba(79,70,229,0.3)] dark:shadow-none text-white transform hover:scale-[1.02] transition-transform">
                                 <span className="text-xs font-black uppercase tracking-[0.4em]">Grand Matrix</span>
                                 <span className="text-3xl font-black font-mono tracking-tighter">{formatCurrency(invoice.amount)}</span>
                             </div>
@@ -272,7 +272,7 @@ export default function InvoicePage() {
                     .text-slate-900 { color: #0f172a !important; }
                     .text-slate-500 { color: #64748b !important; }
                     .bg-slate-50\\/50 { background-color: #f8fafc !important; }
-                    .bg-indigo-600 { background-color: #4f46e5 !important; -webkit-print-color-adjust: exact; }
+                    .bg-primary-600 { background-color: #4f46e5 !important; -webkit-print-color-adjust: exact; }
                     .shadow-2xl, .shadow-xl, .shadow-lg { box-shadow: none !important; }
                     .border { border: 1px solid #e2e8f0 !important; }
                     .rounded-\\[40px\\], .rounded-[32px] { border-radius: 0 !important; }

@@ -421,7 +421,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         {/* User section */}
                         <div className="p-3 border-t border-slate-100 dark:border-white/5">
                             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 mb-2">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md flex-shrink-0">
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-md flex-shrink-0">
                                     <span className="text-white font-semibold text-xs">
                                         {user?.firstName?.[0] || 'U'}
                                     </span>
@@ -484,7 +484,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         className={cn(
                                             'p-2 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium',
                                             copilotOpen
-                                                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
+                                                ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300'
                                                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10'
                                         )}
                                         aria-label={copilotOpen ? 'Close AI Copilot' : 'Open AI Copilot'}

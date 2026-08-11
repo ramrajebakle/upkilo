@@ -133,7 +133,7 @@ export default function ClientSegmentsPage() {
                                     <input
                                         type="number"
                                         placeholder="Min. Amount"
-                                        className="input pl-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500"
+                                        className="input pl-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500 focus:ring-2 focus:ring-primary-500"
                                         value={filters.minSpend}
                                         onChange={(e) => setFilters({ ...filters, minSpend: e.target.value })}
                                     />
@@ -197,7 +197,7 @@ export default function ClientSegmentsPage() {
                                     <input
                                         type="text"
                                         placeholder="Enter tag..."
-                                        className="input pl-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500"
+                                        className="input pl-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500 focus:ring-2 focus:ring-primary-500"
                                         value={filters.tag}
                                         onChange={(e) => setFilters({ ...filters, tag: e.target.value })}
                                     />

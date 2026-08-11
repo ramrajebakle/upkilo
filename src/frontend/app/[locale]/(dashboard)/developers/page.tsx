@@ -88,7 +88,7 @@ export default function DevelopersDashboardPage() {
       {/* Header Bundle */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
         <div className="flex items-center gap-6">
-            <div className="p-4 bg-gradient-to-br from-indigo-600 to-slate-900 rounded-[28px] shadow-2xl shadow-indigo-500/20 border border-indigo-500/20">
+            <div className="p-4 bg-gradient-to-br from-primary-600 to-slate-900 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                 <Terminal className="h-8 w-8 text-white" />
             </div>
             <div>
@@ -121,7 +121,7 @@ export default function DevelopersDashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 {[
-                    { label: 'Total Requests', value: usageData?.totalRequests?.toLocaleString() || 0, icon: Globe, color: 'text-indigo-500', trend: '+12.4%' },
+                    { label: 'Total Requests', value: usageData?.totalRequests?.toLocaleString() || 0, icon: Globe, color: 'text-primary-500', trend: '+12.4%' },
                     { label: 'Avg Latency', value: `${usageData?.averageLatency || 0}ms`, icon: Zap, color: 'text-emerald-500', trend: '-2ms' },
                     { label: 'Active Tokens', value: apiKeys.length, icon: Key, color: 'text-primary-500', trend: 'Stable' }
                 ].map((stat, i) => (
@@ -139,11 +139,11 @@ export default function DevelopersDashboardPage() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 blur-3xl rounded-full" />
         </div>
 
-        <div className="p-10 bg-gradient-to-br from-indigo-900 to-slate-950 border border-slate-800 rounded-[40px] shadow-2xl space-y-8 relative overflow-hidden group">
+        <div className="p-10 bg-gradient-to-br from-primary-900 to-slate-950 border border-slate-800 rounded-[40px] shadow-2xl space-y-8 relative overflow-hidden group">
             <div className="relative z-10 flex flex-col h-full justify-between">
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                        <Database className="h-5 w-5 text-indigo-400" />
+                        <Database className="h-5 w-5 text-primary-400" />
                         <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Isolated Sandbox</h3>
                     </div>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
@@ -154,7 +154,7 @@ export default function DevelopersDashboardPage() {
                 <Button 
                     onClick={handleCreateSandbox} 
                     loading={provisioning}
-                    className="h-14 mt-8 w-full bg-white text-indigo-900 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all active:scale-95 shadow-xl"
+                    className="h-14 mt-8 w-full bg-white text-primary-900 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all active:scale-95 shadow-xl"
                 >
                     <RefreshCw className={cn("h-4 w-4 mr-3", provisioning && "animate-spin")} /> Deploy Sandbox Node
                 </Button>
@@ -238,7 +238,7 @@ export default function DevelopersDashboardPage() {
       {/* Protocol Resources */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {[
-            { title: 'Interactive API Docs', desc: 'SWA-GER Spec v2.0 // REST Architecture', icon: Laptop, color: 'text-indigo-400' },
+            { title: 'Interactive API Docs', desc: 'SWA-GER Spec v2.0 // REST Architecture', icon: Laptop, color: 'text-primary-400' },
             { title: 'Node.js Core SDK', desc: 'npm install @upkilo/node-protocol', icon: Server, color: 'text-emerald-400' }
         ].map((res, i) => (
             <button key={i} className="p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl hover:border-primary-500/20 transition-all text-left flex items-center justify-between group">

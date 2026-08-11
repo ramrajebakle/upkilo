@@ -215,7 +215,7 @@ export default function WaitlistPage() {
                                                 )}
                                                 <button 
                                                     onClick={() => handleNotify(entry.id)}
-                                                    className="text-indigo-600 hover:text-indigo-700 font-medium text-sm"
+                                                    className="text-primary-600 hover:text-primary-700 font-medium text-sm"
                                                 >
                                                     {t('notify')}
                                                 </button>

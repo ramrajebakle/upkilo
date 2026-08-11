@@ -35,7 +35,7 @@ const typeIcons: Record<string, React.ReactNode> = {
 };
 
 const typeColors: Record<string, string> = {
-  video: 'bg-purple-50 text-purple-700',
+  video: 'bg-primary-50 text-primary-700',
   pdf: 'bg-red-50 text-red-700',
   article: 'bg-blue-50 text-blue-700',
   download: 'bg-emerald-50 text-emerald-700',
@@ -119,7 +119,7 @@ export default function MembershipContentPage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Content', value: stats.total, icon: <BookOpen className="h-5 w-5 text-indigo-500" /> },
+          { label: 'Total Content', value: stats.total, icon: <BookOpen className="h-5 w-5 text-primary-500" /> },
           { label: 'Gated Content', value: stats.gated, icon: <Lock className="h-5 w-5 text-amber-500" /> },
           { label: 'Total Views', value: stats.totalViews.toLocaleString(), icon: <Eye className="h-5 w-5 text-emerald-500" /> },
         ].map(stat => (
@@ -194,7 +194,7 @@ export default function MembershipContentPage() {
                 id="gated"
                 checked={form.isGated}
                 onChange={e => setForm(p => ({ ...p, isGated: e.target.checked }))}
-                className="h-4 w-4 rounded border-slate-300 text-indigo-600"
+                className="h-4 w-4 rounded border-slate-300 text-primary-600"
               />
               <label htmlFor="gated" className="text-sm text-slate-700 flex items-center gap-1.5">
                 <Lock className="h-3.5 w-3.5 text-amber-500" /> Gated content (requires membership)
@@ -219,7 +219,7 @@ export default function MembershipContentPage() {
             <button
               key={type}
               onClick={() => setTypeFilter(type)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${typeFilter === type ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${typeFilter === type ? 'bg-primary-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
             >
               {type}
             </button>

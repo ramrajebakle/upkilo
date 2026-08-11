@@ -146,7 +146,7 @@ export default function AdminLogsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                       <Shield className="h-4 w-4 text-indigo-500" />
+                       <Shield className="h-4 w-4 text-primary-500" />
                        {log.action}
                     </div>
                   </TableCell>

@@ -187,7 +187,7 @@ export default function CommissionReportsPage() {
                 <div className="grid grid-cols-4 gap-4">
                     {[
                         { label: 'Total Revenue', value: `$${report.totalRevenue.toLocaleString()}`, icon: <DollarSign className="h-5 w-5 text-slate-500" />, color: 'text-slate-800' },
-                        { label: 'Total Commissions', value: `$${report.totalCommissions.toLocaleString()}`, icon: <Award className="h-5 w-5 text-indigo-500" />, color: 'text-indigo-700' },
+                        { label: 'Total Commissions', value: `$${report.totalCommissions.toLocaleString()}`, icon: <Award className="h-5 w-5 text-primary-500" />, color: 'text-primary-700' },
                         { label: 'Paid Out', value: `$${report.paidCommissions.toLocaleString()}`, icon: <TrendingUp className="h-5 w-5 text-emerald-500" />, color: 'text-emerald-700' },
                         { label: 'Pending', value: `$${report.pendingCommissions.toLocaleString()}`, icon: <BarChart2 className="h-5 w-5 text-amber-500" />, color: 'text-amber-700' },
                     ].map(s => (
@@ -209,7 +209,7 @@ export default function CommissionReportsPage() {
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     placeholder="Search staff..."
-                    className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
             </div>
 
@@ -218,7 +218,7 @@ export default function CommissionReportsPage() {
                 {filtered.map(staff => (
                     <div key={staff.staffId} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
                         <div className="p-4 flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
                                 {staff.staffName.split(' ').map(n => n[0]).join('')}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -230,7 +230,7 @@ export default function CommissionReportsPage() {
                                 <div className="flex gap-5 mt-1 flex-wrap">
                                     <span className="text-xs text-slate-600">{staff.totalBookings} bookings</span>
                                     <span className="text-xs text-slate-600">Revenue: <strong>${staff.totalRevenue.toLocaleString()}</strong></span>
-                                    <span className="text-xs text-slate-600">Commission: <strong className="text-indigo-600">${staff.totalCommission.toLocaleString()}</strong></span>
+                                    <span className="text-xs text-slate-600">Commission: <strong className="text-primary-600">${staff.totalCommission.toLocaleString()}</strong></span>
                                     <span className="text-xs text-emerald-600">Paid: ${staff.paidCommission}</span>
                                     {staff.pendingCommission > 0 && (
                                         <span className="text-xs text-amber-600 font-medium">Pending: ${staff.pendingCommission}</span>
@@ -276,7 +276,7 @@ export default function CommissionReportsPage() {
                                                 <td className="px-4 py-2.5 text-xs text-slate-600">{entry.clientName}</td>
                                                 <td className="px-4 py-2.5 text-xs text-slate-800 text-right">${entry.serviceRevenue}</td>
                                                 <td className="px-4 py-2.5 text-xs text-slate-600 text-right">{entry.commissionRate}%</td>
-                                                <td className="px-4 py-2.5 text-xs font-semibold text-indigo-600 text-right">${entry.commissionEarned}</td>
+                                                <td className="px-4 py-2.5 text-xs font-semibold text-primary-600 text-right">${entry.commissionEarned}</td>
                                                 <td className="px-4 py-2.5 text-center">
                                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${entry.isPaid ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                                                         {entry.isPaid ? 'Paid' : 'Pending'}

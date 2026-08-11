@@ -253,7 +253,7 @@ export default function ConflictsPage() {
                         <button
                             onClick={bulkAutoResolve}
                             disabled={bulkResolving || filteredConflicts.filter(c => c.severity !== 'critical').length === 0}
-                            className="flex items-center gap-2 px-3 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 disabled:opacity-40 transition-colors"
+                            className="flex items-center gap-2 px-3 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-40 transition-colors"
                         >
                             {bulkResolving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                             Auto-Resolve
@@ -278,12 +278,12 @@ export default function ConflictsPage() {
                     <div className="flex items-center gap-2">
                         <label className="text-sm font-medium text-gray-700">From</label>
                         <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
                     </div>
                     <div className="flex items-center gap-2">
                         <label className="text-sm font-medium text-gray-700">To</label>
                         <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
                     </div>
                     <button onClick={fetchConflicts}
                         className="px-4 py-1.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
@@ -332,10 +332,10 @@ export default function ConflictsPage() {
 
                 {/* Resolution panel */}
                 {resolutionForm && (
-                    <div className="bg-violet-50 border border-violet-200 rounded-xl p-5 space-y-4 shadow-sm">
+                    <div className="bg-primary-50 border border-primary-200 rounded-xl p-5 space-y-4 shadow-sm">
                         <div className="flex items-center justify-between">
                             <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-violet-600" />
+                                <Zap className="w-4 h-4 text-primary-600" />
                                 Resolve Booking #{resolutionForm.bookingId.slice(0, 8)}
                             </h3>
                             <button onClick={() => setResolutionForm(null)}>
@@ -357,7 +357,7 @@ export default function ConflictsPage() {
                                         className={cn(
                                             'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-all',
                                             resolutionForm.type === opt.value
-                                                ? 'bg-violet-600 text-white border-violet-600'
+                                                ? 'bg-primary-600 text-white border-primary-600'
                                                 : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                                         )}
                                     >
@@ -374,7 +374,7 @@ export default function ConflictsPage() {
                                     type="datetime-local"
                                     value={resolutionForm.newStartTime ?? ''}
                                     onChange={e => setResolutionForm(p => p ? { ...p, newStartTime: e.target.value } : p)}
-                                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                                 />
                             </div>
                         )}
@@ -386,7 +386,7 @@ export default function ConflictsPage() {
                                     value={resolutionForm.newStaffId ?? ''}
                                     onChange={e => setResolutionForm(p => p ? { ...p, newStaffId: e.target.value } : p)}
                                     placeholder="Staff UUID"
-                                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 w-64"
+                                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 w-64"
                                 />
                             </div>
                         )}
@@ -394,7 +394,7 @@ export default function ConflictsPage() {
                         <button
                             onClick={handleResolve}
                             disabled={!!resolvingId}
-                            className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-bold hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-bold hover:bg-primary-700 disabled:opacity-50 transition-colors"
                         >
                             {resolvingId ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                             Apply Resolution
@@ -460,7 +460,7 @@ export default function ConflictsPage() {
                                                         key={bi}
                                                         className={cn(
                                                             'p-3 rounded-xl border text-sm',
-                                                            bi === 0 ? 'border-violet-200 bg-violet-50' : 'border-blue-200 bg-blue-50'
+                                                            bi === 0 ? 'border-primary-200 bg-primary-50' : 'border-blue-200 bg-blue-50'
                                                         )}
                                                     >
                                                         <p className="font-semibold text-gray-900 mb-1">{booking.clientName}</p>
@@ -476,7 +476,7 @@ export default function ConflictsPage() {
                                                         </div>
                                                         <button
                                                             onClick={() => setResolutionForm({ bookingId: booking.id, type: 'reschedule' })}
-                                                            className="mt-3 flex items-center gap-1 text-xs font-medium text-violet-700 hover:text-violet-900"
+                                                            className="mt-3 flex items-center gap-1 text-xs font-medium text-primary-700 hover:text-primary-900"
                                                         >
                                                             <Zap className="w-3 h-3" />
                                                             Resolve this
@@ -487,12 +487,12 @@ export default function ConflictsPage() {
 
                                             {/* AI suggestion */}
                                             {conflict.suggestedResolution && (
-                                                <div className="flex items-start justify-between gap-3 p-3 bg-violet-50 border border-violet-200 rounded-lg text-sm">
+                                                <div className="flex items-start justify-between gap-3 p-3 bg-primary-50 border border-primary-200 rounded-lg text-sm">
                                                     <div className="flex items-start gap-2">
-                                                        <Sparkles className="w-4 h-4 text-violet-600 mt-0.5 flex-shrink-0" />
+                                                        <Sparkles className="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" />
                                                         <div>
-                                                            <p className="font-medium text-violet-800">AI Suggestion</p>
-                                                            <p className="text-violet-600 text-xs mt-0.5">
+                                                            <p className="font-medium text-primary-800">AI Suggestion</p>
+                                                            <p className="text-primary-600 text-xs mt-0.5">
                                                                 {conflict.suggestedResolution.action === 'reschedule' ? 'Reschedule' :
                                                                  conflict.suggestedResolution.action === 'cancel' ? 'Cancel' : 'Reassign staff'}
                                                                 {' — '}
@@ -503,7 +503,7 @@ export default function ConflictsPage() {
                                                     <button
                                                         onClick={() => applyAISuggestion(conflict)}
                                                         disabled={resolvingId === conflict.suggestedResolution.targetBookingId}
-                                                        className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 bg-violet-600 text-white rounded-lg text-xs font-medium hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                                                        className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
                                                     >
                                                         {resolvingId === conflict.suggestedResolution.targetBookingId ? (
                                                             <Loader2 className="w-3 h-3 animate-spin" />

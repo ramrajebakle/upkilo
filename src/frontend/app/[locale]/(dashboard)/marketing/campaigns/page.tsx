@@ -139,7 +139,7 @@ export default function CampaignsPage() {
       {/* Header Bundle */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
         <div className="flex items-center gap-6">
-            <div className="p-4 bg-gradient-to-br from-indigo-600 to-indigo-950 rounded-[28px] shadow-2xl shadow-indigo-500/20 border border-indigo-500/20">
+            <div className="p-4 bg-gradient-to-br from-primary-600 to-primary-950 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                 <Megaphone className="h-8 w-8 text-white" />
             </div>
             <div>
@@ -162,7 +162,7 @@ export default function CampaignsPage() {
           {[
               { label: 'Cumulative Reach', value: stats.totalSent?.toLocaleString() || '0', icon: Send, color: 'text-blue-500', trend: '+18.5%' },
               { label: 'Density Yield (Open)', value: `${stats.avgOpenRate?.toFixed(1) || '0.0'}%`, icon: Eye, color: 'text-emerald-500', trend: 'Optimal' },
-              { label: 'Interaction Delta', value: `${stats.avgClickRate?.toFixed(1) || '0.0'}%`, icon: MousePointer, color: 'text-indigo-500', trend: 'Stable' },
+              { label: 'Interaction Delta', value: `${stats.avgClickRate?.toFixed(1) || '0.0'}%`, icon: MousePointer, color: 'text-primary-500', trend: 'Stable' },
               { label: 'Scheduled Nodes', value: campaigns.filter(c => c.status === 'scheduled').length, icon: Clock, color: 'text-amber-500', trend: 'Ready' }
           ].map((stat, i) => (
               <div key={i} className="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-4 group overflow-hidden relative">
@@ -236,7 +236,7 @@ export default function CampaignsPage() {
                           <div className="xl:col-span-4 flex items-center gap-8">
                               <div className={cn(
                                   "w-16 h-16 rounded-[24px] flex items-center justify-center text-white shadow-xl transition-all group-hover:scale-110",
-                                  campaign.type === 'Email' ? 'bg-indigo-600' : campaign.type === 'SMS' ? 'bg-violet-600' : 'bg-blue-600'
+                                  campaign.type === 'Email' ? 'bg-primary-600' : campaign.type === 'SMS' ? 'bg-primary-600' : 'bg-blue-600'
                               )}>
                                   {getTypeIcon(campaign.type)}
                               </div>

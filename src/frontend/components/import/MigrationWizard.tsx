@@ -135,7 +135,7 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                                     onClick={() => { setProvider('acuity'); setStep(2); }}
                                     className="p-6 border-2 rounded-2xl hover:border-primary-500 hover:bg-primary-50 transition-all flex flex-col items-center gap-3 text-center"
                                 >
-                                    <div className="h-12 w-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
+                                    <div className="h-12 w-12 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center">
                                         <Database className="h-6 w-6" />
                                     </div>
                                     <span className="font-bold">Acuity</span>
@@ -150,7 +150,7 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                         <div className="space-y-6">
                             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl mb-4">
                                 <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                    {provider === 'calendly' ? <Calendar className="h-5 w-5 text-blue-600" /> : <Database className="h-5 w-5 text-indigo-600" />}
+                                    {provider === 'calendly' ? <Calendar className="h-5 w-5 text-blue-600" /> : <Database className="h-5 w-5 text-primary-600" />}
                                 </div>
                                 <div>
                                     <h4 className="font-bold capitalize">{provider} Credentials</h4>

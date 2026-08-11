@@ -128,7 +128,7 @@ export default function FeatureFlagsPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Total Flags', value: flags.length, icon: <Flag className="h-5 w-5 text-indigo-500" /> },
+                    { label: 'Total Flags', value: flags.length, icon: <Flag className="h-5 w-5 text-primary-500" /> },
                     { label: 'Enabled for Tenant', value: activeCount, icon: <Zap className="h-5 w-5 text-emerald-500" /> },
                     { label: 'Disabled', value: flags.length - activeCount, icon: <Shield className="h-5 w-5 text-slate-400" /> },
                 ].map(s => (
@@ -241,7 +241,7 @@ export default function FeatureFlagsPage() {
                                 ) : (
                                     <button
                                         onClick={() => { setEditingRollout(flag.name); setRolloutValue(flag.rolloutPercentage); }}
-                                        className="flex items-center gap-1 mx-auto text-sm text-slate-600 hover:text-indigo-600"
+                                        className="flex items-center gap-1 mx-auto text-sm text-slate-600 hover:text-primary-600"
                                     >
                                         <Percent className="h-3 w-3" />
                                         {flag.rolloutPercentage}%

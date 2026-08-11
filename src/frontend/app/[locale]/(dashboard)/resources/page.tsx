@@ -112,7 +112,7 @@ export default function ResourcesPage() {
                 actions={
                     <Link 
                         href="/resources/new"
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/25 hover:shadow-xl transition-all hover:-translate-y-0.5 text-sm"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 hover:shadow-xl transition-all hover:-translate-y-0.5 text-sm"
                     >
                         <Plus className="h-4 w-4" />
                         Add Resource
@@ -128,7 +128,7 @@ export default function ResourcesPage() {
                     placeholder="Search resources..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-300 transition-all"
                 />
             </div>
 
@@ -158,7 +158,7 @@ export default function ResourcesPage() {
                         return (
                             <div
                                 key={resource.id}
-                                className="bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-xl hover:border-indigo-200 transition-all group animate-fade-in-up"
+                                className="bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-xl hover:border-primary-200 transition-all group animate-fade-in-up"
                                 style={{ animationDelay: `${i * 80}ms` }}
                             >
                                 <div className="flex items-start justify-between mb-4">
@@ -199,7 +199,7 @@ export default function ResourcesPage() {
                                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <Link 
                                             href={`/resources/${resource.id}`}
-                                            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-indigo-600"
+                                            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-primary-600"
                                             title="Edit"
                                         >
                                             <Edit2 className="h-4 w-4" />

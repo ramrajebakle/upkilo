@@ -143,7 +143,7 @@ export default function CouponsPage() {
                                 <tr>
                                     <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">
                                         <div className="flex flex-col items-center gap-2">
-                                            <div className="h-5 w-5 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"></div>
+                                            <div className="h-5 w-5 border-2 border-primary-300 border-t-primary-600 rounded-full animate-spin"></div>
                                             <span>{common('loading')}</span>
                                         </div>
                                     </td>
@@ -163,7 +163,7 @@ export default function CouponsPage() {
                                     <tr key={coupon.id} className="group hover:bg-slate-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
-                                                <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-bold font-mono tracking-wider border border-indigo-100 uppercase">
+                                                <span className="px-2 py-1 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold font-mono tracking-wider border border-primary-100 uppercase">
                                                     {coupon.code}
                                                 </span>
                                             </div>
@@ -228,7 +228,7 @@ export default function CouponsPage() {
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                                <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200">
                                     <Ticket className="h-5 w-5 text-white" />
                                 </div>
                                 <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>{t('createCoupon')}</h2>
@@ -248,7 +248,7 @@ export default function CouponsPage() {
                                     type="text"
                                     required
                                     placeholder="e.g. SUMMER2024"
-                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-mono font-bold tracking-widest uppercase placeholder:font-sans placeholder:tracking-normal placeholder:font-normal"
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-mono font-bold tracking-widest uppercase placeholder:font-sans placeholder:tracking-normal placeholder:font-normal"
                                     value={formData.code}
                                     onChange={(e) => setFormData({...formData, code: e.target.value.toUpperCase()})}
                                 />
@@ -260,7 +260,7 @@ export default function CouponsPage() {
                                         {t('type')}
                                     </label>
                                     <select
-                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
                                         value={formData.discountType}
                                         onChange={(e) => setFormData({...formData, discountType: e.target.value as any})}
                                     >
@@ -277,7 +277,7 @@ export default function CouponsPage() {
                                         required
                                         min="1"
                                         step={formData.discountType === 'Percentage' ? "1" : "0.01"}
-                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold"
+                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold"
                                         value={formData.discountValue}
                                         onChange={(e) => setFormData({...formData, discountValue: e.target.value})}
                                         placeholder={formData.discountType === 'Percentage' ? "20" : "15.00"}
@@ -295,7 +295,7 @@ export default function CouponsPage() {
                                         type="number"
                                         min="1"
                                         placeholder={t('unlimited')}
-                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
                                         value={formData.maxUses}
                                         onChange={(e) => setFormData({...formData, maxUses: e.target.value})}
                                     />
@@ -308,7 +308,7 @@ export default function CouponsPage() {
                                         type="number"
                                         min="0"
                                         placeholder={t('noMinimum')}
-                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
                                         value={formData.minimumOrderAmount}
                                         onChange={(e) => setFormData({...formData, minimumOrderAmount: e.target.value})}
                                     />
@@ -323,7 +323,7 @@ export default function CouponsPage() {
                                     </label>
                                     <input
                                         type="date"
-                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-xs"
+                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all text-xs"
                                         value={formData.validFrom}
                                         onChange={(e) => setFormData({...formData, validFrom: e.target.value})}
                                     />
@@ -335,7 +335,7 @@ export default function CouponsPage() {
                                     </label>
                                     <input
                                         type="date"
-                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-xs"
+                                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all text-xs"
                                         value={formData.validUntil}
                                         onChange={(e) => setFormData({...formData, validUntil: e.target.value})}
                                     />
@@ -353,7 +353,7 @@ export default function CouponsPage() {
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="flex-[2] py-3 bg-indigo-600 text-white text-sm font-bold rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-70 disabled:active:scale-100"
+                                    className="flex-[2] py-3 bg-primary-600 text-white text-sm font-bold rounded-2xl hover:bg-primary-700 shadow-lg shadow-primary-200 transition-all active:scale-95 disabled:opacity-70 disabled:active:scale-100"
                                 >
                                     {submitting ? t('creating') : t('createCoupon')}
                                 </button>

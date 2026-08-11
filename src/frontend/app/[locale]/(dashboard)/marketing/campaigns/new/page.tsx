@@ -134,7 +134,7 @@ export default function NewCampaignPage() {
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/25">
+                        <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg shadow-primary-500/25">
                             <Send className="h-5 w-5 text-white" />
                         </div>
                         <h1
@@ -153,7 +153,7 @@ export default function NewCampaignPage() {
                 <div className="flex items-center justify-between relative max-w-2xl mx-auto">
                     <div className="absolute left-0 right-0 top-5 h-0.5 bg-slate-100" />
                     <div
-                        className="absolute left-0 top-5 h-0.5 bg-indigo-500 transition-all duration-500"
+                        className="absolute left-0 top-5 h-0.5 bg-primary-500 transition-all duration-500"
                         style={{ width: `${((step - 1) / 2) * 100}%` }}
                     />
                     {[
@@ -167,7 +167,7 @@ export default function NewCampaignPage() {
                                 <div className={cn(
                                     'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300',
                                     step >= s.num
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
+                                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-200'
                                         : 'bg-white border-2 border-slate-100 text-slate-400'
                                 )}>
                                     {step > s.num ? <CheckCircle2 className="h-6 w-6" /> : <Icon className="h-5 w-5" />}
@@ -213,13 +213,13 @@ export default function NewCampaignPage() {
                                                 className={cn(
                                                     'p-6 rounded-2xl border-2 transition-all flex flex-col items-center gap-3',
                                                     campaignType === 'email'
-                                                        ? 'border-indigo-600 bg-indigo-50/50 shadow-md'
+                                                        ? 'border-primary-600 bg-primary-50/50 shadow-md'
                                                         : 'border-slate-100 opacity-60 hover:opacity-100'
                                                 )}
                                             >
                                                 <div className={cn(
                                                     'p-3 rounded-xl',
-                                                    campaignType === 'email' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'
+                                                    campaignType === 'email' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
                                                 )}>
                                                     <Mail className="h-6 w-6" />
                                                 </div>
@@ -231,13 +231,13 @@ export default function NewCampaignPage() {
                                                 className={cn(
                                                     'p-6 rounded-2xl border-2 transition-all flex flex-col items-center gap-3',
                                                     campaignType === 'sms'
-                                                        ? 'border-purple-600 bg-purple-50/50 shadow-md'
+                                                        ? 'border-primary-600 bg-primary-50/50 shadow-md'
                                                         : 'border-slate-100 opacity-60 hover:opacity-100'
                                                 )}
                                             >
                                                 <div className={cn(
                                                     'p-3 rounded-xl',
-                                                    campaignType === 'sms' ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-600'
+                                                    campaignType === 'sms' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
                                                 )}>
                                                     <MessageSquare className="h-6 w-6" />
                                                 </div>
@@ -261,7 +261,7 @@ export default function NewCampaignPage() {
                                             className={cn(
                                                 'p-4 rounded-xl border-2 text-left transition-all',
                                                 segmentId === segment.id
-                                                    ? 'border-indigo-600 bg-indigo-50 shadow-sm'
+                                                    ? 'border-primary-600 bg-primary-50 shadow-sm'
                                                     : 'border-slate-100 hover:border-slate-200'
                                             )}
                                         >
@@ -385,7 +385,7 @@ export default function NewCampaignPage() {
                                     </div>
                                     <div className="flex justify-between py-3 border-b border-slate-50 text-sm">
                                         <span className="text-slate-500">Type</span>
-                                        <span className="font-bold text-indigo-600 flex items-center gap-2 capitalize">
+                                        <span className="font-bold text-primary-600 flex items-center gap-2 capitalize">
                                             {campaignType === 'email' ? <Mail className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
                                             {campaignType}
                                         </span>
@@ -416,7 +416,7 @@ export default function NewCampaignPage() {
                         <div className="space-y-6">
                             <div className="card-elevated p-6">
                                 <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                    <Calendar className="h-5 w-5 text-indigo-500" />
+                                    <Calendar className="h-5 w-5 text-primary-500" />
                                     Schedule
                                 </h3>
                                 <div className="space-y-4">
@@ -425,7 +425,7 @@ export default function NewCampaignPage() {
                                             type="radio"
                                             name="schedule"
                                             defaultChecked
-                                            className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                            className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                                         />
                                         <span className="text-sm font-medium text-slate-700">Send Immediately</span>
                                     </label>
@@ -433,7 +433,7 @@ export default function NewCampaignPage() {
                                         <input
                                             type="radio"
                                             name="schedule"
-                                            className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                            className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                                         />
                                         <span className="text-sm font-medium text-slate-700">Schedule for later</span>
                                     </label>
@@ -445,7 +445,7 @@ export default function NewCampaignPage() {
                                     type="button"
                                     onClick={handleSubmit((data) => onSubmit(data, false))}
                                     disabled={loading}
-                                    className="w-full btn btn-primary py-4 shadow-xl shadow-indigo-500/25 relative overflow-hidden group"
+                                    className="w-full btn btn-primary py-4 shadow-xl shadow-primary-500/25 relative overflow-hidden group"
                                 >
                                     {loading ? (
                                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />

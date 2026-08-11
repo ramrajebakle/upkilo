@@ -27,7 +27,7 @@ interface WaitlistEntry {
 const STATUS_COLORS: Record<string, string> = {
     Pending: 'bg-blue-50 text-blue-700',
     Waiting: 'bg-amber-50 text-amber-700',
-    Notified: 'bg-purple-50 text-purple-700',
+    Notified: 'bg-primary-50 text-primary-700',
     Converted: 'bg-emerald-50 text-emerald-700',
     Booked: 'bg-emerald-50 text-emerald-700',
     Expired: 'bg-slate-100 text-slate-500',
@@ -129,7 +129,7 @@ export default function WaitlistPage() {
                     {[
                         { label: 'Total', value: summary.total, icon: <Users className="h-5 w-5 text-slate-500" />, color: 'text-slate-900' },
                         { label: 'Waiting', value: summary.pending, icon: <Clock className="h-5 w-5 text-amber-500" />, color: 'text-amber-700' },
-                        { label: 'Notified', value: summary.notified, icon: <Bell className="h-5 w-5 text-purple-500" />, color: 'text-purple-700' },
+                        { label: 'Notified', value: summary.notified, icon: <Bell className="h-5 w-5 text-primary-500" />, color: 'text-primary-700' },
                         { label: 'Converted', value: summary.converted, icon: <CheckCircle className="h-5 w-5 text-emerald-500" />, color: 'text-emerald-700' },
                     ].map(s => (
                         <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
@@ -181,7 +181,7 @@ export default function WaitlistPage() {
                         <div key={entry.id} className={`grid grid-cols-12 gap-3 px-5 py-3 items-center ${idx < filteredEntries.length - 1 ? 'border-b border-slate-50' : ''} hover:bg-slate-50`}>
                             <div className="col-span-3">
                                 <div className="flex items-center gap-2">
-                                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                                         {entry.firstName?.[0] || entry.email?.[0]?.toUpperCase() || 'W'}
                                     </div>
                                     <div>
@@ -211,7 +211,7 @@ export default function WaitlistPage() {
                                     <button
                                         onClick={() => handleNotify(entry)}
                                         disabled={notifyingId === entry.id}
-                                        className="p-1.5 rounded-lg text-purple-500 hover:bg-purple-50 hover:text-purple-700"
+                                        className="p-1.5 rounded-lg text-primary-500 hover:bg-primary-50 hover:text-primary-700"
                                         title="Notify client"
                                     >
                                         {notifyingId === entry.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Bell className="h-3.5 w-3.5" />}

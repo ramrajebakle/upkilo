@@ -150,7 +150,7 @@ export default function WorkflowsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total Workflows', value: stats.total, icon: <Zap className="h-5 w-5 text-indigo-500" /> },
+          { label: 'Total Workflows', value: stats.total, icon: <Zap className="h-5 w-5 text-primary-500" /> },
           { label: 'Active', value: stats.active, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
           { label: 'Total Executions', value: stats.totalExecutions.toLocaleString(), icon: <BarChart3 className="h-5 w-5 text-blue-500" /> },
           { label: 'Avg Success Rate', value: `${stats.avgSuccessRate}%`, icon: <CheckCircle className="h-5 w-5 text-green-500" /> },
@@ -182,7 +182,7 @@ export default function WorkflowsPage() {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${statusFilter === s ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${statusFilter === s ? 'bg-primary-600 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
             >
               {s.charAt(0).toUpperCase() + s.slice(1)}
             </button>
@@ -222,7 +222,7 @@ export default function WorkflowsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 flex-wrap">
                       <h3
-                        className="font-semibold text-slate-900 dark:text-white hover:text-indigo-600 cursor-pointer"
+                        className="font-semibold text-slate-900 dark:text-white hover:text-primary-600 cursor-pointer"
                         onClick={() => router.push(`/automation/workflows/new?id=${workflow.id}`)}
                       >
                         {workflow.name}

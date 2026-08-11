@@ -146,12 +146,12 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdItemList) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdBreadcrumb) }} />
       {/* Hero */}
-      <section className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white py-16 px-4">
+      <section className="bg-gradient-to-br from-primary-600 to-primary-700 text-white py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Best {humanCategory} in {humanCity}
           </h1>
-          <p className="text-indigo-100 text-lg">
+          <p className="text-primary-100 text-lg">
             {data ? `${data.total} businesses ready to book online` : `Discover and book local ${humanCategory.toLowerCase()} businesses`}
           </p>
         </div>
@@ -165,7 +165,7 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
             <h2 className="text-xl font-semibold text-gray-700 mb-2">No businesses found yet</h2>
             <p className="text-gray-500">
               Are you a {humanCategory.toLowerCase()} business in {humanCity}?{' '}
-              <a href="/register" className="text-indigo-600 hover:underline font-medium">List your business for free →</a>
+              <a href="/register" className="text-primary-600 hover:underline font-medium">List your business for free →</a>
             </p>
           </div>
         ) : (
@@ -187,10 +187,10 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
                     </div>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">{listing.city}</span>
+                    <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium">{listing.city}</span>
                     <a
                       href={`/book/${listing.id}`}
-                      className="bg-indigo-600 text-white text-sm px-4 py-1.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+                      className="bg-primary-600 text-white text-sm px-4 py-1.5 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
                     >
                       Book Now
                     </a>
@@ -212,7 +212,7 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
               {data.listings.length === data.pageSize && (
                 <a
                   href={`/book/${category}/${city}?page=${page + 1}`}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700"
                 >
                   Next →
                 </a>
@@ -222,10 +222,10 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
         )}
 
         {/* CTA for businesses */}
-        <div className="mt-12 bg-indigo-50 border border-indigo-100 rounded-2xl p-8 text-center">
-          <h3 className="text-lg font-bold text-indigo-900 mb-2">Own a {humanCategory} business in {humanCity}?</h3>
-          <p className="text-indigo-700 text-sm mb-4">Join Upkilo to accept online bookings, automate reminders, and grow your client base.</p>
-          <a href="/register" className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+        <div className="mt-12 bg-primary-50 border border-primary-100 rounded-2xl p-8 text-center">
+          <h3 className="text-lg font-bold text-primary-900 mb-2">Own a {humanCategory} business in {humanCity}?</h3>
+          <p className="text-primary-700 text-sm mb-4">Join Upkilo to accept online bookings, automate reminders, and grow your client base.</p>
+          <a href="/register" className="inline-block bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700">
             List Your Business Free →
           </a>
         </div>

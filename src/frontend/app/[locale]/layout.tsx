@@ -89,15 +89,25 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const isRtl = locale === 'ar' || locale === 'he' || locale === 'fa';
 
+  // The three font variables MUST sit on <html>, not <body>.
+  //
+  // globals.css declares `--font-sans: var(--font-inter), ...` inside @theme, which Tailwind
+  // emits at :root — i.e. on <html>. A custom property is resolved in the scope that declares
+  // it, so a :root declaration cannot see a variable defined on <body>, its own descendant.
+  // With the variables on <body>, --font-sans computed to the empty string, the .font-sans
+  // utility emitted nothing, and every element on every page fell back to Times New Roman.
+  // Putting them on <html> puts --font-inter in the same scope that reads it.
   return (
-    <html lang={locale} dir={isRtl ? 'rtl' : 'ltr'} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={isRtl ? 'rtl' : 'ltr'}
+      className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       {/* Variables, not inter.className. The className hardcodes Inter onto body and leaves
           the other two faces unreachable; exposing all three as variables lets globals.css
           decide which face body text, display headings and code each use. */}
-      <body
-        className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} font-sans`}
-        suppressHydrationWarning
-      >
+      <body className="font-sans" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>
             <AuthBridge />

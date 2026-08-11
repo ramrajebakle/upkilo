@@ -99,7 +99,7 @@ export default function ReferralsPage() {
           { label: "Total referrals", value: analytics.totalReferrals, icon: Users, color: "text-blue-500" },
           { label: "Completed", value: analytics.completedReferrals, icon: Check, color: "text-green-500" },
           { label: "Pending", value: analytics.pendingReferrals, icon: TrendingUp, color: "text-amber-500" },
-          { label: "Rewards paid", value: `$${analytics.totalRewards.toFixed(0)}`, icon: Gift, color: "text-purple-500" },
+          { label: "Rewards paid", value: `$${analytics.totalRewards.toFixed(0)}`, icon: Gift, color: "text-primary-500" },
         ].map((s) => (
           <Card key={s.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">

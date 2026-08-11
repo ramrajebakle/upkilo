@@ -280,7 +280,7 @@ export default function BusinessSettingsPage() {
                                 </ul>
                             </div>
 
-                            <div className="p-6 bg-gradient-to-br from-indigo-900/40 to-slate-950 rounded-3xl border border-indigo-500/20 space-y-4">
+                            <div className="p-6 bg-gradient-to-br from-primary-900/40 to-slate-950 rounded-3xl border border-primary-500/20 space-y-4">
                                 <div className="flex items-center gap-2">
                                     <Target className="h-4 w-4 text-emerald-400" />
                                     <span className="text-[10px] font-black text-white uppercase tracking-widest">Next Step Protocol</span>

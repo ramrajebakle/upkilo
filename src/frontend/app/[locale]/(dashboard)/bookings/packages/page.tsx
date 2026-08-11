@@ -150,7 +150,7 @@ export default function ClassPackagesPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Active Packages', value: packages.filter(p => p.isActive).length, icon: <Package className="h-5 w-5 text-indigo-500" /> },
+                    { label: 'Active Packages', value: packages.filter(p => p.isActive).length, icon: <Package className="h-5 w-5 text-primary-500" /> },
                     { label: 'Total Credits Available', value: packages.reduce((s, p) => s + p.credits, 0), icon: <Tag className="h-5 w-5 text-emerald-500" /> },
                     { label: 'Starting From', value: `$${Math.min(...packages.map(p => p.price || 0)).toFixed(0)}`, icon: <DollarSign className="h-5 w-5 text-amber-500" /> },
                 ].map(s => (
@@ -257,7 +257,7 @@ export default function ClassPackagesPage() {
                     {packages.map(pkg => (
                         <div key={pkg.id} className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
                             <div className="flex items-start gap-3">
-                                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white shrink-0">
+                                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white shrink-0">
                                     <Package className="h-5 w-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -268,7 +268,7 @@ export default function ClassPackagesPage() {
 
                             <div className="flex gap-4">
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-indigo-600">{pkg.credits}</div>
+                                    <div className="text-2xl font-bold text-primary-600">{pkg.credits}</div>
                                     <div className="text-xs text-slate-500">credits</div>
                                 </div>
                                 <div className="text-center">
@@ -298,7 +298,7 @@ export default function ClassPackagesPage() {
                                 >
                                     <CreditCard className="h-3.5 w-3.5 mr-1" /> Sell to Client
                                 </Button>
-                                <button onClick={() => handleEdit(pkg)} className="p-1.5 text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 rounded-lg">
+                                <button onClick={() => handleEdit(pkg)} className="p-1.5 text-slate-400 hover:text-primary-500 hover:bg-primary-50 rounded-lg">
                                     <Edit3 className="h-3.5 w-3.5" />
                                 </button>
                                 <button onClick={() => handleDelete(pkg.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg">

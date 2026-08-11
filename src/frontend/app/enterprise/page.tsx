@@ -68,9 +68,9 @@ export default function EnterprisePage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white py-24 px-4">
+      <section className="bg-gradient-to-br from-slate-900 to-primary-950 text-white py-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <span className="inline-block bg-indigo-500/20 text-indigo-300 text-sm font-semibold px-4 py-1.5 rounded-full mb-6 border border-indigo-500/30">
+          <span className="inline-block bg-primary-500/20 text-primary-300 text-sm font-semibold px-4 py-1.5 rounded-full mb-6 border border-primary-500/30">
             Enterprise
           </span>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
@@ -80,7 +80,7 @@ export default function EnterprisePage() {
             Multi-location chains, franchise networks, and enterprise service brands choose Upkilo for
             the reliability, compliance, and customization they need at scale.
           </p>
-          <a href="#contact" className="inline-block bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-indigo-500 transition-colors">
+          <a href="#contact" className="inline-block bg-primary-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-primary-500 transition-colors">
             Talk to Enterprise Sales →
           </a>
         </div>
@@ -151,12 +151,12 @@ export default function EnterprisePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
                   <input required value={form.companyName} onChange={e => setForm(p => ({ ...p, companyName: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
                   <input value={form.contactName} onChange={e => setForm(p => ({ ...p, contactName: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
               </div>
 
@@ -164,12 +164,12 @@ export default function EnterprisePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Work Email *</label>
                   <input required type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                   <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
               </div>
 
@@ -177,7 +177,7 @@ export default function EnterprisePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Team Size</label>
                   <select value={form.teamSize} onChange={e => setForm(p => ({ ...p, teamSize: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none">
                     <option value="">Select...</option>
                     <option value="10-50">10–50 staff</option>
                     <option value="51-200">51–200 staff</option>
@@ -189,14 +189,14 @@ export default function EnterprisePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Current Platform</label>
                   <input placeholder="e.g. Mindbody, Vagaro..." value={form.currentPlatform}
                     onChange={e => setForm(p => ({ ...p, currentPlatform: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Primary Use Case</label>
                 <select value={form.useCase} onChange={e => setForm(p => ({ ...p, useCase: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none">
                   <option value="">Select...</option>
                   <option value="multi-location">Multi-Location Management</option>
                   <option value="franchise">Franchise Network</option>
@@ -210,11 +210,11 @@ export default function EnterprisePage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tell us more (optional)</label>
                 <textarea rows={3} value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
                   placeholder="What are you trying to accomplish? What's your timeline?"
-                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none resize-none" />
+                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none resize-none" />
               </div>
 
               <button type="submit" disabled={submitting}
-                className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                className="w-full bg-primary-600 text-white py-3 rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                 {submitting && <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />}
                 {submitting ? 'Submitting...' : 'Get in Touch →'}
               </button>

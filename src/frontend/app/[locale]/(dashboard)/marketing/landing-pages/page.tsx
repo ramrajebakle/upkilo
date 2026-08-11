@@ -186,7 +186,7 @@ export default function LandingPagesPage() {
             {/* Stats */}
             <div className="grid grid-cols-4 gap-4">
                 {[
-                    { label: 'Total Pages', value: stats.total, icon: <FileText className="h-5 w-5 text-indigo-500" /> },
+                    { label: 'Total Pages', value: stats.total, icon: <FileText className="h-5 w-5 text-primary-500" /> },
                     { label: 'Published', value: stats.published, icon: <Globe className="h-5 w-5 text-emerald-500" /> },
                     { label: 'Total Views', value: stats.totalViews.toLocaleString(), icon: <Eye className="h-5 w-5 text-blue-500" /> },
                     { label: 'Avg Conv Rate', value: `${stats.avgConversion}%`, icon: <BarChart2 className="h-5 w-5 text-amber-500" /> },
@@ -224,8 +224,8 @@ export default function LandingPagesPage() {
                     {filtered.map(page => (
                         <div key={page.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:shadow-md transition-shadow group">
                             {/* Preview area */}
-                            <div className="h-28 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-800/50 flex items-center justify-center relative">
-                                <Globe className="h-10 w-10 text-indigo-200 dark:text-slate-700" />
+                            <div className="h-28 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-slate-800 dark:to-slate-800/50 flex items-center justify-center relative">
+                                <Globe className="h-10 w-10 text-primary-200 dark:text-slate-700" />
                                 <div className="absolute top-2 left-2">
                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusColor[page.status] || 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-transparent'}`}>
                                         {page.status || (page.isPublished ? 'published' : 'draft')}
@@ -265,7 +265,7 @@ export default function LandingPagesPage() {
                                     </button>
                                     <button
                                         onClick={() => openSeoModal(page)}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
+                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
                                         title="SEO Settings"
                                     >
                                         <Settings className="h-3.5 w-3.5" />
@@ -318,7 +318,7 @@ export default function LandingPagesPage() {
                                 <textarea
                                     value={seoForm.metaDescription}
                                     onChange={e => setSeoForm(p => ({ ...p, metaDescription: e.target.value.slice(0, 160) }))}
-                                    className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm h-20 resize-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm h-20 resize-none focus:ring-2 focus:ring-primary-500"
                                     placeholder="Brief description for search results..."
                                 />
                                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{seoForm.metaDescription.length}/160</p>
@@ -363,7 +363,7 @@ export default function LandingPagesPage() {
                         <div className="p-6">
                             {!analytics ? (
                                 <div className="flex items-center justify-center py-8">
-                                    <RefreshCw className="h-6 w-6 animate-spin text-indigo-500" />
+                                    <RefreshCw className="h-6 w-6 animate-spin text-primary-500" />
                                 </div>
                             ) : analytics.error ? (
                                 <p className="text-center text-slate-500 py-8">No analytics data available</p>

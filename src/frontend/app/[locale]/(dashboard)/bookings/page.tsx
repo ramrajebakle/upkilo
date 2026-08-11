@@ -151,7 +151,7 @@ export default function BookingsPage() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div className="animate-fade-in-up">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25">
+                        <div className="p-2 bg-gradient-to-br from-blue-500 to-primary-600 rounded-xl shadow-lg shadow-blue-500/25">
                             <CalendarDays className="h-5 w-5 text-white" />
                         </div>
                         <h1
@@ -176,10 +176,10 @@ export default function BookingsPage() {
             {/* Stats Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total', value: todayBookings, icon: CalendarDays, gradient: 'from-blue-500 to-indigo-600', shadow: 'shadow-blue-500/25' },
+                    { label: 'Total', value: todayBookings, icon: CalendarDays, gradient: 'from-blue-500 to-primary-600', shadow: 'shadow-blue-500/25' },
                     { label: 'Confirmed', value: confirmedCount, icon: CheckCircle, gradient: 'from-emerald-500 to-emerald-700', shadow: 'shadow-emerald-500/25' },
                     { label: 'Pending', value: pendingCount, icon: Clock, gradient: 'from-amber-500 to-orange-600', shadow: 'shadow-amber-500/25' },
-                    { label: 'Expected Revenue', value: formatCurrency(todayRevenue), icon: DollarSign, gradient: 'from-violet-500 to-violet-700', shadow: 'shadow-violet-500/25' },
+                    { label: 'Expected Revenue', value: formatCurrency(todayRevenue), icon: DollarSign, gradient: 'from-primary-500 to-primary-700', shadow: 'shadow-primary-500/25' },
                 ].map((stat, i) => {
                     const Icon = stat.icon;
                     return (
@@ -284,7 +284,7 @@ export default function BookingsPage() {
                         return (
                             <div
                                 key={booking.id}
-                                className={cn("card-elevated group overflow-hidden animate-fade-in-up transition-all", selectedIds.has(booking.id) && "ring-2 ring-indigo-500 ring-offset-1")}
+                                className={cn("card-elevated group overflow-hidden animate-fade-in-up transition-all", selectedIds.has(booking.id) && "ring-2 ring-primary-500 ring-offset-1")}
                                 style={{ animationDelay: `${400 + index * 100}ms` }}
                             >
                                 <div className="p-5">
@@ -294,7 +294,7 @@ export default function BookingsPage() {
                                             type="checkbox"
                                             checked={selectedIds.has(booking.id)}
                                             onChange={() => toggleSelect(booking.id)}
-                                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-indigo-600 focus:ring-indigo-500 cursor-pointer shrink-0"
+                                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-primary-600 focus:ring-primary-500 cursor-pointer shrink-0"
                                             onClick={e => e.stopPropagation()}
                                         />
                                         {/* Time Block */}

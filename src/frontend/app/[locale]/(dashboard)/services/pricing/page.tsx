@@ -242,7 +242,7 @@ export default function DynamicPricingPage() {
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <TrendingUp className="w-6 h-6 text-violet-600 dark:text-violet-400" />
+                            <TrendingUp className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                             Dynamic Pricing
                         </h1>
                         <p className="text-gray-500 dark:text-slate-400 text-sm mt-0.5">
@@ -251,7 +251,7 @@ export default function DynamicPricingPage() {
                     </div>
                     <button
                         onClick={() => setShowForm(true)}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-violet-600 dark:bg-violet-500 text-white rounded-xl font-medium text-sm hover:bg-violet-700 dark:hover:bg-violet-600 transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 dark:bg-primary-500 text-white rounded-xl font-medium text-sm hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors shadow-sm"
                     >
                         <Plus className="w-4 h-4" />
                         New Rule
@@ -263,7 +263,7 @@ export default function DynamicPricingPage() {
                 {/* KPI cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {[
-                        { label: 'Total Rules', value: rules.length, icon: Tag, color: 'bg-violet-50 dark:bg-violet-900/10 text-violet-600 dark:text-violet-400' },
+                        { label: 'Total Rules', value: rules.length, icon: Tag, color: 'bg-primary-50 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400' },
                         { label: 'Active Rules', value: activeRules, icon: CheckCircle2, color: 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600 dark:text-emerald-400' },
                         { label: 'Surge Rules', value: surgeRules, icon: TrendingUp, color: 'bg-red-50 dark:bg-red-900/10 text-red-500 dark:text-red-400' },
                         { label: 'Discount Rules', value: discountRules, icon: TrendingDown, color: 'bg-blue-50 dark:bg-blue-900/10 text-blue-500 dark:text-blue-400' },
@@ -288,7 +288,7 @@ export default function DynamicPricingPage() {
 
                         {loading ? (
                             <div className="flex justify-center py-12">
-                                <Loader2 className="w-6 h-6 text-violet-500 animate-spin" />
+                                <Loader2 className="w-6 h-6 text-primary-500 animate-spin" />
                             </div>
                         ) : rules.length === 0 ? (
                             <div className="bg-white dark:bg-slate-900 rounded-xl border border-dashed border-gray-200 dark:border-slate-800 p-10 text-center">
@@ -296,7 +296,7 @@ export default function DynamicPricingPage() {
                                 <p className="text-gray-500 dark:text-slate-500 text-sm">No pricing rules yet.</p>
                                 <button
                                     onClick={() => setShowForm(true)}
-                                    className="mt-3 text-violet-600 dark:text-violet-400 text-sm font-medium hover:underline"
+                                    className="mt-3 text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline"
                                 >
                                     Create your first rule →
                                 </button>
@@ -419,7 +419,7 @@ export default function DynamicPricingPage() {
                     <div className="space-y-4">
                         <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-5">
                             <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
-                                <Zap className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
+                                <Zap className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                                 Price Simulator
                             </h3>
 
@@ -429,7 +429,7 @@ export default function DynamicPricingPage() {
                                     <select
                                         value={simServiceId}
                                         onChange={e => setSimServiceId(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     >
                                         <option value="">Select service...</option>
                                         {services.map(s => (
@@ -448,7 +448,7 @@ export default function DynamicPricingPage() {
                                         type="datetime-local"
                                         value={simDate}
                                         onChange={e => setSimDate(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     />
                                 </div>
 
@@ -461,14 +461,14 @@ export default function DynamicPricingPage() {
                                         min={0}
                                         value={simDemand}
                                         onChange={e => setSimDemand(+e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     />
                                 </div>
 
                                 <button
                                     onClick={runSimulation}
                                     disabled={simLoading || !simServiceId}
-                                    className="w-full py-2 bg-violet-600 dark:bg-violet-500 text-white rounded-lg text-sm font-medium hover:bg-violet-700 dark:hover:bg-violet-600 disabled:opacity-40 transition-all flex items-center justify-center gap-2 shadow-sm"
+                                    className="w-full py-2 bg-primary-600 dark:bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-700 dark:hover:bg-primary-600 disabled:opacity-40 transition-all flex items-center justify-center gap-2 shadow-sm"
                                 >
                                     {simLoading ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -486,7 +486,7 @@ export default function DynamicPricingPage() {
                                         <span className="font-medium text-slate-900 dark:text-white">{formatCurrency(simResult.basePrice)}</span>
                                     </div>
                                     {simResult.appliedRules.map((r: any, i: number) => (
-                                        <div key={i} className="flex justify-between text-sm mb-1 text-violet-600 dark:text-violet-400 bg-violet-50/50 dark:bg-violet-900/10 px-2 py-0.5 rounded">
+                                        <div key={i} className="flex justify-between text-sm mb-1 text-primary-600 dark:text-primary-400 bg-primary-50/50 dark:bg-primary-900/10 px-2 py-0.5 rounded">
                                             <span>{r.name}</span>
                                             <span className="font-semibold">
                                                 {r.adjustment >= 0 ? '+' : ''}
@@ -561,7 +561,7 @@ export default function DynamicPricingPage() {
                                     placeholder="e.g. Weekend Surge"
                                     value={form.name}
                                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                                    className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                    className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                 />
                             </div>
 
@@ -580,7 +580,7 @@ export default function DynamicPricingPage() {
                                                 className={cn(
                                                     'flex items-center gap-2 p-2.5 rounded-lg border text-left text-xs transition-all',
                                                     form.type === rt.value
-                                                        ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/10'
+                                                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10'
                                                         : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600'
                                                 )}
                                             >
@@ -603,7 +603,7 @@ export default function DynamicPricingPage() {
                                         onChange={e =>
                                             setForm(f => ({ ...f, adjustmentType: e.target.value as 'percentage' | 'fixed' }))
                                         }
-                                        className="px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 appearance-none"
+                                        className="px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 appearance-none"
                                     >
                                         <option value="percentage">% Percentage</option>
                                         <option value="fixed">$ Fixed amount</option>
@@ -614,7 +614,7 @@ export default function DynamicPricingPage() {
                                         onChange={e =>
                                             setForm(f => ({ ...f, adjustmentValue: parseFloat(e.target.value) || 0 }))
                                         }
-                                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                         placeholder="e.g. 20 for +20%"
                                     />
                                 </div>
@@ -636,7 +636,7 @@ export default function DynamicPricingPage() {
                                             className={cn(
                                                 'px-2.5 py-1 rounded-full text-xs font-medium border transition-all',
                                                 form.applicableDays.includes(day)
-                                                    ? 'bg-violet-600 text-white border-violet-600'
+                                                    ? 'bg-primary-600 text-white border-primary-600'
                                                     : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
                                             )}
                                         >
@@ -656,7 +656,7 @@ export default function DynamicPricingPage() {
                                         type="time"
                                         value={form.startTime}
                                         onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     />
                                 </div>
                                 <div>
@@ -667,7 +667,7 @@ export default function DynamicPricingPage() {
                                         type="time"
                                         value={form.endTime}
                                         onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     />
                                 </div>
                             </div>
@@ -682,7 +682,7 @@ export default function DynamicPricingPage() {
                                         type="date"
                                         value={form.startDate}
                                         onChange={e => setForm(f => ({ ...f, startDate: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     />
                                 </div>
                                 <div>
@@ -693,7 +693,7 @@ export default function DynamicPricingPage() {
                                         type="date"
                                         value={form.endDate}
                                         onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     />
                                 </div>
                             </div>
@@ -712,7 +712,7 @@ export default function DynamicPricingPage() {
                                             setForm(f => ({ ...f, minBookingsThreshold: parseInt(e.target.value) || undefined }))
                                         }
                                         placeholder="e.g. 10"
-                                        className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-shadow"
+                                        className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition-shadow"
                                     />
                                 </div>
                             )}
@@ -733,7 +733,7 @@ export default function DynamicPricingPage() {
                                                     type="checkbox"
                                                     checked={form.serviceIds.includes(s.id)}
                                                     onChange={() => toggleServiceId(s.id)}
-                                                    className="rounded accent-violet-600 dark:bg-slate-700 dark:border-slate-600"
+                                                    className="rounded accent-primary-600 dark:bg-slate-700 dark:border-slate-600"
                                                 />
                                                 <span className="text-sm text-gray-700 dark:text-slate-300">{s.name}</span>
                                                 <span className="text-xs text-gray-400 dark:text-slate-500 ml-auto">
@@ -756,7 +756,7 @@ export default function DynamicPricingPage() {
                             <button
                                 onClick={handleCreate}
                                 disabled={saving || !form.name.trim()}
-                                className="flex-1 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 disabled:opacity-40 transition-colors flex items-center justify-center gap-2"
+                                className="flex-1 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 disabled:opacity-40 transition-colors flex items-center justify-center gap-2"
                             >
                                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                                 Create Rule

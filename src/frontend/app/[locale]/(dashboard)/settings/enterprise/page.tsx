@@ -73,15 +73,15 @@ export default function EnterpriseSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-indigo-500" />
+              <ShieldCheck className="h-5 w-5 text-primary-500" />
               Enterprise SSO (Task 1737)
             </CardTitle>
             <CardDescription>Configure SAML 2.0 or OIDC for your team.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 rounded-xl border border-dashed flex flex-col items-center justify-center py-8 text-center space-y-4">
-              <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center">
-                <Plus className="h-6 w-6 text-indigo-500" />
+              <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center">
+                <Plus className="h-6 w-6 text-primary-500" />
               </div>
               <div>
                 <p className="text-sm font-medium">No SSO Identity Providers</p>

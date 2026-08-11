@@ -71,7 +71,7 @@ export default function TipsPage() {
           { label: "Total tips", value: stats.totalTips, icon: Heart, color: "text-red-400" },
           { label: "Total amount", value: `$${stats.totalAmount.toFixed(2)}`, icon: DollarSign, color: "text-green-500" },
           { label: "Average tip", value: `$${stats.averageTip.toFixed(2)}`, icon: TrendingUp, color: "text-blue-500" },
-          { label: "Top earner", value: stats.topStaffName ?? "—", icon: Users, color: "text-purple-500" },
+          { label: "Top earner", value: stats.topStaffName ?? "—", icon: Users, color: "text-primary-500" },
         ].map((s) => (
           <Card key={s.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">

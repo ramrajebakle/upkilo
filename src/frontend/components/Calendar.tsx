@@ -175,7 +175,7 @@ export default function CalendarView() {
                     <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                         <button 
                             onClick={() => { const d = new Date(currentDate); d.setDate(d.getDate() - 7); setCurrentDate(d); }} 
-                            className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                            className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400"
                         >
                             <ChevronLeft className="h-4.5 w-4.5" />
                         </button>
@@ -184,14 +184,14 @@ export default function CalendarView() {
                         </span>
                         <button 
                             onClick={() => { const d = new Date(currentDate); d.setDate(d.getDate() + 7); setCurrentDate(d); }} 
-                            className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                            className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400"
                         >
                             <ChevronRight className="h-4.5 w-4.5" />
                         </button>
                     </div>
                     <button 
                         onClick={() => setCurrentDate(new Date())} 
-                        className="px-4 py-2 text-xs font-bold uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 rounded-xl transition-all border border-indigo-100 dark:border-indigo-800 shadow-sm active:scale-95"
+                        className="px-4 py-2 text-xs font-bold uppercase tracking-widest bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/60 rounded-xl transition-all border border-primary-100 dark:border-primary-800 shadow-sm active:scale-95"
                     >
                         Today
                     </button>
@@ -206,7 +206,7 @@ export default function CalendarView() {
                                 className={cn(
                                     'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all', 
                                     colorMode === m 
-                                        ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600 dark:text-white' 
+                                        ? 'bg-white dark:bg-slate-700 shadow-sm text-primary-600 dark:text-white' 
                                         : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
                                 )}
                             >
@@ -222,7 +222,7 @@ export default function CalendarView() {
                                 className={cn(
                                     'px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all', 
                                     view === v 
-                                        ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600 dark:text-white' 
+                                        ? 'bg-white dark:bg-slate-700 shadow-sm text-primary-600 dark:text-white' 
                                         : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
                                 )}
                             >
@@ -233,7 +233,7 @@ export default function CalendarView() {
                     <button onClick={fetchBookings} className="p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all text-slate-500 dark:text-slate-400 border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
                         <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
                     </button>
-                    <Link href="/bookings/new" className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/25 transition-all hover:-translate-y-0.5 active:scale-95">
+                    <Link href="/bookings/new" className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 text-xs uppercase tracking-widest shadow-lg shadow-primary-500/25 transition-all hover:-translate-y-0.5 active:scale-95">
                         <Plus className="h-4 w-4" /> New Booking
                     </Link>
                 </div>
@@ -257,13 +257,13 @@ export default function CalendarView() {
                 <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800">
                     <div className="p-4 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50" />
                     {weekDates.map((date, i) => (
-                        <div key={i} className={cn('p-3 text-center border-r border-slate-200 dark:border-slate-800 last:border-r-0 transition-colors', isToday(date) ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : 'bg-white dark:bg-slate-900')}>
+                        <div key={i} className={cn('p-3 text-center border-r border-slate-200 dark:border-slate-800 last:border-r-0 transition-colors', isToday(date) ? 'bg-primary-50/50 dark:bg-primary-900/10' : 'bg-white dark:bg-slate-900')}>
                             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">{weekDays[date.getDay()]}</p>
                             <div className="flex items-center justify-center">
                                 <span className={cn(
                                     'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all',
                                     isToday(date) 
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' 
+                                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30' 
                                         : 'text-slate-900 dark:text-white'
                                 )}>
                                     {date.getDate()}
@@ -287,7 +287,7 @@ export default function CalendarView() {
 
                         {/* Day columns */}
                         {weekDates.map((date, dayIndex) => (
-                            <div key={dayIndex} className={cn('relative border-r border-slate-200 dark:border-slate-800 last:border-r-0 transition-colors', isToday(date) && 'bg-indigo-50/20 dark:bg-indigo-900/5')}>
+                            <div key={dayIndex} className={cn('relative border-r border-slate-200 dark:border-slate-800 last:border-r-0 transition-colors', isToday(date) && 'bg-primary-50/20 dark:bg-primary-900/5')}>
                                 {hours.map(hour => (
                                     <div key={hour} className="h-[60px] border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors" />
                                 ))}

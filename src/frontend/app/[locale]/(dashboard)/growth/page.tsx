@@ -387,7 +387,7 @@ export default function GrowthPage() {
             {/* SEO status card */}
             <div className="card-elevated p-6">
                 <div className="flex items-center gap-3 mb-5">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-primary-600 rounded-xl">
                         <Search className="h-5 w-5 text-white" />
                     </div>
                     <div>
@@ -450,7 +450,7 @@ export default function GrowthPage() {
             {/* Quick links */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                    { label: 'Campaigns',      href: '/marketing/campaigns',     icon: Megaphone,    color: 'text-violet-500' },
+                    { label: 'Campaigns',      href: '/marketing/campaigns',     icon: Megaphone,    color: 'text-primary-500' },
                     { label: 'Landing Pages',  href: '/marketing/landing-pages', icon: Globe,        color: 'text-blue-500' },
                     { label: 'Loyalty',        href: '/loyalty',                 icon: Award,        color: 'text-emerald-500' },
                     { label: 'Analytics',      href: '/analytics',               icon: BarChart3,    color: 'text-amber-500' },

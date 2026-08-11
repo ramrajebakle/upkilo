@@ -61,12 +61,12 @@ export default function DiscoverPage() {
             <p className="text-xs text-gray-400 mt-2">📍 {b.city}{b.country ? `, ${b.country}` : ''}</p>
           )}
           {b.industry && (
-            <span className="inline-block mt-2 text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">{b.industry}</span>
+            <span className="inline-block mt-2 text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">{b.industry}</span>
           )}
         </div>
         <a
           href={b.bookingUrl}
-          className="shrink-0 bg-indigo-600 text-white text-sm px-4 py-2 rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+          className="shrink-0 bg-primary-600 text-white text-sm px-4 py-2 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
         >
           Book Now
         </a>
@@ -77,10 +77,10 @@ export default function DiscoverPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Search */}
-      <section className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white py-20 px-4">
+      <section className="bg-gradient-to-br from-primary-600 to-primary-700 text-white py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-3">Find & Book Local Services</h1>
-          <p className="text-indigo-100 mb-8">Salons, spas, gyms, therapists — book online in seconds.</p>
+          <p className="text-primary-100 mb-8">Salons, spas, gyms, therapists — book online in seconds.</p>
 
           <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-xl p-2 flex gap-2 flex-wrap md:flex-nowrap">
             <input
@@ -97,7 +97,7 @@ export default function DiscoverPage() {
             />
             <button
               type="submit"
-              className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-500 shrink-0"
+              className="bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-500 shrink-0"
             >
               Search
             </button>
@@ -109,7 +109,7 @@ export default function DiscoverPage() {
       <section className="max-w-5xl mx-auto py-12 px-4">
         {loading && (
           <div className="text-center py-16">
-            <div className="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto mb-3" />
+            <div className="animate-spin w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-3" />
             <p className="text-gray-500">Searching...</p>
           </div>
         )}
@@ -152,7 +152,7 @@ export default function DiscoverPage() {
                   <button
                     key={cat}
                     onClick={() => { setQ(cat); }}
-                    className="bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-medium text-gray-700 hover:border-indigo-400 hover:text-indigo-700 transition-colors"
+                    className="bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-medium text-gray-700 hover:border-primary-400 hover:text-primary-700 transition-colors"
                   >
                     {cat}
                   </button>
@@ -161,10 +161,10 @@ export default function DiscoverPage() {
             </div>
 
             {/* CTA for businesses */}
-            <div className="mt-16 bg-indigo-50 border border-indigo-100 rounded-2xl p-8 text-center">
-              <h3 className="text-lg font-bold text-indigo-900 mb-2">Own a service business?</h3>
-              <p className="text-indigo-700 text-sm mb-4">List your business on Upkilo Discover for free and get more clients.</p>
-              <a href="/register" className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+            <div className="mt-16 bg-primary-50 border border-primary-100 rounded-2xl p-8 text-center">
+              <h3 className="text-lg font-bold text-primary-900 mb-2">Own a service business?</h3>
+              <p className="text-primary-700 text-sm mb-4">List your business on Upkilo Discover for free and get more clients.</p>
+              <a href="/register" className="inline-block bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700">
                 List Your Business Free →
               </a>
             </div>

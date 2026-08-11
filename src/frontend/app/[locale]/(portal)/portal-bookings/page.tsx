@@ -135,7 +135,7 @@ export default function CustomerBookingsPage() {
                                 style={{ animationDelay: `${i * 100}ms` }}
                             >
                                 <div className="flex flex-col md:flex-row">
-                                    <div className="w-full md:w-2 bg-gradient-to-b from-primary to-indigo-500" />
+                                    <div className="w-full md:w-2 bg-gradient-to-b from-primary to-primary-500" />
                                     <div className="flex-1 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2">

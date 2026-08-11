@@ -201,7 +201,7 @@ export default function StaffTimesheetsPage() {
         {[
           { label: "Total hours (period)", value: formatDuration(totalHoursThisPeriod), icon: Clock, color: "text-blue-500" },
           { label: "Active sessions", value: activeSessions, icon: CheckCircle2, color: "text-green-500" },
-          { label: "Staff members", value: staff.length, icon: Users, color: "text-purple-500" },
+          { label: "Staff members", value: staff.length, icon: Users, color: "text-primary-500" },
         ].map((s) => (
           <Card key={s.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">

@@ -91,7 +91,7 @@ export default function FinancialIntelligencePage() {
                 { label: "Avg Transaction Value", value: `$${(summary.averageTransactionValue ?? 0).toFixed(0)}`, icon: <BarChart3 className="h-5 w-5 text-blue-400" /> },
                 { label: "Revenue per Client", value: `$${(summary.revenuePerClient ?? 0).toFixed(0)}`, icon: <TrendingUp className="h-5 w-5 text-ai-400" /> },
                 { label: "Churn Revenue Impact", value: `-$${(summary.churnImpact ?? 0).toLocaleString()}`, negative: true, icon: <TrendingDown className="h-5 w-5 text-red-400" /> },
-                { label: "Next Month Forecast", value: `$${(summary.forecastNextMonth ?? 0).toLocaleString()}`, icon: <ArrowUpRight className="h-5 w-5 text-purple-400" /> },
+                { label: "Next Month Forecast", value: `$${(summary.forecastNextMonth ?? 0).toLocaleString()}`, icon: <ArrowUpRight className="h-5 w-5 text-primary-400" /> },
                 { label: "MoM Growth", value: `${(summary.revenueGrowth ?? 0) >= 0 ? "+" : ""}${(summary.revenueGrowth ?? 0).toFixed(1)}%`, positive: (summary.revenueGrowth ?? 0) >= 0, icon: <TrendingUp className="h-5 w-5 text-text-tertiary" /> },
               ].map((s, i) => (
                 <Card key={i}>

@@ -34,7 +34,7 @@ const statusColors: Record<string, string> = {
 const planColors: Record<string, string> = {
   basic: 'bg-slate-100 text-slate-700',
   premium: 'bg-blue-100 text-blue-700',
-  vip: 'bg-purple-100 text-purple-700',
+  vip: 'bg-primary-100 text-primary-700',
 };
 
 export default function MembersProgressPage() {
@@ -101,7 +101,7 @@ export default function MembersProgressPage() {
         {[
           { label: 'Total Members', value: stats.total, icon: <Users className="h-5 w-5 text-blue-500" /> },
           { label: 'Active', value: stats.active, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
-          { label: 'Avg Progress', value: `${stats.avgProgress}%`, icon: <TrendingUp className="h-5 w-5 text-indigo-500" /> },
+          { label: 'Avg Progress', value: `${stats.avgProgress}%`, icon: <TrendingUp className="h-5 w-5 text-primary-500" /> },
           { label: 'Top Streak', value: `${stats.topStreaker?.streakDays || 0}d`, icon: <Award className="h-5 w-5 text-amber-500" /> },
         ].map(stat => (
           <div key={stat.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
@@ -178,7 +178,7 @@ export default function MembersProgressPage() {
             <div key={member.memberId} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
               <div className="flex items-center gap-4">
                 {/* Avatar */}
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
                   {member.memberName.charAt(0).toUpperCase()}
                 </div>
 

@@ -177,7 +177,7 @@ export function DeveloperSettings() {
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-950/20">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-                            <Terminal className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />
+                            <Terminal className="h-6 w-6 text-primary-500 dark:text-primary-400" />
                         </div>
                         <div>
                             <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Active Deployments</h3>
@@ -277,7 +277,7 @@ export function DeveloperSettings() {
                                     <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Host ID: {token.userId}</p>
                                     <div className="flex flex-wrap gap-3 mt-2">
                                         <span className="text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1 rounded-lg uppercase tracking-widest border border-slate-200 dark:border-slate-700">Permissions: {token.scope}</span>
-                                        <span className="text-[9px] font-black bg-indigo-50 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-lg uppercase tracking-widest border border-indigo-100 dark:border-indigo-400/20">
+                                        <span className="text-[9px] font-black bg-primary-50 dark:bg-primary-400/10 text-primary-600 dark:text-primary-400 px-3 py-1 rounded-lg uppercase tracking-widest border border-primary-100 dark:border-primary-400/20">
                                             Expiry: {new Date(token.expiresAt).toLocaleDateString()}
                                         </span>
                                     </div>
@@ -311,7 +311,7 @@ export function DeveloperSettings() {
                                 <input 
                                     type="text" 
                                     required 
-                                    className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" 
+                                    className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none" 
                                     placeholder="e.g. ZYLINE_INTEGRATOR" 
                                     value={newAppName}
                                     onChange={e => setNewAppName(e.target.value)}
@@ -320,7 +320,7 @@ export function DeveloperSettings() {
                             <div className="space-y-4">
                                 <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">META DESCRIPTION</label>
                                 <textarea 
-                                    className="w-full p-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none resize-none" 
+                                    className="w-full p-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none resize-none" 
                                     rows={3} 
                                     placeholder="Technical overview of connection..."
                                     value={newAppDesc}
@@ -329,11 +329,11 @@ export function DeveloperSettings() {
                             </div>
                             <div className="space-y-4">
                                 <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">PROTOCOL REDIR ENDPOINTS *</label>
-                                <p className="text-[9px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Matrix delimited list required</p>
+                                <p className="text-[9px] font-black text-primary-500 dark:text-primary-400 uppercase tracking-widest">Matrix delimited list required</p>
                                 <input 
                                     type="text" 
                                     required 
-                                    className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" 
+                                    className="w-full h-14 px-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none" 
                                     placeholder="https://uplink.io/callback" 
                                     value={newAppUris}
                                     onChange={e => setNewAppUris(e.target.value)}

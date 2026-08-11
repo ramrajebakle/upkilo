@@ -181,7 +181,7 @@ export default function DataImportPage() {
                     <button
                         key={e}
                         onClick={() => setEntityType(e)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium capitalize transition-colors ${entityType === e ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium capitalize transition-colors ${entityType === e ? 'bg-primary-600 text-white border-primary-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                     >
                         {e === 'clients' ? <Users className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
                         {e}
@@ -208,7 +208,7 @@ export default function DataImportPage() {
                         <h2 className="font-semibold text-slate-900 mb-4">Upload CSV File</h2>
                         <div
                             onClick={() => fileRef.current?.click()}
-                            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${importFile ? 'border-indigo-300 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}
+                            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${importFile ? 'border-primary-300 bg-primary-50' : 'border-slate-200 hover:border-primary-300 hover:bg-slate-50'}`}
                         >
                             <input
                                 ref={fileRef}
@@ -220,7 +220,7 @@ export default function DataImportPage() {
                                     if (f) { setImportFile(f); setValidationResult(null); setImportJob(null); }
                                 }}
                             />
-                            <Upload className={`h-10 w-10 mx-auto mb-3 ${importFile ? 'text-indigo-500' : 'text-slate-300'}`} />
+                            <Upload className={`h-10 w-10 mx-auto mb-3 ${importFile ? 'text-primary-500' : 'text-slate-300'}`} />
                             {importFile ? (
                                 <div>
                                     <p className="font-medium text-slate-900">{importFile.name}</p>
@@ -299,7 +299,7 @@ export default function DataImportPage() {
                                     </div>
                                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-indigo-500 rounded-full transition-all"
+                                            className="h-full bg-primary-500 rounded-full transition-all"
                                             style={{ width: `${Math.round(((importJob.processedRows || 0) / importJob.totalRows) * 100)}%` }}
                                         />
                                     </div>

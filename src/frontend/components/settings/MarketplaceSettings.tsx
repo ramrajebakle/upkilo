@@ -82,7 +82,7 @@ export function MarketplaceSettings() {
         <div className="space-y-10 animate-fade-in">
             {/* Visibility Score Card */}
             <div className="grid md:grid-cols-2 gap-8">
-                <div className="p-8 bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-900 rounded-[32px] text-white shadow-2xl shadow-primary-500/20 overflow-hidden relative group">
+                <div className="p-8 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 rounded-[32px] text-white shadow-2xl shadow-primary-500/20 overflow-hidden relative group">
                     <div className="relative z-10">
                         <div className="flex items-center gap-4 mb-6">
                             <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 shadow-inner group-hover:scale-110 transition-transform">
@@ -116,7 +116,7 @@ export function MarketplaceSettings() {
                     </div>
                     {/* Decorative elements */}
                     <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-                    <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl" />
+                    <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-primary-500/20 rounded-full blur-2xl" />
                     <TrendingUp className="absolute bottom-4 right-4 h-32 w-32 text-white/5 -rotate-12 group-hover:rotate-0 transition-transform duration-700" />
                 </div>
 

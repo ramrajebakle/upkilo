@@ -248,9 +248,9 @@ export default function PortalDashboard() {
                 </div>
               ) : upcoming.map(apt => (
                 <div key={apt.id} className="p-4 flex items-center gap-4 hover:bg-slate-50">
-                  <div className="w-14 h-14 rounded-xl bg-violet-50 flex flex-col items-center justify-center">
-                    <span className="text-xs text-violet-500 font-medium">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
-                    <span className="text-lg font-bold text-violet-700">{new Date(apt.date).getDate()}</span>
+                  <div className="w-14 h-14 rounded-xl bg-primary-50 flex flex-col items-center justify-center">
+                    <span className="text-xs text-primary-500 font-medium">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
+                    <span className="text-lg font-bold text-primary-700">{new Date(apt.date).getDate()}</span>
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-slate-900">{apt.service}</p>

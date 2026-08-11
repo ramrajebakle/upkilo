@@ -346,7 +346,7 @@ export default function NewBookingPage() {
                                     )}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold text-lg">
                                             {member.name.split(' ').map(n => n[0]).join('')}
                                         </div>
                                         <div className="flex-1">
@@ -444,7 +444,7 @@ export default function NewBookingPage() {
                         <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60 shadow-sm transition-all hover:shadow-md">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+                                    <div className="p-2 bg-primary-100 text-primary-600 rounded-lg">
                                         <CalendarDays className="h-5 w-5" />
                                     </div>
                                     <div>

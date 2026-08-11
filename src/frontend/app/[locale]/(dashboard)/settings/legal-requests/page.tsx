@@ -130,7 +130,7 @@ export default function LegalRequestsPage() {
                 {[
                   { label: "Total", value: report.totalRequests },
                   { label: "Complied", value: report.complied, cls: "text-green-600" },
-                  { label: "Challenged", value: report.challenged, cls: "text-purple-600" },
+                  { label: "Challenged", value: report.challenged, cls: "text-primary-600" },
                   { label: "Rejected", value: report.rejected, cls: "text-red-600" },
                 ].map((m) => (
                   <Card key={m.label}><CardContent className="pt-3 pb-3 text-center">

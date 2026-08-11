@@ -125,7 +125,7 @@ export default function SmsTemplatesPage() {
                             <select
                                 value={form.category}
                                 onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
-                                className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 transition-shadow"
+                                className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 transition-shadow"
                             >
                                 {CATEGORIES.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
@@ -140,7 +140,7 @@ export default function SmsTemplatesPage() {
                         <textarea
                             value={form.body}
                             onChange={e => setForm(p => ({ ...p, body: e.target.value }))}
-                            className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm h-28 resize-none focus:ring-2 focus:ring-indigo-500 transition-shadow"
+                            className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm h-28 resize-none focus:ring-2 focus:ring-primary-500 transition-shadow"
                             placeholder="Hi {{client_name}}, your appointment at {{business_name}} is confirmed for {{date}} at {{time}}. See you then!"
                         />
                         {/* Character warning */}
@@ -157,7 +157,7 @@ export default function SmsTemplatesPage() {
                                 <button
                                     key={v}
                                     onClick={() => insertVariable(v)}
-                                    className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-xs font-mono hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors border border-indigo-100 dark:border-indigo-800"
+                                    className="px-2 py-0.5 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded text-xs font-mono hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors border border-primary-100 dark:border-primary-800"
                                 >
                                     {v}
                                 </button>
@@ -186,7 +186,7 @@ export default function SmsTemplatesPage() {
                         <button
                             key={cat}
                             onClick={() => setCategory(cat)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${category === cat ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${category === cat ? 'bg-primary-600 dark:bg-primary-500 text-white shadow-sm' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                         >
                             {cat}
                         </button>
@@ -214,7 +214,7 @@ export default function SmsTemplatesPage() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="font-semibold text-slate-900 dark:text-white">{template.name}</span>
-                                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-100 dark:border-purple-800">
+                                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-800">
                                             {template.category}
                                         </span>
                                         <span className="text-xs text-slate-400 dark:text-slate-500">
@@ -231,7 +231,7 @@ export default function SmsTemplatesPage() {
                                             navigator.clipboard.writeText(template.body);
                                             toast.success('Copied!');
                                         }}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
+                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
                                         title="Copy body"
                                     >
                                         <Copy className="h-3.5 w-3.5" />

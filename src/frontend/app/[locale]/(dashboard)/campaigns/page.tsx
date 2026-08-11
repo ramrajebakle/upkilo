@@ -151,7 +151,7 @@ export default function CampaignsPage() {
         switch (type) {
             case 'email': return 'from-blue-500 to-cyan-600';
             case 'sms': return 'from-emerald-500 to-teal-600';
-            default: return 'from-violet-500 to-purple-600';
+            default: return 'from-primary-500 to-primary-600';
         }
     };
 
@@ -326,7 +326,7 @@ export default function CampaignsPage() {
                                 'p-2.5 rounded-xl',
                                 stat.color === 'emerald' && 'bg-emerald-100 text-emerald-600',
                                 stat.color === 'blue' && 'bg-blue-100 text-blue-600',
-                                stat.color === 'violet' && 'bg-violet-100 text-violet-600',
+                                stat.color === 'violet' && 'bg-primary-100 text-primary-600',
                                 stat.color === 'amber' && 'bg-amber-100 text-amber-600',
                             )}>
                                 <stat.icon className="h-5 w-5" />

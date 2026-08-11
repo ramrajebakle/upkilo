@@ -73,7 +73,7 @@ export default function PluginMarketplacePage() {
             <CardHeader className="pb-4 border-b">
               <div className="flex justify-between items-start mb-4">
                 <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
-                  <ToyBrick className="h-6 w-6 text-indigo-500" />
+                  <ToyBrick className="h-6 w-6 text-primary-500" />
                 </div>
                 {pWrapper.isConnected && (
                   <span className="text-[10px] font-bold uppercase tracking-wider text-green-700 bg-green-100 px-2 py-1 rounded">

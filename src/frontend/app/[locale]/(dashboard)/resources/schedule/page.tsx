@@ -108,7 +108,7 @@ export default function ResourceSchedulePage() {
           <p className="text-slate-500 mt-1">View and manage room, equipment, and vehicle reservations</p>
         </div>
         <button onClick={() => { setSelectedResource(resources[0]?.id || ''); setShowBookModal(true); }}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-primary-600 text-white rounded-xl font-medium shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
           <Plus className="w-4 h-4" /> New Booking
         </button>
       </div>
@@ -206,7 +206,7 @@ export default function ResourceSchedulePage() {
             <span>Available</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-6 h-4 rounded bg-violet-100 border border-violet-300" />
+            <div className="w-6 h-4 rounded bg-primary-100 border border-primary-300" />
             <span>Booked</span>
           </div>
         </div>

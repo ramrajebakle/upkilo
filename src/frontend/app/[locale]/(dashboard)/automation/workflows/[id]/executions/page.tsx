@@ -160,7 +160,7 @@ export default function WorkflowExecutionsPage() {
                     <button
                         key={s}
                         onClick={() => { setStatusFilter(s); setPage(1); }}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${statusFilter === s ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${statusFilter === s ? 'bg-primary-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                     >
                         {s || 'All'}
                     </button>

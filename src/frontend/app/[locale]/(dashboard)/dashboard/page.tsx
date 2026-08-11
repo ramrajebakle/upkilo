@@ -85,8 +85,8 @@ function buildStats(d: DashboardData, conversion: number): Stat[] {
       delta: d.bookingsChange,
       deltaLabel: `${d.pendingBookings} pending`,
       icon: Calendar,
-      gradient: "from-violet-500 to-violet-700",
-      shadow: "shadow-violet-500/25",
+      gradient: "from-primary-500 to-primary-700",
+      shadow: "shadow-primary-500/25",
     },
     {
       label: "Conversion Rate",
@@ -119,7 +119,7 @@ const ACTIVITY_DOT_COLORS: Record<string, string> = {
   booking: "bg-cyan-500",
   payment: "bg-emerald-500",
   campaign: "bg-orange-500",
-  review: "bg-violet-500",
+  review: "bg-primary-500",
   client: "bg-primary-500",
   default: "bg-slate-400",
 };
