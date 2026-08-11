@@ -18,7 +18,7 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.upkilo.com';
 
 // Locale-prefixed marketing paths, i.e. /en/pricing. '' covers the /en landing page.
 const MARKETING_LOCALE_SEGMENTS = new Set([
-  '', 'pricing', 'features', 'marketplace', 'medical-spa', 'docs',
+  '', 'pricing', 'features', 'marketplace', 'medical-spa', 'docs', 'contact',
   'terms-of-service', 'privacy-policy', 'cookie-policy', 'book',
 ]);
 
@@ -54,24 +54,20 @@ function isPublicPath(pathname: string): boolean {
       }
     }
   }
-  // Also allow the root landing page and public marketing pages
-  const publicPrefixes = ['/', '/pricing', '/features', '/marketplace', '/docs', '/cookie-policy', '/privacy-policy', '/terms-of-service'];
-  for (const locale of SUPPORTED_LOCALES) {
-    for (const prefix of publicPrefixes) {
-      if (pathname === `/${locale}${prefix === '/' ? '' : prefix}` || pathname === `/${locale}`) {
-        return true;
-      }
-    }
-  }
-  // Allow public booking widget, discover, and powered-by pages.
-  // Use startsWith (not includes) to prevent path-traversal bypasses such as
-  // /dashboard/book/anything or /admin?redirect=/discover matching as public routes.
-  const publicRoutePrefixes = ['/book/', '/discover', '/powered-by'];
-  const locale = extractLocale(pathname);
-  if (publicRoutePrefixes.some(prefix => pathname.startsWith(`/${locale}${prefix}`) || pathname.startsWith(prefix))) {
-    return true;
-  }
-  return false;
+  // Every marketing page is public by definition, so this defers to the same predicate
+  // that drives host routing rather than keeping a second hand-maintained list.
+  //
+  // It used to keep its own `publicPrefixes` array, and the two drifted: `contact` was in
+  // neither list and `medical-spa` was only in the marketing one, so both pages redirected
+  // anonymous visitors — and Googlebot — to /en/login. Nothing failed loudly; the pages
+  // simply could not be reached by anyone who was not already signed in. The old array also
+  // compared with `===`, so nested marketing pages such as /en/docs/custom-domains and
+  // /en/book/<slug> were gated even when their parent segment was listed.
+  //
+  // isMarketingPath matches the first path segment exactly (never a bare startsWith), so the
+  // traversal bypasses the previous comment warned about — /dashboard/book/anything,
+  // /admin?redirect=/discover — still resolve to their real first segment and stay private.
+  return isMarketingPath(pathname);
 }
 
 function roleDefaultRoute(role: string | undefined, locale: string): string {
