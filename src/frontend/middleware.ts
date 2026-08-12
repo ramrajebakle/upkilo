@@ -207,7 +207,14 @@ const authMiddleware = auth((req) => {
     // Guarding the prefix here rather than in each page is the point: a hand-maintained list
     // that must be repeated in 15 files is a list that drifts, which is exactly what happened.
     // A new page under either prefix is now covered before it is written.
-    const isStaffPath = pathname.includes('/platform') || pathname.includes('/admin');
+    //
+    // Matched on whole path segments, not `includes()`. A substring test would also catch a
+    // future tenant route like /settings/admin-notes or /reports/platform-fees and silently
+    // bounce a paying customer out of their own page — the same loose-matching bug that put
+    // /platform/tenants behind the old `/tenant` guard and locked platform owners out of it.
+    const segments = pathname.split('/').filter(Boolean);
+    const rest = SUPPORTED_LOCALES.includes(segments[0]) ? segments.slice(1) : segments;
+    const isStaffPath = rest[0] === 'platform' || rest[0] === 'admin';
 
     if ((role === 'tenant_owner' || role === 'team_member' || role === 'customer') && isStaffPath) {
       return Response.redirect(new URL(`/${locale}/dashboard`, nextUrl));
