@@ -353,6 +353,28 @@
   [data-numeric] {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Checkboxes and radios measured 13×13 on mobile — the browser default, which no one
+     chose. An audit at 390px found 26 of them across the app.
+
+     24px is WCAG 2.5.8 Target Size (Minimum) at AA, and is what is actually reachable here:
+     the AAA 44px figure assumes the control's label shares its hit area, which requires
+     per-instance markup changes rather than a stylesheet rule. This is scoped to coarse
+     pointers so mouse-driven dense forms keep the compact control, and the accent colour
+     is set because an unstyled checkbox is one of the browser surfaces that otherwise ships
+     in no design system at all. */
+  @media (pointer: coarse) {
+    input[type="checkbox"],
+    input[type="radio"] {
+      min-width: 1.5rem;
+      min-height: 1.5rem;
+    }
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-primary-500);
+  }
 }
 
 /* ===========================================

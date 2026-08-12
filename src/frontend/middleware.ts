@@ -193,9 +193,23 @@ const authMiddleware = auth((req) => {
 
   if (isLoggedIn) {
     const role = req.auth?.user?.role as string | undefined;
-    const isPlatformPath = pathname.includes('/platform');
 
-    if ((role === 'tenant_owner' || role === 'team_member') && isPlatformPath) {
+    // Platform-staff surfaces: /platform/* and /admin/*. Both are Upkilo's own back office —
+    // tenant management, platform revenue, impersonation, DLQ, global settings — and no tenant
+    // role has business on either.
+    //
+    // /admin used to be guarded only page-by-page, and 7 of the 15 pages had missed it:
+    // billing, dlq, escalations, impersonate, pricing, revenue and users. A tenant owner who
+    // typed the URL got a 200 and the full platform admin shell. No customer or revenue data
+    // leaked — the API refuses those calls independently — but the back office's structure was
+    // readable, and /admin/impersonate is not a page that should answer at all.
+    //
+    // Guarding the prefix here rather than in each page is the point: a hand-maintained list
+    // that must be repeated in 15 files is a list that drifts, which is exactly what happened.
+    // A new page under either prefix is now covered before it is written.
+    const isStaffPath = pathname.includes('/platform') || pathname.includes('/admin');
+
+    if ((role === 'tenant_owner' || role === 'team_member' || role === 'customer') && isStaffPath) {
       return Response.redirect(new URL(`/${locale}/dashboard`, nextUrl));
     }
 

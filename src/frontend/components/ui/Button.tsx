@@ -60,11 +60,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       outline: "bg-transparent border border-primary-500 text-primary-600 hover:bg-primary-50",
     };
 
+    // Heights are a touch floor on small screens and revert to desktop density from `sm` up.
+    //
+    // A finger needs roughly 44px; a mouse pointer does not, and this is dashboard UI where
+    // density is a feature rather than a compromise. Forcing 44px everywhere would inflate
+    // every toolbar and table row on desktop to fix a problem that only exists on touch.
+    // Tailwind is mobile-first, so `h-11 sm:h-9` reads as: 44px by default, 36px from 640px up.
+    //
+    // An audit at 390px measured 533 controls under 44px. These four tokens are the widest
+    // single lever on that number — Button is imported by 127 of 205 dashboard pages — though
+    // the raw <button> elements that never adopted this component are untouched and still
+    // need the migration pass.
     const sizes = {
-      sm: "h-8 px-3 text-sm rounded-md",
-      md: "h-9 px-4 text-sm rounded-md",
+      sm: "h-11 sm:h-8 px-3 text-sm rounded-md",
+      md: "h-11 sm:h-9 px-4 text-sm rounded-md",
       lg: "h-11 px-5 text-base rounded-lg",
-      icon: "h-9 w-9 rounded-md",
+      icon: "h-11 w-11 sm:h-9 sm:w-9 rounded-md",
     };
 
     return (
