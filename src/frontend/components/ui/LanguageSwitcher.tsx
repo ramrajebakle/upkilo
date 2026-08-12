@@ -52,7 +52,7 @@ export function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 shadow-sm"
+        className="flex items-center gap-2 px-3 py-1.5 min-h-11 sm:min-h-0 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 shadow-sm"
       >
         <Globe className="h-4 w-4 text-gray-500" />
         <span className="hidden sm:inline">{currentLocale.name}</span>

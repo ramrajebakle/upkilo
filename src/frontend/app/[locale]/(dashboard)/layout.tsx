@@ -79,7 +79,7 @@ function NavGroupSection({ group, pathname, defaultOpen = true }: {
         <div className="mb-1">
             <button
                 onClick={() => setOpen(o => !o)}
-                className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-white/5"
+                className="w-full flex items-center justify-between px-4 py-2 min-h-11 sm:min-h-0 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-white/5"
                 aria-expanded={open}
             >
                 <span>{group.label}</span>
@@ -95,7 +95,7 @@ function NavGroupSection({ group, pathname, defaultOpen = true }: {
                                 href={item.href}
                                 aria-current={isActive ? 'page' : undefined}
                                 className={cn(
-                                    'group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 relative',
+                                    'group flex items-center gap-3 px-4 py-2.5 min-h-11 sm:min-h-0 rounded-xl transition-all duration-200 relative',
                                     isActive
                                         ? 'bg-primary-50 text-primary-600 dark:bg-slate-800 dark:text-primary-400 shadow-sm'
                                         : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
@@ -362,7 +362,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 </span>
                             </Link>
                             <button
-                                className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
+                                className="lg:hidden p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
                                 onClick={() => setSidebarOpen(false)}
                                 aria-label="Close navigation menu"
                             >
@@ -382,7 +382,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                 href={item.href}
                                                 aria-current={isActive ? 'page' : undefined}
                                                 className={cn(
-                                                    'group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 relative',
+                                                    'group flex items-center gap-3 px-4 py-2.5 min-h-11 sm:min-h-0 rounded-xl transition-all duration-200 relative',
                                                     isActive
                                                         ? 'bg-primary-50 text-primary-600 dark:bg-slate-800 dark:text-primary-400 shadow-sm'
                                                         : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
@@ -400,7 +400,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     {user?.role === 'superadmin' && (
                                         <Link
                                             href="/admin"
-                                            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors"
+                                            className="flex items-center gap-3 px-4 py-2.5 min-h-11 sm:min-h-0 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors"
                                         >
                                             <Shield className="h-4 w-4 text-slate-400" />
                                             Platform Admin
@@ -435,7 +435,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </div>
                             <button
                                 onClick={logout}
-                                className="flex items-center gap-3 w-full px-4 py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-500/10 rounded-xl transition-colors group"
+                                className="flex items-center gap-3 w-full px-4 py-2.5 min-h-11 sm:min-h-0 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-500/10 rounded-xl transition-colors group"
                                 aria-label="Sign out of Upkilo"
                             >
                                 <LogOut className="h-4 w-4 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors" />
@@ -452,7 +452,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <div className="flex items-center justify-between h-16 px-4 lg:px-6">
                             <div className="flex items-center gap-3">
                                 <button
-                                    className="lg:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
+                                    className="lg:hidden p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
                                     onClick={() => setSidebarOpen(true)}
                                     aria-label="Open navigation menu"
                                     aria-expanded={sidebarOpen}
@@ -472,7 +472,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                                 <button
                                     onClick={toggleTheme}
-                                    className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
+                                    className="p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
                                     aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                                 >
                                     {resolvedTheme === 'dark' ? <Sun className="h-5 w-5" aria-hidden="true" /> : <Moon className="h-5 w-5" aria-hidden="true" />}
@@ -482,7 +482,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     <button
                                         onClick={() => setCopilotOpen((o) => !o)}
                                         className={cn(
-                                            'p-2 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium',
+                                            'p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium',
                                             copilotOpen
                                                 ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300'
                                                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10'

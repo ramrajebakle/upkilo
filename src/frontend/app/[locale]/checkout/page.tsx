@@ -58,7 +58,7 @@ function CheckoutContent() {
 
                 <div className="grid md:grid-cols-5 gap-8">
                     {/* Order summary */}
-                    <div className="md:col-span-3">
+                    <div className="min-w-0 md:col-span-3">
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
 
@@ -161,7 +161,7 @@ function CheckoutContent() {
                     </div>
 
                     {/* Checkout button */}
-                    <div className="md:col-span-2">
+                    <div className="min-w-0 md:col-span-2">
                         <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
                             <div className="mb-6">
                                 <h3 className="font-semibold text-gray-900 mb-2">What's included:</h3>
