@@ -152,7 +152,11 @@ export default function PaymentsPage() {
                         className="w-full h-16 pl-16 pr-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] text-xs font-black uppercase tracking-widest dark:text-white outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-xl"
                     />
                 </div>
-                <div className="p-1.5 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-[28px] shadow-xl flex w-full lg:w-auto">
+                {/* flex-wrap: five status chips at px-6 each measured 488px against a 390px
+                    viewport, and `flex` alone has nowhere to put the surplus, so the whole page
+                    scrolled sideways. The table below was a red herring — it is already inside
+                    an overflow-x-auto wrapper and never contributed to the page scrollWidth. */}
+                <div className="p-1.5 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-[28px] shadow-xl flex flex-wrap w-full lg:w-auto">
                     {['all', 'completed', 'pending', 'refunded', 'failed'].map((status) => (
                         <button
                             key={status}
@@ -171,8 +175,13 @@ export default function PaymentsPage() {
             </div>
 
             {/* Transaction Matrix */}
-            <div className="bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-2xl shadow-slate-200/40 dark:shadow-none overflow-hidden xl:min-h-[500px]">
-                <div className="overflow-x-auto">
+            {/* min-w-0 on both: a scroll container only scrolls if it is allowed to be narrower
+                than its content, and the default min-width:auto on a flex/grid item silently
+                refuses that — the container grows instead and the whole page scrolls sideways
+                (ux-guidelines #69, High). max-w-full pins it to the viewport regardless of what
+                layout context this card is dropped into later. */}
+            <div className="max-w-full min-w-0 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-2xl shadow-slate-200/40 dark:shadow-none overflow-hidden xl:min-h-[500px]">
+                <div className="overflow-x-auto max-w-full min-w-0">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="border-b border-slate-50 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/50">

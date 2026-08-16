@@ -118,7 +118,7 @@ export default function BlogPage() {
             <div className="flex items-start justify-between">
                 <div>
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2.5 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl shadow-lg shadow-violet-500/30">
+                        <div className="p-2.5 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg shadow-primary-500/30">
                             <BookOpen className="h-5 w-5 text-white" />
                         </div>
                         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Blog & Content</h1>
@@ -136,11 +136,11 @@ export default function BlogPage() {
             </div>
 
             {/* SEO Impact Banner */}
-            <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800/40 rounded-2xl p-4 flex gap-3">
-                <TrendingUp className="w-5 h-5 text-violet-600 dark:text-violet-400 shrink-0 mt-0.5" />
+            <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800/40 rounded-2xl p-4 flex gap-3">
+                <TrendingUp className="w-5 h-5 text-primary-600 dark:text-primary-400 shrink-0 mt-0.5" />
                 <div className="text-sm">
-                    <strong className="text-violet-800 dark:text-violet-300">Why blog posts drive local SEO:</strong>
-                    <span className="text-violet-700 dark:text-violet-400"> Businesses with 1+ blog posts get 55% more website visitors. Each post targets keywords your clients search for, building long-term organic traffic without ad spend.</span>
+                    <strong className="text-primary-800 dark:text-primary-300">Why blog posts drive local SEO:</strong>
+                    <span className="text-primary-700 dark:text-primary-400"> Businesses with 1+ blog posts get 55% more website visitors. Each post targets keywords your clients search for, building long-term organic traffic without ad spend.</span>
                 </div>
             </div>
 

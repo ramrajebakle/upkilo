@@ -127,7 +127,7 @@ export default function AgencyDashboardPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Total Accounts', value: stats.total, icon: <Building2 className="h-5 w-5 text-indigo-500" /> },
+                    { label: 'Total Accounts', value: stats.total, icon: <Building2 className="h-5 w-5 text-primary-500" /> },
                     { label: 'Active', value: stats.active, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
                     { label: 'Suspended', value: stats.suspended, icon: <Pause className="h-5 w-5 text-amber-500" /> },
                 ].map(s => (
@@ -207,7 +207,7 @@ export default function AgencyDashboardPage() {
                     {filtered.map((tenant, idx) => (
                         <div key={tenant.id} className={`grid grid-cols-12 gap-4 px-5 py-4 items-center hover:bg-slate-50 transition-colors ${idx < filtered.length - 1 ? 'border-b border-slate-50' : ''}`}>
                             <div className="col-span-4 flex items-center gap-3">
-                                <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                                <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
                                     {tenant.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
@@ -238,7 +238,7 @@ export default function AgencyDashboardPage() {
                                 <button
                                     onClick={() => handleImpersonate(tenant)}
                                     disabled={actioningId === tenant.id || tenant.status !== 0}
-                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-40"
+                                    className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-40"
                                     title="Enter account"
                                 >
                                     {actioningId === tenant.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ExternalLink className="h-3.5 w-3.5" />}

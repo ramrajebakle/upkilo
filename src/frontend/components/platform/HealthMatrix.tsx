@@ -104,13 +104,24 @@ export const HealthMatrix: React.FC<HealthMatrixProps> = ({ tenants }) => {
             return (
               <motion.div
                 key={tenant.id}
-                initial={{ opacity: 0, scale: 0, x: "-50%", y: "-50%" }}
+                // scale starts at 0.9, not 0. Scaling up from nothing has no physical
+                // analogue — real objects do not materialise from a point — and it reads as
+                // a pop rather than an arrival. 0.9 plus the opacity fade gives the same
+                // sense of appearing without the rubber-band feel.
+                initial={{ opacity: 0, scale: 0.9, x: "-50%", y: "-50%" }}
                 animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 260, 
-                  damping: 20, 
-                  delay: index * 0.05 
+                transition={{
+                  // Apple-style spring params: easier to reason about than
+                  // stiffness/damping, and bounce 0.2 keeps it subtle. The previous
+                  // stiffness 260 / damping 20 was under-damped enough to visibly overshoot
+                  // on every dot, which reads as playful in a health-monitoring view that
+                  // should read as precise.
+                  type: "spring",
+                  duration: 0.5,
+                  bounce: 0.2,
+                  // 50ms between items, within the 30-80ms stagger window. With enough
+                  // tenants this tail gets long, so it is capped rather than unbounded.
+                  delay: Math.min(index * 0.05, 0.4),
                 }}
                 className="absolute cursor-pointer"
                 style={{

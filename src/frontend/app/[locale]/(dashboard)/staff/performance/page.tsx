@@ -50,12 +50,17 @@ export default function StaffPerformancePage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <header className="flex items-end justify-between border-b border-surface-200 pb-6">
+      {/* flex-wrap + gap: at 390px the title and the control cluster together measured 671px
+          against a 390px viewport, so the page scrolled sideways (ux-guidelines #69, High).
+          Without wrapping, `justify-between` has nowhere to put the overflow. */}
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-surface-200 pb-6">
         <div>
           <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Staff Performance <TrendingUp className="text-ai-500" size={22} /></h1>
           <p className="text-text-secondary mt-1">Track individual and team performance metrics across all staff.</p>
         </div>
-        <div className="flex items-center gap-3">
+        {/* The outer <header> wraps, but this control cluster did not, so it still pushed the
+            page to 446px at a 390px viewport. Both levels have to wrap for the row to reflow. */}
+        <div className="flex flex-wrap items-center gap-3">
           <input type="date" value={dateRange.start} onChange={(e) => setDateRange((p) => ({ ...p, start: e.target.value }))}
             className="px-3 py-2 text-sm rounded-lg border border-surface-200 bg-surface-50 text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
           <span className="text-text-tertiary text-sm">→</span>

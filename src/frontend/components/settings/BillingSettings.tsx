@@ -99,7 +99,7 @@ export function BillingSettings() {
             {/* Current Status */}
             <div className="flex flex-wrap items-center justify-between gap-8 p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl shadow-slate-200/40 dark:shadow-none relative overflow-hidden group">
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-[28px] flex items-center justify-center shadow-2xl shadow-primary-500/30 group-hover:scale-105 transition-transform duration-500">
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-[28px] flex items-center justify-center shadow-2xl shadow-primary-500/30 group-hover:scale-105 transition-transform duration-500">
                         <Zap className="h-10 w-10 text-white" />
                     </div>
                     <div>
@@ -135,7 +135,7 @@ export function BillingSettings() {
             </div>
 
             {/* Credit Matrix */}
-            <div className="p-10 bg-gradient-to-br from-indigo-950 to-slate-900 border border-slate-800 rounded-[40px] text-white shadow-2xl relative overflow-hidden group">
+            <div className="p-10 bg-gradient-to-br from-primary-950 to-slate-900 border border-slate-800 rounded-[40px] text-white shadow-2xl relative overflow-hidden group">
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
                     <div className="flex items-center gap-10">
                         <div className="w-24 h-24 bg-white/5 rounded-[32px] flex items-center justify-center backdrop-blur-2xl border border-white/10 shadow-inner group-hover:rotate-6 transition-transform">
@@ -149,7 +149,7 @@ export function BillingSettings() {
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Verified Ledger Balance</p>
                         </div>
                     </div>
-                    <Button className="h-14 bg-white text-indigo-950 hover:bg-slate-100 font-black px-12 rounded-2xl border-none shadow-xl uppercase tracking-widest text-[10px] hover:scale-105 transition-all active:scale-95">
+                    <Button className="h-14 bg-white text-primary-950 hover:bg-slate-100 font-black px-12 rounded-2xl border-none shadow-xl uppercase tracking-widest text-[10px] hover:scale-105 transition-all active:scale-95">
                         Inject Liquidity
                     </Button>
                 </div>
@@ -159,7 +159,7 @@ export function BillingSettings() {
             {/* Telemetry Matrix */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
-                    { label: 'Agent Spectrum', used: usage?.staffCount || 0, limit: usage?.staffLimit || 0, icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', format: 'number' as const },
+                    { label: 'Agent Spectrum', used: usage?.staffCount || 0, limit: usage?.staffLimit || 0, icon: Users, color: 'text-primary-500', bg: 'bg-primary-500/10', border: 'border-primary-500/20', format: 'number' as const },
                     { label: 'Origin Points', used: usage?.locationCount || 0, limit: usage?.locationLimit || 0, icon: MapPin, color: 'text-primary-500', bg: 'bg-primary-500/10', border: 'border-primary-500/20', format: 'number' as const },
                     { label: 'Event Volume', used: usage?.bookingsUsed || 0, limit: usage?.bookingsLimit || 0, icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', format: 'number' as const },
                     { label: 'AI Consumption', used: usage?.aiCostUsed || 0, limit: usage?.aiCostLimit || 0, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', format: 'currency' as const }

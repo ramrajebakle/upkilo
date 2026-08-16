@@ -145,7 +145,7 @@ export default function LoyaltyProgramPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Gift className="h-5 w-5 text-purple-500" />
+              <Gift className="h-5 w-5 text-primary-500" />
               Redemption Catalog
             </CardTitle>
             <CardDescription>What clients can spend their points on.</CardDescription>

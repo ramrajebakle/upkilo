@@ -88,7 +88,7 @@ export default function WorkflowEditPage() {
 
     if (isLoading) return (
         <div className="h-screen flex items-center justify-center bg-slate-50">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
         </div>
     );
 
@@ -136,7 +136,7 @@ export default function WorkflowEditPage() {
                             size="sm"
                             onClick={handleTestRun}
                             disabled={isTesting || isSaving}
-                            className="rounded-xl font-bold text-indigo-600 border-indigo-200 bg-indigo-50 hover:bg-indigo-100"
+                            className="rounded-xl font-bold text-primary-600 border-primary-200 bg-primary-50 hover:bg-primary-100"
                         >
                             {isTesting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}
                             {isTesting ? 'Testing...' : 'Test Run'}

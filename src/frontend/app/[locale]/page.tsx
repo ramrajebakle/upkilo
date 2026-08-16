@@ -30,11 +30,20 @@ import Reveal from '@/components/landing/Reveal';
 import FaqAccordion from '@/components/landing/FaqAccordion';
 import LandingNav from '@/components/landing/LandingNav';
 import EmailCapture from '@/components/landing/EmailCapture';
+import { safeJsonLd } from '@/lib/jsonLd';
+
+// Apex host. Must match sitemap.ts / robots.ts and middleware.ts's SITE_URL — the JSON-LD
+// entity below is identified by a URL, so a mismatch here would describe a different entity.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
 export const metadata: Metadata = {
   title: 'Upkilo — Grow Your Service Business on Autopilot',
+  // "Trusted by 500+ service businesses" was removed from the end of this description.
+  // It is unverifiable today, and a meta description is the worst place to carry an
+  // unsupportable claim — it is the text shown in the search result itself, read by people
+  // who have not visited the site yet.
   description:
-    'AI-powered booking, CRM, payments, and marketing for salons, spas, fitness studios, and clinics. Start free, no credit card needed. Trusted by 500+ service businesses.',
+    'AI-powered booking, CRM, payments, and marketing for salons, spas, fitness studios, and clinics. Start free, no credit card needed.',
   openGraph: {
     title: 'Upkilo — Grow Your Service Business on Autopilot',
     description:
@@ -234,18 +243,88 @@ async function fetchPlans(): Promise<Record<string, string>> {
   }
 }
 
+// ── Structured data ─────────────────────────────────────────────────────────
+// Entity clarity — a consistent, machine-readable statement of what Upkilo is — is the
+// most firmly established of the levers that make a site eligible to be cited by search
+// engines and answer engines alike. Until now JSON-LD existed only on the two /book
+// templates; the landing page, which is the page most likely to be the cited source for
+// "what is Upkilo", carried none.
+//
+// The `name`, `url` and `logo` here must stay identical to every other place the entity is
+// described (footer, OG tags, any future About page). Inconsistent facts about the same
+// entity are what prevent it from being resolved as one thing.
+const ORGANIZATION_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${SITE_URL}/#organization`,
+  name: 'Upkilo',
+  url: SITE_URL,
+  // A real asset in public/icons/. /images/logo.png — referenced elsewhere in this app as a
+  // fallback — does not exist on disk, and a logo URL that 404s is worse than omitting the
+  // field, since it is what a Knowledge Panel would try to render.
+  logo: `${SITE_URL}/icons/icon-512x512.png`,
+  description:
+    'AI-powered booking, CRM, payments and marketing software for service businesses — salons, spas, fitness studios and clinics.',
+};
+
+// SoftwareApplication rather than Product: this is software accessed over the web, and the
+// type carries the fields that actually describe it (category, platform). No aggregateRating
+// is declared — there are no genuine reviews yet, and inventing one would be both a policy
+// violation and the same integrity problem as the testimonial removed in the previous commit.
+const SOFTWARE_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Upkilo',
+  applicationCategory: 'BusinessApplication',
+  applicationSubCategory: 'Appointment Scheduling Software',
+  operatingSystem: 'Web',
+  url: SITE_URL,
+  publisher: { '@id': `${SITE_URL}/#organization` },
+  description:
+    'Booking, client CRM, payments, reminders and marketing automation for service businesses in one platform.',
+  offers: {
+    '@type': 'Offer',
+    category: 'free trial',
+    priceSpecification: {
+      '@type': 'UnitPriceSpecification',
+      price: '0',
+      priceCurrency: 'USD',
+      description: '14-day free trial, no credit card required',
+    },
+  },
+};
+
+// Built from the same FAQS array the visible accordion renders, so the two can never drift
+// apart — a mismatch between rendered content and structured data is a policy violation.
+//
+// Google phased out the visual FAQ rich result during 2026, so this will not produce a
+// SERP snippet. It is still read by Bing and by retrieval-style AI crawlers, and costs
+// nothing beyond mapping an array that already exists.
+const FAQ_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+
 export default async function HomePage() {
   const livePrices = await fetchPlans();
   return (
     <div className="min-h-screen bg-white text-slate-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(ORGANIZATION_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(SOFTWARE_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_JSON_LD) }} />
       <LandingNav />
 
       {/* ───────────────────────── HERO (dark gradient) ───────────────────────── */}
       <section className="relative overflow-hidden bg-slate-950 pt-32 pb-40 text-white">
         {/* gradient glows */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-violet-600/25 blur-[120px]" />
-          <div className="absolute right-1/4 top-40 h-[300px] w-[300px] rounded-full bg-indigo-500/20 blur-[100px]" />
+          <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-primary-600/25 blur-[120px]" />
+          <div className="absolute right-1/4 top-40 h-[300px] w-[300px] rounded-full bg-primary-500/20 blur-[100px]" />
           <div className="absolute left-1/4 top-60 h-[300px] w-[300px] rounded-full bg-blue-500/10 blur-[100px]" />
         </div>
         {/* grid texture */}
@@ -261,7 +340,7 @@ export default async function HomePage() {
 
         <div className="relative mx-auto max-w-6xl px-4 text-center">
           <Reveal>
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-violet-400/20 bg-violet-500/10 px-4 py-1.5 text-sm font-medium text-violet-200">
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary-400/20 bg-primary-500/10 px-4 py-1.5 text-sm font-medium text-primary-200">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               <span>AI-powered booking, CRM &amp; payments in one place</span>
             </div>
@@ -270,9 +349,14 @@ export default async function HomePage() {
           <Reveal delay={0.08}>
             <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
               Grow your service business{' '}
-              <span className="bg-gradient-to-r from-violet-400 via-indigo-400 to-blue-400 bg-clip-text text-transparent">
-                on autopilot
-              </span>
+              {/* Solid brand colour, not bg-clip-text over a three-stop gradient.
+                  Gradient text is decorative rather than meaningful — it is one of the more
+                  recognisable AI-generated-UI tells, and it costs legibility: the lightest
+                  stop sets the effective contrast, so part of the phrase is always the
+                  weakest-contrast text on the page. Emphasis here comes from the colour
+                  break against white, which the surrounding words already carry at full
+                  weight. */}
+              <span className="text-primary-400">on autopilot</span>
             </h1>
           </Reveal>
 
@@ -287,7 +371,7 @@ export default async function HomePage() {
             <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
               <Link
                 href="/register"
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-violet-500/30 transition-all hover:-translate-y-0.5 hover:bg-violet-500 hover:shadow-violet-500/50"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-primary-500/30 transition-all hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-primary-500/50"
               >
                 Start 14-day free trial
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
@@ -310,7 +394,7 @@ export default async function HomePage() {
           {/* product preview mock */}
           <Reveal delay={0.4}>
             <div className="relative mx-auto mt-16 max-w-3xl">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-violet-600/20 to-blue-600/20 blur-2xl" aria-hidden="true" />
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-primary-600/20 to-blue-600/20 blur-2xl" aria-hidden="true" />
               <div className="relative animate-float rounded-2xl border border-white/10 bg-slate-900/80 p-5 text-left shadow-2xl backdrop-blur">
                 {/* window bar */}
                 <div className="mb-4 flex items-center gap-1.5" aria-hidden="true">
@@ -334,7 +418,7 @@ export default async function HomePage() {
                   <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
                     <p className="text-xs text-slate-400">Utilization</p>
                     <p className="mt-1 text-2xl font-bold text-white">94%</p>
-                    <p className="mt-1 text-xs text-violet-300">Waitlist auto-fills gaps</p>
+                    <p className="mt-1 text-xs text-primary-300">Waitlist auto-fills gaps</p>
                   </div>
                 </div>
                 {/* appointment rows */}
@@ -342,14 +426,14 @@ export default async function HomePage() {
                   {[
                     { t: '10:00', s: 'Hair Color · Priya', a: 'P', st: 'Confirmed', c: 'text-emerald-400' },
                     { t: '11:30', s: 'Deep Tissue · Rahul', a: 'R', st: 'Checked in', c: 'text-blue-400' },
-                    { t: '13:00', s: 'Manicure · Aisha', a: 'A', st: 'Deposit paid', c: 'text-violet-300' },
+                    { t: '13:00', s: 'Manicure · Aisha', a: 'A', st: 'Deposit paid', c: 'text-primary-300' },
                   ].map((row) => (
                     <div
                       key={row.t}
                       className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5"
                     >
                       <span className="w-12 text-xs font-medium text-slate-400">{row.t}</span>
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-500/20 text-xs font-bold text-violet-200">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-500/20 text-xs font-bold text-primary-200">
                         {row.a}
                       </span>
                       <span className="flex-1 truncate text-sm text-slate-200">{row.s}</span>
@@ -398,7 +482,7 @@ export default async function HomePage() {
               <Reveal key={g.label} delay={i * 0.08}>
                 <div className="flex flex-col items-center text-center">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
-                    <g.icon className="h-6 w-6 text-violet-600" aria-hidden="true" />
+                    <g.icon className="h-6 w-6 text-primary-600" aria-hidden="true" />
                   </div>
                   <p className="mt-3 text-base font-bold text-slate-900">{g.label}</p>
                   <p className="mt-1 text-sm text-slate-500">{g.sub}</p>
@@ -414,7 +498,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4">
           <Reveal>
             <div className="mx-auto mb-16 max-w-2xl text-center">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-violet-600">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-600">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Features
               </span>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
@@ -429,8 +513,8 @@ export default async function HomePage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((feature, i) => (
               <Reveal key={feature.title} delay={(i % 3) * 0.08}>
-                <div className="group h-full rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-500/5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 transition-transform group-hover:scale-110">
+                <div className="group h-full rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25 transition-transform group-hover:scale-110">
                     <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
                   </div>
                   <h3 className="mt-5 text-lg font-semibold text-slate-900">{feature.title}</h3>
@@ -447,7 +531,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-4">
           <Reveal>
             <div className="mx-auto mb-16 max-w-2xl text-center">
-              <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-violet-600">
+              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-600">
                 How it works
               </span>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
@@ -466,13 +550,13 @@ export default async function HomePage() {
                   {/* connector line (desktop) */}
                   {i < STEPS.length - 1 && (
                     <div
-                      className="absolute left-[60%] top-8 hidden h-px w-[80%] bg-gradient-to-r from-violet-300 to-transparent md:block"
+                      className="absolute left-[60%] top-8 hidden h-px w-[80%] bg-gradient-to-r from-primary-300 to-transparent md:block"
                       aria-hidden="true"
                     />
                   )}
-                  <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-100 bg-white shadow-md">
-                    <step.icon className="h-7 w-7 text-violet-600" aria-hidden="true" />
-                    <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white">
+                  <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-primary-100 bg-white shadow-md">
+                    <step.icon className="h-7 w-7 text-primary-600" aria-hidden="true" />
+                    <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white">
                       {i + 1}
                     </span>
                   </div>
@@ -500,8 +584,8 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {INDUSTRIES.map((ind, i) => (
               <Reveal key={ind.label} delay={i * 0.08}>
-                <div className="group flex h-full flex-col items-center rounded-2xl border border-slate-200 bg-white p-8 text-center transition-all hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-500/5">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 transition-transform group-hover:scale-110">
+                <div className="group flex h-full flex-col items-center rounded-2xl border border-slate-200 bg-white p-8 text-center transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25 transition-transform group-hover:scale-110">
                     <ind.icon className="h-7 w-7 text-white" aria-hidden="true" />
                   </div>
                   <p className="mt-5 text-base font-semibold text-slate-900">{ind.label}</p>
@@ -557,12 +641,12 @@ export default async function HomePage() {
                 <div
                   className={`relative flex h-full flex-col rounded-2xl p-7 transition-all ${
                     plan.highlight
-                      ? 'border-2 border-violet-500 bg-slate-950 text-white shadow-2xl shadow-violet-500/20 md:-translate-y-3'
-                      : 'border border-slate-200 bg-white hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-500/5'
+                      ? 'border-2 border-primary-500 bg-slate-950 text-white shadow-2xl shadow-primary-500/20 md:-translate-y-3'
+                      : 'border border-slate-200 bg-white hover:-translate-y-1 hover:shadow-xl hover:shadow-primary-500/5'
                   }`}
                 >
                   {plan.highlight && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-lg">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary-600 px-4 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-lg">
                       Most Popular
                     </span>
                   )}
@@ -584,7 +668,7 @@ export default async function HomePage() {
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-center gap-2.5 text-sm">
                         <CheckCircle2
-                          className={`h-4 w-4 flex-shrink-0 ${plan.highlight ? 'text-violet-400' : 'text-violet-600'}`}
+                          className={`h-4 w-4 flex-shrink-0 ${plan.highlight ? 'text-primary-400' : 'text-primary-600'}`}
                           aria-hidden="true"
                         />
                         <span className={plan.highlight ? 'text-slate-200' : 'text-slate-700'}>{f}</span>
@@ -595,7 +679,7 @@ export default async function HomePage() {
                     href={plan.href}
                     className={`mt-8 rounded-xl py-3 text-center text-sm font-semibold transition-all ${
                       plan.highlight
-                        ? 'bg-violet-600 text-white hover:bg-violet-500'
+                        ? 'bg-primary-600 text-white hover:bg-primary-500'
                         : 'bg-slate-900 text-white hover:bg-slate-800'
                     }`}
                   >
@@ -631,7 +715,7 @@ export default async function HomePage() {
       {/* ───────────────────────── CONTACT + FINAL CTA ───────────────────────── */}
       <section className="relative overflow-hidden bg-slate-950 py-24 text-white">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute left-1/2 top-1/2 h-[400px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-600/20 blur-[120px]" />
+          <div className="absolute left-1/2 top-1/2 h-[400px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600/20 blur-[120px]" />
         </div>
         <div className="relative mx-auto max-w-3xl px-4 text-center">
           <Reveal>
@@ -657,9 +741,9 @@ export default async function HomePage() {
                 <a
                   key={c.label}
                   href={c.href}
-                  className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all hover:border-violet-400/30 hover:bg-white/[0.06]"
+                  className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all hover:border-primary-400/30 hover:bg-white/[0.06]"
                 >
-                  <c.icon className="h-6 w-6 text-violet-300" aria-hidden="true" />
+                  <c.icon className="h-6 w-6 text-primary-300" aria-hidden="true" />
                   <p className="mt-3 text-sm font-semibold text-white">{c.label}</p>
                   <p className="mt-1 text-xs text-slate-400">{c.value}</p>
                 </a>
@@ -675,7 +759,7 @@ export default async function HomePage() {
           <div className="grid gap-10 md:grid-cols-5">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600">
                   <span className="text-sm font-bold text-white">U</span>
                 </div>
                 <span className="text-lg font-bold text-white">Upkilo</span>

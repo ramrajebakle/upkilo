@@ -194,7 +194,7 @@ export default function InventoryPage() {
                         </button>
                         <Link
                             href="/inventory/new"
-                            className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-xl shadow-indigo-500/25 hover:shadow-2xl transition-all hover:-translate-y-0.5 active:scale-95"
+                            className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-xl shadow-primary-500/25 hover:shadow-2xl transition-all hover:-translate-y-0.5 active:scale-95"
                         >
                             <Plus className="h-4 w-4" />
                             Add Product
@@ -209,13 +209,13 @@ export default function InventoryPage() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between px-1">
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1 w-full">
                     <div className="relative flex-1 max-w-md w-full group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-primary-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search products or SKU..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 dark:focus:border-indigo-500/50 transition-all shadow-sm"
+                            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 dark:focus:border-primary-500/50 transition-all shadow-sm"
                         />
                     </div>
                     <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner">
@@ -230,7 +230,7 @@ export default function InventoryPage() {
                                 className={cn(
                                     'px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all',
                                     filterStatus === f.key
-                                        ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-md'
+                                        ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-white shadow-md'
                                         : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
                                 )}
                             >
@@ -242,7 +242,7 @@ export default function InventoryPage() {
                 {selectedItems.size > 0 && (
                     <button
                         onClick={() => setIsBulkAdjustOpen(true)}
-                        className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/25 hover:bg-indigo-700 transition-all transform animate-in slide-in-from-right-4"
+                        className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl shadow-primary-600/25 hover:bg-primary-700 transition-all transform animate-in slide-in-from-right-4"
                     >
                         <Layers className="h-4 w-4" />
                         Bulk Adjust ({selectedItems.size})
@@ -258,7 +258,7 @@ export default function InventoryPage() {
                             <div>
                                 <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Stock Adjustment</h3>
                                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">
-                                    Updating <span className="text-indigo-600 dark:text-indigo-400 font-bold">{selectedItems.size}</span> items
+                                    Updating <span className="text-primary-600 dark:text-primary-400 font-bold">{selectedItems.size}</span> items
                                 </p>
                             </div>
                             <button onClick={() => setIsBulkAdjustOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
@@ -272,7 +272,7 @@ export default function InventoryPage() {
                                     type="number"
                                     value={bulkAdjustValue}
                                     onChange={(e) => setBulkAdjustValue(parseInt(e.target.value) || 0)}
-                                    className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-bold dark:text-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all shadow-inner"
+                                    className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-bold dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all shadow-inner"
                                     placeholder="e.g. +10 or -5"
                                 />
                                 <p className="text-[10px] font-medium text-slate-400 dark:text-slate-500 ml-1">Use positive for stock in, negative for stock out</p>
@@ -283,7 +283,7 @@ export default function InventoryPage() {
                                     type="text"
                                     value={bulkAdjustNotes}
                                     onChange={(e) => setBulkAdjustNotes(e.target.value)}
-                                    className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium dark:text-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all shadow-inner"
+                                    className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all shadow-inner"
                                     placeholder="Reason for adjustment..."
                                 />
                             </div>
@@ -298,7 +298,7 @@ export default function InventoryPage() {
                             <button
                                 onClick={handleBulkAdjust}
                                 disabled={isBulkProcessing || bulkAdjustValue === 0}
-                                className="flex-1 px-6 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl text-xs font-bold uppercase tracking-widest shadow-xl shadow-indigo-500/25 disabled:opacity-50 hover:shadow-2xl transition-all active:scale-95"
+                                className="flex-1 px-6 py-3.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-2xl text-xs font-bold uppercase tracking-widest shadow-xl shadow-primary-500/25 disabled:opacity-50 hover:shadow-2xl transition-all active:scale-95"
                             >
                                 {isBulkProcessing ? 'Processing...' : 'Apply Change'}
                             </button>
@@ -321,7 +321,7 @@ export default function InventoryPage() {
                                             type="checkbox"
                                             checked={selectedItems.size === paginatedItems.length && paginatedItems.length > 0}
                                             onChange={toggleSelectAll}
-                                            className="rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-indigo-600 focus:ring-indigo-500/20 transition-all pointer-events-auto cursor-pointer"
+                                            className="rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-primary-600 focus:ring-primary-500/20 transition-all pointer-events-auto cursor-pointer"
                                         />
                                     </th>
                                     <th className="text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">Product Details</th>
@@ -361,11 +361,11 @@ export default function InventoryPage() {
                                                         type="checkbox"
                                                         checked={selectedItems.has(item.id)}
                                                         onChange={() => toggleSelect(item.id)}
-                                                        className="rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-indigo-600 focus:ring-indigo-500/20 transition-all pointer-events-auto cursor-pointer"
+                                                        className="rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-primary-600 focus:ring-primary-500/20 transition-all pointer-events-auto cursor-pointer"
                                                     />
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <div className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{item.name}</div>
+                                                    <div className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{item.name}</div>
                                                     <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">{item.category}</div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -402,7 +402,7 @@ export default function InventoryPage() {
                                                     <div className="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                                                         <Link
                                                             href={`/inventory/${item.id}`}
-                                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 active:scale-90 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 active:scale-90 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                                                         >
                                                             <Edit2 className="h-4 w-4" />
                                                         </Link>

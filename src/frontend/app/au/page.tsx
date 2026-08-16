@@ -1,10 +1,27 @@
-'use client';
-
+// Not a Client Component. This page has no state, no effects and no event handlers — the
+// 'use client' directive that stood here was doing nothing except preventing the file from
+// exporting metadata, which is why the page shipped with no <title> or <meta description>
+// at all. app/au has its own root layout that exports no metadata either, so unlike the
+// pages nested under [locale] there was not even a generic fallback to inherit.
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Upkilo Australia — Booking Software for Australian Service Businesses',
+  description: 'Booking, client records and payments for Australian salons, spas, gyms and clinics. GST-ready invoicing, AEST/AEDT scheduling and local SMS sender IDs.',
+  alternates: { canonical: 'https://upkilo.com/au' },
+  openGraph: {
+    title: 'Upkilo Australia — Booking Software for Australian Businesses',
+    description: 'GST-ready booking and client management built for the Australian market.',
+    type: 'website',
+  },
+};
 
 const features = [
   { title: 'GST-Ready Invoicing', desc: 'Automatic 10% GST calculation on all invoices. Compliant with ATO requirements.' },
-  { title: 'AUD Pricing', desc: 'All plans priced in Australian Dollars. No conversion surprises.' },
+  // "AUD Pricing / All plans priced in Australian Dollars" contradicted the plan cards below,
+  // which are USD — Upkilo bills exclusively in USD (PricingIntegrityService.BillingCurrency).
+  { title: 'Transparent Pricing', desc: 'Flat monthly plans with no per-booking commission and no setup fee.' },
   { title: 'AEDT/AEST Scheduling', desc: 'Timezone-aware booking system for all Australian states and territories.' },
   { title: 'Local SMS via Twilio AU', desc: 'Australian sender IDs for higher open rates and SPAM Act compliance.' },
   { title: 'Medicare Rebate Notes', desc: 'Add Allied Health rebate information to client receipts and invoices.' },
@@ -26,7 +43,9 @@ export default function AustraliaPage() {
       {/* Hero */}
       <section className="bg-gradient-to-br from-green-900 to-yellow-700 text-white py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="text-5xl mb-4">🦘</div>
+          {/* A 48px 🦘 above the headline was decoration standing in for an icon system —
+              it carried no meaning the heading does not already state, and emoji render
+              differently on every platform, so it was never a controlled visual either. */}
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Booking software built for Australian service businesses
           </h1>
@@ -43,7 +62,10 @@ export default function AustraliaPage() {
               Book a Demo
             </Link>
           </div>
-          <p className="mt-4 text-sm opacity-75">Trusted by 1,200+ Australian salons, gyms, and clinics</p>
+          {/* "Trusted by 1,200+ Australian salons, gyms, and clinics" was removed — an
+              unverifiable customer count, same issue as the landing page's meta description
+              and the medical-spa testimonial. Replaced with a product fact. */}
+          <p className="mt-4 text-sm opacity-75">Online booking, client records, and automated reminders in one system</p>
         </div>
       </section>
 
@@ -93,11 +115,18 @@ export default function AustraliaPage() {
       {/* Trust */}
       <section className="py-16 px-4 text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-8 text-gray-900">Australian businesses love Upkilo</h2>
-          <blockquote className="text-lg text-gray-700 italic mb-4">
-            "Upkilo cut our no-shows by 40% and the GST invoicing saves us hours every BAS period."
-          </blockquote>
-          <p className="text-gray-500 text-sm">— Sarah M., Skin & Body Studio, Melbourne</p>
+          {/* Replaced a fabricated testimonial: a quote attributed to "Sarah M., Skin & Body
+              Studio, Melbourne" claiming Upkilo "cut our no-shows by 40%". There is no such
+              customer and no such measurement — a named endorsement with an invented metric is
+              the most exposed form of the unverifiable-claim problem being cleaned up across
+              these pages, not merely an SEO issue.
+
+              Restore a testimonial here only with a real, consenting, named customer. */}
+          <h2 className="text-2xl font-bold mb-6 text-gray-900">What you get on day one</h2>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+            Online booking, client records, automated reminders and GST-ready invoicing —
+            configured for Australian tax and time zones from the first booking you take.
+          </p>
           <div className="mt-12">
             <Link href="/register?locale=en-AU&currency=AUD"
               className="bg-green-900 text-white font-bold px-10 py-4 rounded-lg hover:bg-green-800 transition text-lg">

@@ -86,7 +86,7 @@ export const LogicNode = memo(({ data, isConnectable }: NodeProps) => {
   const isCondition = data.type === 'ConditionBranch';
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-xl bg-white border-2 border-purple-500 min-w-[200px] border-l-[6px]`}>
+    <div className={`px-4 py-3 shadow-md rounded-xl bg-white border-2 border-primary-500 min-w-[200px] border-l-[6px]`}>
       <Handle
         type="target"
         position={Position.Top}
@@ -94,11 +94,11 @@ export const LogicNode = memo(({ data, isConnectable }: NodeProps) => {
         isConnectable={isConnectable}
       />
       <div className="flex items-center">
-        <div className="rounded-lg p-2 bg-purple-50 text-purple-600">
+        <div className="rounded-lg p-2 bg-primary-50 text-primary-600">
           <Icon size={18} />
         </div>
         <div className="ml-3">
-          <div className="text-xs font-bold text-purple-600 uppercase tracking-wider">Logic</div>
+          <div className="text-xs font-bold text-primary-600 uppercase tracking-wider">Logic</div>
           <div className="text-sm font-bold text-gray-900">{data.label}</div>
         </div>
       </div>

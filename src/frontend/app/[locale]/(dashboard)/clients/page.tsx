@@ -172,12 +172,12 @@ export default function ClientsPage() {
                 title="Clients"
                 description="Manage your customer base, loyalty programs, and referrals"
                 icon={Users}
-                iconGradient="from-violet-500 to-purple-600"
-                iconShadow="shadow-violet-500/25"
+                iconGradient="from-primary-500 to-primary-600"
+                iconShadow="shadow-primary-500/25"
                 actions={
                     <Link
                         href="/clients/new"
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/25 hover:shadow-xl transition-all hover:-translate-y-0.5 text-sm"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 hover:shadow-xl transition-all hover:-translate-y-0.5 text-sm"
                     >
                         <Plus className="h-4 w-4" />
                         Add Client
@@ -204,7 +204,7 @@ export default function ClientsPage() {
                         placeholder="Search by name, email, or phone..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 dark:focus:border-indigo-500/50 text-slate-900 dark:text-white transition-all shadow-sm"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-300 dark:focus:border-primary-500/50 text-slate-900 dark:text-white transition-all shadow-sm"
                     />
                 </div>
                 <div className="flex gap-2 flex-wrap">
@@ -215,8 +215,8 @@ export default function ClientsPage() {
                             className={cn(
                                 'px-4 py-2 rounded-lg text-sm font-semibold transition-all capitalize',
                                 statusFilter === s
-                                    ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
-                                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-300 shadow-sm'
+                                    ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
+                                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-primary-300 dark:hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-300 shadow-sm'
                             )}
                         >
                             {s}
@@ -227,7 +227,7 @@ export default function ClientsPage() {
 
             {/* Bulk Actions Bar */}
             {selectedIds.size > 0 && (
-                <div className="bg-indigo-600 text-white px-6 py-3 rounded-xl flex items-center justify-between animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="bg-primary-600 text-white px-6 py-3 rounded-xl flex items-center justify-between animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <div className="flex items-center gap-3">
                         <span className="font-semibold">{selectedIds.size} selected</span>
                         <div className="flex gap-2 border-l border-white/20 ml-3 pl-3">
@@ -265,7 +265,7 @@ export default function ClientsPage() {
                                     <th className="px-6 py-3">
                                         <input
                                             type="checkbox"
-                                            className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-indigo-600 focus:ring-indigo-500"
+                                            className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-primary-600 focus:ring-primary-500"
                                             checked={selectedIds.size === clients.length && clients.length > 0}
                                             onChange={toggleSelectAll}
                                         />
@@ -302,19 +302,19 @@ export default function ClientsPage() {
                                         return (
                                             <tr key={client.id} className={cn(
                                                 "hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group",
-                                                selectedIds.has(client.id) && "bg-indigo-50/30 dark:bg-indigo-900/10"
+                                                selectedIds.has(client.id) && "bg-primary-50/30 dark:bg-primary-900/10"
                                             )}>
                                                 <td className="px-6 py-4">
                                                     <input
                                                         type="checkbox"
-                                                        className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-indigo-600 focus:ring-indigo-500"
+                                                        className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-primary-600 focus:ring-primary-500"
                                                         checked={selectedIds.has(client.id)}
                                                         onChange={() => toggleSelectOne(client.id)}
                                                     />
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
                                                             {client.firstName?.[0]}{client.lastName?.[0]}
                                                         </div>
                                                         <div>
@@ -322,7 +322,7 @@ export default function ClientsPage() {
                                                             {client.tags.length > 0 && (
                                                                 <div className="flex gap-1 mt-0.5">
                                                                     {client.tags.slice(0, 2).map(tag => (
-                                                                        <span key={tag} className="px-1.5 py-0.5 text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-md border border-indigo-100 dark:border-indigo-800">{tag}</span>
+                                                                        <span key={tag} className="px-1.5 py-0.5 text-[10px] font-bold bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 rounded-md border border-primary-100 dark:border-primary-800">{tag}</span>
                                                                     ))}
                                                                     {client.tags.length > 2 && (
                                                                         <span className="px-1.5 py-0.5 text-[10px] font-medium bg-slate-100 text-slate-500 rounded-full">+{client.tags.length - 2}</span>
@@ -360,7 +360,7 @@ export default function ClientsPage() {
                                                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <Link
                                                             href={`/clients/${client.id}`}
-                                                            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-indigo-600"
+                                                            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-primary-600"
                                                             title="View"
                                                         >
                                                             <ChevronRight className="h-4 w-4" />

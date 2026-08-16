@@ -60,7 +60,7 @@ export default function SandboxPage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Developer Sandboxes <FlaskConical className="text-purple-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Developer Sandboxes <FlaskConical className="text-primary-500" size={22} /></h1>
         <p className="text-text-secondary mt-1">Isolated test environments for building and testing integrations without affecting live data.</p>
       </header>
 

@@ -1,9 +1,5 @@
 import { Metadata } from 'next';
-
-// Prevents </script> injection when data lands in JSON-LD blocks.
-function safeJsonLd(obj: unknown): string {
-  return JSON.stringify(obj).replace(/</g, '\\u003c');
-}
+import { safeJsonLd } from '@/lib/jsonLd';
 
 interface Listing {
   id: string;
@@ -66,19 +62,44 @@ export async function generateStaticParams() {
   );
 }
 
+// generateStaticParams above cross-produces 10 categories × 10 cities = 100 combinations,
+// and any other category/city pair is additionally reachable via ISR — but a page only has
+// something to show once real businesses have listed in that exact pair. Until then the body
+// renders "No businesses found yet" (see the empty state below) while still returning HTTP 200.
+//
+// Serving a large set of near-identical, auto-generated, empty pages is what Google's spam
+// policy describes as scaled content abuse / doorway pages, and the penalty for it is not
+// scoped to the offending URLs — it can suppress the whole domain. So empty combinations are
+// explicitly noindexed until they have real content.
+//
+// `follow: true` is deliberate: the empty state still links to /register, and there is no
+// reason to stop crawlers walking those links. This gate needs no maintenance — pages become
+// indexable on their own as real listings arrive.
+function hasListings(data: PageData | null): boolean {
+  return !!data && data.listings.length > 0;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category, city } = await params;
   const data = await fetchListings(category, city);
-  if (!data) {
-    return { title: `Book ${category} in ${city} | Upkilo` };
+
+  // Mirrors the render's own empty check exactly (`!data || data.listings.length === 0`),
+  // so what the crawler is told can never drift from what the page actually shows.
+  if (!hasListings(data)) {
+    return {
+      title: `Book ${category} in ${city} | Upkilo`,
+      robots: { index: false, follow: true },
+    };
   }
+
   return {
-    title: data.seo.title,
-    description: data.seo.description,
-    alternates: { canonical: data.seo.canonicalUrl },
+    title: data!.seo.title,
+    description: data!.seo.description,
+    alternates: { canonical: data!.seo.canonicalUrl },
+    robots: { index: true, follow: true },
     openGraph: {
-      title: data.seo.title,
-      description: data.seo.description,
+      title: data!.seo.title,
+      description: data!.seo.description,
       type: 'website',
     },
   };
@@ -125,12 +146,12 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdItemList) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdBreadcrumb) }} />
       {/* Hero */}
-      <section className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white py-16 px-4">
+      <section className="bg-gradient-to-br from-primary-600 to-primary-700 text-white py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Best {humanCategory} in {humanCity}
           </h1>
-          <p className="text-indigo-100 text-lg">
+          <p className="text-primary-100 text-lg">
             {data ? `${data.total} businesses ready to book online` : `Discover and book local ${humanCategory.toLowerCase()} businesses`}
           </p>
         </div>
@@ -144,7 +165,7 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
             <h2 className="text-xl font-semibold text-gray-700 mb-2">No businesses found yet</h2>
             <p className="text-gray-500">
               Are you a {humanCategory.toLowerCase()} business in {humanCity}?{' '}
-              <a href="/register" className="text-indigo-600 hover:underline font-medium">List your business for free →</a>
+              <a href="/register" className="text-primary-600 hover:underline font-medium">List your business for free →</a>
             </p>
           </div>
         ) : (
@@ -166,10 +187,10 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
                     </div>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">{listing.city}</span>
+                    <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium">{listing.city}</span>
                     <a
                       href={`/book/${listing.id}`}
-                      className="bg-indigo-600 text-white text-sm px-4 py-1.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+                      className="bg-primary-600 text-white text-sm px-4 py-1.5 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
                     >
                       Book Now
                     </a>
@@ -191,7 +212,7 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
               {data.listings.length === data.pageSize && (
                 <a
                   href={`/book/${category}/${city}?page=${page + 1}`}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700"
                 >
                   Next →
                 </a>
@@ -201,10 +222,10 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
         )}
 
         {/* CTA for businesses */}
-        <div className="mt-12 bg-indigo-50 border border-indigo-100 rounded-2xl p-8 text-center">
-          <h3 className="text-lg font-bold text-indigo-900 mb-2">Own a {humanCategory} business in {humanCity}?</h3>
-          <p className="text-indigo-700 text-sm mb-4">Join Upkilo to accept online bookings, automate reminders, and grow your client base.</p>
-          <a href="/register" className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+        <div className="mt-12 bg-primary-50 border border-primary-100 rounded-2xl p-8 text-center">
+          <h3 className="text-lg font-bold text-primary-900 mb-2">Own a {humanCategory} business in {humanCity}?</h3>
+          <p className="text-primary-700 text-sm mb-4">Join Upkilo to accept online bookings, automate reminders, and grow your client base.</p>
+          <a href="/register" className="inline-block bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700">
             List Your Business Free →
           </a>
         </div>

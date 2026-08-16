@@ -1,9 +1,31 @@
-"use client";
-
+// Not a Client Component. This page has no state, no effects and no event handlers — the
+// 'use client' directive that stood here only prevented the file from exporting metadata,
+// so the page fell back to app/[locale]/layout.tsx's generic site-wide title and
+// description, identical to every other page under [locale].
+import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
 import { Check, Shield, Lock, FileCheck, Heart, Users, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://upkilo.com";
+
+// Canonical is pinned to /en rather than built from the visitor's locale, matching the
+// middleware rule that folds non-English marketing URLs onto English while those pages
+// carry no real translations. When a locale passes the content gate, this becomes
+// locale-aware in the same change that removes it from that redirect.
+export const metadata: Metadata = {
+  title: "Upkilo for Medical Spas — HIPAA-Ready Booking, Waivers & Consent",
+  description:
+    "Booking and client management for medical spas and aesthetic clinics. Digital waivers, contraindication tracking, treatment photos and a full compliance audit trail.",
+  alternates: { canonical: `${SITE_URL}/en/medical-spa` },
+  openGraph: {
+    title: "Upkilo for Medical Spas — HIPAA-Ready Booking & Consent",
+    description:
+      "Digital waivers, contraindication tracking and compliance audit logs, in the same system that runs your bookings.",
+    type: "website",
+  },
+};
 
 const complianceFeatures = [
   { icon: Shield, title: "HIPAA-Ready Infrastructure", description: "BAA available, encrypted data at rest and in transit, audit logs retained 90 days." },
@@ -23,11 +45,14 @@ const medSpaUseCases = [
   "Body Contouring Centers",
 ];
 
-const testimonialQuote = {
-  text: "We switched from a legacy system that couldn't handle consent forms properly. Upkilo's medical spa mode gave us everything — digital waivers, contraindication tracking, and HIPAA audit logs — in one platform.",
-  author: "Dr. Priya S.",
-  role: "Medical Director, Aesthetic Clinic, Dubai",
-};
+// A named customer testimonial ("Dr. Priya S., Medical Director, Aesthetic Clinic,
+// Dubai") stood here and was fabricated — there are no customers to quote yet.
+// Attributing an endorsement to a person who did not give one is a legal exposure under
+// endorsement-advertising rules, independent of any SEO consideration, and it is the
+// opposite of the first-hand-experience signal search engines actually reward.
+//
+// Replaced with a claim that is true today and needs no attribution. Restore a real
+// quote here only with a named, consenting customer.
 
 export default function MedicalSpaPage() {
   return (
@@ -113,22 +138,27 @@ export default function MedicalSpaPage() {
         </div>
       </section>
 
-      {/* Testimonial */}
+      {/* Capability summary — see note above the removed testimonial constant */}
       <section className="py-16 px-4 bg-rose-50">
         <div className="max-w-2xl mx-auto text-center">
-          <blockquote className="text-xl italic text-gray-700">
-            &ldquo;{testimonialQuote.text}&rdquo;
-          </blockquote>
-          <p className="mt-4 font-semibold text-gray-900">{testimonialQuote.author}</p>
-          <p className="text-sm text-gray-500">{testimonialQuote.role}</p>
+          <p className="text-xl text-gray-700">
+            Digital waivers, contraindication tracking, and a full compliance audit trail — in
+            the same system that runs your bookings, clients, and payments.
+          </p>
+          <p className="mt-4 text-sm text-gray-500">
+            No separate consent tool, no paper intake forms, no spreadsheet of allergies.
+          </p>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-20 px-4 bg-white text-center">
         <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Ready to modernize your medical spa?</h2>
+        {/* "Join aesthetic clinics across the US, UK, UAE, and Australia running..." stood
+            here — same problem as the removed testimonial: it asserts an existing customer
+            base. Rewritten to describe what the product supports, which is verifiable. */}
         <p className="text-gray-600 mb-8 max-w-xl mx-auto">
-          Join aesthetic clinics across the US, UK, UAE, and Australia running HIPAA-ready operations on Upkilo.
+          Set up digital waivers, consent tracking, and HIPAA-ready audit logs in an afternoon.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/register?vertical=medical-spa">

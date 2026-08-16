@@ -83,7 +83,7 @@ export default function CustomerProfilePage() {
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
             <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                     Profile Settings
                 </h1>
                 <p className="text-slate-500 mt-1">Manage your personal information and preferences</p>
@@ -94,7 +94,7 @@ export default function CustomerProfilePage() {
                 <div className="space-y-6">
                     <Card className="p-6 text-center border-none shadow-xl shadow-slate-200/50">
                         <div className="relative w-24 h-24 mx-auto mb-4 group">
-                            <div className="w-full h-full rounded-2xl bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-primary/20">
+                            <div className="w-full h-full rounded-2xl bg-gradient-to-br from-primary to-primary-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-primary/20">
                                 {profile?.firstName?.[0]}{profile?.lastName?.[0]}
                             </div>
                             <button className="absolute -bottom-2 -right-2 p-2 bg-white rounded-xl shadow-lg border border-slate-100 text-slate-600 hover:text-primary transition-colors">

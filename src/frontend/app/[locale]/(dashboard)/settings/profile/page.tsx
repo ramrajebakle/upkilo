@@ -88,7 +88,7 @@ export default function ProfileSettingsPage() {
             <div className="relative p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl shadow-slate-200/40 dark:shadow-none overflow-hidden group">
                 <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-10">
                     <div className="relative">
-                        <div className="w-32 h-32 rounded-[32px] bg-gradient-to-br from-indigo-500 via-primary-500 to-violet-600 flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-primary-500/30 ring-8 ring-white dark:ring-slate-950 transition-transform group-hover:scale-105 duration-500">
+                        <div className="w-32 h-32 rounded-[32px] bg-gradient-to-br from-primary-500 via-primary-500 to-primary-600 flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-primary-500/30 ring-8 ring-white dark:ring-slate-950 transition-transform group-hover:scale-105 duration-500">
                             {user.initials}
                         </div>
                         <button className="absolute -bottom-2 -right-2 p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-primary-500 transition-all hover:scale-110 active:scale-95">
@@ -229,7 +229,7 @@ export default function ProfileSettingsPage() {
             </div>
 
             {/* Security Notice */}
-            <div className="p-8 bg-gradient-to-br from-slate-900 to-indigo-950 border border-slate-800 rounded-[32px] flex items-center gap-8 group">
+            <div className="p-8 bg-gradient-to-br from-slate-900 to-primary-950 border border-slate-800 rounded-[32px] flex items-center gap-8 group">
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/10 group-hover:scale-110 transition-transform">
                     <Shield className="h-8 w-8 text-primary-400" />
                 </div>

@@ -127,7 +127,7 @@ export default function OrdersPage() {
           { label: "Total orders", value: stats.totalOrders, icon: ShoppingBag, color: "text-blue-500" },
           { label: "Revenue (paid)", value: `$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, color: "text-green-500" },
           { label: "Pending", value: stats.pendingOrders, icon: Clock, color: "text-amber-500" },
-          { label: "Avg order value", value: `$${stats.avgOrderValue.toFixed(2)}`, icon: Package, color: "text-purple-500" },
+          { label: "Avg order value", value: `$${stats.avgOrderValue.toFixed(2)}`, icon: Package, color: "text-primary-500" },
         ].map((s) => (
           <Card key={s.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">

@@ -107,13 +107,13 @@ export default function ReportsPage() {
                         color: channelColors[i % channelColors.length]
                     })));
                 } else {
-                    setChannelData([{ channel: 'Online Booking', percent: 100, color: 'bg-violet-500' }]);
+                    setChannelData([{ channel: 'Online Booking', percent: 100, color: 'bg-primary-500' }]);
                 }
             } catch (err) {
                 console.error('Failed to fetch report stats:', err);
                 setRevenueData(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => ({ day: d, value: 0 })));
                 setPeakHours([{ time: '10 AM - 12 PM', bookings: 0, percent: 0 }]);
-                setChannelData([{ channel: 'Online Booking', percent: 100, color: 'bg-violet-500' }]);
+                setChannelData([{ channel: 'Online Booking', percent: 100, color: 'bg-primary-500' }]);
             } finally {
                 setLoading(false);
             }
@@ -143,13 +143,13 @@ export default function ReportsPage() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="animate-fade-in-up">
                     <div className="flex items-center gap-4 mb-2">
-                        <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl shadow-xl shadow-violet-500/25 transform transition-transform hover:scale-110">
+                        <div className="p-3 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl shadow-xl shadow-primary-500/25 transform transition-transform hover:scale-110">
                             <BarChart3 className="h-6 w-6 text-white" />
                         </div>
                         <div>
                             <h1
                                 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight"
-                                style={{ fontFamily: 'Outfit, sans-serif' }}
+                                style={{ fontFamily: 'var(--font-display)' }}
                             >
                                 Intelligence Center
                             </h1>
@@ -217,9 +217,9 @@ export default function ReportsPage() {
                             value: stats?.newClients || 0,
                             change: stats?.clientsChange || 0,
                             icon: Users,
-                            gradient: 'from-violet-500 to-purple-600',
-                            bgGradient: 'from-violet-500/5 to-purple-500/5 dark:from-violet-500/10 dark:to-purple-500/5',
-                            border: 'border-violet-100/50 dark:border-violet-900/20'
+                            gradient: 'from-primary-500 to-primary-600',
+                            bgGradient: 'from-primary-500/5 to-primary-600/5 dark:from-primary-500/10 dark:to-primary-600/5',
+                            border: 'border-primary-100/50 dark:border-primary-900/20'
                         },
                         {
                             label: 'Avg. Order',
@@ -273,7 +273,7 @@ export default function ReportsPage() {
                         className={cn(
                             'flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all',
                             activeTab === tab.id
-                                ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-lg'
+                                ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-white shadow-lg'
                                 : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
                         )}
                     >
@@ -290,7 +290,7 @@ export default function ReportsPage() {
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 blur-3xl rounded-full -mr-32 -mt-32 pointer-events-none" />
                     <div className="flex items-center justify-between mb-8 relative">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                 Performance Velocity
                             </h3>
                             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Daily revenue capitalization metrics</p>
@@ -330,7 +330,7 @@ export default function ReportsPage() {
                 <div className="card-elevated p-8 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800 shadow-xl" style={{ animationDelay: '450ms' }}>
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                 Premier Services
                             </h3>
                             <p className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mt-1">Growth Tier List</p>
@@ -453,8 +453,8 @@ export default function ReportsPage() {
                 {/* Revenue by Channel */}
                 <div className="card-elevated p-8 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800 shadow-xl" style={{ animationDelay: '600ms' }}>
                     <div className="flex items-center gap-4 mb-8">
-                        <div className="p-3 bg-violet-50 dark:bg-violet-900/20 rounded-2xl">
-                            <PieChart className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+                        <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-2xl">
+                            <PieChart className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Origin Analysis</h3>

@@ -319,7 +319,7 @@ export function GlobalSearch() {
                                 <button
                                     onClick={handleSaveSearch}
                                     disabled={savingFilter}
-                                    className="flex items-center gap-1 hover:text-indigo-600 transition-colors bg-indigo-50 text-indigo-500 px-2 py-1 rounded"
+                                    className="flex items-center gap-1 hover:text-primary-600 transition-colors bg-primary-50 text-primary-500 px-2 py-1 rounded"
                                 >
                                     <Save className="h-3 w-3" />
                                     {savingFilter ? 'Saving...' : 'Save Search'}

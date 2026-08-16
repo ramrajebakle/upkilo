@@ -212,7 +212,7 @@ export default function BackupRestorePage() {
             {stats && (
                 <div className="grid grid-cols-4 gap-4">
                     {[
-                        { label: 'Total Backups', value: stats.totalBackups, icon: <Archive className="h-5 w-5 text-indigo-500" />, color: 'text-indigo-700' },
+                        { label: 'Total Backups', value: stats.totalBackups, icon: <Archive className="h-5 w-5 text-primary-500" />, color: 'text-primary-700' },
                         { label: 'Total Size', value: formatBytes(stats.totalSizeBytes), icon: <HardDrive className="h-5 w-5 text-slate-500" />, color: 'text-slate-700' },
                         { label: 'Last Backup', value: stats.lastBackupAt ? new Date(stats.lastBackupAt).toLocaleDateString() : 'Never', icon: <CheckCircle className="h-5 w-5 text-emerald-500" />, color: 'text-emerald-700' },
                         { label: 'Retention', value: `${stats.retentionDays} days`, icon: <Calendar className="h-5 w-5 text-amber-500" />, color: 'text-amber-700' },
@@ -251,7 +251,7 @@ export default function BackupRestorePage() {
                             value={backupName}
                             onChange={e => setBackupName(e.target.value)}
                             placeholder="e.g., Pre-migration snapshot, Monthly backup April 2026"
-                            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                     </div>
 
@@ -259,13 +259,13 @@ export default function BackupRestorePage() {
                         <div className="flex items-center justify-between mb-2">
                             <label className="block text-sm font-medium text-slate-700">Include Data</label>
                             <div className="flex gap-2">
-                                <button onClick={() => setSelectedEntities(ENTITY_OPTIONS.map(e => e.key))} className="text-xs text-indigo-600 hover:text-indigo-800">Select All</button>
+                                <button onClick={() => setSelectedEntities(ENTITY_OPTIONS.map(e => e.key))} className="text-xs text-primary-600 hover:text-primary-800">Select All</button>
                                 <button onClick={() => setSelectedEntities([])} className="text-xs text-slate-500 hover:text-slate-700">Clear</button>
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                             {ENTITY_OPTIONS.map(entity => (
-                                <label key={entity.key} className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${selectedEntities.includes(entity.key) ? 'border-indigo-300 bg-indigo-50' : 'border-slate-200 hover:bg-slate-50'}`}>
+                                <label key={entity.key} className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${selectedEntities.includes(entity.key) ? 'border-primary-300 bg-primary-50' : 'border-slate-200 hover:bg-slate-50'}`}>
                                     <input
                                         type="checkbox"
                                         checked={selectedEntities.includes(entity.key)}

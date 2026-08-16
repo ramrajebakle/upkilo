@@ -133,7 +133,7 @@ export default function KioskPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
                     {t('title')}
                 </h1>
                 <p className="text-sm text-slate-500">{t('description')}</p>
@@ -183,7 +183,7 @@ export default function KioskPage() {
             {isKioskOpen && (
                 <div className="fixed inset-0 z-[100] bg-slate-900 flex flex-col">
                     <div className="flex justify-between items-center p-6 border-b border-slate-800 bg-slate-900 text-white">
-                        <h2 className="text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>{t('welcomeTitle')}</h2>
+                        <h2 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-display)' }}>{t('welcomeTitle')}</h2>
                         <button onClick={() => setIsKioskOpen(false)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg font-medium transition-colors flex items-center gap-2">
                             <X className="h-4 w-4" /> {t('exitKiosk')}
                         </button>
@@ -210,7 +210,7 @@ export default function KioskPage() {
                                 {kioskTab === 'checkin' ? (
                                     <div className="max-w-xl mx-auto w-full flex-1 flex flex-col">
                                         <div className="text-center mb-8">
-                                            <h3 className="text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>{t('checkInHeader')}</h3>
+                                            <h3 className="text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'var(--font-display)' }}>{t('checkInHeader')}</h3>
                                             <p className="text-slate-500 text-lg">{t('checkInDesc')}</p>
                                         </div>
                                         
@@ -260,7 +260,7 @@ export default function KioskPage() {
                                 ) : (
                                     <div className="max-w-2xl mx-auto w-full">
                                         <div className="text-center mb-8">
-                                            <h3 className="text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>{t('walkInHeader')}</h3>
+                                            <h3 className="text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'var(--font-display)' }}>{t('walkInHeader')}</h3>
                                             <p className="text-slate-500 text-lg">{t('walkInDesc')}</p>
                                         </div>
 

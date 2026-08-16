@@ -44,7 +44,7 @@ export default function AppearanceSettingsPage() {
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
             {/* Header Bundle */}
             <div className="flex items-center gap-6 mb-12">
-                <div className="p-4 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
+                <div className="p-4 bg-gradient-to-br from-primary-500 to-primary-600 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                     <Palette className="h-8 w-8 text-white" />
                 </div>
                 <div>

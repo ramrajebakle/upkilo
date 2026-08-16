@@ -143,15 +143,15 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                     className="fixed right-0 top-0 h-full w-[360px] z-40 flex flex-col bg-white border-l border-surface-200 shadow-2xl"
                 >
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-surface-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-surface-200 bg-gradient-to-r from-primary-50 to-primary-100">
                         <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-indigo-600 rounded-lg">
+                            <div className="p-1.5 bg-primary-600 rounded-lg">
                                 <Bot className="h-4 w-4 text-white" />
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-text-primary">AI Copilot</p>
                                 <p className="text-xs text-text-tertiary flex items-center gap-1">
-                                    <Sparkles className="h-3 w-3 text-indigo-400" />
+                                    <Sparkles className="h-3 w-3 text-primary-400" />
                                     Context-aware assistant
                                 </p>
                             </div>
@@ -175,7 +175,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
 
                     {/* Context hint banner */}
                     {contextHint && (
-                        <div className="px-4 py-2 bg-indigo-50 border-b border-indigo-100 text-xs text-indigo-700 flex items-center gap-1.5">
+                        <div className="px-4 py-2 bg-primary-50 border-b border-primary-100 text-xs text-primary-700 flex items-center gap-1.5">
                             <ChevronRight className="h-3 w-3" />
                             Context: {contextHint}
                         </div>
@@ -186,8 +186,8 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                         {messages.length === 0 && (
                             <div className="space-y-4">
                                 <div className="text-center py-6">
-                                    <div className="mx-auto mb-3 w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center">
-                                        <Sparkles className="h-6 w-6 text-indigo-500" />
+                                    <div className="mx-auto mb-3 w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center">
+                                        <Sparkles className="h-6 w-6 text-primary-500" />
                                     </div>
                                     <p className="text-sm font-medium text-text-primary">How can I help?</p>
                                     <p className="text-xs text-text-tertiary mt-1">Ask me anything about your business</p>
@@ -199,7 +199,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                                         <button
                                             key={prompt}
                                             onClick={() => send(prompt)}
-                                            className="w-full text-left text-sm px-3 py-2.5 rounded-xl border border-surface-200 text-text-secondary hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 transition-all"
+                                            className="w-full text-left text-sm px-3 py-2.5 rounded-xl border border-surface-200 text-text-secondary hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-all"
                                         >
                                             {prompt}
                                         </button>
@@ -214,7 +214,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                                 className={cn('flex gap-2', msg.role === 'user' ? 'justify-end' : 'justify-start')}
                             >
                                 {msg.role === 'assistant' && (
-                                    <div className="shrink-0 w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center mt-0.5">
+                                    <div className="shrink-0 w-7 h-7 bg-primary-600 rounded-full flex items-center justify-center mt-0.5">
                                         <Bot className="h-3.5 w-3.5 text-white" />
                                     </div>
                                 )}
@@ -224,7 +224,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                                         className={cn(
                                             'rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap',
                                             msg.role === 'user'
-                                                ? 'bg-indigo-600 text-white rounded-tr-sm'
+                                                ? 'bg-primary-600 text-white rounded-tr-sm'
                                                 : 'bg-surface-100 text-text-primary rounded-tl-sm'
                                         )}
                                     >
@@ -254,11 +254,11 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
 
                         {isLoading && (
                             <div className="flex gap-2 justify-start">
-                                <div className="shrink-0 w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center mt-0.5">
+                                <div className="shrink-0 w-7 h-7 bg-primary-600 rounded-full flex items-center justify-center mt-0.5">
                                     <Bot className="h-3.5 w-3.5 text-white" />
                                 </div>
                                 <div className="bg-surface-100 rounded-2xl rounded-tl-sm px-3.5 py-2.5 flex items-center gap-1.5">
-                                    <Loader2 className="h-3.5 w-3.5 text-indigo-500 animate-spin" />
+                                    <Loader2 className="h-3.5 w-3.5 text-primary-500 animate-spin" />
                                     <span className="text-sm text-text-secondary">Thinking…</span>
                                 </div>
                             </div>
@@ -269,7 +269,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
 
                     {/* Input */}
                     <div className="px-4 py-3 border-t border-surface-200 bg-surface-50">
-                        <div className="flex items-end gap-2 bg-white rounded-2xl border border-surface-200 px-3 py-2 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                        <div className="flex items-end gap-2 bg-white rounded-2xl border border-surface-200 px-3 py-2 focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-100 transition-all">
                             <textarea
                                 ref={inputRef}
                                 rows={1}
@@ -285,7 +285,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                                 className={cn(
                                     'shrink-0 p-1.5 rounded-xl transition-all',
                                     input.trim() && !isLoading
-                                        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                        ? 'bg-primary-600 text-white hover:bg-primary-700'
                                         : 'bg-surface-200 text-text-tertiary cursor-not-allowed'
                                 )}
                             >

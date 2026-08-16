@@ -153,7 +153,7 @@ export default function CalendarIntegrationsPage() {
                     <ArrowLeft className="h-5 w-5 text-slate-600" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
                         Calendar Integrations
                     </h1>
                     <p className="text-slate-500">Sync your bookings with external calendars to avoid double booking.</p>

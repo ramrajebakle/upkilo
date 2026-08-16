@@ -67,7 +67,7 @@ export default function ServicesPage() {
             {/* Header section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Services</h1>
+                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Services</h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">Manage your appointment types and class offerings</p>
                 </div>
                 <Link 
@@ -170,8 +170,8 @@ export default function ServicesPage() {
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Pricing</span>
                                         <div className="flex items-center gap-1.5 text-slate-900 dark:text-white">
-                                            <div className="p-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-md">
-                                                <DollarSign className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                                            <div className="p-1 bg-primary-50 dark:bg-primary-900/20 rounded-md">
+                                                <DollarSign className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                                             </div>
                                             <span className="text-sm font-black whitespace-nowrap">
                                                 {service.price} <span className="text-[10px] text-slate-400 font-bold">{service.currency}</span>
@@ -204,7 +204,7 @@ export default function ServicesPage() {
                         <div className="w-24 h-24 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 dark:text-slate-600">
                             <Package className="w-12 h-12" />
                         </div>
-                        <div className="absolute -inset-4 blur-2xl bg-indigo-500/5 rounded-full" />
+                        <div className="absolute -inset-4 blur-2xl bg-primary-500/5 rounded-full" />
                     </div>
                     <div className="max-w-md space-y-2">
                         <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">No services found</h3>

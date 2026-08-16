@@ -98,7 +98,7 @@ export default function CustomerBookingsPage() {
         <div className="space-y-8 max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                         My Appointments
                     </h1>
                     <p className="text-slate-500 mt-1">Manage your sessions and view past visits</p>
@@ -135,7 +135,7 @@ export default function CustomerBookingsPage() {
                                 style={{ animationDelay: `${i * 100}ms` }}
                             >
                                 <div className="flex flex-col md:flex-row">
-                                    <div className="w-full md:w-2 bg-gradient-to-b from-primary to-indigo-500" />
+                                    <div className="w-full md:w-2 bg-gradient-to-b from-primary to-primary-500" />
                                     <div className="flex-1 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2">

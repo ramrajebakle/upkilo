@@ -35,7 +35,7 @@ export default function LandingNav() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5" aria-label="Upkilo home">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/30">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/30">
             <span className="text-sm font-bold text-white">U</span>
           </div>
           <span
@@ -57,7 +57,7 @@ export default function LandingNav() {
             <a
               key={l.href}
               href={l.href}
-              className={`transition-colors ${scrolled ? 'hover:text-violet-600' : 'hover:text-white'}`}
+              className={`transition-colors ${scrolled ? 'hover:text-primary-600' : 'hover:text-white'}`}
             >
               {l.label}
             </a>
@@ -76,7 +76,7 @@ export default function LandingNav() {
           </Link>
           <Link
             href="/register"
-            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition-all hover:-translate-y-0.5 hover:bg-violet-500 hover:shadow-violet-500/40"
+            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary-500/25 transition-all hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-primary-500/40"
           >
             Start free trial
           </Link>
@@ -119,7 +119,7 @@ export default function LandingNav() {
               <Link
                 href="/register"
                 onClick={() => setOpen(false)}
-                className="rounded-lg bg-violet-600 px-3 py-2.5 text-center text-sm font-semibold text-white"
+                className="rounded-lg bg-primary-600 px-3 py-2.5 text-center text-sm font-semibold text-white"
               >
                 Start free trial
               </Link>

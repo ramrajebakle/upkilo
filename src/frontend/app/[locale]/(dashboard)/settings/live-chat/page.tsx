@@ -65,7 +65,7 @@ export default function LiveChatSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-purple-500" />
+              <Bot className="h-5 w-5 text-primary-500" />
               AI Chatbot Handoff (Task 1849)
             </CardTitle>
             <CardDescription>Rules for escalating chats to human staff.</CardDescription>
@@ -92,10 +92,10 @@ export default function LiveChatSettingsPage() {
                </div>
 
                <div className="flex gap-2">
-                  <span className="bg-purple-100 text-purple-700 text-[10px] uppercase font-bold px-2 py-1 rounded">
+                  <span className="bg-primary-100 text-primary-700 text-[10px] uppercase font-bold px-2 py-1 rounded">
                     Trigger: Sentiment is Negative
                   </span>
-                  <span className="bg-purple-100 text-purple-700 text-[10px] uppercase font-bold px-2 py-1 rounded">
+                  <span className="bg-primary-100 text-primary-700 text-[10px] uppercase font-bold px-2 py-1 rounded">
                     Trigger: "Speak to agent"
                   </span>
                </div>

@@ -18,7 +18,7 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.upkilo.com';
 
 // Locale-prefixed marketing paths, i.e. /en/pricing. '' covers the /en landing page.
 const MARKETING_LOCALE_SEGMENTS = new Set([
-  '', 'pricing', 'features', 'marketplace', 'medical-spa', 'docs',
+  '', 'pricing', 'features', 'marketplace', 'medical-spa', 'docs', 'contact',
   'terms-of-service', 'privacy-policy', 'cookie-policy', 'book',
 ]);
 
@@ -54,24 +54,20 @@ function isPublicPath(pathname: string): boolean {
       }
     }
   }
-  // Also allow the root landing page and public marketing pages
-  const publicPrefixes = ['/', '/pricing', '/features', '/marketplace', '/docs', '/cookie-policy', '/privacy-policy', '/terms-of-service'];
-  for (const locale of SUPPORTED_LOCALES) {
-    for (const prefix of publicPrefixes) {
-      if (pathname === `/${locale}${prefix === '/' ? '' : prefix}` || pathname === `/${locale}`) {
-        return true;
-      }
-    }
-  }
-  // Allow public booking widget, discover, and powered-by pages.
-  // Use startsWith (not includes) to prevent path-traversal bypasses such as
-  // /dashboard/book/anything or /admin?redirect=/discover matching as public routes.
-  const publicRoutePrefixes = ['/book/', '/discover', '/powered-by'];
-  const locale = extractLocale(pathname);
-  if (publicRoutePrefixes.some(prefix => pathname.startsWith(`/${locale}${prefix}`) || pathname.startsWith(prefix))) {
-    return true;
-  }
-  return false;
+  // Every marketing page is public by definition, so this defers to the same predicate
+  // that drives host routing rather than keeping a second hand-maintained list.
+  //
+  // It used to keep its own `publicPrefixes` array, and the two drifted: `contact` was in
+  // neither list and `medical-spa` was only in the marketing one, so both pages redirected
+  // anonymous visitors — and Googlebot — to /en/login. Nothing failed loudly; the pages
+  // simply could not be reached by anyone who was not already signed in. The old array also
+  // compared with `===`, so nested marketing pages such as /en/docs/custom-domains and
+  // /en/book/<slug> were gated even when their parent segment was listed.
+  //
+  // isMarketingPath matches the first path segment exactly (never a bare startsWith), so the
+  // traversal bypasses the previous comment warned about — /dashboard/book/anything,
+  // /admin?redirect=/discover — still resolve to their real first segment and stay private.
+  return isMarketingPath(pathname);
 }
 
 function roleDefaultRoute(role: string | undefined, locale: string): string {
@@ -168,9 +164,30 @@ const authMiddleware = auth((req) => {
 
   if (isLoggedIn) {
     const role = req.auth?.user?.role as string | undefined;
-    const isPlatformPath = pathname.includes('/platform');
 
-    if ((role === 'tenant_owner' || role === 'team_member') && isPlatformPath) {
+    // Platform-staff surfaces: /platform/* and /admin/*. Both are Upkilo's own back office —
+    // tenant management, platform revenue, impersonation, DLQ, global settings — and no tenant
+    // role has business on either.
+    //
+    // /admin used to be guarded only page-by-page, and 7 of the 15 pages had missed it:
+    // billing, dlq, escalations, impersonate, pricing, revenue and users. A tenant owner who
+    // typed the URL got a 200 and the full platform admin shell. No customer or revenue data
+    // leaked — the API refuses those calls independently — but the back office's structure was
+    // readable, and /admin/impersonate is not a page that should answer at all.
+    //
+    // Guarding the prefix here rather than in each page is the point: a hand-maintained list
+    // that must be repeated in 15 files is a list that drifts, which is exactly what happened.
+    // A new page under either prefix is now covered before it is written.
+    //
+    // Matched on whole path segments, not `includes()`. A substring test would also catch a
+    // future tenant route like /settings/admin-notes or /reports/platform-fees and silently
+    // bounce a paying customer out of their own page — the same loose-matching bug that put
+    // /platform/tenants behind the old `/tenant` guard and locked platform owners out of it.
+    const segments = pathname.split('/').filter(Boolean);
+    const rest = SUPPORTED_LOCALES.includes(segments[0]) ? segments.slice(1) : segments;
+    const isStaffPath = rest[0] === 'platform' || rest[0] === 'admin';
+
+    if ((role === 'tenant_owner' || role === 'team_member' || role === 'customer') && isStaffPath) {
       return Response.redirect(new URL(`/${locale}/dashboard`, nextUrl));
     }
 
@@ -218,5 +235,26 @@ export const config = {
   // apple-app-site-association, and Google requires assetlinks.json to be served
   // directly — if host routing 308s these to another origin, universal links,
   // App Links and password autofill all silently stop working.
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icons|screenshots|sw.js|manifest.json|\\.well-known).*)'],
+  //
+  // robots.txt and sitemap.xml MUST be excluded for the same class of reason, and their
+  // absence here was doing real damage. Neither is a locale-prefixed route, so the
+  // auto-prefix rule above rewrote /robots.txt to /en/robots.txt; that is not a public path,
+  // so the auth check then bounced it to /en/login. Measured against a production build:
+  //
+  //   /robots.txt   307 -> /en/robots.txt   302 -> /en/login
+  //   /sitemap.xml  307 -> /en/sitemap.xml  302 -> /en/login
+  //
+  // So both files have been unreachable. A crawler asking for robots.txt got a redirect to a
+  // login page, and a sitemap submitted to Search Console could never be fetched — which
+  // silently voided every crawl directive and every URL this app publishes.
+  //
+  // opengraph-image and twitter-image are excluded too: Next serves them as routes under the
+  // segment that declares them, and a social scraper fetching a card image does not follow
+  // redirects into an auth flow either.
+  //
+  // This is why the list is deny-by-default with named exceptions — anything served as a
+  // file rather than a page belongs here.
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|icons|screenshots|sw.js|manifest.json|robots.txt|sitemap.xml|opengraph-image|twitter-image|\\.well-known).*)',
+  ],
 };

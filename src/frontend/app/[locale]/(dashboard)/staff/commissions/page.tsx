@@ -85,7 +85,7 @@ export default function CommissionsPage() {
 
     if (loading) return (
         <div className="flex items-center justify-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
         </div>
     );
 
@@ -121,7 +121,7 @@ export default function CommissionsPage() {
                         { label: 'Total Tips', value: summary.totalTips, icon: <DollarSign className="h-5 w-5 text-emerald-500" /> },
                         { label: 'Total Amount', value: `$${summary.totalAmount?.toFixed(2) || '0.00'}`, icon: <TrendingUp className="h-5 w-5 text-blue-500" /> },
                         { label: 'Pending Distribution', value: summary.pendingDistribution, icon: <Clock className="h-5 w-5 text-amber-500" /> },
-                        { label: 'Pending Amount', value: `$${summary.pendingAmount?.toFixed(2) || '0.00'}`, icon: <Award className="h-5 w-5 text-purple-500" /> },
+                        { label: 'Pending Amount', value: `$${summary.pendingAmount?.toFixed(2) || '0.00'}`, icon: <Award className="h-5 w-5 text-primary-500" /> },
                     ].map(s => (
                         <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
                             <div className="p-2 bg-slate-50 rounded-lg">{s.icon}</div>
@@ -151,7 +151,7 @@ export default function CommissionsPage() {
                         <div key={staff.staffId} className={idx < summary.staffBreakdown.length - 1 ? 'border-b border-slate-50' : ''}>
                             <div className="grid grid-cols-5 gap-4 px-5 py-3 items-center hover:bg-slate-50">
                                 <div className="col-span-2 flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                                         {staff.staffName?.charAt(0) || 'S'}
                                     </div>
                                     <span className="font-medium text-slate-900 text-sm">{staff.staffName || 'Staff'}</span>

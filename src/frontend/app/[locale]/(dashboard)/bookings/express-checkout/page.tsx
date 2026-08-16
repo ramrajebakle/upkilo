@@ -101,7 +101,7 @@ function StepIndicator({ current }: { current: number }) {
                                 className={cn(
                                     'w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-all',
                                     done && 'bg-emerald-500 border-emerald-500 text-white',
-                                    active && 'bg-violet-600 border-violet-600 text-white scale-110 shadow-lg shadow-violet-200',
+                                    active && 'bg-primary-600 border-primary-600 text-white scale-110 shadow-lg shadow-primary-200',
                                     !done && !active && 'bg-white border-gray-200 text-gray-400'
                                 )}
                             >
@@ -110,7 +110,7 @@ function StepIndicator({ current }: { current: number }) {
                             <span
                                 className={cn(
                                     'text-xs mt-1 font-medium',
-                                    active ? 'text-violet-600' : done ? 'text-emerald-600' : 'text-gray-400'
+                                    active ? 'text-primary-600' : done ? 'text-emerald-600' : 'text-gray-400'
                                 )}
                             >
                                 {step.label}
@@ -297,7 +297,7 @@ export default function ExpressCheckoutPage() {
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50/30 to-white">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-primary-50/30 to-white">
             {/* Header */}
             <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
                 <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-4">
@@ -308,8 +308,8 @@ export default function ExpressCheckoutPage() {
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div className="flex items-center gap-2">
-                        <div className="p-1.5 bg-violet-100 rounded-lg">
-                            <Zap className="w-5 h-5 text-violet-600" />
+                        <div className="p-1.5 bg-primary-100 rounded-lg">
+                            <Zap className="w-5 h-5 text-primary-600" />
                         </div>
                         <div>
                             <h1 className="text-lg font-bold text-gray-900">Express Checkout</h1>
@@ -337,7 +337,7 @@ export default function ExpressCheckoutPage() {
                                 placeholder="Search services..."
                                 value={serviceSearch}
                                 onChange={e => setServiceSearch(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                             />
                         </div>
 
@@ -355,7 +355,7 @@ export default function ExpressCheckoutPage() {
                                             className={cn(
                                                 'text-left p-4 rounded-xl border-2 transition-all hover:shadow-md',
                                                 form.serviceId === svc.id
-                                                    ? 'border-violet-500 bg-violet-50 shadow-md'
+                                                    ? 'border-primary-500 bg-primary-50 shadow-md'
                                                     : 'border-gray-100 bg-white hover:border-gray-200'
                                             )}
                                         >
@@ -370,7 +370,7 @@ export default function ExpressCheckoutPage() {
                                                     </span>
                                                 </div>
                                                 {form.serviceId === svc.id && (
-                                                    <Check className="w-4 h-4 text-violet-600 flex-shrink-0" />
+                                                    <Check className="w-4 h-4 text-primary-600 flex-shrink-0" />
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-3 mt-2 ml-5">
@@ -378,7 +378,7 @@ export default function ExpressCheckoutPage() {
                                                     <Clock className="w-3 h-3" />
                                                     {svc.duration} min
                                                 </span>
-                                                <span className="text-xs font-bold text-violet-700">
+                                                <span className="text-xs font-bold text-primary-700">
                                                     {formatCurrency(svc.price)}
                                                 </span>
                                             </div>
@@ -422,7 +422,7 @@ export default function ExpressCheckoutPage() {
                                         className={cn(
                                             'px-3 py-1.5 rounded-full text-sm border transition-all',
                                             !form.staffId
-                                                ? 'bg-violet-600 text-white border-violet-600'
+                                                ? 'bg-primary-600 text-white border-primary-600'
                                                 : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                                         )}
                                     >
@@ -435,7 +435,7 @@ export default function ExpressCheckoutPage() {
                                             className={cn(
                                                 'px-3 py-1.5 rounded-full text-sm border transition-all flex items-center gap-1.5',
                                                 form.staffId === s.id
-                                                    ? 'bg-violet-600 text-white border-violet-600'
+                                                    ? 'bg-primary-600 text-white border-primary-600'
                                                     : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                                             )}
                                         >
@@ -485,7 +485,7 @@ export default function ExpressCheckoutPage() {
                             {/* Time slots */}
                             {slotsLoading ? (
                                 <div className="flex justify-center py-8">
-                                    <Loader2 className="w-6 h-6 text-violet-500 animate-spin" />
+                                    <Loader2 className="w-6 h-6 text-primary-500 animate-spin" />
                                 </div>
                             ) : slots.length === 0 ? (
                                 <p className="text-center text-gray-400 py-6 text-sm">
@@ -506,10 +506,10 @@ export default function ExpressCheckoutPage() {
                                                     'opacity-30 cursor-not-allowed bg-gray-50 border-gray-100 text-gray-400',
                                                 slot.available &&
                                                     form.startTime === slot.dateTime &&
-                                                    'bg-violet-600 text-white border-violet-600 shadow-md',
+                                                    'bg-primary-600 text-white border-primary-600 shadow-md',
                                                 slot.available &&
                                                     form.startTime !== slot.dateTime &&
-                                                    'bg-white text-gray-700 border-gray-200 hover:border-violet-300 hover:text-violet-600'
+                                                    'bg-white text-gray-700 border-gray-200 hover:border-primary-300 hover:text-primary-600'
                                             )}
                                         >
                                             {slot.time}
@@ -539,7 +539,7 @@ export default function ExpressCheckoutPage() {
                                     placeholder="Jane Smith"
                                     value={form.clientName}
                                     onChange={e => setForm(f => ({ ...f, clientName: e.target.value }))}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                                 />
                             </div>
                             <div>
@@ -551,7 +551,7 @@ export default function ExpressCheckoutPage() {
                                     placeholder="jane@example.com"
                                     value={form.clientEmail}
                                     onChange={e => setForm(f => ({ ...f, clientEmail: e.target.value }))}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                                 />
                                 <p className="text-xs text-gray-400 mt-1">
                                     If this email matches an existing client they'll be linked automatically.
@@ -566,7 +566,7 @@ export default function ExpressCheckoutPage() {
                                     placeholder="+1 555 000 0000"
                                     value={form.clientPhone}
                                     onChange={e => setForm(f => ({ ...f, clientPhone: e.target.value }))}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                                 />
                             </div>
                             <div>
@@ -578,7 +578,7 @@ export default function ExpressCheckoutPage() {
                                     value={form.notes}
                                     onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                                     rows={2}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none"
+                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 resize-none"
                                 />
                             </div>
                         </div>
@@ -657,12 +657,12 @@ export default function ExpressCheckoutPage() {
                                         setForm(f => ({ ...f, promoCode: e.target.value.toUpperCase() }))
                                     }
                                     disabled={promoApplied}
-                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 disabled:opacity-50"
+                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 disabled:opacity-50"
                                 />
                                 <button
                                     onClick={applyPromo}
                                     disabled={promoApplied || !form.promoCode}
-                                    className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 disabled:opacity-40 transition-colors"
+                                    className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-40 transition-colors"
                                 >
                                     {promoApplied ? 'Applied' : 'Apply'}
                                 </button>
@@ -706,7 +706,7 @@ export default function ExpressCheckoutPage() {
                         <h2 className="text-2xl font-bold text-gray-900 mb-1">Booking Confirmed!</h2>
                         <p className="text-gray-500 mb-6">
                             Confirmation:{' '}
-                            <span className="font-mono font-bold text-violet-600">
+                            <span className="font-mono font-bold text-primary-600">
                                 {result.confirmationCode}
                             </span>
                         </p>
@@ -760,7 +760,7 @@ export default function ExpressCheckoutPage() {
                             </button>
                             <Link
                                 href={`/bookings/${result.bookingId}`}
-                                className="px-5 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-medium hover:bg-violet-700 transition-colors"
+                                className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700 transition-colors"
                             >
                                 View Booking
                             </Link>
@@ -784,7 +784,7 @@ export default function ExpressCheckoutPage() {
                             <button
                                 onClick={() => setStep(s => s + 1)}
                                 disabled={!canProceed()}
-                                className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-violet-600 text-white rounded-xl hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md shadow-violet-200"
+                                className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md shadow-primary-200"
                             >
                                 Continue
                                 <ArrowRight className="w-4 h-4" />

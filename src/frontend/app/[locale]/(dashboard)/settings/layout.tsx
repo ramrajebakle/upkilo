@@ -73,7 +73,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
             {/* Header */}
             <div className="animate-fade-in-up">
                 <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 bg-gradient-to-br from-primary-600 to-indigo-900 rounded-2xl shadow-xl shadow-primary-500/20 border border-primary-500/20">
+                    <div className="p-3 bg-gradient-to-br from-primary-600 to-primary-900 rounded-2xl shadow-xl shadow-primary-500/20 border border-primary-500/20">
                         <Building2 className="h-6 w-6 text-white" />
                     </div>
                     <div>

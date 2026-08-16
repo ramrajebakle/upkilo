@@ -142,7 +142,7 @@ function BrandingContent() {
             {/* Header & Commit Bundle */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
                 <div className="flex items-center gap-6">
-                    <div className="p-4 bg-gradient-to-br from-primary-600 to-indigo-900 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
+                    <div className="p-4 bg-gradient-to-br from-primary-600 to-primary-900 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                         <Palette className="h-8 w-8 text-white" />
                     </div>
                     <div>
@@ -303,7 +303,7 @@ function BrandingContent() {
                                 <div className="p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-12">
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-10 w-1 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50" />
+                                            <div className="h-10 w-1 rounded-full bg-primary-500 shadow-lg shadow-primary-500/50" />
                                             <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Namespace Routing</h2>
                                         </div>
                                         <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-2 ml-14">Map custom top-level domain to your reservations node</p>
@@ -460,7 +460,7 @@ function BrandingContent() {
                                 <div className="p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-12">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-10 w-1 rounded-full bg-violet-500 shadow-lg shadow-violet-500/50" />
+                                            <div className="h-10 w-1 rounded-full bg-primary-500 shadow-lg shadow-primary-500/50" />
                                             <div>
                                                 <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Neural Override Schema</h2>
                                                 <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Direct CSS Injection Terminal</p>

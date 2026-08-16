@@ -64,8 +64,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ planId: str
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Stripe-hosted payment — redirect flow */}
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-md border border-indigo-100 text-center text-sm text-indigo-600 font-medium">
-                  <ShieldCheck className="w-5 h-5 mx-auto mb-1 text-indigo-500" />
+                <div className="bg-gradient-to-r from-primary-50 to-primary-100 p-4 rounded-md border border-primary-100 text-center text-sm text-primary-600 font-medium">
+                  <ShieldCheck className="w-5 h-5 mx-auto mb-1 text-primary-500" />
                   Secure payment via Stripe — you'll be redirected to complete payment
                 </div>
 

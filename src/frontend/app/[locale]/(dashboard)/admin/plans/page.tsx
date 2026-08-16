@@ -58,7 +58,7 @@ export default function AdminPlansPage() {
             <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg shadow-amber-500/20">
               <CreditCard className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Subscription Tiers
             </h1>
           </div>
@@ -87,7 +87,7 @@ export default function AdminPlansPage() {
           {plans.map((plan) => (
             <div 
               key={plan.id} 
-              className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300"
+              className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
             >
               {!plan.isActive && (
                 <div className="absolute top-4 right-4">
@@ -96,13 +96,13 @@ export default function AdminPlansPage() {
               )}
               
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>{plan.name}</h3>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2" style={{ fontFamily: 'var(--font-display)' }}>{plan.name}</h3>
                 <p className="text-slate-500 text-sm h-10 overflow-hidden">{plan.description}</p>
               </div>
 
               <div className="mb-8">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>${plan.monthlyPrice}</span>
+                  <span className="text-4xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>${plan.monthlyPrice}</span>
                   <span className="text-slate-500 text-sm font-medium">/month</span>
                 </div>
                 <div className="text-emerald-600 text-xs font-semibold mt-1">

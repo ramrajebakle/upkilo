@@ -60,7 +60,7 @@ function MiniBarChart({ data, valueKey, labelKey }: { data: any[]; valueKey: str
                     <span className="w-28 text-xs text-slate-500 truncate text-right">{d[labelKey]}</span>
                     <div className="flex-1 h-5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-indigo-500 rounded-full transition-all"
+                            className="h-full bg-primary-500 rounded-full transition-all"
                             style={{ width: `${(d[valueKey] / max) * 100}%` }}
                         />
                     </div>
@@ -86,7 +86,7 @@ function SparkTrend({ trend }: { trend: { date: string; cost: number }[] }) {
         return `${x},${y}`;
     }).join(' ');
     return (
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-14 text-indigo-500">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-14 text-primary-500">
             <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />
             {trend.map((d, i) => {
                 const x = (i / (trend.length - 1)) * W;
@@ -132,10 +132,10 @@ export default function AiOversightPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2.5 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-2xl shadow-lg shadow-violet-500/20">
+                        <div className="p-2.5 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl shadow-lg shadow-primary-500/20">
                             <Bot className="h-6 w-6 text-white" />
                         </div>
-                        <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                        <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                             AI Oversight
                         </h1>
                     </div>
@@ -147,7 +147,7 @@ export default function AiOversightPage() {
                         <select
                             value={period}
                             onChange={(e) => setPeriod(Number(e.target.value) as Period)}
-                            className="appearance-none pl-3 pr-8 py-2 text-sm border border-slate-200 dark:border-white/10 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="appearance-none pl-3 pr-8 py-2 text-sm border border-slate-200 dark:border-white/10 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                             <option value={7}>Last 7 days</option>
                             <option value={14}>Last 14 days</option>
@@ -166,11 +166,11 @@ export default function AiOversightPage() {
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 <StatCard icon={<DollarSign className="text-green-500" size={20} />} label="Total AI Cost" value={`$${(s?.totalCostUsd ?? 0).toFixed(4)}`} sub={`Last ${period} days`} accent="green" />
-                <StatCard icon={<Zap className="text-indigo-500" size={20} />} label="Total Tokens" value={(s?.totalTokens ?? 0).toLocaleString()} sub={`${(s?.totalRequests ?? 0).toLocaleString()} requests`} accent="indigo" />
+                <StatCard icon={<Zap className="text-primary-500" size={20} />} label="Total Tokens" value={(s?.totalTokens ?? 0).toLocaleString()} sub={`${(s?.totalRequests ?? 0).toLocaleString()} requests`} accent="indigo" />
                 <StatCard icon={<CheckCircle2 className="text-emerald-500" size={20} />} label="Success Rate" value={`${s?.successRate ?? 100}%`} sub={`${s?.failedRequests ?? 0} failures`} accent="emerald" />
                 <StatCard icon={<Clock className="text-blue-500" size={20} />} label="Avg Latency" value={`${Math.round(s?.avgLatencyMs ?? 0)} ms`} sub="Per AI request" accent="blue" />
                 <StatCard icon={<AlertCircle className="text-rose-500" size={20} />} label="Failed Requests" value={s?.failedRequests ?? 0} sub="Errors this period" accent="rose" />
-                <StatCard icon={<TrendingUp className="text-violet-500" size={20} />} label="Avg Cost / Request" value={s && s.totalRequests > 0 ? `$${(s.totalCostUsd / s.totalRequests).toFixed(6)}` : '$0'} sub="Per AI call" accent="violet" />
+                <StatCard icon={<TrendingUp className="text-primary-500" size={20} />} label="Avg Cost / Request" value={s && s.totalRequests > 0 ? `$${(s.totalCostUsd / s.totalRequests).toFixed(6)}` : '$0'} sub="Per AI call" accent="violet" />
             </div>
 
             {/* Daily Cost Trend */}

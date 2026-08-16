@@ -134,7 +134,7 @@ export default function NewWaitlistPage() {
                         </div>
                         <h1
                             className="text-2xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Add to Waitlist
                         </h1>
@@ -232,7 +232,7 @@ export default function NewWaitlistPage() {
 
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                             <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <Briefcase className="h-5 w-5 text-indigo-500" />
+                                <Briefcase className="h-5 w-5 text-primary-500" />
                                 Preference
                             </h2>
                             <div className="space-y-4">

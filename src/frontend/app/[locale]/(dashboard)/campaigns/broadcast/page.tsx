@@ -145,7 +145,7 @@ function StatusBadge({ status }: { status: CampaignStatus }) {
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {
     return (
         <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
                 {icon}
             </div>
             <div>
@@ -188,7 +188,7 @@ function CampaignCard({ campaign, onSend, onCancel, sending, cancelling }: Campa
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
             {/* Header row */}
             <div className="flex flex-wrap items-center gap-3 p-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
                     <Megaphone className="h-5 w-5" />
                 </div>
 
@@ -236,7 +236,7 @@ function CampaignCard({ campaign, onSend, onCancel, sending, cancelling }: Campa
                         <button
                             onClick={() => onSend(campaign.id)}
                             disabled={sending}
-                            className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-violet-700 disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-50"
                         >
                             <Play className="h-3.5 w-3.5" />
                             {sending ? 'Sending…' : 'Send Now'}
@@ -388,7 +388,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                 {/* Modal header */}
                 <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
                     <div className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-400">
                             <Megaphone className="h-4 w-4" />
                         </div>
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -414,7 +414,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                             value={form.name}
                             onChange={e => patch({ name: e.target.value })}
                             placeholder="e.g. Spring Promotion 2026"
-                            className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+                            className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
                         />
                     </div>
 
@@ -432,7 +432,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                                     className={cn(
                                         'flex items-center gap-2.5 rounded-xl border-2 p-3.5 text-sm font-medium transition-all',
                                         form.channel === ch
-                                            ? 'border-violet-500 bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300'
+                                            ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                                             : 'border-gray-200 text-gray-600 hover:border-gray-300 dark:border-gray-700 dark:text-gray-300',
                                     )}
                                 >
@@ -456,7 +456,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                                 value={form.subject}
                                 onChange={e => patch({ subject: e.target.value })}
                                 placeholder="e.g. Exclusive offer just for you 🎉"
-                                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+                                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
                             />
                         </div>
                     )}
@@ -486,7 +486,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                                 'w-full resize-y rounded-lg border px-3.5 py-2.5 text-sm outline-none transition-colors focus:ring-2 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500',
                                 smsOverLimit
                                     ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20'
-                                    : 'border-gray-300 focus:border-violet-500 focus:ring-violet-500/20 dark:border-gray-600',
+                                    : 'border-gray-300 focus:border-primary-500 focus:ring-primary-500/20 dark:border-gray-600',
                             )}
                         />
                     </div>
@@ -505,7 +505,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                                     className={cn(
                                         'flex items-center gap-2 rounded-lg border px-3.5 py-2.5 text-left text-sm transition-all',
                                         form.targetSegment === key
-                                            ? 'border-violet-500 bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300'
+                                            ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                                             : 'border-gray-200 text-gray-600 hover:border-gray-300 dark:border-gray-700 dark:text-gray-300',
                                     )}
                                 >
@@ -533,7 +533,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                                     className={cn(
                                         'flex items-center gap-2.5 rounded-xl border-2 p-3.5 text-sm font-medium transition-all',
                                         form.sendMode === mode
-                                            ? 'border-violet-500 bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300'
+                                            ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                                             : 'border-gray-200 text-gray-600 hover:border-gray-300 dark:border-gray-700 dark:text-gray-300',
                                     )}
                                 >
@@ -549,7 +549,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                                     value={form.scheduledAt}
                                     min={new Date().toISOString().slice(0, 16)}
                                     onChange={e => patch({ scheduledAt: e.target.value })}
-                                    className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                                    className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
                                 />
                             </div>
                         )}
@@ -561,14 +561,14 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                             <button
                                 type="button"
                                 onClick={() => setPreview(v => !v)}
-                                className="mb-2 flex items-center gap-1.5 text-sm font-medium text-violet-600 hover:text-violet-700 dark:text-violet-400"
+                                className="mb-2 flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400"
                             >
                                 <Eye className="h-4 w-4" />
                                 {preview ? 'Hide Preview' : 'Show Preview'}
                             </button>
                             {preview && (
-                                <div className="rounded-xl border border-dashed border-violet-200 bg-violet-50/50 p-4 dark:border-violet-700/40 dark:bg-violet-900/10">
-                                    <p className="mb-1 text-xs font-medium uppercase tracking-wide text-violet-400">
+                                <div className="rounded-xl border border-dashed border-primary-200 bg-primary-50/50 p-4 dark:border-primary-700/40 dark:bg-primary-900/10">
+                                    <p className="mb-1 text-xs font-medium uppercase tracking-wide text-primary-400">
                                         {form.channel === 'email' ? 'Email Preview' : 'SMS Preview'}
                                     </p>
                                     {form.channel === 'email' && form.subject && (
@@ -596,7 +596,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                         <button
                             type="submit"
                             disabled={saving || smsOverLimit}
-                            className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-violet-700 disabled:opacity-50"
+                            className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-50"
                         >
                             {saving ? (
                                 <>
@@ -720,7 +720,7 @@ export default function BroadcastCampaignPage() {
                 {/* ── Page header ─────────────────────────────────────────────── */}
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white shadow-sm">
                             <Megaphone className="h-5 w-5" />
                         </div>
                         <div>
@@ -734,7 +734,7 @@ export default function BroadcastCampaignPage() {
                     </div>
                     <button
                         onClick={() => setModalOpen(true)}
-                        className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-violet-700"
+                        className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700"
                     >
                         <Plus className="h-4 w-4" />
                         New Broadcast
@@ -785,7 +785,7 @@ export default function BroadcastCampaignPage() {
                                     className={cn(
                                         'flex shrink-0 items-center gap-1.5 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
                                         activeTab === tab.key
-                                            ? 'border-violet-500 text-violet-600 dark:text-violet-400'
+                                            ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                                             : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
                                     )}
                                 >
@@ -794,7 +794,7 @@ export default function BroadcastCampaignPage() {
                                         <span className={cn(
                                             'rounded-full px-1.5 py-0.5 text-xs',
                                             activeTab === tab.key
-                                                ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300'
+                                                ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300'
                                                 : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
                                         )}>
                                             {count}
@@ -821,7 +821,7 @@ export default function BroadcastCampaignPage() {
                             </p>
                             <button
                                 onClick={() => setModalOpen(true)}
-                                className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
+                                className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
                             >
                                 <Plus className="h-4 w-4" />
                                 New Broadcast

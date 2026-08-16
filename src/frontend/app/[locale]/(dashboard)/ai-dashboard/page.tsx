@@ -42,7 +42,7 @@ function ForecastBar({ label, value, max }: { label: string; value: number; max:
         <span className="font-semibold text-gray-900">${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
       </div>
       <div className="w-full bg-gray-100 rounded-full h-2">
-        <div className="bg-indigo-500 h-2 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+        <div className="bg-primary-500 h-2 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -74,7 +74,7 @@ export default function AIDashboardPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600" />
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600" />
     </div>
   );
 
@@ -93,8 +93,8 @@ export default function AIDashboardPage() {
             {forecast ? `Updated ${new Date(forecast.generatedAt).toLocaleTimeString()}` : 'Revenue forecasts and AI recommendations'}
           </p>
         </div>
-        <div className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+        <div className="bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+          <span className="inline-block w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
           AI Active
         </div>
       </div>
@@ -148,14 +148,14 @@ export default function AIDashboardPage() {
 
         {/* AI Recommendations */}
         {forecast && forecast.aiRecommendations.length > 0 && (
-          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-100 p-6">
+          <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-100 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <span>🧠</span> AI Recommendations
             </h2>
             <div className="space-y-3">
               {forecast.aiRecommendations.map((rec, i) => (
                 <div key={i} className="flex gap-3">
-                  <div className="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">
+                  <div className="w-6 h-6 rounded-full bg-primary-500 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">
                     {i + 1}
                   </div>
                   <p className="text-sm text-gray-700">{rec}</p>
@@ -185,7 +185,7 @@ export default function AIDashboardPage() {
               <div className="text-sm text-gray-500 mt-1">Pending Review</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600">{metrics.accuracy ? `${metrics.accuracy}%` : '—'}</div>
+              <div className="text-3xl font-bold text-primary-600">{metrics.accuracy ? `${metrics.accuracy}%` : '—'}</div>
               <div className="text-sm text-gray-500 mt-1">Accuracy Score</div>
             </div>
           </div>

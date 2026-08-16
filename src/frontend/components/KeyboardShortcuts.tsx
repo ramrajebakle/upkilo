@@ -100,7 +100,7 @@ export function KeyboardShortcutsOverlay({ onClose }: { onClose?: () => void } =
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50">
           <div className="flex items-center gap-2">
-            <Command className="h-5 w-5 text-indigo-500" />
+            <Command className="h-5 w-5 text-primary-500" />
             <h2 className="font-semibold text-slate-900">Keyboard Shortcuts</h2>
           </div>
           <button onClick={close} className="text-slate-400 hover:text-slate-600 p-1 rounded">

@@ -77,7 +77,7 @@ export default function StaffEarningsPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Commissions", value: `$${summary.totalCommission.toFixed(2)}`, icon: Award, color: "text-purple-500" },
+          { label: "Commissions", value: `$${summary.totalCommission.toFixed(2)}`, icon: Award, color: "text-primary-500" },
           { label: "Tips", value: `$${summary.totalTips.toFixed(2)}`, icon: DollarSign, color: "text-red-400" },
           { label: "Total earned", value: `$${summary.totalRevenue.toFixed(2)}`, icon: TrendingUp, color: "text-green-500" },
           { label: "Hours worked", value: `${summary.totalHours.toFixed(1)}h`, icon: Clock, color: "text-blue-500" },
@@ -121,7 +121,7 @@ export default function StaffEarningsPage() {
                       <td className="py-3 px-3 text-text-secondary text-xs">{new Date(e.date).toLocaleDateString([], { month: "short", day: "numeric" })}</td>
                       <td className="py-3 px-3 text-text-primary">{e.totalHours ? `${e.totalHours.toFixed(1)}h` : "—"}</td>
                       <td className="py-3 px-3 text-text-secondary">{e.bookingCount ?? "—"}</td>
-                      <td className="py-3 px-3 text-purple-600 font-medium">${e.commission.toFixed(2)}</td>
+                      <td className="py-3 px-3 text-primary-600 font-medium">${e.commission.toFixed(2)}</td>
                       <td className="py-3 px-3 text-red-500 font-medium">${e.tips.toFixed(2)}</td>
                       <td className="py-3 px-3 text-green-600 font-bold">${(e.commission + e.tips).toFixed(2)}</td>
                     </tr>

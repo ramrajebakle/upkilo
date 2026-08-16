@@ -92,9 +92,9 @@ export default async function FeaturesPage({
   return (
     <main className="bg-white">
       {/* ───────────────────────── HERO ───────────────────────── */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-violet-50 to-white py-20">
+      <section className="border-b border-slate-200 bg-gradient-to-b from-primary-50 to-white py-20">
         <div className="mx-auto max-w-4xl px-4 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-violet-700">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700">
             Features
           </span>
           <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
@@ -107,7 +107,7 @@ export default async function FeaturesPage({
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               href={`/${locale}/register`}
-              className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-7 py-3.5 font-semibold text-white shadow-lg shadow-violet-500/25 transition-colors hover:bg-violet-700"
+              className="inline-flex items-center gap-2 rounded-2xl bg-primary-600 px-7 py-3.5 font-semibold text-white shadow-lg shadow-primary-500/25 transition-colors hover:bg-primary-700"
             >
               Start free trial <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
@@ -138,9 +138,9 @@ export default async function FeaturesPage({
             {CORE.map((feature) => (
               <div
                 key={feature.title}
-                className="group h-full rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-500/5"
+                className="group h-full rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 transition-transform group-hover:scale-110">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25 transition-transform group-hover:scale-110">
                   <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-slate-900">{feature.title}</h3>
@@ -148,7 +148,7 @@ export default async function FeaturesPage({
                 <ul className="mt-4 space-y-2">
                   {feature.points.map((point) => (
                     <li key={point} className="flex items-start gap-2 text-sm text-slate-600">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-violet-600" aria-hidden="true" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" aria-hidden="true" />
                       <span>{point}</span>
                     </li>
                   ))}
@@ -174,7 +174,7 @@ export default async function FeaturesPage({
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PLATFORM.map((item) => (
               <div key={item.title} className="rounded-2xl border border-slate-200 bg-white p-6">
-                <item.icon className="h-6 w-6 text-violet-600" aria-hidden="true" />
+                <item.icon className="h-6 w-6 text-primary-600" aria-hidden="true" />
                 <h3 className="mt-4 font-semibold text-slate-900">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
               </div>
@@ -195,7 +195,7 @@ export default async function FeaturesPage({
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               href={`/${locale}/register`}
-              className="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-7 py-3.5 font-semibold text-white shadow-lg shadow-violet-500/25 transition-colors hover:bg-violet-700"
+              className="inline-flex items-center gap-2 rounded-2xl bg-primary-600 px-7 py-3.5 font-semibold text-white shadow-lg shadow-primary-500/25 transition-colors hover:bg-primary-700"
             >
               Start free trial <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>

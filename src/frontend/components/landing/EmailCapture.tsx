@@ -27,7 +27,7 @@ export default function EmailCapture({ dark = false }: { dark?: boolean }) {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Enter your work email"
         aria-label="Work email address"
-        className={`flex-1 rounded-xl border px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-violet-500 ${
+        className={`flex-1 rounded-xl border px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-primary-500 ${
           dark
             ? 'border-white/20 bg-white/10 text-white placeholder-slate-400 focus:border-transparent'
             : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-transparent'
@@ -35,7 +35,7 @@ export default function EmailCapture({ dark = false }: { dark?: boolean }) {
       />
       <button
         type="submit"
-        className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5 hover:bg-violet-500"
+        className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/30 transition-all hover:-translate-y-0.5 hover:bg-primary-500"
       >
         Start free trial
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />

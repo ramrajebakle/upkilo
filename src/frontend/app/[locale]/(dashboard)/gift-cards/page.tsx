@@ -108,7 +108,9 @@ export default function GiftCardsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    {/* Solid colour — see the note in coupons/page.tsx. This one faded slate-900
+                        to slate-600, so the heading literally got fainter as it read on. */}
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
                         {t('giftCards')}
                     </h1>
                     <p className="text-sm text-slate-500">Manage digital and physical gift cards</p>
@@ -292,7 +294,7 @@ export default function GiftCardsPage() {
                                 <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
                                     <Gift className="h-5 w-5 text-white" />
                                 </div>
-                                <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>{t('issueGiftCard')}</h2>
+                                <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>{t('issueGiftCard')}</h2>
                             </div>
                             <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition-all">
                                 <X className="h-4 w-4" />

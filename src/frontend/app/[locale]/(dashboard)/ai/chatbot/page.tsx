@@ -113,7 +113,7 @@ export default function ChatbotAdminPage() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/25">
+                        <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg shadow-primary-500/25">
                             <Bot className="h-6 w-6 text-white" />
                         </div>
                         <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">AI Chatbot Management</h1>
@@ -167,7 +167,7 @@ export default function ChatbotAdminPage() {
                 {/* Configuration */}
                 <Card className="lg:col-span-1 p-6 space-y-6 self-start">
                     <div className="flex items-center gap-2 mb-2">
-                        <Settings className="h-5 w-5 text-indigo-500" />
+                        <Settings className="h-5 w-5 text-primary-500" />
                         <h2 className="text-lg font-bold">Bot Persona</h2>
                     </div>
 

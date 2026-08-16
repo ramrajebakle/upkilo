@@ -71,10 +71,10 @@ export default function AdminSettingsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/20">
+            <div className="p-2.5 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl shadow-lg shadow-primary-500/20">
               <Settings className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Global Platform Settings
             </h1>
           </div>
@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
         {/* Content Area */}
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6" style={{ fontFamily: 'Outfit, sans-serif' }}>Platform Appearance</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6" style={{ fontFamily: 'var(--font-display)' }}>Platform Appearance</h2>
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -129,7 +129,7 @@ export default function AdminSettingsPage() {
 
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>System Status Controls</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>System Status Controls</h2>
                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Global</Badge>
             </div>
             <div className="space-y-6">
@@ -161,7 +161,7 @@ export default function AdminSettingsPage() {
 
 function SettingsSectionButton({ icon: Icon, label, active = false }: { icon: any; label: string; active?: boolean }) {
     return (
-        <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${active ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5'}`}>
+        <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${active ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/20' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5'}`}>
             <Icon className="h-5 w-5" />
             <span className="font-semibold text-sm">{label}</span>
         </button>
@@ -177,7 +177,7 @@ function SettingsToggle({ label, description, enabled, onToggle }: { label: stri
             </div>
             <button 
                 onClick={onToggle}
-                className={`flex-shrink-0 w-12 h-6 rounded-full p-1 transition-colors ${enabled ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}
+                className={`flex-shrink-0 w-12 h-6 rounded-full p-1 transition-colors ${enabled ? 'bg-primary-600' : 'bg-slate-300 dark:bg-slate-700'}`}
             >
                 <div className={`h-4 w-4 rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-0'}`} />
             </button>

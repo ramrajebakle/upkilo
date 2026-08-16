@@ -105,9 +105,9 @@ export function TeamSettings() {
 
                 <div className="grid gap-4">
                     {team.map((member) => (
-                        <div key={member.id} className="flex items-center justify-between p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] hover:border-indigo-400 dark:hover:border-indigo-600 transition-all group shadow-xl shadow-slate-200/50 dark:shadow-none">
+                        <div key={member.id} className="flex items-center justify-between p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] hover:border-primary-400 dark:hover:border-primary-600 transition-all group shadow-xl shadow-slate-200/50 dark:shadow-none">
                             <div className="flex items-center gap-5">
-                                <div className="w-14 h-14 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center font-black text-lg shadow-inner group-hover:scale-110 transition-transform">
+                                <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 rounded-2xl flex items-center justify-center font-black text-lg shadow-inner group-hover:scale-110 transition-transform">
                                     {member.firstName.charAt(0)}{member.lastName.charAt(0)}
                                 </div>
                                 <div className="space-y-1">
@@ -127,7 +127,7 @@ export function TeamSettings() {
                                 <div className="text-right">
                                     <span className={cn(
                                         "text-[9px] font-black px-4 py-1.5 rounded-lg border uppercase tracking-[0.2em] shadow-sm",
-                                        member.role === 'Owner' ? "bg-violet-50 dark:bg-violet-400/10 text-violet-600 dark:text-violet-400 border-violet-100 dark:border-violet-400/20" :
+                                        member.role === 'Owner' ? "bg-primary-50 dark:bg-primary-400/10 text-primary-600 dark:text-primary-400 border-primary-100 dark:border-primary-400/20" :
                                             member.role === 'Admin' ? "bg-blue-50 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-400/20" :
                                                 "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-700"
                                     )}>
@@ -221,7 +221,7 @@ export function TeamSettings() {
                                     className={cn(
                                         "px-4 py-4 text-[10px] font-black uppercase tracking-widest rounded-2xl border transition-all duration-300",
                                         inviteRole === r
-                                            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shadow-xl shadow-indigo-500/10"
+                                            ? "border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/10"
                                             : "border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
                                     )}
                                 >
@@ -231,7 +231,7 @@ export function TeamSettings() {
                         </div>
                         <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
                             <p className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <Shield className="h-3 w-3 text-indigo-500" />
+                                <Shield className="h-3 w-3 text-primary-500" />
                                 {inviteRole === 'Admin' && 'Full system control and data manipulation.'}
                                 {inviteRole === 'Manager' && 'Operation control for logistics and clients.'}
                                 {inviteRole === 'Staff' && 'Standard access for assigned tasks.'}

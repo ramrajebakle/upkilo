@@ -53,7 +53,7 @@ export default function DevOpsDashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-purple-500" />
+              <GitBranch className="h-5 w-5 text-primary-500" />
               Canary Traffic Routing (Task 1411)
             </CardTitle>
             <CardDescription>Split live production traffic between Stable and Canary (v1.25.0-beta) versions.</CardDescription>
@@ -66,13 +66,13 @@ export default function DevOpsDashboardPage() {
               </div>
               <div className="h-6 w-full bg-gray-100 rounded-full overflow-hidden flex">
                 <div 
-                  className="bg-indigo-500 h-full transition-all duration-500 flex items-center justify-center text-[10px] text-white font-bold"
+                  className="bg-primary-500 h-full transition-all duration-500 flex items-center justify-center text-[10px] text-white font-bold"
                   style={{ width: `${100 - canaryWeight}%` }}
                 >
                   {100 - canaryWeight}%
                 </div>
                 <div 
-                  className="bg-purple-500 h-full transition-all duration-500 flex items-center justify-center text-[10px] text-white font-bold"
+                  className="bg-primary-500 h-full transition-all duration-500 flex items-center justify-center text-[10px] text-white font-bold"
                   style={{ width: `${canaryWeight}%` }}
                 >
                   {canaryWeight}%
@@ -122,7 +122,7 @@ export default function DevOpsDashboardPage() {
           <CardContent>
             <div className="space-y-6">
               {[
-                { version: "v1.25.0", status: "Canary", time: "2 hr ago", color: "bg-purple-100 text-purple-700" },
+                { version: "v1.25.0", status: "Canary", time: "2 hr ago", color: "bg-primary-100 text-primary-700" },
                 { version: "v1.24.5", status: "Stable", time: "2 days ago", color: "bg-green-100 text-green-700" },
                 { version: "v1.24.4", status: "Rolled Back", time: "3 days ago", color: "bg-red-100 text-red-700" },
               ].map((log, i) => (

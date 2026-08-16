@@ -222,7 +222,7 @@ export default function EditBookingPage() {
                             >
                                 <Calendar className="h-5 w-5 text-white" />
                             </div>
-                            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
                                 Edit Booking
                             </h1>
                         </div>

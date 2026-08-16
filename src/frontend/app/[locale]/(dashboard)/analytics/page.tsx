@@ -141,8 +141,8 @@ export default function AnalyticsPage() {
         <div className="space-y-6">
             <PageHeader
                 icon={BarChart3}
-                iconGradient="from-indigo-500 to-purple-600"
-                iconShadow="shadow-indigo-500/25"
+                iconGradient="from-primary-500 to-primary-600"
+                iconShadow="shadow-primary-500/25"
                 title="Analytics"
                 description="Track your business performance and insights"
                 actions={
@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
                             <p className="text-sm text-slate-500 dark:text-slate-400">Daily revenue breakdown and booking volume</p>
                         </div>
                         <div className="flex gap-2">
-                            <button className="px-3 py-1 text-xs font-medium rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20">
+                            <button className="px-3 py-1 text-xs font-medium rounded-lg bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-500/20">
                                 Revenue
                             </button>
                             <button className="px-3 py-1 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800">
@@ -286,8 +286,8 @@ export default function AnalyticsPage() {
                         {[
                             { label: 'Retention Rate', value: `${dashboardMetrics?.retentionRate || 78}%`, gradient: 'from-emerald-500 to-emerald-600', text: 'text-emerald-600' },
                             { label: 'No-show Rate', value: `${dashboardMetrics?.noShowRate || 4.2}%`, gradient: 'from-rose-500 to-red-600', text: 'text-rose-600' },
-                            { label: 'Avg. Booking', value: formatCurrency(bookingsData?.averageValue || 0), gradient: 'from-blue-500 to-indigo-600', text: 'text-blue-600' },
-                            { label: 'Active Clients', value: (dashboardMetrics?.activeClients || 0).toLocaleString(), gradient: 'from-violet-500 to-violet-600', text: 'text-violet-600' },
+                            { label: 'Avg. Booking', value: formatCurrency(bookingsData?.averageValue || 0), gradient: 'from-blue-500 to-primary-600', text: 'text-blue-600' },
+                            { label: 'Active Clients', value: (dashboardMetrics?.activeClients || 0).toLocaleString(), gradient: 'from-primary-500 to-primary-600', text: 'text-primary-600' },
                         ].map((metric, i) => (
                             <div
                                 key={metric.label}

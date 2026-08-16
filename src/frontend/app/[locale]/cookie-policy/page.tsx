@@ -5,7 +5,7 @@ export default function CookiePolicyPage() {
     return (
         <div className="min-h-screen bg-slate-50 py-16 px-4 sm:px-6 lg:px-8 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
             <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden p-8 sm:p-12">
-                <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>Cookie Policy</h1>
+                <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4" style={{ fontFamily: 'var(--font-display)' }}>Cookie Policy</h1>
                 <p className="text-slate-500 dark:text-slate-400 mb-1 font-medium">Last Updated: June 2026 · Version 2.0</p>
                 <p className="text-slate-500 dark:text-slate-400 mb-8 text-sm">
                     <strong>Upkilo Technologies Private Limited</strong> · Incorporated in India ·
@@ -14,12 +14,12 @@ export default function CookiePolicyPage() {
 
                 <div className="space-y-8 text-slate-700 dark:text-slate-300">
 
-                    <div className="flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-xl px-5 py-4">
+                    <div className="flex items-center justify-between bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700 rounded-xl px-5 py-4">
                         <div>
                             <p className="font-semibold text-slate-900 dark:text-white text-sm">Manage your cookie preferences</p>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">You can change or withdraw your consent at any time.</p>
                         </div>
-                        <ManageCookiesButton className="shrink-0 ml-4 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold cursor-pointer border-0 hover:bg-indigo-700 transition-colors">
+                        <ManageCookiesButton className="shrink-0 ml-4 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-semibold cursor-pointer border-0 hover:bg-primary-700 transition-colors">
                             Open Preferences
                         </ManageCookiesButton>
                     </div>
@@ -46,10 +46,10 @@ export default function CookiePolicyPage() {
                             </div>
 
                             <div className="border border-slate-200 dark:border-slate-600 rounded-xl overflow-hidden">
-                                <div className="bg-indigo-50 dark:bg-indigo-900/20 px-4 py-3 flex items-center justify-between">
+                                <div className="bg-primary-50 dark:bg-primary-900/20 px-4 py-3 flex items-center justify-between">
                                     <div>
                                         <span className="font-semibold text-slate-900 dark:text-white">Functional</span>
-                                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-indigo-200 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-200">Consent Required</span>
+                                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-primary-200 dark:bg-primary-700 text-primary-800 dark:text-primary-200">Consent Required</span>
                                     </div>
                                     <span className="text-xs text-slate-500">Legal basis: DPDP Act S.6 consent / GDPR Art. 6(1)(a)</span>
                                 </div>
@@ -220,10 +220,10 @@ export default function CookiePolicyPage() {
                         <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">5. Browser Cookie Controls</h2>
                         <p className="mb-3">You can also control cookies through your browser settings. Note that blocking essential cookies will prevent the platform from functioning correctly.</p>
                         <ul className="list-disc pl-5 space-y-1 text-sm">
-                            <li><a href="https://support.google.com/chrome/answer/95647" className="underline text-indigo-600 dark:text-indigo-400" rel="noopener noreferrer">Google Chrome</a></li>
-                            <li><a href="https://support.mozilla.org/en-US/kb/enable-and-disable-cookies-website-preferences" className="underline text-indigo-600 dark:text-indigo-400" rel="noopener noreferrer">Mozilla Firefox</a></li>
-                            <li><a href="https://support.apple.com/en-gb/guide/safari/sfri11471/mac" className="underline text-indigo-600 dark:text-indigo-400" rel="noopener noreferrer">Apple Safari</a></li>
-                            <li><a href="https://support.microsoft.com/en-us/windows/manage-cookies-in-microsoft-edge" className="underline text-indigo-600 dark:text-indigo-400" rel="noopener noreferrer">Microsoft Edge</a></li>
+                            <li><a href="https://support.google.com/chrome/answer/95647" className="underline text-primary-600 dark:text-primary-400" rel="noopener noreferrer">Google Chrome</a></li>
+                            <li><a href="https://support.mozilla.org/en-US/kb/enable-and-disable-cookies-website-preferences" className="underline text-primary-600 dark:text-primary-400" rel="noopener noreferrer">Mozilla Firefox</a></li>
+                            <li><a href="https://support.apple.com/en-gb/guide/safari/sfri11471/mac" className="underline text-primary-600 dark:text-primary-400" rel="noopener noreferrer">Apple Safari</a></li>
+                            <li><a href="https://support.microsoft.com/en-us/windows/manage-cookies-in-microsoft-edge" className="underline text-primary-600 dark:text-primary-400" rel="noopener noreferrer">Microsoft Edge</a></li>
                         </ul>
                     </section>
 
@@ -231,7 +231,7 @@ export default function CookiePolicyPage() {
                         <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">6. Third-Party Services</h2>
                         <p className="mb-3">Upkilo integrates the following third-party processors that may set their own cookies or access identifiers:</p>
                         <ul className="list-disc pl-5 space-y-2">
-                            <li><strong>Stripe</strong> (payments) — sets cookies for fraud detection and secure payment processing. <a href="https://stripe.com/privacy" className="underline text-indigo-600 dark:text-indigo-400" rel="noopener noreferrer">Stripe Privacy Policy</a></li>
+                            <li><strong>Stripe</strong> (payments) — sets cookies for fraud detection and secure payment processing. <a href="https://stripe.com/privacy" className="underline text-primary-600 dark:text-primary-400" rel="noopener noreferrer">Stripe Privacy Policy</a></li>
                             <li><strong>SendGrid / Twilio</strong> (email/SMS) — used only to deliver transactional messages; no tracking pixels are embedded by Upkilo</li>
                             <li><strong>Microsoft Azure</strong> (cloud infrastructure) — your data is processed on Azure servers; no Azure-specific tracking cookies are set</li>
                         </ul>

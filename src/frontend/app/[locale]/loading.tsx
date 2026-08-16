@@ -5,13 +5,13 @@ export default function Loading() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
             <div className="text-center space-y-6 animate-fade-in">
                 <div className="relative">
-                    <div className="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-xl shadow-indigo-500/30 animate-pulse" />
-                    <div className="absolute inset-0 h-16 w-16 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 opacity-30 animate-ping" />
+                    <div className="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/30 animate-pulse" />
+                    <div className="absolute inset-0 h-16 w-16 mx-auto rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 opacity-30 animate-ping" />
                 </div>
                 <div className="space-y-2">
                     <h2
                         className="text-xl font-semibold text-slate-700"
-                        style={{ fontFamily: 'Outfit, sans-serif' }}
+                        style={{ fontFamily: 'var(--font-display)' }}
                     >
                         Loading...
                     </h2>
@@ -21,7 +21,7 @@ export default function Loading() {
                     {[0, 1, 2].map((i) => (
                         <div
                             key={i}
-                            className="h-2 w-2 rounded-full bg-indigo-400"
+                            className="h-2 w-2 rounded-full bg-primary-400"
                             style={{
                                 animation: `bounce 1.4s infinite ease-in-out both`,
                                 animationDelay: `${i * 0.16}s`,

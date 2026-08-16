@@ -126,7 +126,7 @@ export default function FunnelsPage() {
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 transition-all"
         >
           <Plus className="w-4 h-4" /> New Funnel
         </button>
@@ -135,7 +135,7 @@ export default function FunnelsPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total Funnels', value: funnels.length, icon: <Target className="w-5 h-5 text-violet-500" /> },
+          { label: 'Total Funnels', value: funnels.length, icon: <Target className="w-5 h-5 text-primary-500" /> },
           { label: 'Active', value: funnels.filter(f => f.status === 'active').length, icon: <Play className="w-5 h-5 text-emerald-500" /> },
           { label: 'Total Entered', value: funnels.reduce((s, f) => s + f.totalEntered, 0), icon: <Users className="w-5 h-5 text-blue-500" /> },
           { label: 'Total Converted', value: funnels.reduce((s, f) => s + f.totalConverted, 0), icon: <Zap className="w-5 h-5 text-amber-500" /> },
@@ -153,14 +153,14 @@ export default function FunnelsPage() {
       {/* Funnel List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : funnels.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
           <Target className="w-12 h-12 text-slate-300 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-slate-700">No funnels yet</h3>
           <p className="text-slate-500 mt-1">Create your first marketing funnel to automate lead conversion.</p>
-          <button onClick={() => setShowCreate(true)} className="mt-4 px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition-colors">
+          <button onClick={() => setShowCreate(true)} className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
             Create Funnel
           </button>
         </div>
@@ -216,18 +216,18 @@ export default function FunnelsPage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Funnel Name *</label>
                 <input type="text" value={newFunnel.name} onChange={e => setNewFunnel({ ...newFunnel, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" placeholder="e.g., Welcome Series" />
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="e.g., Welcome Series" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
                 <textarea value={newFunnel.description} onChange={e => setNewFunnel({ ...newFunnel, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" rows={2} placeholder="Brief description..." />
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" rows={2} placeholder="Brief description..." />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Trigger Type</label>
                   <select value={newFunnel.triggerType} onChange={e => setNewFunnel({ ...newFunnel, triggerType: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none">
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                     <option value="manual">Manual</option>
                     <option value="form_submit">Form Submission</option>
                     <option value="tag_added">Tag Added</option>
@@ -237,7 +237,7 @@ export default function FunnelsPage() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Conversion Goal</label>
                   <select value={newFunnel.conversionGoal} onChange={e => setNewFunnel({ ...newFunnel, conversionGoal: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none">
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                     <option value="">Select goal</option>
                     <option value="booking_made">Booking Made</option>
                     <option value="purchase_completed">Purchase Completed</option>
@@ -248,7 +248,7 @@ export default function FunnelsPage() {
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowCreate(false)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">Cancel</button>
-              <button onClick={handleCreate} className="flex-1 px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600">Create Funnel</button>
+              <button onClick={handleCreate} className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">Create Funnel</button>
             </div>
           </div>
         </div>
@@ -292,10 +292,10 @@ export default function FunnelsPage() {
                     {selectedFunnel.steps.map((step, i) => (
                       <div key={step.id} className="flex items-center gap-3">
                         <div className="flex flex-col items-center">
-                          <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-semibold text-sm">
+                          <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
                             {i + 1}
                           </div>
-                          {i < (selectedFunnel.steps?.length || 0) - 1 && <div className="w-px h-6 bg-violet-200 mt-1" />}
+                          {i < (selectedFunnel.steps?.length || 0) - 1 && <div className="w-px h-6 bg-primary-200 mt-1" />}
                         </div>
                         <div className="flex-1 bg-slate-50 rounded-lg p-3">
                           <div className="flex items-center gap-2">

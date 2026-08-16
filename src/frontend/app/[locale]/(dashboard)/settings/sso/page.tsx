@@ -150,7 +150,7 @@ export default function SsoSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -207,12 +207,12 @@ export default function SsoSettingsPage() {
       {/* Provider Selection */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Globe className="w-5 h-5 text-violet-500" /> Identity Provider
+          <Globe className="w-5 h-5 text-primary-500" /> Identity Provider
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {providers.map((p) => (
             <button key={p.id} onClick={() => setForm({ ...form, provider: p.id })}
-              className={`p-4 border-2 rounded-xl text-left transition-all ${form.provider === p.id ? 'border-violet-500 bg-violet-50' : 'border-slate-200 hover:border-slate-300'}`}>
+              className={`p-4 border-2 rounded-xl text-left transition-all ${form.provider === p.id ? 'border-primary-500 bg-primary-50' : 'border-slate-200 hover:border-slate-300'}`}>
               <p className="font-semibold text-slate-900">{p.name}</p>
               <p className="text-xs text-slate-500 mt-1">{p.protocols.join(' / ')}</p>
             </button>
@@ -223,14 +223,14 @@ export default function SsoSettingsPage() {
       {/* Configuration */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Settings className="w-5 h-5 text-violet-500" /> Configuration
+          <Settings className="w-5 h-5 text-primary-500" /> Configuration
         </h2>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Protocol</label>
               <select value={form.protocol} onChange={e => setForm({ ...form, protocol: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none">
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                 <option value="SAML">SAML 2.0</option>
                 <option value="OIDC">OpenID Connect</option>
               </select>
@@ -238,24 +238,24 @@ export default function SsoSettingsPage() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Entity ID / Issuer</label>
               <input type="text" value={form.entityId} onChange={e => setForm({ ...form, entityId: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" placeholder="https://idp.example.com" />
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com" />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">IdP Metadata URL</label>
             <input type="url" value={form.metadataUrl} onChange={e => setForm({ ...form, metadataUrl: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" placeholder="https://idp.example.com/metadata" />
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/metadata" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Sign-In URL</label>
               <input type="url" value={form.signInUrl} onChange={e => setForm({ ...form, signInUrl: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" placeholder="https://idp.example.com/sso" />
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/sso" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Logout URL</label>
               <input type="url" value={form.logoutUrl} onChange={e => setForm({ ...form, logoutUrl: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" placeholder="https://idp.example.com/slo" />
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/slo" />
             </div>
           </div>
 
@@ -263,7 +263,7 @@ export default function SsoSettingsPage() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">X.509 Certificate {config?.sso?.hasCertificate && <span className="text-emerald-500">(configured)</span>}</label>
               <textarea value={form.certificate} onChange={e => setForm({ ...form, certificate: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none font-mono text-xs" rows={4} placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----" />
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none font-mono text-xs" rows={4} placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----" />
             </div>
           )}
 
@@ -272,12 +272,12 @@ export default function SsoSettingsPage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Client ID</label>
                 <input type="text" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" />
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Client Secret {config?.sso?.hasClientSecret && <span className="text-emerald-500">(configured)</span>}</label>
                 <input type="password" value={form.clientSecret} onChange={e => setForm({ ...form, clientSecret: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none" />
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
               </div>
             </div>
           )}
@@ -287,7 +287,7 @@ export default function SsoSettingsPage() {
       {/* Options */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Lock className="w-5 h-5 text-violet-500" /> Options
+          <Lock className="w-5 h-5 text-primary-500" /> Options
         </h2>
         <div className="space-y-4">
           {[
@@ -302,7 +302,7 @@ export default function SsoSettingsPage() {
                 <p className="text-sm text-slate-500">{opt.desc}</p>
               </div>
               <input type="checkbox" checked={(form as any)[opt.key]} onChange={e => setForm({ ...form, [opt.key]: e.target.checked })}
-                className="w-5 h-5 text-violet-500 rounded border-slate-300 focus:ring-violet-500" />
+                className="w-5 h-5 text-primary-500 rounded border-slate-300 focus:ring-primary-500" />
             </label>
           ))}
         </div>
@@ -311,7 +311,7 @@ export default function SsoSettingsPage() {
       {/* Save Button */}
       <div className="flex justify-end">
         <button onClick={handleSave} disabled={saving}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50">
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 transition-all disabled:opacity-50">
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
           Save Configuration
         </button>

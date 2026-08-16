@@ -246,7 +246,7 @@ export function CommandPalette() {
                 onChange={e => setQuery(e.target.value)}
               />
               {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />
+                <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
               ) : query ? (
                 <button onClick={() => setQuery('')} className="text-slate-400 hover:text-slate-600 text-xs bg-slate-200 px-1.5 py-0.5 rounded">✕</button>
               ) : (
@@ -269,9 +269,9 @@ export function CommandPalette() {
                           key={item.id}
                           onClick={item.action}
                           onMouseEnter={() => setSelectedIndex(globalIdx)}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg transition-colors ${globalIdx === selectedIndex ? 'bg-indigo-50 text-indigo-700' : 'hover:bg-slate-50'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg transition-colors ${globalIdx === selectedIndex ? 'bg-primary-50 text-primary-700' : 'hover:bg-slate-50'}`}
                         >
-                          <div className={`p-1.5 rounded-lg shrink-0 ${globalIdx === selectedIndex ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500'}`}>
+                          <div className={`p-1.5 rounded-lg shrink-0 ${globalIdx === selectedIndex ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-500'}`}>
                             {item.icon}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -280,7 +280,7 @@ export function CommandPalette() {
                               <p className="text-xs text-slate-500 truncate">{item.description}</p>
                             )}
                           </div>
-                          <ChevronRight className={`h-3 w-3 shrink-0 ${globalIdx === selectedIndex ? 'text-indigo-400' : 'text-slate-300'}`} />
+                          <ChevronRight className={`h-3 w-3 shrink-0 ${globalIdx === selectedIndex ? 'text-primary-400' : 'text-slate-300'}`} />
                         </button>
                       );
                     })}
@@ -302,16 +302,16 @@ export function CommandPalette() {
                       key={cmd.id}
                       onClick={cmd.action}
                       onMouseEnter={() => setSelectedIndex(idx)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg transition-colors ${idx === selectedIndex ? 'bg-indigo-50 text-indigo-700' : 'hover:bg-slate-50'}`}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg transition-colors ${idx === selectedIndex ? 'bg-primary-50 text-primary-700' : 'hover:bg-slate-50'}`}
                     >
-                      <div className={`p-1.5 rounded-lg shrink-0 ${idx === selectedIndex ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500'}`}>
+                      <div className={`p-1.5 rounded-lg shrink-0 ${idx === selectedIndex ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-500'}`}>
                         {cmd.icon}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">{cmd.label}</p>
                         {cmd.description && <p className="text-xs text-slate-500">{cmd.description}</p>}
                       </div>
-                      <ChevronRight className={`h-3 w-3 ${idx === selectedIndex ? 'text-indigo-400' : 'text-slate-300'}`} />
+                      <ChevronRight className={`h-3 w-3 ${idx === selectedIndex ? 'text-primary-400' : 'text-slate-300'}`} />
                     </button>
                   ))}
                 </div>

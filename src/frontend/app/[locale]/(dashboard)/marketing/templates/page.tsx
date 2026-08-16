@@ -349,7 +349,7 @@ export default function EmailTemplatesPage() {
                     <button
                         onClick={handleSave}
                         disabled={!selectedTemplate || saving}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-40"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-40"
                     >
                         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                         Save
@@ -362,7 +362,7 @@ export default function EmailTemplatesPage() {
                 <div className="w-60 shrink-0 bg-white rounded-xl border border-slate-200 flex flex-col overflow-hidden">
                     <div className="p-3 border-b border-slate-100 flex items-center justify-between">
                         <span className="font-semibold text-sm text-slate-900 flex items-center gap-2">
-                            <LayoutTemplate className="h-4 w-4 text-indigo-500" />
+                            <LayoutTemplate className="h-4 w-4 text-primary-500" />
                             Templates
                         </span>
                         {loading && <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />}
@@ -375,7 +375,7 @@ export default function EmailTemplatesPage() {
                                 className={cn(
                                     'w-full text-left p-3 rounded-lg text-sm transition-all',
                                     selectedTemplate?.id === template.id
-                                        ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                        ? 'bg-primary-50 text-primary-700 border border-primary-200'
                                         : 'hover:bg-slate-50 text-slate-600 border border-transparent'
                                 )}
                             >
@@ -387,7 +387,7 @@ export default function EmailTemplatesPage() {
                     <div className="p-2 border-t border-slate-100 flex gap-1.5">
                         <button
                             onClick={handleNewTemplate}
-                            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100"
                         >
                             <Plus className="h-3.5 w-3.5" /> New
                         </button>
@@ -413,7 +413,7 @@ export default function EmailTemplatesPage() {
                                     <input
                                         value={subject}
                                         onChange={e => setSubject(e.target.value)}
-                                        className="flex-1 text-sm border border-slate-200 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                                        className="flex-1 text-sm border border-slate-200 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
                                         placeholder="Email subject line..."
                                     />
                                 </div>
@@ -455,7 +455,7 @@ export default function EmailTemplatesPage() {
                                             className={cn(
                                                 'flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all',
                                                 viewMode === mode
-                                                    ? 'bg-indigo-600 text-white shadow-sm'
+                                                    ? 'bg-primary-600 text-white shadow-sm'
                                                     : 'text-slate-500 hover:text-slate-700'
                                             )}
                                         >
@@ -469,14 +469,14 @@ export default function EmailTemplatesPage() {
                                     <div className="flex bg-white rounded-lg border border-slate-200 p-0.5">
                                         <button
                                             onClick={() => setDeviceMode('desktop')}
-                                            className={cn('p-1.5 rounded transition-all', deviceMode === 'desktop' ? 'bg-slate-100 text-indigo-600' : 'text-slate-400 hover:text-slate-600')}
+                                            className={cn('p-1.5 rounded transition-all', deviceMode === 'desktop' ? 'bg-slate-100 text-primary-600' : 'text-slate-400 hover:text-slate-600')}
                                             title="Desktop"
                                         >
                                             <Monitor className="h-3.5 w-3.5" />
                                         </button>
                                         <button
                                             onClick={() => setDeviceMode('mobile')}
-                                            className={cn('p-1.5 rounded transition-all', deviceMode === 'mobile' ? 'bg-slate-100 text-indigo-600' : 'text-slate-400 hover:text-slate-600')}
+                                            className={cn('p-1.5 rounded transition-all', deviceMode === 'mobile' ? 'bg-slate-100 text-primary-600' : 'text-slate-400 hover:text-slate-600')}
                                             title="Mobile"
                                         >
                                             <Smartphone className="h-3.5 w-3.5" />
@@ -542,7 +542,7 @@ export default function EmailTemplatesPage() {
                             <p className="text-sm">Select a template to start editing</p>
                             <button
                                 onClick={handleNewTemplate}
-                                className="mt-4 flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100"
+                                className="mt-4 flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100"
                             >
                                 <Plus className="h-4 w-4" /> Create New Template
                             </button>

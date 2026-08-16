@@ -126,7 +126,7 @@ export function AgencySettings() {
 
                 <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-8 shadow-2xl shadow-slate-200/50 dark:shadow-none hover:scale-[1.02] transition-all group">
                     <div className="flex items-center gap-5 mb-4">
-                        <div className="p-3 bg-violet-50 dark:bg-violet-900/30 rounded-2xl text-violet-600 dark:text-violet-400 border border-violet-100 dark:border-violet-400/20 shadow-sm group-hover:scale-110 transition-transform">
+                        <div className="p-3 bg-primary-50 dark:bg-primary-900/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-400/20 shadow-sm group-hover:scale-110 transition-transform">
                             <CreditCard className="h-6 w-6" />
                         </div>
                         <div>
@@ -151,18 +151,18 @@ export function AgencySettings() {
                     </div>
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                         <div className="relative group min-w-[280px]">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Filter nodes..."
-                                className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-2xl pl-12 pr-4 py-3.5 text-xs font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all dark:text-white"
+                                className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-2xl pl-12 pr-4 py-3.5 text-xs font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all dark:text-white"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         <button 
                             onClick={() => setIsCreateModalOpen(true)}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-600/25 transition-all active:scale-95 flex items-center justify-center gap-2"
+                            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary-600/25 transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Plus className="h-4 w-4" />
                             Provision Entity
@@ -187,12 +187,12 @@ export function AgencySettings() {
                                     <tr key={account.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all group">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-5">
-                                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-sm shadow-xl group-hover:scale-110 transition-transform">
+                                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-black text-sm shadow-xl group-hover:scale-110 transition-transform">
                                                     {account.businessName.substring(0, 2).toUpperCase()}
                                                 </div>
                                                 <div className="space-y-1">
                                                     <div className="font-black text-slate-900 dark:text-white uppercase tracking-tight text-base">{account.businessName}</div>
-                                                    <div className="text-[10px] text-indigo-500 font-black uppercase tracking-[0.2em] flex items-center gap-1.5">
+                                                    <div className="text-[10px] text-primary-500 font-black uppercase tracking-[0.2em] flex items-center gap-1.5">
                                                         <ExternalLink className="h-3 w-3" />
                                                         {account.slug}.upkilo.com
                                                     </div>
@@ -220,7 +220,7 @@ export function AgencySettings() {
                                         </td>
                                         <td className="px-8 py-6 text-right">
                                             <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                <button className="p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-sm hover:scale-110">
+                                                <button className="p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm hover:scale-110">
                                                     <ExternalLink className="h-4 w-4" />
                                                 </button>
                                                 <button className="p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm hover:scale-110">
@@ -249,8 +249,8 @@ export function AgencySettings() {
 
             {/* Billing Details */}
             <div className="bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden group">
-                <div className="p-10 border-b border-slate-100 dark:border-slate-800 bg-indigo-50/30 dark:bg-indigo-400/5 flex items-start gap-8">
-                    <div className="p-5 bg-indigo-600 text-white rounded-3xl shadow-xl shadow-indigo-600/20 group-hover:scale-110 transition-all">
+                <div className="p-10 border-b border-slate-100 dark:border-slate-800 bg-primary-50/30 dark:bg-primary-400/5 flex items-start gap-8">
+                    <div className="p-5 bg-primary-600 text-white rounded-3xl shadow-xl shadow-primary-600/20 group-hover:scale-110 transition-all">
                         <CreditCard className="h-8 w-8" />
                     </div>
                     <div className="flex-1">
@@ -265,7 +265,7 @@ export function AgencySettings() {
                             <div className="space-y-2">
                                 <div className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Entity Surcharge</div>
                                 <div className="text-xl font-black text-slate-900 dark:text-white tracking-tight">${billing?.subAccounts?.totalCost?.toFixed(2) || '0.00'}</div>
-                                <div className="text-[9px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">${billing?.subAccounts?.costPerAccount || '29'} / unique node</div>
+                                <div className="text-[9px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-widest">${billing?.subAccounts?.costPerAccount || '29'} / unique node</div>
                             </div>
                             <div className="space-y-2">
                                 <div className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Temporal Window</div>
@@ -273,8 +273,8 @@ export function AgencySettings() {
                                     {billing?.currentCycle ? `${new Date(billing.currentCycle.startsAt).toLocaleDateString()} ➔ ${new Date(billing.currentCycle.endsAt).toLocaleDateString()}` : 'Monthly Protocol'}
                                 </div>
                             </div>
-                            <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-indigo-100 dark:border-indigo-400/20 shadow-xl shadow-indigo-500/5 flex flex-col justify-center">
-                                <div className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.4em] mb-1">Projected Total</div>
+                            <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-primary-100 dark:border-primary-400/20 shadow-xl shadow-primary-500/5 flex flex-col justify-center">
+                                <div className="text-[9px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-[0.4em] mb-1">Projected Total</div>
                                 <div className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">${billing?.estimatedTotal?.toFixed(2) || '0.00'}</div>
                             </div>
                         </div>
@@ -291,7 +291,7 @@ export function AgencySettings() {
                     >
                         <div className="p-10 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30">
                             <div className="flex items-center gap-6">
-                                <div className="p-5 bg-indigo-600 text-white rounded-3xl shadow-xl shadow-indigo-600/20">
+                                <div className="p-5 bg-primary-600 text-white rounded-3xl shadow-xl shadow-primary-600/20">
                                     <Plus className="h-8 w-8" />
                                 </div>
                                 <div>
@@ -309,7 +309,7 @@ export function AgencySettings() {
                                         required
                                         type="text"
                                         placeholder="E.g. ZENITH_PROTOCOLS"
-                                        className="w-full h-16 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-6 text-sm font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all dark:text-white"
+                                        className="w-full h-16 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-6 text-sm font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all dark:text-white"
                                         value={formData.businessName}
                                         onChange={(e) => setFormData({ ...formData, businessName: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
                                     />
@@ -320,7 +320,7 @@ export function AgencySettings() {
                                         <input
                                             required
                                             type="text"
-                                            className="flex-1 h-16 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-l-2xl px-6 text-sm font-bold tracking-tight outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all dark:text-white border-r-0"
+                                            className="flex-1 h-16 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-l-2xl px-6 text-sm font-bold tracking-tight outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all dark:text-white border-r-0"
                                             value={formData.slug}
                                             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                                         />
@@ -333,7 +333,7 @@ export function AgencySettings() {
                                     <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em] pl-1">Industry Sector Matrix</label>
                                     <div className="relative">
                                         <select 
-                                            className="w-full h-16 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-6 text-sm font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all dark:text-white appearance-none cursor-pointer"
+                                            className="w-full h-16 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-6 text-sm font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all dark:text-white appearance-none cursor-pointer"
                                             value={formData.sector}
                                             onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
                                         >
@@ -350,11 +350,11 @@ export function AgencySettings() {
                                 </div>
                             </div>
 
-                            <div className="flex items-start gap-5 p-6 bg-indigo-50/50 dark:bg-indigo-400/5 rounded-3xl border border-indigo-100/50 dark:border-indigo-400/10">
-                                <AlertCircle className="h-6 w-6 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+                            <div className="flex items-start gap-5 p-6 bg-primary-50/50 dark:bg-primary-400/5 rounded-3xl border border-primary-100/50 dark:border-primary-400/10">
+                                <AlertCircle className="h-6 w-6 text-primary-600 dark:text-primary-400 shrink-0 mt-0.5" />
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-widest">Protocol Overhead Reminder</p>
-                                    <p className="text-[10px] text-indigo-600/70 dark:text-indigo-400/70 leading-relaxed font-bold uppercase tracking-widest">
+                                    <p className="text-[10px] font-black text-primary-700 dark:text-primary-300 uppercase tracking-widest">Protocol Overhead Reminder</p>
+                                    <p className="text-[10px] text-primary-600/70 dark:text-primary-400/70 leading-relaxed font-bold uppercase tracking-widest">
                                         Initializing entity node scales overhead by <span className="text-slate-900 dark:text-white">$29.00/cycle</span>. Committed to next financial dispatch.
                                     </p>
                                 </div>
@@ -371,7 +371,7 @@ export function AgencySettings() {
                                 <button 
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-12 h-16 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-indigo-600/25 transition-all active:scale-95 disabled:opacity-50"
+                                    className="bg-primary-600 hover:bg-primary-700 text-white px-12 h-16 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary-600/25 transition-all active:scale-95 disabled:opacity-50"
                                 >
                                     {isSubmitting ? 'DEPLOYING...' : 'COMMIT DEPLOYMENT'}
                                 </button>

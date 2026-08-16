@@ -111,7 +111,7 @@ export default function SecurityOverviewPage() {
                         <div className="p-2.5 bg-gradient-to-br from-rose-500 to-orange-500 rounded-2xl shadow-lg shadow-rose-500/20">
                             <ShieldAlert className="h-6 w-6 text-white" />
                         </div>
-                        <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                        <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                             Security Overview
                         </h1>
                     </div>

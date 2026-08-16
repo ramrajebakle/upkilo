@@ -146,7 +146,7 @@ export function CustomDomainSettings() {
             {/* Header / Identity Oracle */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
                 <div className="flex items-center gap-6">
-                    <div className="p-4 bg-gradient-to-br from-indigo-600 to-indigo-950 rounded-[28px] shadow-2xl shadow-indigo-500/20 border border-indigo-500/20">
+                    <div className="p-4 bg-gradient-to-br from-primary-600 to-primary-950 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                         <Globe2 className="h-8 w-8 text-white" />
                     </div>
                     <div>

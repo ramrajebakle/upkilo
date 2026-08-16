@@ -99,7 +99,7 @@ export default function TeamPage() {
       {/* Header Bundle */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
         <div className="flex items-center gap-6">
-            <div className="p-4 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
+            <div className="p-4 bg-gradient-to-br from-primary-500 to-primary-600 rounded-[28px] shadow-2xl shadow-primary-500/20 border border-primary-500/20">
                 <Users className="h-8 w-8 text-white" />
             </div>
             <div>
@@ -118,7 +118,7 @@ export default function TeamPage() {
       {/* Stats Spectrum */}
       <div className="grid md:grid-cols-3 gap-8">
           {[
-              { label: 'Total Agents', value: team.length, icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+              { label: 'Total Agents', value: team.length, icon: Users, color: 'text-primary-500', bg: 'bg-primary-500/10' },
               { label: 'Active Nodes', value: team.filter(m => m.isActive).length, icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
               { label: 'Pending Comms', value: invitations.length, icon: Mail, color: 'text-amber-500', bg: 'bg-amber-500/10' }
           ].map((stat, i) => (
@@ -187,7 +187,7 @@ export default function TeamPage() {
                             <td className="px-10 py-8">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-slate-50 dark:bg-slate-850 rounded-lg border border-slate-200 dark:border-slate-800">
-                                        <Shield className={cn("h-3 w-3", member.role === 'Owner' ? 'text-primary-500' : 'text-indigo-500')} />
+                                        <Shield className={cn("h-3 w-3", member.role === 'Owner' ? 'text-primary-500' : 'text-primary-500')} />
                                     </div>
                                     <span className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest">{member.role}</span>
                                 </div>

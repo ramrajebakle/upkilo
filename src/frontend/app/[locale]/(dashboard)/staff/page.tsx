@@ -153,7 +153,7 @@ export default function StaffPage() {
                 title="Staff Management" 
                 description="Manage your team members and their schedules"
                 icon={Users}
-                iconGradient="from-blue-500 to-indigo-600"
+                iconGradient="from-blue-500 to-primary-600"
                 iconShadow="shadow-blue-500/25"
                 actions={
                     <Link
@@ -303,7 +303,7 @@ export default function StaffPage() {
                                     </div>
 
                                     {/* Name & Role */}
-                                    <h3 className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                    <h3 className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                         {member.firstName} {member.lastName}
                                     </h3>
                                     <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">{member.role}</p>
@@ -320,7 +320,7 @@ export default function StaffPage() {
                                         {member.specialties.slice(0, 2).map((spec) => (
                                             <span
                                                 key={spec}
-                                                className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-tighter bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md border border-indigo-100 dark:border-indigo-800/50"
+                                                className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-tighter bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-md border border-primary-100 dark:border-primary-800/50"
                                             >
                                                 {spec}
                                             </span>
@@ -334,7 +334,7 @@ export default function StaffPage() {
 
                                     {/* Today's bookings badge */}
                                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                                        <Calendar className="h-3.5 w-3.5 text-indigo-500" />
+                                        <Calendar className="h-3.5 w-3.5 text-primary-500" />
                                         <span>
                                             <span className="text-slate-900 dark:text-white">{member.bookingsToday}</span> bookings today
                                         </span>
@@ -349,7 +349,7 @@ export default function StaffPage() {
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </button>
-                                <div className="p-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 bg-white dark:bg-slate-800 shadow-md rounded-xl transition-all text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700">
+                                <div className="p-2 hover:bg-primary-50 dark:hover:bg-primary-900/40 bg-white dark:bg-slate-800 shadow-md rounded-xl transition-all text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700">
                                     <ChevronRight className="h-4 w-4" />
                                 </div>
                             </div>

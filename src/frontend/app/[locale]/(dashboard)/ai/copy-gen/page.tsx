@@ -244,17 +244,17 @@ export default function AiCopyGenPage() {
                                 </pre>
                             </div>
 
-                            <div className="mt-8 p-4 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-between">
+                            <div className="mt-8 p-4 rounded-xl bg-primary-50 border border-primary-100 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <Target className="h-4 w-4 text-indigo-600" />
+                                        <Target className="h-4 w-4 text-primary-600" />
                                     </div>
                                     <div className="text-sm">
-                                        <p className="font-bold text-indigo-900">Optimization Tip</p>
-                                        <p className="text-indigo-700">Add a limited-time bonus to increase urgency by 24%.</p>
+                                        <p className="font-bold text-primary-900">Optimization Tip</p>
+                                        <p className="text-primary-700">Add a limited-time bonus to increase urgency by 24%.</p>
                                     </div>
                                 </div>
-                                <ChevronRight className="h-5 w-5 text-indigo-300" />
+                                <ChevronRight className="h-5 w-5 text-primary-300" />
                             </div>
                         </div>
                     )}

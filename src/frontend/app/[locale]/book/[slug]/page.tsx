@@ -1,12 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import PublicBookingClient from './PublicBookingClient';
-
-// Prevents </script> injection when tenant-controlled data lands in JSON-LD blocks.
-// JSON.stringify alone does NOT escape </script>; dangerouslySetInnerHTML bypasses React's escaping.
-function safeJsonLd(obj: unknown): string {
-  return JSON.stringify(obj).replace(/</g, '\\u003c');
-}
+import { safeJsonLd } from '@/lib/jsonLd';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 

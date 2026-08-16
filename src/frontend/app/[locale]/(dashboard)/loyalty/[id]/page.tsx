@@ -132,12 +132,12 @@ export default function EditLoyaltyRewardPage() {
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/25">
+                        <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg shadow-primary-500/25">
                             <Gift className="h-5 w-5 text-white" />
                         </div>
                         <h1
                             className="text-2xl font-bold text-slate-900"
-                            style={{ fontFamily: 'Outfit, sans-serif' }}
+                            style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Edit Reward
                         </h1>

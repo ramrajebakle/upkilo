@@ -179,7 +179,7 @@ export default function AutoRebookingPage() {
             {/* Stats */}
             <div className="grid grid-cols-4 gap-4">
                 {[
-                    { label: 'Active Prompts', value: prompts.filter(p => p.isActive).length, icon: <RotateCcw className="h-5 w-5 text-indigo-500" />, color: 'text-indigo-700' },
+                    { label: 'Active Prompts', value: prompts.filter(p => p.isActive).length, icon: <RotateCcw className="h-5 w-5 text-primary-500" />, color: 'text-primary-700' },
                     { label: 'Messages Sent', value: totalSent.toLocaleString(), icon: <Bell className="h-5 w-5 text-blue-500" />, color: 'text-blue-700' },
                     { label: 'Bookings Generated', value: totalConverted.toLocaleString(), icon: <Calendar className="h-5 w-5 text-emerald-500" />, color: 'text-emerald-700' },
                     { label: 'Avg Conversion', value: `${avgConversion}%`, icon: <TrendingUp className="h-5 w-5 text-amber-500" />, color: 'text-amber-700' },
@@ -211,7 +211,7 @@ export default function AutoRebookingPage() {
                             <select
                                 value={form.channel}
                                 onChange={e => setForm(p => ({ ...p, channel: e.target.value as RebookChannel }))}
-                                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             >
                                 <option value="sms">SMS</option>
                                 <option value="email">Email</option>
@@ -225,7 +225,7 @@ export default function AutoRebookingPage() {
                             <select
                                 value={form.trigger}
                                 onChange={e => setForm(p => ({ ...p, trigger: e.target.value as RebookTrigger }))}
-                                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             >
                                 {Object.entries(TRIGGER_LABELS).map(([v, l]) => (
                                     <option key={v} value={v}>{l}</option>
@@ -250,7 +250,7 @@ export default function AutoRebookingPage() {
                         <textarea
                             value={form.message}
                             onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
-                            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500"
                             placeholder="Use {{firstName}}, {{bookingLink}}, {{businessName}}, {{lastService}}..."
                         />
                         <p className="text-xs text-slate-400 mt-1">Available variables: {`{{firstName}}, {{bookingLink}}, {{businessName}}, {{lastService}}, {{daysSinceVisit}}`}</p>

@@ -49,13 +49,13 @@ function PoweredByUpkiloBadge() {
 
     return (
         <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mt-2">
-            <Zap className="h-3 w-3 text-indigo-400" />
+            <Zap className="h-3 w-3 text-primary-400" />
             <span>Powered by</span>
             <a
                 href="https://upkilo.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold text-indigo-500 hover:text-indigo-600 transition-colors"
+                className="font-semibold text-primary-500 hover:text-primary-600 transition-colors"
                 title="Grow your service business with Upkilo"
             >
                 Upkilo

@@ -312,7 +312,7 @@ export default function EditClientPage() {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
                                     {client.firstName} {client.lastName}
                                 </h1>
                                 <span className={cn(
@@ -466,8 +466,8 @@ export default function EditClientPage() {
                         {/* Tags */}
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-violet-100 rounded-lg">
-                                    <Tag className="h-5 w-5 text-violet-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Tag className="h-5 w-5 text-primary-600" />
                                 </div>
                                 <h2 className="text-lg font-semibold text-slate-900">Tags</h2>
                             </div>

@@ -140,7 +140,7 @@ export default function ExperimentsPage() {
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Total Experiments', value: experiments.length, icon: <FlaskConical className="h-5 w-5 text-indigo-500" /> },
+                    { label: 'Total Experiments', value: experiments.length, icon: <FlaskConical className="h-5 w-5 text-primary-500" /> },
                     { label: 'Active', value: experiments.filter(e => e.isActive).length, icon: <TrendingUp className="h-5 w-5 text-emerald-500" /> },
                     { label: 'Paused', value: experiments.filter(e => !e.isActive).length, icon: <BarChart3 className="h-5 w-5 text-amber-500" /> },
                 ].map(s => (
@@ -191,7 +191,7 @@ export default function ExperimentsPage() {
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Traffic Split: <span className="text-indigo-600">{form.trafficSplit}% → A</span> / <span className="text-purple-600">{100 - form.trafficSplit}% → B</span>
+                            Traffic Split: <span className="text-primary-600">{form.trafficSplit}% → A</span> / <span className="text-primary-600">{100 - form.trafficSplit}% → B</span>
                         </label>
                         <input
                             type="range"
@@ -200,7 +200,7 @@ export default function ExperimentsPage() {
                             step="5"
                             value={form.trafficSplit}
                             onChange={e => setForm(p => ({ ...p, trafficSplit: parseInt(e.target.value) }))}
-                            className="w-full accent-indigo-600"
+                            className="w-full accent-primary-600"
                         />
                         <div className="flex justify-between text-xs text-slate-400 mt-1">
                             <span>10%</span>
@@ -244,9 +244,9 @@ export default function ExperimentsPage() {
                                         </span>
                                     </div>
                                     <div className="text-xs text-slate-500 mt-0.5">
-                                        <span className="text-indigo-600 font-medium">{exp.variantA}</span>
+                                        <span className="text-primary-600 font-medium">{exp.variantA}</span>
                                         <span className="mx-2">vs</span>
-                                        <span className="text-purple-600 font-medium">{exp.variantB}</span>
+                                        <span className="text-primary-600 font-medium">{exp.variantB}</span>
                                         <span className="mx-2">·</span>
                                         <span>{Math.round(exp.trafficSplit * 100)}% / {Math.round((1 - exp.trafficSplit) * 100)}% split</span>
                                     </div>
@@ -288,7 +288,7 @@ export default function ExperimentsPage() {
                                                 <BarChart3 className="h-4 w-4 text-slate-500" />
                                                 <span className="font-semibold text-slate-900 text-sm">Experiment Results</span>
                                                 <span className="text-xs text-slate-400">· {expandedData.results.confidenceLevel}% confidence</span>
-                                                <span className={`ml-auto px-2 py-0.5 text-xs font-medium rounded-full flex items-center gap-1 ${expandedData.results.winner === 'A' ? 'bg-indigo-50 text-indigo-700' : 'bg-purple-50 text-purple-700'}`}>
+                                                <span className={`ml-auto px-2 py-0.5 text-xs font-medium rounded-full flex items-center gap-1 ${expandedData.results.winner === 'A' ? 'bg-primary-50 text-primary-700' : 'bg-primary-50 text-primary-700'}`}>
                                                     <Award className="h-3 w-3" /> Variant {expandedData.results.winner} winning
                                                 </span>
                                             </div>
@@ -298,9 +298,9 @@ export default function ExperimentsPage() {
                                                     const name = variant === 'A' ? expandedData.variantA : expandedData.variantB;
                                                     const isWinner = expandedData.results.winner === variant;
                                                     return (
-                                                        <div key={variant} className={`rounded-xl p-4 border ${isWinner ? (variant === 'A' ? 'border-indigo-200 bg-indigo-50' : 'border-purple-200 bg-purple-50') : 'border-slate-200 bg-white'}`}>
+                                                        <div key={variant} className={`rounded-xl p-4 border ${isWinner ? (variant === 'A' ? 'border-primary-200 bg-primary-50' : 'border-primary-200 bg-primary-50') : 'border-slate-200 bg-white'}`}>
                                                             <div className="flex items-center gap-2 mb-3">
-                                                                <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${variant === 'A' ? 'bg-indigo-600 text-white' : 'bg-purple-600 text-white'}`}>
+                                                                <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${variant === 'A' ? 'bg-primary-600 text-white' : 'bg-primary-600 text-white'}`}>
                                                                     {variant}
                                                                 </span>
                                                                 <span className="font-medium text-slate-900 text-sm">{name}</span>
@@ -322,7 +322,7 @@ export default function ExperimentsPage() {
                                                                 {/* Progress bar */}
                                                                 <div className="h-1.5 bg-white rounded-full overflow-hidden mt-1">
                                                                     <div
-                                                                        className={`h-full rounded-full ${variant === 'A' ? 'bg-indigo-500' : 'bg-purple-500'}`}
+                                                                        className={`h-full rounded-full ${variant === 'A' ? 'bg-primary-500' : 'bg-primary-500'}`}
                                                                         style={{ width: `${Math.min(data.conversionRate * 5, 100)}%` }}
                                                                     />
                                                                 </div>

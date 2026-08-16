@@ -94,7 +94,7 @@ export default function DuplicateClientsPage() {
             <div className="grid grid-cols-3 gap-4">
                 {[
                     { label: 'Duplicate Groups', value: groups.length, icon: <AlertTriangle className="h-5 w-5 text-amber-500" /> },
-                    { label: 'Affected Clients', value: groups.reduce((acc, g) => acc + g.clients.length, 0), icon: <Users className="h-5 w-5 text-indigo-500" /> },
+                    { label: 'Affected Clients', value: groups.reduce((acc, g) => acc + g.clients.length, 0), icon: <Users className="h-5 w-5 text-primary-500" /> },
                     { label: 'Resolved', value: resolvedGroups.size, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
                 ].map(s => (
                     <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
@@ -153,21 +153,21 @@ export default function DuplicateClientsPage() {
                                                 <div
                                                     key={client.id}
                                                     onClick={() => setSelectedPrimary(prev => ({ ...prev, [group.groupId]: client.id }))}
-                                                    className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${isPrimary ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 bg-white hover:border-indigo-200'}`}
+                                                    className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${isPrimary ? 'border-primary-500 bg-primary-50' : 'border-slate-200 bg-white hover:border-primary-200'}`}
                                                 >
                                                     <div className="flex items-start justify-between mb-2">
                                                         <div className="flex items-center gap-2">
-                                                            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${isPrimary ? 'bg-indigo-600' : 'bg-slate-400'}`}>
+                                                            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${isPrimary ? 'bg-primary-600' : 'bg-slate-400'}`}>
                                                                 {(client.firstName?.[0] || client.email?.[0] || 'C').toUpperCase()}
                                                             </div>
                                                             <div>
                                                                 <p className="font-semibold text-slate-900 text-sm">
                                                                     {`${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Unknown'}
                                                                 </p>
-                                                                {isPrimary && <span className="text-xs text-indigo-600 font-medium">Primary (keep)</span>}
+                                                                {isPrimary && <span className="text-xs text-primary-600 font-medium">Primary (keep)</span>}
                                                             </div>
                                                         </div>
-                                                        {isPrimary && <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0" />}
+                                                        {isPrimary && <CheckCircle className="h-4 w-4 text-primary-600 shrink-0" />}
                                                     </div>
                                                     <div className="space-y-1 text-xs text-slate-600">
                                                         {client.email && <p>✉ {client.email}</p>}

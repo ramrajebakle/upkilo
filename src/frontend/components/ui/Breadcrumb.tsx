@@ -21,7 +21,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
         <li>
           <Link
             href="/dashboard"
-            className="flex items-center gap-1 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+            className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
             aria-label="Dashboard home"
           >
             <Home className="h-3.5 w-3.5" aria-hidden="true" />
@@ -33,7 +33,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
             {item.href && i < items.length - 1 ? (
               <Link
                 href={item.href as any}
-                className="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 {item.label}
               </Link>

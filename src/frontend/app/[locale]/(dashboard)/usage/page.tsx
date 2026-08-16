@@ -152,12 +152,12 @@ export default function UsageDashboardPage() {
             {/* Consumption Matrix (Grid) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <UsageMetricCard
-                    icon={<Calendar className="h-6 w-6 text-indigo-500" />}
+                    icon={<Calendar className="h-6 w-6 text-primary-500" />}
                     title="Engagement Capacity"
                     subtitle="Monthly Bookings"
                     used={summary?.bookingsUsed || 0}
                     limit={summary?.bookingsLimit || 0}
-                    color="from-indigo-500 to-blue-600"
+                    color="from-primary-500 to-blue-600"
                 />
                 <UsageMetricCard
                     icon={<MessageSquare className="h-6 w-6 text-emerald-500" />}
@@ -173,7 +173,7 @@ export default function UsageDashboardPage() {
                     subtitle="AI Cognitive Credits"
                     used={summary?.aiCreditsUsed || 0}
                     limit={summary?.aiCreditsLimit || 0}
-                    color="from-primary-500 to-indigo-600"
+                    color="from-primary-500 to-primary-600"
                 />
                 <UsageMetricCard
                     icon={<HardDrive className="h-6 w-6 text-blue-500" />}

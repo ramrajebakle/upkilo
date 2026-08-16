@@ -6,8 +6,19 @@
    =========================================== */
 
 @theme {
-  --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  /* These now point at the next/font variables defined in app/[locale]/layout.tsx, so the
+     names here and the faces actually downloaded cannot drift apart.
+
+     --font-sans previously read "Inter Variable", which was never loaded under that name —
+     next/font loads the family as "Inter". Anything using the `font-sans` utility therefore
+     fell through to -apple-system while body text got Inter from a className, so the page
+     mixed two faces without either being chosen.
+
+     --font-display is new: Outfit is used as the display face in 58 files that had no
+     supported way to reach it. */
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: var(--font-outfit), var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "Fira Code", monospace;
 
   /* Typography */
   --text-xs: 11px;
@@ -193,6 +204,22 @@
 }
 
 @theme {
+  /* ── Easing vocabulary ───────────────────────────────────────────────────
+     The stylesheet had no easing tokens, so every animation reached for a CSS
+     built-in. Those curves are deliberately gentle and read as slightly slack on
+     UI: a strong ease-out leaves fast and settles, so the element is where the
+     user expects it well before the animation formally ends — which is why a
+     200ms ease-out feels quicker than a 200ms ease-in of identical length.
+
+     Never ease-in on UI. It starts slow, delaying the exact moment the user is
+     watching for.
+
+     Naming these once means new motion extends one vocabulary instead of each
+     component inventing its own curve. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);       /* entering / exiting */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* moving on screen */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);    /* iOS-like drawer travel */
+
   /* Custom animation tokens — enables animate-* Tailwind utilities */
   --animate-fade-in: fade-in 0.25s ease-out both;
   --animate-fade-in-up: fade-in-up 0.35s ease-out both;
@@ -252,6 +279,101 @@
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
     }
+  }
+
+  /* ── Browser surfaces ────────────────────────────────────────────────────
+     The parts of the page nobody draws still carry the design. Selection
+     highlight, the text caret, focus rings and scrollbars all shipped as browser
+     defaults here — which meant a product built around an indigo brand rendered
+     its selection highlight in Chrome's stock blue, and its focus ring in the
+     platform's, on every page.
+
+     Every value below resolves from tokens already defined above rather than
+     introducing new colour, so this follows the palette automatically, including
+     into dark mode. */
+
+  ::selection {
+    /* 0.22 alpha keeps selected body text above the 4.5:1 contrast floor against
+       both --surface-base values; a solid brand fill would drop it below. */
+    background-color: color-mix(in srgb, var(--color-primary-500) 22%, transparent);
+    color: var(--text-primary);
+  }
+
+  /* Inputs inherit the caret from the browser, which is always the platform's
+     text colour and never the theme's. */
+  input,
+  textarea,
+  [contenteditable] {
+    caret-color: var(--color-primary-500);
+  }
+
+  /* A global focus ring, not just the one on .btn — every interactive element
+     needs a visible keyboard state, and until now anything that was not a .btn
+     fell back to the UA default (or nothing, where a reset removed it). */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Firefox honours these two; the WebKit rules below cover Chrome and Safari. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--surface-border-strong);
+    border-radius: 999px;
+    /* Transparent border + background-clip insets the thumb without needing a
+       second element, so it reads as a rail rather than filling the gutter. */
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-tertiary);
+    background-clip: content-box;
+  }
+
+  /* Digits that sit in columns — prices, counts, dates — must not shift width as
+     they change. Applied to the elements that carry tabular data rather than
+     globally, since proportional figures are correct in running prose. */
+  table,
+  time,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Checkboxes and radios measured 13×13 on mobile — the browser default, which no one
+     chose. An audit at 390px found 26 of them across the app.
+
+     24px is WCAG 2.5.8 Target Size (Minimum) at AA, and is what is actually reachable here:
+     the AAA 44px figure assumes the control's label shares its hit area, which requires
+     per-instance markup changes rather than a stylesheet rule. This is scoped to coarse
+     pointers so mouse-driven dense forms keep the compact control, and the accent colour
+     is set because an unstyled checkbox is one of the browser surfaces that otherwise ships
+     in no design system at all. */
+  @media (pointer: coarse) {
+    input[type="checkbox"],
+    input[type="radio"] {
+      min-width: 1.5rem;
+      min-height: 1.5rem;
+    }
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-primary-500);
   }
 }
 
@@ -370,13 +492,10 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
-  /* ---- Text effects ---- */
-  .gradient-text {
-    background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+  /* .gradient-text removed. It clipped a violet-to-blue gradient into text, which is
+     decorative rather than meaningful and makes the lightest stop set the effective contrast
+     for whatever it wraps. Its single caller was the dashboard greeting, where it was applied
+     to the user's own name. Emphasis in text comes from weight, size or a solid accent. */
 
   /* ---- Texture overlay ---- */
   .grain {
@@ -399,5 +518,85 @@
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.02em;
+  }
+}
+
+/* ===========================================
+   Product tour (Shepherd) — deliberately OUTSIDE @layer components.
+   shepherd.css ships no @layer at all, and in the cascade an unlayered rule beats a
+   layered one no matter how specific the layered selector is. Inside @layer components
+   this block lost to Shepherd's stock theme even at two classes deep; unlayered, it wins.
+   =========================================== */
+/* ---- Product tour (Shepherd) ----
+   shepherd.css is imported inside ProductTour.tsx, so it loads after this file. Shepherd
+   also puts .shepherd-button on every button itself, which ties on specificity with
+   .btn-primary — and on a tie the later stylesheet wins. The tour therefore rendered in
+   Shepherd's stock #3288e6 blue: the most off-brand surface in the product, on the first
+   screen a new tenant ever sees.
+
+   Every selector below is two classes deep so it outranks the vendor default outright
+   rather than depending on load order. Scoped to .upkilo-tour, set in defaultStepOptions. */
+.shepherd-element.upkilo-tour {
+  background-color: var(--color-neutral-900);
+  color: #ffffff;
+  max-width: 22rem;
+  /* Offset and blur, not a zero-offset halo — a halo reads as decoration, not elevation. */
+  box-shadow: 0 12px 32px -8px rgb(0 0 0 / 0.45);
+}
+
+.shepherd-element.upkilo-tour .shepherd-text {
+  color: var(--color-neutral-100);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  padding: 0.25rem 0 1rem;
+}
+
+.shepherd-element.upkilo-tour .shepherd-button {
+  background-color: var(--color-primary-500);
+  color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  font-weight: 500;
+  /* Matches the press feedback on Button.tsx so the tour feels like the same product. */
+  transition: background-color 200ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.shepherd-element.upkilo-tour .shepherd-button:not(:disabled):hover {
+  background-color: var(--color-primary-600);
+}
+
+.shepherd-element.upkilo-tour .shepherd-button:active {
+  transform: scale(0.97);
+}
+
+.shepherd-element.upkilo-tour .shepherd-button.btn-secondary {
+  background-color: transparent;
+  color: var(--color-neutral-300);
+  border: 1px solid var(--color-neutral-700);
+}
+
+.shepherd-element.upkilo-tour .shepherd-button.btn-secondary:not(:disabled):hover {
+  background-color: var(--color-neutral-800);
+  color: #ffffff;
+}
+
+.shepherd-element.upkilo-tour .shepherd-cancel-icon {
+  color: var(--color-neutral-400);
+}
+
+.shepherd-element.upkilo-tour .shepherd-cancel-icon:hover {
+  color: #ffffff;
+}
+
+.shepherd-element.upkilo-tour .shepherd-arrow::before {
+  background-color: var(--color-neutral-900);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shepherd-element.upkilo-tour .shepherd-button {
+    transition: none;
+  }
+  .shepherd-element.upkilo-tour .shepherd-button:active {
+    transform: none;
   }
 }

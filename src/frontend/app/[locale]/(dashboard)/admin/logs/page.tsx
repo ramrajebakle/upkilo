@@ -75,7 +75,7 @@ export default function AdminLogsPage() {
             <div className="p-2.5 bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl shadow-lg shadow-slate-500/20">
               <ClipboardList className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Platform Audit Logs
             </h1>
           </div>
@@ -146,7 +146,7 @@ export default function AdminLogsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                       <Shield className="h-4 w-4 text-indigo-500" />
+                       <Shield className="h-4 w-4 text-primary-500" />
                        {log.action}
                     </div>
                   </TableCell>

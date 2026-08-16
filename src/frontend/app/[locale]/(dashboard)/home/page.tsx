@@ -290,7 +290,7 @@ export default function DashboardPage() {
                 <div className="absolute inset-0 opacity-40">
                     <div className="absolute top-0 -left-10 w-72 h-72 bg-primary-500 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
                     <div className="absolute top-0 -right-10 w-72 h-72 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-                    <div className="absolute -bottom-10 left-1/2 w-72 h-72 bg-violet-500 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+                    <div className="absolute -bottom-10 left-1/2 w-72 h-72 bg-primary-500 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
                 </div>
 
                 <div className="relative z-10">
@@ -300,10 +300,16 @@ export default function DashboardPage() {
                                 <Sparkles className="w-4 h-4" />
                                 {greeting}
                             </p>
+                            {/* The name below used .gradient-text, now removed from globals.css —
+                                this was its only caller. A person's own name is poor material for
+                                a legibility trade. primary-300 rather than a mid tone because this
+                                heading sits on the dark hero, alongside text-white and
+                                text-slate-400; a 600-weight accent here would be darker than the
+                                surface it sits on. */}
                             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
                                 Welcome back,{' '}
                                 {user?.firstName ? (
-                                    <span className="gradient-text">{user.firstName}</span>
+                                    <span className="text-primary-300">{user.firstName}</span>
                                 ) : (
                                     <span className="inline-block w-28 h-8 bg-white/20 rounded-lg animate-pulse align-middle" aria-hidden="true" />
                                 )}
@@ -403,14 +409,14 @@ export default function DashboardPage() {
                                     className={cn(
                                         'flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all text-start',
                                         selected
-                                            ? 'border-violet-500 bg-violet-50 dark:bg-violet-500/10 text-violet-700 dark:text-violet-300'
+                                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300'
                                             : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600',
                                         disabled && 'opacity-40 cursor-not-allowed'
                                     )}
                                 >
                                     <div className={cn(
                                         'w-4 h-4 rounded flex items-center justify-center shrink-0 border transition-colors',
-                                        selected ? 'bg-violet-500 border-violet-500' : 'border-slate-300 dark:border-slate-600'
+                                        selected ? 'bg-primary-500 border-primary-500' : 'border-slate-300 dark:border-slate-600'
                                     )}>
                                         {selected && <Check className="h-2.5 w-2.5 text-white" aria-hidden="true" />}
                                     </div>
@@ -486,11 +492,11 @@ export default function DashboardPage() {
             {stats?.totalBookings === 0 && (
                 <div
                     role="status"
-                    className="flex items-center gap-4 bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-900/20 dark:to-indigo-900/20 border border-violet-200 dark:border-violet-800 rounded-2xl p-5 animate-fade-in-up"
+                    className="flex items-center gap-4 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-950/20 border border-primary-200 dark:border-primary-800 rounded-2xl p-5 animate-fade-in-up"
                     style={{ animationDelay: '350ms' }}
                 >
-                    <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-800/40 flex items-center justify-center shrink-0">
-                        <Sparkles className="h-5 w-5 text-violet-500" aria-hidden="true" />
+                    <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-800/40 flex items-center justify-center shrink-0">
+                        <Sparkles className="h-5 w-5 text-primary-500" aria-hidden="true" />
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="font-semibold text-slate-900 dark:text-white text-sm">Complete your setup to get started</p>
@@ -498,7 +504,7 @@ export default function DashboardPage() {
                     </div>
                     <Link
                         href="/onboarding"
-                        className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-xl transition-colors"
+                        className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-xl transition-colors"
                     >
                         Continue setup
                         <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -534,8 +540,8 @@ export default function DashboardPage() {
                     {/* Empty state for new accounts */}
                     {recentBookings.length === 0 && !loading && (
                         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-100 to-violet-200 dark:from-violet-900/30 dark:to-violet-800/30 flex items-center justify-center mb-4">
-                                <Calendar className="h-8 w-8 text-violet-500" aria-hidden="true" />
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/30 flex items-center justify-center mb-4">
+                                <Calendar className="h-8 w-8 text-primary-500" aria-hidden="true" />
                             </div>
                             <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">No bookings yet</h3>
                             <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mb-5">
@@ -543,7 +549,7 @@ export default function DashboardPage() {
                             </p>
                             <Link
                                 href="/bookings/new"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-xl transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-xl transition-colors"
                             >
                                 <Calendar className="h-4 w-4" aria-hidden="true" />
                                 Create first booking
@@ -650,7 +656,7 @@ export default function DashboardPage() {
                     <div className="card-elevated p-6 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800" style={{ animationDelay: '300ms' }}>
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                                <Lightbulb className="h-5 w-5 text-violet-500" aria-hidden="true" />
+                                <Lightbulb className="h-5 w-5 text-primary-500" aria-hidden="true" />
                                 Today's Status
                             </h2>
                             <Link href="/bookings?date=today" className="text-xs text-primary-500 hover:text-primary-600 font-medium">
@@ -678,7 +684,7 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-slate-600 dark:text-slate-400">Total clients</span>
-                                <span className="font-semibold text-violet-600">{stats?.totalClients ?? '—'}</span>
+                                <span className="font-semibold text-primary-600">{stats?.totalClients ?? '—'}</span>
                             </div>
                         </div>
                     </div>
@@ -713,8 +719,8 @@ function AiInsightCard({ todayBookings, todayRevenue }: { todayBookings?: number
     return (
         <div className="card-elevated p-5 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800" style={{ animationDelay: '400ms' }}>
             <div className="flex items-center gap-2 mb-3">
-                <div className="p-1.5 rounded-lg bg-violet-100 dark:bg-violet-900/40">
-                    <Sparkles className="h-4 w-4 text-violet-500" aria-hidden="true" />
+                <div className="p-1.5 rounded-lg bg-primary-100 dark:bg-primary-900/40">
+                    <Sparkles className="h-4 w-4 text-primary-500" aria-hidden="true" />
                 </div>
                 <span className="text-sm font-semibold text-slate-900 dark:text-white">AI Daily Insight</span>
             </div>

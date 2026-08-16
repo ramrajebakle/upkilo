@@ -12,10 +12,34 @@ export function ProductTour() {
         const hasSeenTour = localStorage.getItem('upkilo_tour_seen');
         if (hasSeenTour) return;
 
+        // Do not open on top of the cookie banner. A new tenant used to get three competing
+        // layers on first paint — consent banner, onboarding checklist, and this tour's modal
+        // overlay — with the tour dimming the checklist it was pointing at. The banner is a
+        // legal blocker and cannot be deferred, so the tour yields to it and starts only once
+        // consent has been answered. CookieConsent fires 'consent-updated' when that happens.
+        let cancelled = false;
+        let timer: ReturnType<typeof setTimeout> | undefined;
+
+        const consentAnswered = () => localStorage.getItem('upkilo-consent') !== null;
+
+        const startWhenClear = () => {
+            if (cancelled || !consentAnswered()) return;
+            window.removeEventListener('consent-updated', startWhenClear);
+            // Long enough for the checklist above to settle, short enough to still read as a
+            // response to arriving rather than an unrelated interruption.
+            timer = setTimeout(() => { if (!cancelled) tour.start(); }, 1200);
+        };
+
         tourRef.current = new Shepherd.Tour({
             useModalOverlay: true,
             defaultStepOptions: {
-                classes: 'shadow-md bg-slate-900 text-white rounded-xl border-none p-4',
+                // 'upkilo-tour' is the hook globals.css uses to override Shepherd's stock theme.
+                // Shepherd puts .shepherd-button on every button itself, which has the same
+                // specificity as .btn-primary — so whichever stylesheet loads last wins, and
+                // shepherd.css (imported here, inside the component) loaded after globals.css.
+                // That is why the buttons rendered in Shepherd's default #3288e6 blue instead
+                // of the brand. The override is scoped and more specific so order stops mattering.
+                classes: 'upkilo-tour shadow-md rounded-xl border-none p-4',
                 scrollTo: { behavior: 'smooth', block: 'center' },
                 cancelIcon: {
                     enabled: true
@@ -25,13 +49,21 @@ export function ProductTour() {
 
         const tour = tourRef.current;
 
+        // Any dismissal is final, not just reaching the last step. Previously only the Finish
+        // button wrote the flag, so anyone who pressed Skip — or the X, or Escape — was shown
+        // the whole tour again on the next page load, forever.
+        const remember = () => localStorage.setItem('upkilo_tour_seen', 'true');
+        tour.on('cancel', remember);
+        tour.on('complete', remember);
+
         tour.addStep({
             id: 'welcome',
             text: 'Welcome to Upkilo! Let us show you around your new command center.',
-            attachTo: {
-                element: '.group > Sparkles', // Logo area
-                on: 'bottom'
-            },
+            // No attachTo: this step introduces the product rather than pointing at one control,
+            // so it is deliberately centred. It previously read `.group > Sparkles`, which is not
+            // a valid selector — `Sparkles` is a React component name, and CSS has no way to match
+            // one. Shepherd found nothing, silently fell back to an unattached step, and the
+            // result looked like a bug rather than a decision. Now it is the decision.
             buttons: [
                 {
                     text: 'Skip',
@@ -103,23 +135,30 @@ export function ProductTour() {
                 },
                 {
                     text: 'Finish',
-                    action: () => {
-                        localStorage.setItem('upkilo_tour_seen', 'true');
-                        tour.complete();
-                    },
+                    // The flag is written by the 'complete' handler above, which also covers
+                    // Skip, the X and Escape. Setting it here as well would only re-introduce
+                    // the assumption that finishing is the sole way out.
+                    action: tour.complete,
                     classes: 'btn btn-primary text-xs'
                 }
             ]
         });
 
-        // Start tour after a short delay
-        const timer = setTimeout(() => {
-            tour.start();
-        }, 2000);
+        if (consentAnswered()) {
+            startWhenClear();
+        } else {
+            window.addEventListener('consent-updated', startWhenClear);
+        }
 
         return () => {
-            clearTimeout(timer);
+            cancelled = true;
+            if (timer) clearTimeout(timer);
+            window.removeEventListener('consent-updated', startWhenClear);
+            // cancel() fires the 'cancel' handler, which would mark the tour as seen. Unmounting
+            // on navigation is not the user dismissing anything, so detach first and let the
+            // tour reappear on their next visit.
             if (tourRef.current) {
+                tourRef.current.off('cancel', remember);
                 tourRef.current.cancel();
             }
         };

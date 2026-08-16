@@ -106,7 +106,7 @@ export default function SecurityCompliancePage() {
         <Card className="dark:bg-slate-900 dark:border-slate-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 dark:text-white">
-              <Activity className="h-5 w-5 text-indigo-500" />
+              <Activity className="h-5 w-5 text-primary-500" />
               Real-time Audit
             </CardTitle>
             <CardDescription className="dark:text-slate-400">Recent sensitive actions.</CardDescription>

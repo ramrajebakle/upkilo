@@ -207,7 +207,7 @@ export default function NotificationsSettingsPage() {
             </div>
 
             {/* Tactical Notice */}
-            <div className="p-8 bg-gradient-to-br from-indigo-950 to-slate-900 border border-slate-800 rounded-[40px] flex items-center gap-8 group">
+            <div className="p-8 bg-gradient-to-br from-primary-950 to-slate-900 border border-slate-800 rounded-[40px] flex items-center gap-8 group">
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/10 group-hover:scale-110 transition-transform">
                     <Smartphone className="h-8 w-8 text-primary-400" />
                 </div>

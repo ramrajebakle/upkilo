@@ -150,7 +150,7 @@ export default function ClassSchedulingPage() {
             {summary && (
                 <div className="grid grid-cols-3 gap-4">
                     {[
-                        { label: 'Total Classes', value: summary.total, icon: <Users className="h-5 w-5 text-indigo-500" /> },
+                        { label: 'Total Classes', value: summary.total, icon: <Users className="h-5 w-5 text-primary-500" /> },
                         { label: 'Open', value: summary.open, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
                         { label: 'Full', value: summary.full, icon: <Users className="h-5 w-5 text-amber-500" /> },
                     ].map(s => (
@@ -265,7 +265,7 @@ export default function ClassSchedulingPage() {
                     {classes.map(cls => (
                         <div key={cls.id} className="bg-white border border-slate-200 rounded-xl p-4">
                             <div className="flex items-start gap-4">
-                                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white shrink-0">
+                                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white shrink-0">
                                     <Users className="h-5 w-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">

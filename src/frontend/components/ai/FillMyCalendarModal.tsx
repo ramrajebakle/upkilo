@@ -165,7 +165,7 @@ export default function FillMyCalendarModal({ isOpen, onClose }: FillMyCalendarM
               </p>
               <button
                 onClick={handleScan}
-                className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+                className="bg-primary-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
               >
                 Scan My Calendar
               </button>
@@ -174,7 +174,7 @@ export default function FillMyCalendarModal({ isOpen, onClose }: FillMyCalendarM
 
           {step === 'loading' && (
             <div className="text-center py-12">
-              <div className="animate-spin w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto mb-4" />
+              <div className="animate-spin w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-4" />
               <p className="text-gray-600">Scanning your calendar and matching clients...</p>
             </div>
           )}
@@ -182,9 +182,9 @@ export default function FillMyCalendarModal({ isOpen, onClose }: FillMyCalendarM
           {step === 'preview' && data && (
             <div>
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-indigo-50 rounded-xl p-4 text-center">
-                  <p className="text-3xl font-bold text-indigo-700">{data.totalOpenSlots}</p>
-                  <p className="text-sm text-indigo-600 font-medium mt-1">Open Slots This Week</p>
+                <div className="bg-primary-50 rounded-xl p-4 text-center">
+                  <p className="text-3xl font-bold text-primary-700">{data.totalOpenSlots}</p>
+                  <p className="text-sm text-primary-600 font-medium mt-1">Open Slots This Week</p>
                 </div>
                 <div className="bg-green-50 rounded-xl p-4 text-center">
                   <p className="text-3xl font-bold text-green-700">{data.totalMatches}</p>
@@ -212,7 +212,7 @@ export default function FillMyCalendarModal({ isOpen, onClose }: FillMyCalendarM
 
               <button
                 onClick={handleGenerateSms}
-                className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+                className="w-full bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
               >
                 Generate Personalized SMS Messages →
               </button>
@@ -221,7 +221,7 @@ export default function FillMyCalendarModal({ isOpen, onClose }: FillMyCalendarM
 
           {step === 'generating' && (
             <div className="text-center py-12">
-              <div className="animate-spin w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto mb-4" />
+              <div className="animate-spin w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-4" />
               <p className="text-gray-600">Writing personalized messages for each client...</p>
             </div>
           )}
@@ -233,12 +233,12 @@ export default function FillMyCalendarModal({ isOpen, onClose }: FillMyCalendarM
               </p>
               <div className="space-y-3 mb-6">
                 {sendItems.map(item => (
-                  <label key={item.clientId} className={`flex gap-3 border rounded-xl p-4 cursor-pointer transition-colors ${selectedItems.has(item.clientId) ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200'}`}>
+                  <label key={item.clientId} className={`flex gap-3 border rounded-xl p-4 cursor-pointer transition-colors ${selectedItems.has(item.clientId) ? 'border-primary-400 bg-primary-50' : 'border-gray-200'}`}>
                     <input
                       type="checkbox"
                       checked={selectedItems.has(item.clientId)}
                       onChange={() => toggleItem(item.clientId)}
-                      className="mt-1 accent-indigo-600"
+                      className="mt-1 accent-primary-600"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-800 text-sm">{item.clientName}</p>
@@ -266,7 +266,7 @@ export default function FillMyCalendarModal({ isOpen, onClose }: FillMyCalendarM
               <p className="text-gray-500 mb-6">
                 {sentCount} personalized outreach message{sentCount !== 1 ? 's' : ''} sent. We'll notify you when clients respond.
               </p>
-              <button onClick={onClose} className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+              <button onClick={onClose} className="bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700">
                 Done
               </button>
             </div>

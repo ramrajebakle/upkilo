@@ -23,7 +23,7 @@ export const PageHeader = memo(function PageHeader({ icon: Icon, iconGradient, i
                     </div>
                     <h1
                         className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white"
-                        style={{ fontFamily: 'Outfit, sans-serif' }}
+                        style={{ fontFamily: 'var(--font-display)' }}
                     >
                         {title}
                     </h1>

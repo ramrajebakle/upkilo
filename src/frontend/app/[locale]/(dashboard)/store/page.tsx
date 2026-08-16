@@ -153,7 +153,7 @@ export default function EcommerceDashboardPage() {
                        <div className="text-xs text-gray-400 font-mono mt-0.5">{item.sku}</div>
                      </div>
                      <div>
-                       <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${!item.isRetail ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                       <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${!item.isRetail ? 'bg-primary-100 text-primary-700' : 'bg-blue-100 text-blue-700'}`}>
                          {!item.isRetail ? 'Digital' : 'Physical'}
                        </span>
                      </div>
