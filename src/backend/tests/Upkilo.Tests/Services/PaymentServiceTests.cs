@@ -39,8 +39,8 @@ public class PaymentServiceTests : IDisposable
 
         // Unconfigured service (no Stripe key)
         var unconfiguredSecretProvider = new Mock<ISecretProvider>();
-        unconfiguredSecretProvider.Setup(s => s.GetSecret(It.Is<string>(k => k != "Stripe--SecretKey"))).Returns("test");
-        unconfiguredSecretProvider.Setup(s => s.GetSecret("Stripe--SecretKey")).Returns((string?)null);
+        unconfiguredSecretProvider.Setup(s => s.GetSecret(It.Is<string>(k => k != "Stripe:SecretKey"))).Returns("test");
+        unconfiguredSecretProvider.Setup(s => s.GetSecret("Stripe:SecretKey")).Returns((string?)null);
         _unconfiguredSut = new PaymentService(
             MockFactory.CreateConfiguration(),
             logger.Object,

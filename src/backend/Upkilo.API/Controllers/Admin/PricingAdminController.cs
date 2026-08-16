@@ -76,7 +76,8 @@ public class PricingAdminController : ControllerBase
     [HttpPost("sync-stripe")]
     public async Task<IActionResult> SyncWithStripe()
     {
-        var stripeKey = _secretProvider.GetSecret("Stripe--SecretKey");
+        // Colon form — see PaymentService.cs for why "Stripe--SecretKey" never resolved.
+        var stripeKey = _secretProvider.GetSecret("Stripe:SecretKey");
         if (string.IsNullOrEmpty(stripeKey))
             return StatusCode(500, new { error = "Stripe API key not configured." });
 

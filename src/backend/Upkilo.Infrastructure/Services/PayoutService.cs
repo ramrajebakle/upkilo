@@ -26,7 +26,8 @@ namespace Upkilo.Infrastructure.Services
             _configuration = configuration;
             _secretProvider = secretProvider;
 
-            StripeConfiguration.ApiKey = _secretProvider.GetSecret("Stripe--SecretKey");
+            // Colon form — see PaymentService.cs for why "Stripe--SecretKey" never resolved.
+            StripeConfiguration.ApiKey = _secretProvider.GetSecret("Stripe:SecretKey");
         }
 
         public async Task<string> GetStaffOnboardingUrlAsync(Guid tenantId, Guid staffId, string returnUrl)

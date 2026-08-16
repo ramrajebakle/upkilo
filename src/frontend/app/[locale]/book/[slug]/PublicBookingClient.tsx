@@ -81,7 +81,11 @@ export default function PublicBookingClient({ business, slug, mode, color, trans
 
       {/* Booking wizard */}
       <main className={`max-w-4xl mx-auto px-4 flex-1 w-full ${isWidget ? 'py-4' : 'py-8 md:py-12'}`}>
-        <BookingWizard tenantSlug={slug} preselectServiceId={preselectServiceId} />
+        <BookingWizard
+          tenantSlug={slug}
+          preselectServiceId={preselectServiceId}
+          business={{ name: business.name, primaryColor }}
+        />
       </main>
 
       {/* Footer — hidden in widget mode to keep the embed compact */}

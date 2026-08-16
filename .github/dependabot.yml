@@ -43,6 +43,13 @@ updates:
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
         update-types: ["version-update:semver-major"]
+      # The solution targets net8.0. Microsoft.Extensions.* majors track the .NET release
+      # they ship with, so a 9.x or 10.x bump pulls .NET 9/10 assemblies and transitive
+      # requirements into a net8.0 project. That is what broke main: Extensions.Http 10.0.10
+      # landed in some projects while others stayed on 8.x, and the resulting NU1605
+      # downgrade errors failed restore outright.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "nuget"
     directory: "/src/backend/Upkilo.Infrastructure"
@@ -55,6 +62,13 @@ updates:
         update-types: ["minor", "patch"]
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      # The solution targets net8.0. Microsoft.Extensions.* majors track the .NET release
+      # they ship with, so a 9.x or 10.x bump pulls .NET 9/10 assemblies and transitive
+      # requirements into a net8.0 project. That is what broke main: Extensions.Http 10.0.10
+      # landed in some projects while others stayed on 8.x, and the resulting NU1605
+      # downgrade errors failed restore outright.
+      - dependency-name: "Microsoft.Extensions.*"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "nuget"
@@ -69,6 +83,13 @@ updates:
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
         update-types: ["version-update:semver-major"]
+      # The solution targets net8.0. Microsoft.Extensions.* majors track the .NET release
+      # they ship with, so a 9.x or 10.x bump pulls .NET 9/10 assemblies and transitive
+      # requirements into a net8.0 project. That is what broke main: Extensions.Http 10.0.10
+      # landed in some projects while others stayed on 8.x, and the resulting NU1605
+      # downgrade errors failed restore outright.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "nuget"
     directory: "/src/backend/Upkilo.Application"
@@ -81,6 +102,13 @@ updates:
         update-types: ["minor", "patch"]
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      # The solution targets net8.0. Microsoft.Extensions.* majors track the .NET release
+      # they ship with, so a 9.x or 10.x bump pulls .NET 9/10 assemblies and transitive
+      # requirements into a net8.0 project. That is what broke main: Extensions.Http 10.0.10
+      # landed in some projects while others stayed on 8.x, and the resulting NU1605
+      # downgrade errors failed restore outright.
+      - dependency-name: "Microsoft.Extensions.*"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "nuget"

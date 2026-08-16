@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Check, CheckCircle2, Calendar, Clock, User, ArrowRight, ArrowLeft, Loader2, AlertTriangle } from "lucide-react";
+import { Check, CheckCircle2, Calendar, Clock, User, ArrowRight, ArrowLeft, Loader2, AlertTriangle, CreditCard } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { loadRazorpayCheckout } from "@/lib/razorpay";
+import { currencySymbol } from "@/lib/currency";
 
 interface Service {
   id: string;
@@ -13,7 +15,20 @@ interface Service {
   price: number;
 }
 
-export function BookingWizard({ tenantSlug, preselectServiceId }: { tenantSlug: string; preselectServiceId?: string }) {
+interface Business {
+  name: string;
+  primaryColor?: string;
+}
+
+export function BookingWizard({
+  tenantSlug,
+  preselectServiceId,
+  business,
+}: {
+  tenantSlug: string;
+  preselectServiceId?: string;
+  business?: Business;
+}) {
   const [step, setStep] = useState(1);
   const [services, setServices] = useState<Service[]>([]);
   const [loadingServices, setLoadingServices] = useState(true);
@@ -28,6 +43,16 @@ export function BookingWizard({ tenantSlug, preselectServiceId }: { tenantSlug: 
   const [submitting, setSubmitting] = useState(false);
   const [conflicts, setConflicts] = useState<{ hasConflict: boolean; message: string } | null>(null);
   const [checkingConflict, setCheckingConflict] = useState(false);
+
+  // Stripe activation is blocked (unregistered business entity), so the booking response can
+  // come back with requiresPayment=true and clientSecret=null — see PublicBookingController's
+  // CreateBooking. awaitingPayment renders a Razorpay "Pay Now" panel INSIDE the existing step-4
+  // content instead of introducing a numbered step 5: the stepper header, nextStep/prevStep
+  // clamp, and footer nav all hardcode `step === 4` as "final step" in several places, and a
+  // boolean flag branching within that same step avoids touching any of them.
+  const [awaitingPayment, setAwaitingPayment] = useState(false);
+  const [payingNow, setPayingNow] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const handleConfirmBooking = async () => {
     setSubmitting(true);
@@ -49,11 +74,101 @@ export function BookingWizard({ tenantSlug, preselectServiceId }: { tenantSlug: 
       }
       const data = await res.json();
       setBookingResult(data);
+      // data.clientSecret is only ever populated by a configured Stripe — this frontend has no
+      // Stripe SDK today, so that combination (requiresPayment && clientSecret) intentionally
+      // falls through unchanged, exactly as it did before this file had any payment UI at all.
+      if (data.requiresPayment && !data.clientSecret) {
+        setAwaitingPayment(true);
+      }
       nextStep();
     } catch (err: any) {
       alert(err.message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handlePayNow = async () => {
+    if (!bookingResult?.id) return;
+    setPayingNow(true);
+    setPaymentError(null);
+    try {
+      await loadRazorpayCheckout();
+
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const orderRes = await fetch(`${API_URL}/api/booking/${tenantSlug}/razorpay/order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId: bookingResult.id })
+      });
+      if (!orderRes.ok) {
+        const err = await orderRes.json().catch(() => ({}));
+        throw new Error(err.error || 'Could not start payment. Please try again.');
+      }
+      const order = await orderRes.json(); // { orderId, keyId, amount, currency } — amount in minor units
+
+      const rzp = new (window as any).Razorpay({
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.orderId,
+        name: business?.name || 'Upkilo',
+        description: selectedService?.name,
+        prefill: {
+          name: `${contact.firstName} ${contact.lastName}`.trim(),
+          email: contact.email,
+          contact: contact.phone,
+        },
+        theme: { color: business?.primaryColor || '#06B6D4' },
+        handler: (response: any) => {
+          verifyPayment(response);
+        },
+        modal: {
+          // Checkout.js's own handler already covers success; this only fires when the user
+          // closes the modal without paying, so re-enable the button rather than treat it as
+          // an error.
+          ondismiss: () => setPayingNow(false),
+        },
+      });
+
+      rzp.on('payment.failed', (resp: any) => {
+        setPaymentError(resp?.error?.description || 'Payment failed. Please try again.');
+        setPayingNow(false);
+      });
+
+      rzp.open();
+    } catch (err: any) {
+      setPaymentError(err.message || 'Could not start payment. Please try again.');
+      setPayingNow(false);
+    }
+  };
+
+  const verifyPayment = async (response: any) => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const verifyRes = await fetch(`${API_URL}/api/booking/${tenantSlug}/razorpay/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: bookingResult.id,
+          orderId: response.razorpay_order_id,
+          paymentId: response.razorpay_payment_id,
+          signature: response.razorpay_signature,
+        })
+      });
+      if (!verifyRes.ok) {
+        const err = await verifyRes.json().catch(() => ({}));
+        throw new Error(err.error || 'Payment verification failed. Please contact support.');
+      }
+      // Falls through to the existing "Booking Confirmed" panel below. bookingResult.message
+      // still holds the original "Please complete payment..." text from booking creation, so
+      // it's corrected here rather than left stale now that payment has actually completed.
+      setBookingResult((prev: any) => ({ ...prev, message: 'Your booking has been confirmed.' }));
+      setAwaitingPayment(false);
+    } catch (err: any) {
+      setPaymentError(err.message || 'Payment verification failed. Please contact support.');
+    } finally {
+      setPayingNow(false);
     }
   };
 
@@ -303,7 +418,47 @@ export function BookingWizard({ tenantSlug, preselectServiceId }: { tenantSlug: 
           </CardContent>
         )}
 
-        {step === 4 && (
+        {step === 4 && awaitingPayment && (
+          <CardContent className="p-6 md:p-8 flex-1 flex flex-col items-center justify-center text-center space-y-6">
+            <div className="w-20 h-20 rounded-full bg-[var(--primary-color-light)] flex items-center justify-center mb-2">
+              <CreditCard className="w-10 h-10 text-[var(--primary-color)]" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">Reserve Your Spot</h2>
+              <p className="text-slate-500 max-w-xs mx-auto">
+                Your time is held — pay the deposit below to confirm {selectedService?.name}.
+              </p>
+            </div>
+
+            <div className="bg-slate-50 rounded-2xl p-6 w-full max-w-sm text-left border border-slate-100 space-y-1">
+              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Deposit due</div>
+              {/* INR-only for now, matching the backend's currency whitelist in
+                  PublicBookingController.CreateRazorpayOrder — the initial booking response
+                  doesn't include a currency field to read here. */}
+              <div className="text-3xl font-bold text-slate-900">
+                {currencySymbol('INR')}{bookingResult?.booking?.depositAmount}
+              </div>
+            </div>
+
+            {paymentError && (
+              <div role="alert" className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 w-full max-w-sm text-left">
+                <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" aria-hidden="true" />
+                <p className="text-sm text-red-700">{paymentError}</p>
+              </div>
+            )}
+
+            <Button
+              onClick={handlePayNow}
+              disabled={payingNow}
+              className="rounded-xl px-8 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-white shadow-lg transition-all w-full max-w-sm"
+            >
+              {payingNow ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CreditCard className="w-4 h-4 mr-2" />}
+              Pay Now
+            </Button>
+          </CardContent>
+        )}
+
+        {step === 4 && !awaitingPayment && (
           <CardContent className="p-6 md:p-8 flex-1 flex flex-col items-center justify-center text-center space-y-6">
             <div className="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mb-2">
               <CheckCircle2 className="w-12 h-12 text-emerald-500" />
@@ -319,7 +474,7 @@ export function BookingWizard({ tenantSlug, preselectServiceId }: { tenantSlug: 
                 </div>
               )}
             </div>
-            
+
             <div className="bg-slate-50 rounded-2xl p-6 w-full max-w-sm text-left border border-slate-100 space-y-4">
               <div className="flex gap-4">
                 <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-[var(--primary-color)] shadow-sm">

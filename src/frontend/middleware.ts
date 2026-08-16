@@ -130,35 +130,6 @@ function hostRoutingResponse(req: NextRequest): NextResponse | null {
     if (pathname === '/') {
       return NextResponse.redirect(new URL('/en', nextUrl));
     }
-
-    // Consolidate non-English marketing URLs onto English until real translations exist.
-    //
-    // The marketing pages (landing, features, pricing, marketplace, medical-spa) call
-    // useTranslations nowhere — verified by grep, zero hits across all five. They render
-    // byte-identical hardcoded English JSX no matter which locale prefix is requested, so
-    // /de/features and /fr/features are not "thin" translations, they are exact duplicates
-    // of /en/features. Fifteen URLs, one page's worth of content.
-    //
-    // There is also no language switcher anywhere on the marketing surface (also verified),
-    // so nothing today sends a real visitor to a non-English marketing URL — this closes the
-    // duplicate-content exposure before a crawler finds it by guessing, at zero UX cost.
-    //
-    // Scoped deliberately: only marketing paths on the apex reach this branch. Dashboard,
-    // portal and auth routes on app.upkilo.com are untouched, and DO have real partial
-    // translations in messages/*.json plus a session-based locale — they must keep working
-    // in all 15 locales.
-    //
-    // Remove this per-locale, not wholesale, as each locale passes the content gate: wire
-    // the marketing pages to useTranslations, get the copy genuinely translated and
-    // reviewed, then drop that locale from the redirect and add it to sitemap.ts's
-    // `locales` array and hreflang in the same change. Doing any one of those without the
-    // others produces either duplicate content or orphaned URLs.
-    const requestedLocale = extractLocale(pathname);
-    if (requestedLocale !== 'en' && SUPPORTED_LOCALES.includes(firstSegment)) {
-      const englishPath = `/en${pathname.slice(`/${firstSegment}`.length)}`;
-      return NextResponse.redirect(new URL(`${englishPath}${nextUrl.search}`, SITE_URL), 308);
-    }
-
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set('x-next-intl-locale', extractLocale(pathname));
     return NextResponse.next({ request: { headers: requestHeaders } });

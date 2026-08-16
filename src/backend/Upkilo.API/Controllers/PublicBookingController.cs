@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Upkilo.Core.Entities;
 using Upkilo.Core.Interfaces;
 using Upkilo.Infrastructure.Data;
+using Upkilo.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 using Microsoft.Extensions.Caching.Memory;
@@ -24,6 +25,7 @@ public class PublicBookingController : ControllerBase
     private readonly IEventService _eventService;
     private readonly IBookingService _bookingService;
     private readonly IMemoryCache _cache;
+    private readonly RazorpayService _razorpayService;
 
     public PublicBookingController(
         ILogger<PublicBookingController> logger,
@@ -32,7 +34,8 @@ public class PublicBookingController : ControllerBase
         IPaymentService paymentService,
         IEventService eventService,
         IBookingService bookingService,
-        IMemoryCache cache)
+        IMemoryCache cache,
+        RazorpayService razorpayService)
     {
         _logger = logger;
         _context = context;
@@ -41,6 +44,7 @@ public class PublicBookingController : ControllerBase
         _eventService = eventService;
         _bookingService = bookingService;
         _cache = cache;
+        _razorpayService = razorpayService;
     }
 
     /// <summary>
@@ -346,6 +350,16 @@ public class PublicBookingController : ControllerBase
             {
                 clientSecret = paymentResult.ClientSecret;
             }
+            else if (paymentResult.Error == "Stripe not configured")
+            {
+                // Stripe activation is blocked on business registration — see RazorpayService
+                // for the fallback rail. Booking still gets created Pending with
+                // clientSecret == null; the frontend detects that combination and calls
+                // razorpay/order below instead. A GENUINE Stripe failure (declined, invalid
+                // Connect account, etc. — any Error other than this exact string) still hard-
+                // fails below, unchanged from before.
+                _logger.LogInformation("Stripe not configured for booking {BookingId}; leaving Pending for Razorpay checkout", booking.Id);
+            }
             else
             {
                 _logger.LogError("Failed to create Stripe payment intent for booking {BookingId}: {Error}", booking.Id, paymentResult.Error);
@@ -373,6 +387,137 @@ public class PublicBookingController : ControllerBase
                 depositAmount = service.DepositAmount
             }
         });
+    }
+
+    /// <summary>
+    /// Create a Razorpay order for a booking's deposit. Fallback rail while Stripe activation
+    /// is blocked — see CreateBooking above, which leaves clientSecret null and the booking
+    /// Pending (not a hard failure) specifically so this endpoint has something to act on.
+    /// Amount and currency are always server-derived from the booking's own service, never
+    /// accepted from the client, matching this controller's existing security posture.
+    /// </summary>
+    [HttpPost("razorpay/order")]
+    public async Task<IActionResult> CreateRazorpayOrder(string tenantSlug, [FromBody] PublicRazorpayOrderRequest request)
+    {
+        var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Slug == tenantSlug);
+        if (tenant == null) return NotFound();
+
+        var booking = await _context.Bookings
+            .Include(b => b.Service)
+            .FirstOrDefaultAsync(b => b.Id == request.BookingId && b.TenantId == tenant.Id);
+        if (booking == null) return NotFound("Booking not found");
+
+        if (booking.Service == null || !booking.Service.RequiresPayment || !(booking.Service.DepositAmount > 0))
+            return BadRequest(new { error = "This booking does not require a deposit." });
+
+        if (booking.PaymentStatus == PaymentStatus.Succeeded)
+            return BadRequest(new { error = "This booking is already paid." });
+
+        // Ship INR-only: a platform-wide India-based Razorpay account may not be approved to
+        // settle other currencies. Widen once confirmed against the real live account.
+        var currency = booking.Service.Currency.ToUpperInvariant();
+        if (currency != "INR")
+            return BadRequest(new { error = $"Razorpay checkout is currently only available in INR (booking is {currency})." });
+
+        var depositAmount = booking.Service.DepositAmount!.Value;
+        var orderId = await _razorpayService.CreateOrderAsync(depositAmount, currency, $"bk_{booking.Id:N}");
+        var keyId = _razorpayService.GetPublicKeyId();
+
+        if (orderId == null || string.IsNullOrEmpty(keyId))
+        {
+            _logger.LogError("Failed to create Razorpay order for booking {BookingId}", booking.Id);
+            return StatusCode(500, new { error = "Payment system error. Please try again later." });
+        }
+
+        return Ok(new
+        {
+            orderId,
+            keyId,
+            amount = Upkilo.Core.Helpers.Currency.ToMinorUnits(depositAmount, currency),
+            currency
+        });
+    }
+
+    /// <summary>
+    /// Verify a completed Razorpay payment and confirm the booking. Idempotent: a
+    /// booking already marked Succeeded returns success without re-capturing, since
+    /// Checkout.js's handler callback can plausibly fire more than once for one payment.
+    /// </summary>
+    [HttpPost("razorpay/verify")]
+    public async Task<IActionResult> VerifyRazorpayPayment(string tenantSlug, [FromBody] PublicRazorpayVerifyRequest request)
+    {
+        var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Slug == tenantSlug);
+        if (tenant == null) return NotFound();
+
+        var booking = await _context.Bookings
+            .Include(b => b.Service)
+            .Include(b => b.Client)
+            .FirstOrDefaultAsync(b => b.Id == request.BookingId && b.TenantId == tenant.Id);
+        if (booking == null) return NotFound("Booking not found");
+
+        if (booking.PaymentStatus == PaymentStatus.Succeeded)
+            return Ok(new { success = true });
+
+        if (booking.Service == null || !(booking.Service.DepositAmount > 0))
+            return BadRequest(new { error = "This booking does not require a deposit." });
+
+        if (!_razorpayService.VerifySignature(request.OrderId, request.PaymentId, request.Signature))
+        {
+            _logger.LogWarning("Invalid Razorpay signature for booking {BookingId}, order {OrderId}", booking.Id, request.OrderId);
+            return BadRequest(new { error = "Payment verification failed" });
+        }
+
+        var depositAmount = booking.Service.DepositAmount!.Value;
+        var currency = booking.Service.Currency.ToUpperInvariant();
+        var captured = await _razorpayService.CapturePaymentAsync(request.PaymentId, depositAmount, currency);
+
+        if (!captured)
+        {
+            _logger.LogError("Razorpay capture failed for booking {BookingId}, payment {PaymentId}", booking.Id, request.PaymentId);
+            return StatusCode(500, new { error = "Payment capture failed. Please try again or contact support." });
+        }
+
+        // No typed RazorpayOrderId/RazorpayPaymentId columns yet — Metadata is the existing
+        // schema-less JSON column used identically for Tenant.Settings/Booking.Metadata, and
+        // adding real columns needs an EF migration this machine has no dotnet-ef to verify.
+        var payment = new Payment
+        {
+            Id = Guid.NewGuid(),
+            TenantId = tenant.Id,
+            BookingId = booking.Id,
+            ClientId = booking.ClientId,
+            Amount = depositAmount,
+            Currency = currency,
+            Status = PaymentStatus.Succeeded,
+            PaymentMethod = "razorpay",
+            Metadata = new Dictionary<string, object>
+            {
+                ["razorpay_order_id"] = request.OrderId,
+                ["razorpay_payment_id"] = request.PaymentId
+            },
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.Payments.Add(payment);
+
+        booking.DepositPaid += depositAmount;
+        booking.PaymentStatus = PaymentStatus.Succeeded;
+        booking.Status = BookingStatus.Confirmed;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Razorpay payment {PaymentId} verified and captured for booking {BookingId}", request.PaymentId, booking.Id);
+
+        await _eventService.PublishAsync(WebhookEvents.PaymentReceived, new
+        {
+            PaymentId = payment.Id,
+            BookingId = booking.Id,
+            Email = booking.Client?.Email,
+            Amount = depositAmount,
+            Currency = currency,
+            PaymentMethod = "razorpay"
+        }, tenant.Id);
+
+        return Ok(new { success = true });
     }
 
     /// <summary>
@@ -634,4 +779,13 @@ public record WaitlistRequest(
     string? Phone,
     string? Notes
 );
+
+// "Public" prefix distinguishes these from PaymentsController's RazorpayOrderRequest /
+// RazorpayVerifyRequest, which live in the same Upkilo.API.Controllers namespace but are
+// Owner/Admin-only and take a client-supplied ReceiptId — the wrong shape for anonymous
+// checkout. These take only what an unauthenticated client should ever be trusted to send;
+// amount, currency and receipt are always derived server-side from the booking itself.
+public record PublicRazorpayOrderRequest(Guid BookingId);
+
+public record PublicRazorpayVerifyRequest(Guid BookingId, string OrderId, string PaymentId, string Signature);
 

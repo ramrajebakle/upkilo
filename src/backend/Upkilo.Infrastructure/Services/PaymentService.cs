@@ -32,7 +32,12 @@ public class PaymentService : IPaymentService
         _context = context;
         _secretProvider = secretProvider;
 
-        _apiKey = _secretProvider.GetSecret("Stripe--SecretKey");
+        // Colon form, not "Stripe--SecretKey": ISecretProvider only translates a literal ':'
+        // into '--' (Key Vault) or '__' (env var fallback) — a string already containing
+        // '--' passes through untouched. deploy.yml sets the App Service setting as
+        // Stripe__SecretKey (double underscore), which the old literal never matched once
+        // Key Vault (confirmed empty in production) fell through to the env var path.
+        _apiKey = _secretProvider.GetSecret("Stripe:SecretKey");
         _isConfigured = !string.IsNullOrEmpty(_apiKey);
 
         if (_isConfigured)

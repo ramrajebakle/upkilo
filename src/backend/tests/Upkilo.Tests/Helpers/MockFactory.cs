@@ -45,7 +45,7 @@ public static class MockFactory
         var mock = new Mock<ISecretProvider>();
         mock.Setup(s => s.GetSecret(It.IsAny<string>())).Returns("test-secret-value");
         mock.Setup(s => s.GetSecret("Jwt:Secret")).Returns("ThisIsAVeryLongTestSecretKeyThatIsAtLeast32CharactersLong!");
-        mock.Setup(s => s.GetSecret("Stripe--SecretKey")).Returns("sk_test_fake");
+        mock.Setup(s => s.GetSecret("Stripe:SecretKey")).Returns("sk_test_fake");
         mock.Setup(s => s.GetSecretAsync(It.IsAny<string>())).ReturnsAsync("test-secret-value");
         mock.Setup(s => s.GetSecretAsync("Stripe:WebhookSecret")).ReturnsAsync("whsec_test_secret");
         return mock;

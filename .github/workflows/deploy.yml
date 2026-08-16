@@ -106,7 +106,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -160,6 +160,8 @@ jobs:
                 Stripe__SecretKey="${{ secrets.STAGING_STRIPE_SECRET_KEY }}" \
                 Stripe__WebhookSecret="${{ secrets.STAGING_STRIPE_WEBHOOK_SECRET }}" \
                 Stripe__PublishableKey="${{ secrets.STAGING_STRIPE_PUBLISHABLE_KEY }}" \
+                Razorpay__KeyId="${{ secrets.STAGING_RAZORPAY_KEY_ID }}" \
+                Razorpay__KeySecret="${{ secrets.STAGING_RAZORPAY_KEY_SECRET }}" \
                 SendGrid__ApiKey="${{ secrets.STAGING_SENDGRID_API_KEY }}" \
                 Twilio__AccountSid="${{ secrets.STAGING_TWILIO_ACCOUNT_SID }}" \
                 Twilio__AuthToken="${{ secrets.STAGING_TWILIO_AUTH_TOKEN }}" \
@@ -253,7 +255,7 @@ jobs:
             echo "✅ Temporary firewall rule $RULE opened for $RUNNER_IP"
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -323,7 +325,7 @@ jobs:
           AzureKeyVault__VaultUri: ""
 
       - name: Upload migration script as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: migration-sql-${{ github.sha }}
           path: migration-${{ github.sha }}.sql
@@ -442,6 +444,8 @@ jobs:
                 Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY }}" \
                 Stripe__WebhookSecret="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
                 Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
+                Razorpay__KeyId="${{ secrets.RAZORPAY_KEY_ID }}" \
+                Razorpay__KeySecret="${{ secrets.RAZORPAY_KEY_SECRET }}" \
                 SendGrid__ApiKey="${{ secrets.SENDGRID_API_KEY }}" \
                 Twilio__AccountSid="${{ secrets.TWILIO_ACCOUNT_SID }}" \
                 Twilio__AuthToken="${{ secrets.TWILIO_AUTH_TOKEN }}" \
@@ -635,7 +639,7 @@ jobs:
       # Schema rollback: revert to the migration that was current before this deploy.
       # Without this, old code runs against a schema that may have dropped columns it reads.
       - name: Setup .NET for schema rollback
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 

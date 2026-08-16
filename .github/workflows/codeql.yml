@@ -53,7 +53,7 @@ jobs:
     # suitable build method"), so C# is built explicitly. JavaScript needs no build step.
     - name: Setup .NET
       if: matrix.language == 'csharp'
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: '8.0.x'
 
@@ -69,7 +69,7 @@ jobs:
         output: sarif-results
 
     - name: Publish SARIF as an artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       if: always()
       with:
         name: codeql-sarif-${{ matrix.language }}
