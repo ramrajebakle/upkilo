@@ -298,12 +298,16 @@ jobs:
       - name: T4 — Vitest component tests
         run: npm test
 
+      # NODE_OPTIONS: this build has been OOM-killing the default V8 heap limit
+      # (~2GB) on GitHub-hosted runners — confirmed via a real run, not assumed. The same
+      # app has needed this exact value locally on this codebase before for the same reason.
       - name: Build
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: https://api.upkilo.com
           NEXT_PUBLIC_SIGNALR_URL: https://api.upkilo.com/hubs/notifications
           NEXT_PUBLIC_APP_NAME: Upkilo
+          NODE_OPTIONS: --max-old-space-size=6144
 
   # ── T5: Lighthouse CI ─────────────────────────────────────────────
   lighthouse:
@@ -340,6 +344,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: https://api.upkilo.com
           NEXT_PUBLIC_APP_NAME: Upkilo
+          NODE_OPTIONS: --max-old-space-size=6144
       - name: Start Next.js server
         run: |
           npm run start &
@@ -402,6 +407,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: https://api.upkilo.com
           NEXT_PUBLIC_APP_NAME: Upkilo
+          NODE_OPTIONS: --max-old-space-size=6144
       - name: Start Next.js server
         run: |
           npm run start &
