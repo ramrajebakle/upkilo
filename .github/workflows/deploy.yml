@@ -12,6 +12,16 @@ on:
         type: choice
         options: [staging, production]
 
+# Serializes runs so two overlapping deploys — a double-dispatch, or a push-triggered
+# build racing a dispatch-triggered deploy — cannot run migrate-database/deploy-production
+# in parallel against the same production App Service and database. cancel-in-progress is
+# deliberately false: unlike ci.yml's throwaway PR builds, a deploy in flight may already
+# have applied migrations or be mid-swap, so a new trigger should queue behind it, not
+# cancel it and leave production half-deployed.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 env:
   DOTNET_VERSION: '8.0.x'
   NODE_VERSION: '20.x'
@@ -331,6 +341,42 @@ jobs:
           path: migration-${{ github.sha }}.sql
           retention-days: 90
 
+      # Snapshot the migration that is about to become "the previous one," so `rollback`
+      # has a real target if this deploy's migrations need to be undone later. Must run
+      # BEFORE "Apply migrations" — it records where the database actually is right now,
+      # not where this deploy is about to take it.
+      #
+      # Surfaced in the job summary rather than written automatically: GITHUB_TOKEN's
+      # write access does not reliably extend to repository variables the way it does to
+      # contents/PRs, so this follows the same pattern as "Record pre-migration restore
+      # point" above — put the exact command where a human can paste it in one step,
+      # rather than have ROLLBACK_TARGET_MIGRATION silently stay stale.
+      #
+      # `migrations list` marks anything not yet applied to THIS database with "(Pending)";
+      # the last line without that suffix is the last one already applied.
+      - name: Record current migration as the rollback target
+        run: |
+          CURRENT=$(dotnet ef migrations list \
+            --project src/backend/Upkilo.Infrastructure/Upkilo.Infrastructure.csproj \
+            --startup-project src/backend/Upkilo.API/Upkilo.API.csproj \
+            2>/dev/null | grep -v '(Pending)' | tail -1 | tr -d '[:space:]')
+          if [ -z "$CURRENT" ]; then
+            echo "::warning::Could not determine the currently-applied migration. Set ROLLBACK_TARGET_MIGRATION manually before relying on automatic schema rollback."
+          else
+            echo "✅ Current migration before this deploy: $CURRENT"
+            {
+              echo "### Rollback target for this deploy"
+              echo ""
+              echo "If this deploy needs to be rolled back, set this repository variable first so the rollback job's schema-rollback step has a real target:"
+              echo '```bash'
+              echo "gh variable set ROLLBACK_TARGET_MIGRATION --body \"$CURRENT\" --repo ${{ github.repository }}"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_PROD_DB_CONNECTION }}
+          AzureKeyVault__VaultUri: ""
+
       - name: Apply migrations
         run: |
           dotnet ef database update \
@@ -582,11 +628,20 @@ jobs:
         run: |
           echo "🚀 Deploy SUCCESS: ${{ github.sha }} → production at $(date -u)"
 
-  # ── Rollback (automatic on deploy-production failure) ────────────────
+  # ── Rollback (automatic on deploy-production or migrate-database failure) ────────
   rollback:
     name: Rollback Production
     runs-on: ubuntu-latest
-    if: failure() && needs.deploy-production.result == 'failure'
+    # always() + explicit result checks, same pattern as migrate-database/deploy-production
+    # above: a migrate-database failure leaves deploy-production "skipped", not "failure",
+    # so failure() alone (which only looks at whether upstream jobs failed) would miss it —
+    # and a failed migration can leave the database partially migrated with nobody notified.
+    # Container rollback is skipped in that case (see the per-step guards below), since
+    # deploy-production never ran and never touched a container; schema rollback still
+    # applies, since that is exactly the state migrate-database can leave behind.
+    if: >-
+      always()
+      && (needs.deploy-production.result == 'failure' || needs.migrate-database.result == 'failure')
     needs: [deploy-production, migrate-database]
     # DO NOT add `environment: production` here — environment protection gates
     # (required reviewers) block jobs triggered by failure(), making the rollback
@@ -605,6 +660,12 @@ jobs:
       # If a tag is empty this was the first-ever deploy — there is nothing to roll
       # back to, and the container is left as-is for manual inspection.
       - name: Rollback API to previous image
+        # Skipped when migrate-database failed before deploy-production ever ran: there is
+        # no new container deployment to undo, only a possible partial migration (handled
+        # by the schema-rollback step below). success() preserves the original implicit
+        # "only run if earlier steps in this job succeeded" behavior that an explicit `if:`
+        # otherwise replaces rather than adds to.
+        if: success() && needs.deploy-production.result == 'failure'
         uses: azure/CLI@v3
         with:
           inlineScript: |
@@ -621,6 +682,7 @@ jobs:
             fi
 
       - name: Rollback frontend to previous image
+        if: success() && needs.deploy-production.result == 'failure'
         uses: azure/CLI@v3
         with:
           inlineScript: |
@@ -673,4 +735,8 @@ jobs:
 
       - name: Notify on rollback
         run: |
-          echo "🚨 ROLLBACK TRIGGERED for ${{ github.sha }} at $(date -u). Check deploy logs and PagerDuty."
+          if [ "${{ needs.deploy-production.result }}" = "failure" ]; then
+            echo "🚨 ROLLBACK TRIGGERED for ${{ github.sha }} at $(date -u). Check deploy logs and PagerDuty."
+          else
+            echo "🚨 MIGRATION FAILED for ${{ github.sha }} at $(date -u), before deploy-production ran. Containers were NOT touched — the database may be partially migrated. Check deploy logs and PagerDuty, then verify schema state manually before retrying."
+          fi
