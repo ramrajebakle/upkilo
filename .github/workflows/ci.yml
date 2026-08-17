@@ -37,6 +37,25 @@ jobs:
   detect-changes:
     name: Detect Changed Areas
     runs-on: ubuntu-latest
+    # Skips the pull_request-triggered run when the PR's head branch is one that ALSO
+    # triggers this workflow directly via `push` (main/develop/ramraje, same list as the
+    # `on: push: branches:` above — keep these two in sync). Without this, opening a PR
+    # from ramraje ran the entire suite twice for the identical commit: once for the push
+    # that already happened, once more for the PR — confirmed costing double (backend
+    # ~19min + frontend, twice over) for zero extra signal, since both runs test the exact
+    # same SHA. Every OTHER job in this file needs: detect-changes (directly or via
+    # frontend-build/backend-build) and checks its outputs, so a skipped detect-changes
+    # (empty outputs) cascades to skip them too — security-scan is the one exception,
+    # since it has no needs: of its own; see its needs: addition below for why.
+    #
+    # PRs from forks are exempt (head.repo.full_name check) since a fork can never trigger
+    # `push` on this repo — pull_request is its only path to CI. PRs from any OTHER branch
+    # (a feature branch, or any dependabot/* branch) are exempt too, since those aren't in
+    # the push trigger list and pull_request is their only path to CI as well.
+    if: |
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name != github.repository ||
+      !contains(fromJSON('["main","develop","ramraje"]'), github.event.pull_request.head.ref)
     # dorny/paths-filter behaves differently per trigger: on pull_request it calls
     # `GET /repos/.../pulls/{n}/files` (documented requirement: pull-requests: read); on a
     # plain push it instead diffs locally via git, needing contents: read to fetch history.
@@ -440,6 +459,16 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    # Same anti-duplicate-run condition as detect-changes above (keep both in sync) —
+    # duplicated rather than expressed via `needs: detect-changes`, deliberately: this job
+    # has never depended on detect-changes and scans the whole filesystem regardless of
+    # what changed, so a `needs:` link would mean a detect-changes FAILURE (not just a
+    # skip) also silently skips security scanning, which is a real gap this job exists to
+    # not have.
+    if: |
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name != github.repository ||
+      !contains(fromJSON('["main","develop","ramraje"]'), github.event.pull_request.head.ref)
     # gitleaks-action reads workflow-run metadata; without `actions: read` it fails with
     # "Resource not accessible by integration" before scanning anything.
     #
