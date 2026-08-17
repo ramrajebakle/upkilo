@@ -41,6 +41,12 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
 # Environment variables for build time
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+# Same OOM this app has hit on GitHub-hosted runners before (ci.yml sets this same value
+# on its own `npm run build` steps) — the default V8 old-space limit (~2GB) isn't enough
+# for this build, and a Docker RUN step doesn't inherit NODE_OPTIONS from the workflow
+# env: that only reaches processes the runner itself launches, not ones launched inside
+# the container Buildx is building.
+ENV NODE_OPTIONS=--max-old-space-size=6144
 
 RUN npm run build
 
