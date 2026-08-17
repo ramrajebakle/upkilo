@@ -27,6 +27,17 @@ jobs:
   mobile-lint-and-types:
     name: Mobile Lint & TypeCheck
     runs-on: ubuntu-latest
+    # Skips the pull_request-triggered run when the PR's head branch already triggers this
+    # workflow directly via `push` (same list as `on: push: branches:` above — keep in
+    # sync). Without this, a PR from ramraje touching src/mobile/** runs this job twice for
+    # the identical commit. Not applied to mobile-e2e-android below: that job already only
+    # runs on pull_request (never push), so it was never duplicated in the first place —
+    # adding this condition there would remove its only trigger for ramraje-sourced PRs
+    # instead of deduplicating it.
+    if: |
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name != github.repository ||
+      !contains(fromJSON('["main","develop","ramraje"]'), github.event.pull_request.head.ref)
     defaults:
       run:
         working-directory: src/mobile
@@ -125,6 +136,11 @@ jobs:
   eas-build-check:
     name: EAS Build Validation
     runs-on: ubuntu-latest
+    # Same anti-duplicate-run condition as mobile-lint-and-types above (keep both in sync).
+    if: |
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name != github.repository ||
+      !contains(fromJSON('["main","develop","ramraje"]'), github.event.pull_request.head.ref)
     defaults:
       run:
         working-directory: src/mobile

@@ -28,6 +28,8 @@ migration-*.sql
 # ================================================================
 .vs/
 .vscode/
+# Local Claude Code tooling state (skills, settings) — not part of the app.
+.claude/
 *.user
 *.userosscache
 *.sln.docstates

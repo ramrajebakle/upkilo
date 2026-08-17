@@ -55,6 +55,17 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
+      # allowed-conclusions includes `skipped`, not just `success`. ci.yml's jobs are
+      # gated by path filters (detect-changes) and an explicit dependabot-author exclusion
+      # on T5 Lighthouse CI, so a legitimate, safe PR routinely has jobs report "skipped"
+      # rather than "success" — Lighthouse is skipped on every Dependabot PR by design,
+      # and Backend/Frontend Build skip whenever a PR only touches one side. With
+      # `allowed-conclusions: success` alone that skip was indistinguishable from a
+      # failure: this step rejected 27 of the last 28 Dependabot PRs it evaluated
+      # (confirmed from run history), so auto-merge had never actually merged anything on
+      # its own. A real failure still reports "failure"/"cancelled"/"timed_out" — none of
+      # which are in this list — so this does not weaken the gate, it stops penalizing
+      # checks that intentionally did not run.
       - name: Wait for CI (ci.yml) to report success on this PR
         uses: lewagon/wait-on-check-action@v1.9.1
         with:
@@ -62,7 +73,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 20
           running-workflow-name: "Evaluate Dependabot PR"
-          allowed-conclusions: success
+          allowed-conclusions: success,skipped
 
       - name: Merge patch/minor bumps
         if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
