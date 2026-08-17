@@ -1,8 +1,15 @@
 name: Upkilo Production Deploy
 
+# workflow_dispatch only — no push trigger. build-and-push used to also fire on every push
+# to main (including every Dependabot auto-merge), building and pushing fresh :latest/:sha
+# images to ACR whether or not anyone was about to deploy. Since deploy-production and
+# migrate-database already require an explicit dispatch, and a real dispatch rebuilds from
+# current main anyway (Buildx's registry cache makes that rebuild cheap, not free), the
+# push-triggered build was pure recurring cost with no corresponding benefit — nothing
+# downstream of it could run without a human also running workflow_dispatch. Removed
+# rather than gated with an `if:`, so a plain push to main doesn't start an empty run at
+# all instead of visibly doing nothing.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -12,12 +19,11 @@ on:
         type: choice
         options: [staging, production]
 
-# Serializes runs so two overlapping deploys — a double-dispatch, or a push-triggered
-# build racing a dispatch-triggered deploy — cannot run migrate-database/deploy-production
-# in parallel against the same production App Service and database. cancel-in-progress is
-# deliberately false: unlike ci.yml's throwaway PR builds, a deploy in flight may already
-# have applied migrations or be mid-swap, so a new trigger should queue behind it, not
-# cancel it and leave production half-deployed.
+# Serializes runs so a double-dispatch cannot run migrate-database/deploy-production in
+# parallel against the same production App Service and database. cancel-in-progress is
+# deliberately false: a deploy in flight may already have applied migrations or be
+# mid-swap, so a new trigger should queue behind it, not cancel it and leave production
+# half-deployed.
 concurrency:
   group: deploy-production
   cancel-in-progress: false
