@@ -1,15 +1,16 @@
 name: Upkilo Production Deploy
 
-# workflow_dispatch only — no push trigger. build-and-push used to also fire on every push
-# to main (including every Dependabot auto-merge), building and pushing fresh :latest/:sha
-# images to ACR whether or not anyone was about to deploy. Since deploy-production and
-# migrate-database already require an explicit dispatch, and a real dispatch rebuilds from
-# current main anyway (Buildx's registry cache makes that rebuild cheap, not free), the
-# push-triggered build was pure recurring cost with no corresponding benefit — nothing
-# downstream of it could run without a human also running workflow_dispatch. Removed
-# rather than gated with an `if:`, so a plain push to main doesn't start an empty run at
-# all instead of visibly doing nothing.
+# push builds automatically on merge to main so a human who's ready to deploy isn't also
+# waiting on a fresh build first — deploy-production/migrate-database still require an
+# explicit workflow_dispatch regardless (see their own `if:` conditions below), so a push
+# here can never deploy anything by itself, only pre-build the images for whenever a human
+# actually dispatches. build-and-push itself skips Dependabot merges (see its `if:` below)
+# — those don't warrant a fresh image on their own, and this workflow previously built one
+# for every single one of them (patch bumps included) with nothing ever consuming it, which
+# is pure recurring cost. A real feature merge still gets built immediately.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -38,6 +39,14 @@ jobs:
   build-and-push:
     name: Build & Push Images
     runs-on: ubuntu-latest
+    # Skip Dependabot merges specifically: workflow_dispatch always rebuilds from current
+    # main regardless of this job, so this condition doesn't cost any deploy real coverage
+    # — it only decides whether a build happens speculatively, ahead of anyone asking for
+    # one. head_commit.author.name (not github.actor) is what carries the ORIGINAL PR
+    # author through a squash-merge — github.actor on the resulting push instead reflects
+    # whatever identity performed the merge (github-actions[bot], via
+    # dependabot-auto-merge.yml's GITHUB_TOKEN), not dependabot[bot] itself.
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.author.name != 'dependabot[bot]'
     outputs:
       image-tag: ${{ github.sha }}
 
