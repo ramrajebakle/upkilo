@@ -60,7 +60,10 @@ export function QRScannerScreen() {
   return (
     <View style={styles.container}>
       <CameraView
-        style={StyleSheet.absoluteFillObject}
+        {/* react-native 0.87's generated types no longer export absoluteFillObject (TS2551).
+            StyleSheet.absoluteFill is a valid style reference on its own — it does not need
+            to be routed through StyleSheet.create. */}
+        style={StyleSheet.absoluteFill}
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: ['qr'],
