@@ -513,7 +513,7 @@ jobs:
         run: npx playwright install-deps chromium webkit
 
       - name: Download build output
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: frontend-build
           path: src/frontend
@@ -582,7 +582,7 @@ jobs:
         working-directory: src/frontend
 
       - name: Download build output
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: frontend-build
           path: src/frontend
