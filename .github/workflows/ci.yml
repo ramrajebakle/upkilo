@@ -6,12 +6,16 @@ on:
   pull_request:
     branches: [main, develop]
 
-# Actions bills the SUM of every job's minutes, not wall-clock, so one full run of this
-# workflow costs ~37 minutes: backend 19, playwright 7, lighthouse 6, frontend 5.
-# Without this block each push to a branch started a fresh run and left the superseded
-# one burning to completion — five pushes to one PR cost ~185 minutes instead of ~37.
-# GitHub Free allows 2,000 minutes/month on private repos, and this workflow alone had
-# consumed 1,558 of them.
+# Actions bills the SUM of every job's minutes, not wall-clock. This workflow is shaped
+# around that fact:
+#
+#   1. Nothing runs unless the change actually touches it. `changes` (detect-changes.yml)
+#      is the single source of truth; every job below reads its outputs and nothing else.
+#   2. The Next.js app is built ONCE. It used to be built three times — in the frontend
+#      job, again in Lighthouse, again in Playwright — at ~4 minutes and one Sentry
+#      source-map upload each. The build output now moves between jobs as an artifact.
+#   3. Every job declares timeout-minutes. A hung job on a GitHub-hosted runner otherwise
+#      bills up to six hours.
 #
 # cancel-in-progress is deliberately false on main: superseded PR runs are throwaway, but
 # a main build is the artifact deploy.yml promotes, so it must be allowed to finish.
@@ -19,75 +23,51 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+# Least privilege by default. Jobs that need more declare it themselves; a job-level
+# `permissions:` block replaces this one wholesale rather than adding to it.
+permissions:
+  contents: read
+
 env:
   DOTNET_VERSION: '8.0.x'
   NODE_VERSION: '20.x'
+  # Consumed by the `database` job's shell steps. The backend job's `services:` block
+  # repeats the literal `postgres:16` because GitHub does not expose the `env` context in
+  # `services.<id>.image` — keep the two in step with docker-compose.yml by hand.
+  POSTGRES_IMAGE: 'postgres:16'
 
 jobs:
-  # ── Detect which side changed ───────────────────────────────────────
-  # Backend (.NET) and frontend (Next.js) are independent build/test pipelines with no
-  # cross-directory dependency (verified: nothing in either job's steps reads outside its
-  # own src/backend or src/frontend), yet every job ran on every push regardless of what
-  # changed — a README edit paid the full ~37 minutes: backend 19, playwright 7,
-  # lighthouse 6, frontend 5. This job decides which of those are actually relevant so the
-  # rest can skip when they are not.
-  #
-  # A change to this workflow file itself counts as touching BOTH sides, since it can
-  # alter either job's behavior and both need to be validated by the run that changes them.
-  detect-changes:
-    name: Detect Changed Areas
-    runs-on: ubuntu-latest
+  # ── Which parts of the system did this change touch? ───────────────
+  # All routing rules live in detect-changes.yml. Do not add path logic here.
+  changes:
+    name: Detect Changes
     # Skips the pull_request-triggered run when the PR's head branch is one that ALSO
     # triggers this workflow directly via `push` (main/develop/ramraje, same list as the
     # `on: push: branches:` above — keep these two in sync). Without this, opening a PR
     # from ramraje ran the entire suite twice for the identical commit: once for the push
-    # that already happened, once more for the PR — confirmed costing double (backend
-    # ~19min + frontend, twice over) for zero extra signal, since both runs test the exact
-    # same SHA. Every OTHER job in this file needs: detect-changes (directly or via
-    # frontend-build/backend-build) and checks its outputs, so a skipped detect-changes
-    # (empty outputs) cascades to skip them too — security-scan is the one exception,
-    # since it has no needs: of its own; see its needs: addition below for why.
+    # that already happened, once more for the PR — double cost for zero extra signal,
+    # since both runs test the exact same SHA.
     #
     # PRs from forks are exempt (head.repo.full_name check) since a fork can never trigger
     # `push` on this repo — pull_request is its only path to CI. PRs from any OTHER branch
-    # (a feature branch, or any dependabot/* branch) are exempt too, since those aren't in
-    # the push trigger list and pull_request is their only path to CI as well.
+    # (a feature branch, or any dependabot/* branch) are exempt too, for the same reason.
+    #
+    # This condition now lives in exactly one place: every other job reaches it through
+    # `needs: changes`, so a skipped `changes` cascades and there is no second copy to
+    # keep in sync.
     if: |
       github.event_name == 'push' ||
       github.event.pull_request.head.repo.full_name != github.repository ||
       !contains(fromJSON('["main","develop","ramraje"]'), github.event.pull_request.head.ref)
-    # dorny/paths-filter behaves differently per trigger: on pull_request it calls
-    # `GET /repos/.../pulls/{n}/files` (documented requirement: pull-requests: read); on a
-    # plain push it instead diffs locally via git, needing contents: read to fetch history.
-    # The first run of this job failed with "Resource not accessible by integration" until
-    # both were declared explicitly — the third time in this workflow's history a call
-    # needed a scope that relying on default token permissions did not cover (gitleaks and
-    # wait-on-check-action were the other two), so it is named here rather than assumed.
-    permissions:
-      contents: read
-      pull-requests: read
-    outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: dorny/paths-filter@v4.0.3
-        id: filter
-        with:
-          filters: |
-            backend:
-              - 'src/backend/**'
-              - '.github/workflows/ci.yml'
-            frontend:
-              - 'src/frontend/**'
-              - '.github/workflows/ci.yml'
+    uses: ./.github/workflows/detect-changes.yml
 
-  # ── Backend Build & Test ───────────────────────────────────────────
-  backend-build:
+  # ── Backend Build & Test (.NET) ────────────────────────────────────
+  backend:
     name: Backend Build & Test
-    needs: detect-changes
-    if: needs.detect-changes.outputs.backend == 'true'
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     defaults:
       run:
         working-directory: src/backend
@@ -129,6 +109,16 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: ${{ runner.os }}-nuget-
 
+      # dotnet-ef is installed on every run of this job and of deploy.yml's migration job.
+      # It is a ~30 s NuGet download that never changes within a major version, so it is
+      # cached on a constant key rather than re-fetched. `--version 8.*` in the install
+      # below still pins the major; the key is bumped by hand if that pin moves.
+      - name: Cache dotnet-ef tool
+        uses: actions/cache@v6
+        with:
+          path: ~/.dotnet/tools
+          key: ${{ runner.os }}-dotnet-ef-8
+
       - name: Restore dependencies
         run: dotnet restore Upkilo.sln
 
@@ -149,13 +139,11 @@ jobs:
       # seeds the pricing catalogue. Against an empty database that seeder's AnyAsync()
       # guard throws 42P01 'relation "PricingPlans" does not exist', the host never starts,
       # and every OpenApiContractTests case fails. Nothing else here creates the schema.
-      #
-      # This gap was invisible until now: the Format Check above used to fail first, so the
-      # test step never ran to expose it.
       - name: Apply migrations to test database
         run: |
-          dotnet tool install --global dotnet-ef --version 8.* || dotnet tool update --global dotnet-ef --version 8.*
           export PATH="$PATH:$HOME/.dotnet/tools"
+          # Restored from cache on most runs; installed only on a cache miss.
+          command -v dotnet-ef >/dev/null 2>&1 || dotnet tool install --global dotnet-ef --version 8.*
           dotnet ef database update \
             --project Upkilo.Infrastructure \
             --startup-project Upkilo.API \
@@ -196,14 +184,9 @@ jobs:
       # Detects EF model drift: entity changes that have NOT been captured in a migration.
       # That is the risk worth gating on — shipping code whose model disagrees with the
       # schema fails on first write in production.
-      #
-      # This previously ran `migrations list | grep "(Pending)"`, which failed on EVERY run:
-      # the CI Postgres service is a fresh, empty database and nothing in this job applies
-      # migrations to it, so all 74 always reported "(Pending)". Because the step had no
-      # `if: always()` successor guard, it also skipped the coverage step, whose missing
-      # output then produced a second, misleading "cat: No such file" failure.
       - name: Migration gate — no un-migrated model changes
         run: |
+          export PATH="$PATH:$HOME/.dotnet/tools"
           # --configuration Release is REQUIRED alongside --no-build. Without it the EF tool
           # defaults to Debug, looks for bin/Debug/net8.0/Upkilo.API.deps.json — which this
           # workflow never builds — and exits non-zero with "The specified deps.json does not
@@ -226,6 +209,7 @@ jobs:
         with:
           name: backend-test-results
           path: src/backend/**/TestResults/**
+          retention-days: 7
 
       - name: Report Code Coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
@@ -253,12 +237,114 @@ jobs:
             echo "⚠️ Coverage report not generated — an earlier step failed or was skipped." >> "$GITHUB_STEP_SUMMARY"
           fi
 
-  # ── Frontend Build, Lint & TypeCheck ──────────────────────────────
-  frontend-build:
-    name: Frontend Build & Lint
-    needs: detect-changes
-    if: needs.detect-changes.outputs.frontend == 'true'
+  # ── Database Checks (raw SQL) ──────────────────────────────────────
+  # Runs when database/**, the EF migrations, or the DbContext/entities move.
+  #
+  # Deliberately SEPARATE from the backend job, and deliberately cheap (~1 minute, no
+  # .NET toolchain). A `database/schema.sql` edit is not a backend change — nothing in
+  # the .NET test suite reads that file, the backend builds its test schema from EF
+  # migrations instead — so it must not drag a 20-minute solution build behind it. The
+  # EF-side gate (`has-pending-model-changes`) lives in the backend job because it needs
+  # the compiled assembly, and detect-changes.yml guarantees a migration change turns
+  # BOTH jobs on.
+  database:
+    name: Database Checks
+    needs: changes
+    if: needs.changes.outputs.database == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Started with `docker run` rather than as a `services:` container because
+      # init-perf.sql creates a view over pg_stat_statements, and that extension is only
+      # usable when it is in shared_preload_libraries. GitHub's `services:` block has no
+      # way to pass server flags, so the view would fail to resolve.
+      - name: Start PostgreSQL
+        run: |
+          docker run -d --name upkilo-sqlcheck \
+            -e POSTGRES_USER=upkilo_test \
+            -e POSTGRES_PASSWORD=testpassword \
+            -e POSTGRES_DB=upkilo_test \
+            -p 5432:5432 \
+            "${POSTGRES_IMAGE}" \
+            -c shared_preload_libraries=pg_stat_statements
+          # A real query against the real database, not `pg_isready`. During initdb the
+          # image starts a temporary server to run the bootstrap scripts, and pg_isready
+          # can report "accepting connections" against it before upkilo_test exists — so
+          # the very next step would fail on a database that is about to be replaced.
+          # `SELECT 1` on the target database cannot pass until initdb is genuinely done.
+          for i in $(seq 1 60); do
+            if docker exec upkilo-sqlcheck \
+                 psql -U upkilo_test -d upkilo_test -c 'SELECT 1' >/dev/null 2>&1; then
+              echo "PostgreSQL ready after ${i}s"; exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::PostgreSQL did not become ready within 60s"
+          docker logs upkilo-sqlcheck
+          exit 1
+
+      # ON_ERROR_STOP=1 is what makes this a gate rather than a log. Without it psql
+      # reports success even when half the statements failed.
+      - name: Apply schema.sql to a clean database
+        run: |
+          set -euo pipefail
+          for f in database/schema.sql database/init-perf.sql; do
+            [ -f "$f" ] || continue
+            echo "── Applying $f"
+            docker exec -i upkilo-sqlcheck \
+              psql -v ON_ERROR_STOP=1 -U upkilo_test -d upkilo_test < "$f"
+          done
+          echo "✅ Bootstrap SQL applies cleanly to an empty ${POSTGRES_IMAGE}"
+
+      - name: Report applied objects
+        run: |
+          {
+            echo "### Database schema check"
+            echo
+            echo '```'
+            docker exec upkilo-sqlcheck psql -U upkilo_test -d upkilo_test -c "
+              SELECT
+                (SELECT count(*) FROM information_schema.tables  WHERE table_schema='public') AS tables,
+                (SELECT count(*) FROM pg_indexes               WHERE schemaname='public')   AS indexes,
+                (SELECT count(*) FROM information_schema.views  WHERE table_schema='public') AS views;"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Advisory, not blocking. A destructive statement is sometimes exactly what a
+      # migration is for; what is dangerous is one arriving unnoticed. This surfaces it in
+      # the PR without standing between a legitimate schema change and merge.
+      - name: Flag destructive statements added by this change
+        run: |
+          set -euo pipefail
+          base=$(git merge-base "origin/${{ github.base_ref || github.ref_name }}" HEAD 2>/dev/null || echo "")
+          [ -n "$base" ] || { echo "No comparable base — skipping destructive-statement scan."; exit 0; }
+          added=$(git diff "$base" HEAD -- 'database/*.sql' 'src/backend/Upkilo.Infrastructure/Migrations/*' \
+                    | grep '^+' | grep -v '^+++' || true)
+          hits=$(echo "$added" | grep -Ein 'DROP[[:space:]]+(TABLE|COLUMN|SCHEMA|DATABASE)|TRUNCATE|DELETE[[:space:]]+FROM' || true)
+          if [ -n "$hits" ]; then
+            echo "::warning::This change adds destructive SQL — confirm it is intentional and that deploy.yml's pre-migration backup covers it."
+            { echo "### ⚠️ Destructive SQL added"; echo; echo '```sql'; echo "$hits"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No destructive statements added."
+          fi
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: docker rm -f upkilo-sqlcheck 2>/dev/null || true
+
+  # ── Frontend Build, Lint & TypeCheck ──────────────────────────────
+  # THE build. Lighthouse and Playwright consume its output instead of repeating it.
+  frontend:
+    name: Frontend Build & Lint
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: src/frontend
@@ -272,6 +358,23 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: src/frontend/package-lock.json
+
+      # Next.js keeps its compiler/webpack cache under .next/cache. Restoring it turns a
+      # cold build into an incremental one. Keyed on the lockfile plus the source tree, so
+      # a dependency bump or a source edit gets a fresh entry, with restore-keys so a miss
+      # still falls back to the last good cache rather than starting from nothing.
+      #
+      # MUST stay above `npm ci`. hashFiles() walks the workspace at the moment the step
+      # runs and does not know to skip node_modules — after an install, these globs would
+      # traverse ~35 k files and hash the dependency tree along with the source.
+      - name: Cache Next.js build cache
+        uses: actions/cache@v6
+        with:
+          path: src/frontend/.next/cache
+          key: ${{ runner.os }}-next-${{ hashFiles('src/frontend/package-lock.json') }}-${{ hashFiles('src/frontend/app/**', 'src/frontend/components/**', 'src/frontend/lib/**', 'src/frontend/hooks/**', 'src/frontend/messages/**', 'src/frontend/next.config.js') }}
+          restore-keys: |
+            ${{ runner.os }}-next-${{ hashFiles('src/frontend/package-lock.json') }}-
+            ${{ runner.os }}-next-
 
       - name: Install dependencies
         run: npm ci
@@ -318,8 +421,7 @@ jobs:
         run: npm test
 
       # NODE_OPTIONS: this build has been OOM-killing the default V8 heap limit
-      # (~2GB) on GitHub-hosted runners — confirmed via a real run, not assumed. The same
-      # app has needed this exact value locally on this codebase before for the same reason.
+      # (~2GB) on GitHub-hosted runners — confirmed via a real run, not assumed.
       - name: Build
         run: npm run build
         env:
@@ -328,25 +430,57 @@ jobs:
           NEXT_PUBLIC_APP_NAME: Upkilo
           NODE_OPTIONS: --max-old-space-size=6144
 
-  # ── T5: Lighthouse CI ─────────────────────────────────────────────
-  lighthouse:
-    name: T5 Lighthouse CI
+      # `.next/cache` is excluded: it is by far the largest thing in the directory and
+      # `next start` never reads it — it only feeds the NEXT build, which is what the
+      # actions/cache entry above is for.
+      #
+      # public/sw.js IS included because the postbuild hook rewrites its CACHE_NAME with
+      # this build's BUILD_ID. Downstream jobs check out the repo fresh, so without this
+      # they would serve the checked-in service worker whose cache key does not match the
+      # bundle being served — the exact staleness the postbuild hook exists to prevent.
+      - name: Package build output for downstream jobs
+        run: |
+          # .next/cache is excluded rather than deleted: actions/cache's post-run step
+          # saves that exact directory at job end, so removing it here would silently
+          # empty the build cache for every future run.
+          tar -cf next-build.tar \
+            --exclude='./.next/cache' \
+            --exclude='./.next/cache/*' \
+            ./.next ./public/sw.js
+          echo "Artifact size: $(du -h next-build.tar | cut -f1)"
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-build
+          path: src/frontend/next-build.tar
+          # Already a tar of mostly-compressed assets; re-compressing costs time for
+          # almost no size gain.
+          compression-level: 0
+          # Consumed within the same run. Nothing reads it afterwards.
+          retention-days: 1
+
+  # ── T3: Playwright E2E ─────────────────────────────────────────────
+  e2e:
+    name: T3 Playwright E2E
     runs-on: ubuntu-latest
-    needs: [detect-changes, frontend-build]
-    # Skipped on Dependabot PRs. This job costs ~6 minutes and enforces a performance and
-    # accessibility budget against rendered pages — worth it for changes that touch markup
-    # or styling, but a transitive patch bump cannot move a Lighthouse score, and 25 of the
-    # last 39 runs of this workflow came from Dependabot. Playwright E2E deliberately still
-    # runs on those PRs: a dependency bump absolutely can break the app at runtime, and
-    # catching that is the whole point of auto-merging them.
+    needs: [changes, frontend]
+    timeout-minutes: 25
+    # Gated on the FRONTEND only, not on backend changes.
     #
-    # Also skipped when frontend-build itself was skipped (nothing under src/frontend
-    # changed) — a Lighthouse score cannot move without a frontend change to move it, and
-    # frontend-build being skipped means there is no fresh build for this job to measure.
+    # This job previously also ran for backend-only changes, on the reasoning that E2E
+    # covers the frontend/backend contract. It does not: no backend is started anywhere in
+    # this job, and tests/e2e/critical-flows.spec.ts makes zero API calls — every
+    # assertion is a rendering check against http://localhost:3000. A backend-only change
+    # therefore bought ~7 minutes of runner time and no backend signal at all. Restoring
+    # the contract coverage means starting the API here; until that exists, gating on the
+    # backend is paying for a test that cannot fail for backend reasons.
     if: |
       github.event_name == 'pull_request' &&
-      github.event.pull_request.user.login != 'dependabot[bot]' &&
-      needs.detect-changes.outputs.frontend == 'true'
+      needs.frontend.result == 'success'
+    defaults:
+      run:
+        working-directory: src/frontend
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -354,26 +488,127 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: src/frontend/package-lock.json
+
+      # Still needed despite the prebuilt artifact: the Playwright *runner* is a devDependency.
       - name: Install dependencies
         run: npm ci
-        working-directory: src/frontend
-      - name: Build for Lighthouse
-        run: npm run build
-        working-directory: src/frontend
-        env:
-          NEXT_PUBLIC_API_URL: https://api.upkilo.com
-          NEXT_PUBLIC_APP_NAME: Upkilo
-          NODE_OPTIONS: --max-old-space-size=6144
+
+      # Browser binaries are ~400 MB and take 1–2 minutes to download on every run, while
+      # changing only when @playwright/test does. Keyed on the lockfile so a version bump
+      # invalidates it; `install-deps` (system libraries, apt-cached separately) still runs
+      # because those live outside this path.
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('src/frontend/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Install Playwright system dependencies
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium webkit
+
+      - name: Download build output
+        uses: actions/download-artifact@v7
+        with:
+          name: frontend-build
+          path: src/frontend
+
+      - name: Unpack build output
+        run: tar -xf next-build.tar && rm next-build.tar
+
       - name: Start Next.js server
         run: |
           npm run start &
-          # Wait up to 30 s for the server to be ready
           npx wait-on http://localhost:3000 --timeout 30000
+        env:
+          PORT: 3000
+          NEXT_PUBLIC_API_URL: https://api.upkilo.com
+          NEXT_PUBLIC_APP_NAME: Upkilo
+
+      - name: Run E2E tests
+        run: npx playwright test tests/e2e/
+        env:
+          BASE_URL: http://localhost:3000
+
+      - name: Run accessibility tests
+        run: npx playwright test tests/accessibility.spec.ts
+        env:
+          BASE_URL: http://localhost:3000
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-report
+          path: src/frontend/playwright-report/
+          retention-days: 7
+
+  # ── T5: Lighthouse CI ─────────────────────────────────────────────
+  lighthouse:
+    name: T5 Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: [changes, frontend]
+    timeout-minutes: 20
+    # Skipped on Dependabot PRs. This job enforces a performance and accessibility budget
+    # against rendered pages — worth it for changes that touch markup or styling, but a
+    # transitive patch bump cannot move a Lighthouse score, and the majority of runs of
+    # this workflow come from Dependabot. Playwright E2E deliberately still runs on those
+    # PRs: a dependency bump absolutely can break the app at runtime, and catching that is
+    # the whole point of auto-merging them.
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      needs.frontend.result == 'success'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+
+      # Full install, not `--omit=dev`. This job only needs to SERVE the prebuilt app, so
+      # the dev tree is dead weight — but package.json's `prepare` script runs `husky`,
+      # which IS a devDependency, and whether npm skips `prepare` on a production install
+      # is a behaviour this workflow would be silently betting on. Twenty seconds is not
+      # worth that bet; if `prepare` is ever made install-safe, drop `--omit=dev` back in.
+      - name: Install dependencies
+        run: npm ci
+        working-directory: src/frontend
+
+      - name: Download build output
+        uses: actions/download-artifact@v7
+        with:
+          name: frontend-build
+          path: src/frontend
+
+      - name: Unpack build output
+        run: tar -xf next-build.tar && rm next-build.tar
+        working-directory: src/frontend
+
+      - name: Start Next.js server
+        run: |
+          npm run start &
+          # curl loop rather than `npx wait-on`: one less package to resolve at runtime,
+          # and it reports the actual timeout as an error annotation rather than a bare
+          # non-zero exit.
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:3000 >/dev/null 2>&1 && exit 0
+            sleep 1
+          done
+          echo "::error::Next.js server did not respond within 30s"
+          exit 1
         working-directory: src/frontend
         env:
           PORT: 3000
           NEXT_PUBLIC_API_URL: https://api.upkilo.com
           NEXT_PUBLIC_APP_NAME: Upkilo
+
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
         with:
@@ -386,89 +621,29 @@ jobs:
           # route structure, and API endpoint URLs to a publicly accessible URL during every
           # PR run.  Artifacts are uploaded to GitHub (private) via uploadArtifacts: true.
         # No continue-on-error — budget violations block the PR (performance ≥ 90, accessibility ≥ 95)
+
       - name: Upload Lighthouse artifacts
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: lighthouse-results
           path: .lighthouseci/
-
-  # ── T3: Playwright E2E ─────────────────────────────────────────────
-  playwright:
-    name: T3 Playwright E2E
-    runs-on: ubuntu-latest
-    needs: [detect-changes, frontend-build, backend-build]
-    # Runs on backend OR frontend changes, not just frontend: it needs: both build jobs
-    # (an E2E run against a broken backend build is meaningless), so it must stay live
-    # whenever either could have skipped the other's reason for existing. Grouped with
-    # `needs.*.result` rather than `== 'true'` checks on backend-build/frontend-build
-    # directly, because a job that IS in `needs:` but was skipped by its own `if:` reports
-    # result "skipped", not "success" — treating "skipped" as equivalent to "did not
-    # regress" here is what actually preserves current behavior.
-    if: |
-      github.event_name == 'pull_request' &&
-      (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true') &&
-      (needs.backend-build.result == 'success' || needs.backend-build.result == 'skipped') &&
-      (needs.frontend-build.result == 'success' || needs.frontend-build.result == 'skipped')
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
-      - name: Install Playwright
-        run: |
-          cd src/frontend
-          npm ci
-          npx playwright install --with-deps chromium webkit
-      - name: Build for E2E
-        run: npm run build
-        working-directory: src/frontend
-        env:
-          NEXT_PUBLIC_API_URL: https://api.upkilo.com
-          NEXT_PUBLIC_APP_NAME: Upkilo
-          NODE_OPTIONS: --max-old-space-size=6144
-      - name: Start Next.js server
-        run: |
-          npm run start &
-          npx wait-on http://localhost:3000 --timeout 30000
-        working-directory: src/frontend
-        env:
-          PORT: 3000
-          NEXT_PUBLIC_API_URL: https://api.upkilo.com
-          NEXT_PUBLIC_APP_NAME: Upkilo
-      - name: Run E2E tests
-        run: npx playwright test tests/e2e/
-        working-directory: src/frontend
-        env:
-          BASE_URL: http://localhost:3000
-      - name: Run accessibility tests
-        run: npx playwright test tests/accessibility.spec.ts
-        working-directory: src/frontend
-        env:
-          BASE_URL: http://localhost:3000
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: playwright-report
-          path: src/frontend/playwright-report/
+          retention-days: 7
 
   # ── Security Scanning ─────────────────────────────────────────────
-  security-scan:
+  security:
     name: Security Scan
     runs-on: ubuntu-latest
-    # Same anti-duplicate-run condition as detect-changes above (keep both in sync) —
-    # duplicated rather than expressed via `needs: detect-changes`, deliberately: this job
-    # has never depended on detect-changes and scans the whole filesystem regardless of
-    # what changed, so a `needs:` link would mean a detect-changes FAILURE (not just a
-    # skip) also silently skips security scanning, which is a real gap this job exists to
-    # not have.
-    if: |
-      github.event_name == 'push' ||
-      github.event.pull_request.head.repo.full_name != github.repository ||
-      !contains(fromJSON('["main","develop","ramraje"]'), github.event.pull_request.head.ref)
+    needs: changes
+    timeout-minutes: 20
+    # NOT gated on any change output — this job scans the whole filesystem and the whole
+    # git history, so "nothing relevant changed" is not a thing it can be true of. It is
+    # linked to `changes` only to inherit the duplicate-run guard.
+    #
+    # `always()` with an explicit `!= 'skipped'` is the point: a FAILING detect job must
+    # still let the security scan run (a broken change-detection step is no reason to stop
+    # scanning for secrets), while a SKIPPED one — a duplicate PR run — correctly stops it.
+    if: always() && needs.changes.result != 'skipped'
     # gitleaks-action reads workflow-run metadata; without `actions: read` it fails with
     # "Resource not accessible by integration" before scanning anything.
     #
@@ -476,10 +651,7 @@ jobs:
     # up on pull_request events: gitleaks lists the PR's commits to decide what to scan, so
     # without it the step dies on
     #   GET /repos/.../pulls/N/commits -> 403 "Resource not accessible by integration"
-    # while push builds pass untouched. That asymmetry meant ci.yml could never go green on
-    # ANY pull request — which is what actually blocked Dependabot PR #33 (run 30792312594
-    # failed here, not on the dependency bump), and what made the auto-merge workflow
-    # unreachable, since it waits for a successful ci.yml run on the PR.
+    # while push builds pass untouched.
     permissions:
       contents: read
       actions: read
@@ -527,3 +699,38 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
           format: table
+
+  # ── Aggregate gate ────────────────────────────────────────────────
+  # One check whose name never changes and which always reports, whatever the routing
+  # decided. This is what branch protection should require and what a human should read.
+  #
+  # It exists because every job above is conditional: with per-job required checks, a
+  # frontend-only PR would sit forever waiting on a backend check that correctly never
+  # ran. Here, "skipped" is a pass and only a real failure or cancellation is a fail.
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: always()
+    needs: [changes, backend, database, frontend, e2e, lighthouse, security]
+    steps:
+      - name: Verify no required job failed
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          failed=$(echo "$RESULTS" | jq -r 'to_entries
+            | map(select(.value.result == "failure" or .value.result == "cancelled"))
+            | .[].key')
+          {
+            echo "### CI result"
+            echo
+            echo "| Job | Result |"
+            echo "| --- | --- |"
+            echo "$RESULTS" | jq -r 'to_entries | .[] | "| \(.key) | \(.value.result) |"'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$failed" ]; then
+            echo "::error::Failed or cancelled: $(echo "$failed" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "✅ Every job that needed to run passed."

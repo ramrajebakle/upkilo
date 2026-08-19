@@ -40,11 +40,18 @@ permissions:
   # declaring a `permissions:` block drops every scope that is not named, so the check-runs
   # API stays unreachable no matter how broad the other two are.
   checks: read
+  # Labels live on the ISSUES api, not the pull-requests one — `gh label create` calls
+  # POST /repos/{owner}/{repo}/labels, which `pull-requests: write` does not cover. Without
+  # this the major-bump path dies on 403 the first time it has to create the label.
+  issues: write
 
 jobs:
   auto-merge:
     name: Evaluate Dependabot PR
     runs-on: ubuntu-latest
+    # This job's whole body is a poll loop waiting on ci.yml. Without a ceiling, a CI
+    # run that never reports leaves it billing runner minutes for six hours.
+    timeout-minutes: 90
     # The PR author, not github.actor: github.actor is whoever caused the event, which on
     # a re-run is the person who pressed the button rather than Dependabot.
     if: github.event.pull_request.user.login == 'dependabot[bot]'
@@ -86,8 +93,35 @@ jobs:
       - name: Flag major bumps for human review
         if: steps.metadata.outputs.update-type == 'version-update:semver-major'
         run: |
-          gh pr comment "$PR_URL" --body "🔒 Major version bump — outside the Security Agent's auto-merge scope. Needs human review (see autonomous_production_agents_plan.md, section 3: scope fence)."
+          set -euo pipefail
+
+          # `gh pr edit --add-label` FAILS if the label does not exist in the repository
+          # ("'needs-human-review' not found"), taking the whole job down with it. That
+          # label has never existed here — `gh label list` returns only the GitHub defaults
+          # plus Dependabot's own dependencies/javascript/.NET/github_actions labels.
+          #
+          # It stayed hidden because every major PR so far failed CI, so the wait step
+          # above aborted the job before this step could run. Grouped major PRs make that
+          # far less likely to keep hiding it: one batched PR whose members all pass CI now
+          # reaches this line. Created on demand instead of assumed — `|| true` because a
+          # concurrent run may have created it a moment earlier.
+          gh label create "needs-human-review" \
+            --color "B60205" \
+            --description "Held for a human: outside the Dependabot auto-merge scope" \
+            2>/dev/null || true
+
+          # dependency-names is the whole group for a grouped PR, so the comment says which
+          # packages are actually in the batch rather than just "a major bump".
+          # printf, not a multi-line "..." literal: inside a `run: |` block every
+          # continuation line carries the YAML indentation into the string, and ten leading
+          # spaces turn the second paragraph into a Markdown code block in the comment.
+          printf '%s\n\n%s\n' \
+            "🔒 Major version bump — outside the Security Agent's auto-merge scope. Needs human review (see autonomous_production_agents_plan.md, section 3: scope fence)." \
+            "Packages in this update: \`${DEP_NAMES}\`" \
+            | gh pr comment "$PR_URL" --body-file -
+
           gh pr edit "$PR_URL" --add-label "needs-human-review"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
+          DEP_NAMES: ${{ steps.metadata.outputs.dependency-names }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

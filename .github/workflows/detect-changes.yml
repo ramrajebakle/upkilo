@@ -1,0 +1,347 @@
+name: Detect Changed Areas
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SINGLE SOURCE OF TRUTH for "what did this change actually touch?".
+#
+# Called by ci.yml and deploy.yml via `uses:`. Every other workflow decides what
+# to run purely from this job's outputs, so the routing rules live in exactly one
+# place and are changed in exactly one place.
+#
+# ── Why hand-rolled git instead of a paths-filter action ─────────────────────
+# Three reasons, in priority order:
+#   1. Correctness. Path-filter actions match a file against a list of globs with
+#      OR semantics, which cannot express "src/backend/** but not *.md" without
+#      an action-version-specific `predicate-quantifier: every` flag — and if that
+#      input is ever dropped or renamed, GitHub silently ignores it (unknown
+#      inputs are not an error) and the negation flips to matching *everything*.
+#      That failure mode is invisible: CI stays green, it just runs every job
+#      forever. The case statement below cannot fail that way.
+#   2. Dependency rules. "A migration change is also a backend change" and "raw
+#      SQL is NOT a backend change" are graph edges, not glob patterns. They
+#      belong in readable code next to the classification that feeds them.
+#   3. Supply chain. This is the job that decides whether the security scan runs.
+#      It should not itself be a third-party action.
+#
+# ── The one invariant that matters ───────────────────────────────────────────
+# Unrecognised paths fall through to `*)` and force EVERYTHING on. A new
+# top-level directory, a renamed config file, or an unreachable git ref can
+# therefore only ever cost extra minutes — never silently skip a job that was
+# needed. Cost optimisation is allowed to be wrong; correctness is not.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_call:
+    inputs:
+      force-all:
+        description: >-
+          Skip diffing and report every area as changed. Used by deploy.yml on
+          workflow_dispatch, where there is no "before" commit to diff against.
+        type: boolean
+        required: false
+        default: false
+    outputs:
+      backend:
+        description: '.NET solution needs lint/build/test'
+        value: ${{ jobs.detect.outputs.backend }}
+      frontend:
+        description: 'Next.js app needs lint/typecheck/test/build'
+        value: ${{ jobs.detect.outputs.frontend }}
+      database:
+        description: 'Raw SQL or the EF model changed — DB checks required'
+        value: ${{ jobs.detect.outputs.database }}
+      migrations:
+        description: 'EF migrations specifically changed (subset of database)'
+        value: ${{ jobs.detect.outputs.migrations }}
+      mobile:
+        description: 'Expo app needs its own pipeline'
+        value: ${{ jobs.detect.outputs.mobile }}
+      e2e:
+        description: 'Frontend or backend changed — end-to-end run is meaningful'
+        value: ${{ jobs.detect.outputs.e2e }}
+      docker-api:
+        description: 'API container image must be rebuilt'
+        value: ${{ jobs.detect.outputs.docker-api }}
+      docker-frontend:
+        description: 'Frontend container image must be rebuilt'
+        value: ${{ jobs.detect.outputs.docker-frontend }}
+      tools:
+        description: 'src/tools changed'
+        value: ${{ jobs.detect.outputs.tools }}
+      docs-only:
+        description: 'Nothing but documentation/meta files changed — skip all builds'
+        value: ${{ jobs.detect.outputs.docs-only }}
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    name: Detect
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      backend: ${{ steps.classify.outputs.backend }}
+      frontend: ${{ steps.classify.outputs.frontend }}
+      database: ${{ steps.classify.outputs.database }}
+      migrations: ${{ steps.classify.outputs.migrations }}
+      mobile: ${{ steps.classify.outputs.mobile }}
+      e2e: ${{ steps.classify.outputs.e2e }}
+      docker-api: ${{ steps.classify.outputs.docker-api }}
+      docker-frontend: ${{ steps.classify.outputs.docker-frontend }}
+      tools: ${{ steps.classify.outputs.tools }}
+      docs-only: ${{ steps.classify.outputs.docs-only }}
+
+    steps:
+      # fetch-depth: 0 is required to resolve a merge-base. The repo is ~15 MB /
+      # ~100 commits, so a full clone costs a couple of seconds — cheaper than a
+      # shallow fetch that then has to be deepened, and immune to the
+      # "shallow update not allowed" failure that deepening hits on force-pushes.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Resolve diff range
+        id: range
+        env:
+          FORCE_ALL: ${{ inputs.force-all }}
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          fallback() {
+            echo "::notice::$1 — treating every area as changed."
+            echo "force_all=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+
+          if [ "$FORCE_ALL" = "true" ]; then
+            fallback "force-all requested by the calling workflow"
+          fi
+
+          case "$EVENT" in
+            pull_request|pull_request_target)
+              base="$PR_BASE"; head="$PR_HEAD" ;;
+            push)
+              base="$PUSH_BEFORE"; head="$PUSH_AFTER" ;;
+            *)
+              # workflow_dispatch, schedule, release... carry no "previous" commit.
+              fallback "event '$EVENT' carries no diff range" ;;
+          esac
+
+          # An all-zero SHA is how GitHub reports "this ref did not exist before"
+          # (first push to a new branch). There is nothing to diff against.
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            fallback "no base commit ($EVENT)"
+          fi
+
+          # A force-push leaves `before` pointing at an object that is no longer
+          # reachable, even after a full clone.
+          git cat-file -e "${base}^{commit}" 2>/dev/null || fallback "base commit $base is unreachable (force-push?)"
+          git cat-file -e "${head}^{commit}" 2>/dev/null || fallback "head commit $head is unreachable"
+
+          # Three-dot semantics: diff against the point the branch actually
+          # diverged from, not against wherever the base branch has moved to
+          # since. Without this, every commit merged into main after the PR opened
+          # shows up as "changed" and drags unrelated jobs into the run.
+          merge_base=$(git merge-base "$base" "$head" 2>/dev/null || echo "")
+          if [ -z "$merge_base" ]; then
+            fallback "no common ancestor between $base and $head"
+          fi
+
+          echo "base=$merge_base" >> "$GITHUB_OUTPUT"
+          echo "head=$head" >> "$GITHUB_OUTPUT"
+          echo "force_all=false" >> "$GITHUB_OUTPUT"
+
+      - name: Classify changed files
+        id: classify
+        env:
+          FORCE_ALL: ${{ steps.range.outputs.force_all }}
+          BASE: ${{ steps.range.outputs.base }}
+          HEAD: ${{ steps.range.outputs.head }}
+        run: |
+          set -euo pipefail
+
+          BACKEND=0; FRONTEND=0; DATABASE=0; MIGRATIONS=0; MOBILE=0
+          DOCKER_API=0; DOCKER_FRONTEND=0; TOOLS=0
+          EVERYTHING=0
+
+          # -z / null-delimited: paths in this repo contain spaces
+          # ("docs/dns old records/") and a semicolon, both of which naive word
+          # splitting would mangle into filenames that do not exist — and an
+          # unmatched path silently falls through to the catch-all, so the bug
+          # would show up as "everything always runs" rather than as an error.
+          #
+          # Written to a file rather than captured with $(...): command
+          # substitution DISCARDS NUL bytes. Capturing a -z diff into a variable
+          # concatenates every path into one unsplittable string, which then fails
+          # to match any pattern and lands on the catch-all. Verified — that is
+          # exactly what happened before this was a file.
+          changed_files="$(mktemp)"
+          trap 'rm -f "$changed_files"' EXIT
+          if [ "$FORCE_ALL" = "true" ]; then
+            : > "$changed_files"
+          else
+            git diff --name-only -z "$BASE" "$HEAD" > "$changed_files"
+          fi
+
+          # ── Classification table ────────────────────────────────────────────
+          # First match wins, so order runs most-specific -> most-general.
+          # NOTE: in a shell `case`, `*` matches `/` too, so `src/backend/*`
+          # already covers every depth beneath it — no globstar needed.
+          classify() {
+            case "$1" in
+              # Documentation and editor/agent metadata: never gate a build.
+              *.md|docs/*|LICENSE|.gitignore|.editorconfig|.claude/*)
+                : ;;
+
+              # This file defines the routing itself — validate every route.
+              .github/workflows/detect-changes.yml)
+                EVERYTHING=1 ;;
+
+              # A CI definition change can alter either pipeline's behaviour, so
+              # both must be exercised by the very run that changes them.
+              .github/workflows/ci.yml)
+                BACKEND=1; FRONTEND=1; DATABASE=1 ;;
+              .github/workflows/deploy.yml)
+                BACKEND=1; FRONTEND=1; DOCKER_API=1; DOCKER_FRONTEND=1 ;;
+              .github/workflows/mobile-ci.yml)
+                MOBILE=1 ;;
+              .github/lighthouse-budget.json)
+                FRONTEND=1 ;;
+              # Remaining .github files (dependabot config, codeql, dr-drill,
+              # auto-merge) are self-triggering or advisory — they gate nothing.
+              .github/*)
+                : ;;
+
+              # Shared runtime contract: the compose topology and the documented
+              # environment surface are consumed by both apps.
+              docker-compose.yml|.env.example|.gitattributes)
+                EVERYTHING=1 ;;
+
+              # Root Dockerfile builds the API image only.
+              Dockerfile|.dockerignore)
+                BACKEND=1; DOCKER_API=1 ;;
+
+              # Raw bootstrap SQL. Deliberately does NOT imply backend: nothing in
+              # the .NET test suite reads these files — the backend job builds its
+              # schema from EF migrations instead. A schema.sql edit needs SQL
+              # validation and nothing else.
+              database/*)
+                DATABASE=1 ;;
+
+              # Throwaway experiments, excluded from the solution.
+              src/backend/scratch/*)
+                : ;;
+
+              # The EF model. These paths are where schema truth lives, so they
+              # are both a backend change (they compile into the API assembly and
+              # therefore into the image) and a database change (they move the
+              # schema and must clear the drift gate).
+              src/backend/Upkilo.Infrastructure/Migrations/*)
+                BACKEND=1; DATABASE=1; MIGRATIONS=1; DOCKER_API=1 ;;
+              src/backend/Upkilo.Infrastructure/Data/*|src/backend/Upkilo.Core/Entities/*)
+                BACKEND=1; DATABASE=1; DOCKER_API=1 ;;
+
+              src/backend/*)
+                BACKEND=1; DOCKER_API=1 ;;
+
+              # Frontend source is baked into the frontend image at build time
+              # (NEXT_PUBLIC_* values are inlined into the client bundle), so any
+              # change to it invalidates the image.
+              src/frontend/*)
+                FRONTEND=1; DOCKER_FRONTEND=1 ;;
+
+              src/mobile/*)
+                MOBILE=1 ;;
+
+              src/tools/*)
+                TOOLS=1 ;;
+
+              # ── Fail-safe ──
+              # Anything this table does not recognise runs the full suite. A new
+              # top-level directory must never be able to skip CI by being unknown.
+              *)
+                echo "::notice::Unclassified path '$1' — running the full suite."
+                EVERYTHING=1 ;;
+            esac
+          }
+
+          count=0
+          while IFS= read -r -d '' f; do
+            [ -n "$f" ] || continue
+            count=$((count + 1))
+            classify "$f"
+          done < "$changed_files"
+
+          # A push whose diff is genuinely empty (a re-pushed identical tree, or a
+          # merge commit that changes nothing) would otherwise skip every job
+          # including the security scan. Cheaper to run once than to reason about
+          # whether that is safe.
+          if [ "$FORCE_ALL" != "true" ] && [ "$count" -eq 0 ]; then
+            echo "::notice::Diff produced no files — running the full suite."
+            EVERYTHING=1
+          fi
+
+          # ── Dependency resolution ───────────────────────────────────────────
+          if [ "$EVERYTHING" -eq 1 ]; then
+            BACKEND=1; FRONTEND=1; DATABASE=1; MIGRATIONS=1; MOBILE=1
+            DOCKER_API=1; DOCKER_FRONTEND=1; TOOLS=1
+          fi
+
+          # End-to-end tests drive the frontend against the backend contract, so
+          # either side moving is reason enough to run them — and only those two.
+          E2E=0
+          if [ "$FRONTEND" -eq 1 ] || [ "$BACKEND" -eq 1 ]; then E2E=1; fi
+
+          DOCS_ONLY=1
+          if [ $((BACKEND + FRONTEND + DATABASE + MOBILE + TOOLS)) -gt 0 ]; then
+            DOCS_ONLY=0
+          fi
+
+          emit() { # emit <output-name> <0|1>
+            if [ "$2" -eq 1 ]; then
+              echo "$1=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "$1=false" >> "$GITHUB_OUTPUT"
+            fi
+          }
+          emit backend         "$BACKEND"
+          emit frontend        "$FRONTEND"
+          emit database        "$DATABASE"
+          emit migrations      "$MIGRATIONS"
+          emit mobile          "$MOBILE"
+          emit e2e             "$E2E"
+          emit docker-api      "$DOCKER_API"
+          emit docker-frontend "$DOCKER_FRONTEND"
+          emit tools           "$TOOLS"
+          emit docs-only       "$DOCS_ONLY"
+
+          # ── Human-readable routing decision ─────────────────────────────────
+          # Printed to the run summary so "why did/didn't job X run?" is answered
+          # by looking at the run, not by re-deriving the rules from this file.
+          mark() { if [ "$1" -eq 1 ]; then echo "run"; else echo "skip"; fi; }
+          {
+            echo "### Change routing"
+            echo
+            echo "Compared \`${BASE:-<none>}\` -> \`${HEAD:-<none>}\` (${count} file(s) changed)."
+            echo
+            echo "| Area | Decision |"
+            echo "| --- | --- |"
+            echo "| Backend (.NET) | $(mark $BACKEND) |"
+            echo "| Frontend (Next.js) | $(mark $FRONTEND) |"
+            echo "| Database | $(mark $DATABASE) |"
+            echo "| EF migrations | $(mark $MIGRATIONS) |"
+            echo "| End-to-end | $(mark $E2E) |"
+            echo "| Mobile (Expo) | $(mark $MOBILE) |"
+            echo "| API image | $(mark $DOCKER_API) |"
+            echo "| Frontend image | $(mark $DOCKER_FRONTEND) |"
+            echo "| Tools | $(mark $TOOLS) |"
+            echo
+            if [ "$DOCS_ONLY" -eq 1 ]; then
+              echo "> Documentation/meta only — all build jobs skipped."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

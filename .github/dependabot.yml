@@ -1,5 +1,6 @@
 version: 2
 
+# ── Why the backend is split into one job per project ───────────────────────
 # Dependabot previously ran a single nuget job across all of /src/backend. That job died
 # with `out_of_disk` (run 30789820827): resolving every project in one ephemeral container
 # made the updater download ~40 Elastic.Clients.Elasticsearch nupkgs (8.19.x → 9.1.5) plus
@@ -7,16 +8,35 @@ version: 2
 # no disk knob to turn, so the fix is to shrink each job's scope — one entry per project
 # means one container per project, each resolving a fraction of the graph.
 #
-# `groups` keeps the resulting PR volume sane: without it, splitting into six backend jobs
-# would open six near-identical PRs for every shared transitive bump.
+# ── Why every entry groups MAJORS as well as minor/patch ────────────────────
+# The previous version of this file grouped only ["minor", "patch"]. Anything outside a
+# group gets its own PR, so every major bump arrived alone — and dependabot-auto-merge.yml
+# refuses to merge majors by design, labelling them `needs-human-review` and leaving them
+# open. Minors and patches were merged away automatically; majors accumulated forever.
 #
-# Two coverage gaps are also closed here:
-#   - github-actions was never listed at all, which is why every action in
-#     .github/workflows/ sat on v4 / the Node 20 runtime until it was bumped by hand.
-#     Node 20 is removed from GitHub-hosted runners on 2026-09-16, so this ecosystem
-#     needs to stay watched.
-#   - /src/mobile has its own package.json and was not covered either, so the Expo app
-#     received no security updates.
+# That is the whole explanation for the PR backlog: all 11 PRs open when this was written
+# were majors, none mergeable by the automation that was supposed to clear them. Each entry
+# now carries a second group so the majors arrive as ONE review batch per ecosystem instead
+# of one PR per package. fetch-metadata still reports `semver-major` for a grouped major
+# PR, so the auto-merge workflow's label-and-hold path is unchanged.
+#
+# ── Why several majors are ignored outright ─────────────────────────────────
+# Some majors are not dependency updates at all — they are framework migrations wearing a
+# version number, and merging one in isolation is guaranteed to break the build. Those are
+# ignored here rather than left to be opened, reviewed and closed every single week. Each
+# block below says which framework pins it.
+#
+# ── Coverage ────────────────────────────────────────────────────────────────
+# github-actions is listed because it was not, which is why every action in
+# .github/workflows/ sat on v4 / the Node 20 runtime until it was bumped by hand. Node 20
+# is removed from GitHub-hosted runners on 2026-09-16, so this ecosystem needs watching.
+#
+# ── Known remaining duplication ─────────────────────────────────────────────
+# 17 packages (MediatR, Microsoft.Extensions.Http, FluentValidation, Azure.Identity, …) are
+# referenced by 2–4 backend projects. Grouping is per-ENTRY, so a MediatR bump still opens
+# one PR per project that references it. The real fix is Central Package Management — a
+# single Directory.Packages.props at src/backend, after which all six nuget entries below
+# collapse into one. That is a change to the .csproj files, not to this file.
 
 updates:
   # ── GitHub Actions ──────────────────────────────────────────────────────
@@ -25,10 +45,12 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     groups:
       actions-minor-patch:
         update-types: ["minor", "patch"]
+      actions-major:
+        update-types: ["major"]
 
   # ── Backend: one job per project, to stay inside the updater's disk budget ──
   - package-ecosystem: "nuget"
@@ -36,10 +58,12 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     groups:
       api-minor-patch:
         update-types: ["minor", "patch"]
+      api-major:
+        update-types: ["major"]
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
         update-types: ["version-update:semver-major"]
@@ -49,6 +73,8 @@ updates:
       # landed in some projects while others stayed on 8.x, and the resulting NU1605
       # downgrade errors failed restore outright.
       - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore.*"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "nuget"
@@ -56,19 +82,23 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     groups:
       infrastructure-minor-patch:
         update-types: ["minor", "patch"]
+      infrastructure-major:
+        update-types: ["major"]
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
         update-types: ["version-update:semver-major"]
-      # The solution targets net8.0. Microsoft.Extensions.* majors track the .NET release
-      # they ship with, so a 9.x or 10.x bump pulls .NET 9/10 assemblies and transitive
-      # requirements into a net8.0 project. That is what broke main: Extensions.Http 10.0.10
-      # landed in some projects while others stayed on 8.x, and the resulting NU1605
-      # downgrade errors failed restore outright.
       - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      # Same pin, different package family: EF Core majors track the .NET release. An EF
+      # Core 9/10 bump against net8.0 fails restore, and it would also invalidate all 74
+      # migrations' generated model snapshot.
+      - dependency-name: "Microsoft.EntityFrameworkCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Npgsql.EntityFrameworkCore.PostgreSQL"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "nuget"
@@ -76,18 +106,15 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     groups:
       core-minor-patch:
         update-types: ["minor", "patch"]
+      core-major:
+        update-types: ["major"]
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
         update-types: ["version-update:semver-major"]
-      # The solution targets net8.0. Microsoft.Extensions.* majors track the .NET release
-      # they ship with, so a 9.x or 10.x bump pulls .NET 9/10 assemblies and transitive
-      # requirements into a net8.0 project. That is what broke main: Extensions.Http 10.0.10
-      # landed in some projects while others stayed on 8.x, and the resulting NU1605
-      # downgrade errors failed restore outright.
       - dependency-name: "Microsoft.Extensions.*"
         update-types: ["version-update:semver-major"]
 
@@ -96,18 +123,15 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     groups:
       application-minor-patch:
         update-types: ["minor", "patch"]
+      application-major:
+        update-types: ["major"]
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
         update-types: ["version-update:semver-major"]
-      # The solution targets net8.0. Microsoft.Extensions.* majors track the .NET release
-      # they ship with, so a 9.x or 10.x bump pulls .NET 9/10 assemblies and transitive
-      # requirements into a net8.0 project. That is what broke main: Extensions.Http 10.0.10
-      # landed in some projects while others stayed on 8.x, and the resulting NU1605
-      # downgrade errors failed restore outright.
       - dependency-name: "Microsoft.Extensions.*"
         update-types: ["version-update:semver-major"]
 
@@ -116,20 +140,37 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     groups:
       ai-minor-patch:
         update-types: ["minor", "patch"]
+      ai-major:
+        update-types: ["major"]
+    ignore:
+      # Was missing here and on the tests entry, so these two projects could be dragged
+      # onto a .NET 9/10 assembly while the other four were pinned to 8.x — the exact
+      # mixed-version state that produced the NU1605 restore failures on main.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "nuget"
     directory: "/src/backend/tests/Upkilo.Tests"
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     groups:
       tests-minor-patch:
         update-types: ["minor", "patch"]
+      tests-major:
+        update-types: ["major"]
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore.*"
+        update-types: ["version-update:semver-major"]
 
   # ── Frontend (Next.js) ──────────────────────────────────────────────────
   - package-ecosystem: "npm"
@@ -141,21 +182,67 @@ updates:
     groups:
       frontend-minor-patch:
         update-types: ["minor", "patch"]
+      frontend-major:
+        update-types: ["major"]
+    ignore:
+      # eslint-config-next ships the lint rules for ONE Next.js major and is versioned in
+      # lockstep with it (both are on 15.5.x here). Dependabot offered 16.3.1 against
+      # `next` ^15.5.22 — Next 16 rules linting a Next 15 app. This moves when `next` moves,
+      # which is a deliberate framework upgrade, not a weekly dependency bump.
+      - dependency-name: "eslint-config-next"
+        update-types: ["version-update:semver-major"]
+      # eslint 9 replaced .eslintrc with flat config. The repo still has .eslintrc.json, so
+      # a major bump here is a lint-config migration that silently stops enforcing every
+      # rule — and ci.yml runs `npm run lint` as a blocking gate before the build.
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
 
   # ── Mobile (Expo / React Native) ────────────────────────────────────────
-  # Expo pins the React Native version its SDK supports, so a major bump here is an SDK
-  # migration rather than a dependency update — those wait for a human.
+  #
+  # ⚠️ Every expo-* package is version-locked to the installed Expo SDK — that is why the
+  # app pins them with `~` and why Expo ships `expo install` instead of using npm directly.
+  # This app is on SDK 54. Dependabot was proposing individual jumps to 57.x
+  # (expo-constants 18→57, expo-device 8→57, expo-local-authentication 15→57,
+  # @expo/metro-runtime 6→57) while `expo` itself stayed on 54 — five PRs that could not be
+  # merged without breaking the build, reopened every week. The existing `expo` and
+  # `react-native` major ignores were the right idea applied to too narrow a list.
+  #
+  # An SDK upgrade is `npx expo install --fix` moving every package at once, by a human.
+  #
+  # 🔴 ALREADY DRIFTED: package.json currently pins expo-localization ^57.0.1 and
+  # expo-secure-store ^55.0.9 against SDK 54 — merged Dependabot majors from before these
+  # ignores existed. Realign them with `npx expo install --fix` before shipping the app.
+  #
+  # Monthly rather than weekly, and a limit of 2: the Expo app is not deployed by this
+  # repository (ci.yml's Trivy scan skips src/mobile entirely, and mobile-ci.yml has never
+  # run), so it should not be generating weekly review load for a shipped product.
   - package-ecosystem: "npm"
     directory: "/src/mobile"
     schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
+      interval: "monthly"
+    open-pull-requests-limit: 2
     groups:
       mobile-minor-patch:
         update-types: ["minor", "patch"]
+      mobile-major:
+        update-types: ["major"]
     ignore:
       - dependency-name: "expo"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "expo-*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@expo/*"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "react-native"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-native-*"
+        update-types: ["version-update:semver-major"]
+      # Scoped packages need their own pattern — `react-native-*` does not match a name
+      # beginning with `@`, which is how @react-native-async-storage/async-storage 3.x
+      # (a bump that requires a newer React Native) slipped through as its own PR.
+      - dependency-name: "@react-native-*/*"
+        update-types: ["version-update:semver-major"]
+      # React Native pins the React version each release supports; bumping React alone
+      # produces a renderer/runtime mismatch.
+      - dependency-name: "react"
         update-types: ["version-update:semver-major"]
