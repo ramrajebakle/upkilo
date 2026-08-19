@@ -57,7 +57,7 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
         handleSubmit,
         formState: { errors },
         setValue
-    } = useForm<LocationFormData>({
+    } = useForm<z.input<typeof locationSchema>, any, LocationFormData>({
         resolver: zodResolver(locationSchema),
         defaultValues: {
             name: '',
