@@ -3,7 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "jsx": "react-native",
-    "baseUrl": ".",
+    // baseUrl was removed as a compiler option (TS5102: "Option 'baseUrl' has been removed").
+    // Non-relative path lookups now come from "paths" alone, so each entry needs its own
+    // baseUrl-relative prefix baked in — "@/*" resolved against baseUrl "." before, so its
+    // target becomes "./src/*" unchanged; this key is unaffected, but any future paths entry
+    // must be written the same way, relative to this file, not to a separate baseUrl.
     "paths": {
       "@/*": ["./src/*"]
     }
