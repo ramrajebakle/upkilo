@@ -515,7 +515,7 @@ public class IntegrationsController : ControllerBase
             estimatedMinutes = 15,
             pollUrl = $"/api/v1/integrations/migration/status/{jobId}",
             instructions = $"Export your data from {request.SourcePlatform} as CSV and upload via /settings/import.",
-            supportEmail = "migration-support@upkilo.com"
+            supportEmail = "support@upkilo.com"
         });
     }
 

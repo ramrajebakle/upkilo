@@ -60,7 +60,7 @@ export default function EnterprisePage() {
     if (res.ok) {
       setSubmitted(true);
     } else {
-      setError('Something went wrong. Please email enterprise@upkilo.com directly.');
+      setError('Something went wrong. Please email sales@upkilo.com directly.');
     }
     setSubmitting(false);
   };
@@ -138,7 +138,7 @@ export default function EnterprisePage() {
                   against is worse than no promise. */}
               <p className="text-green-700">
                 We&apos;ll reply by email to the address you gave us. If it&apos;s urgent,
-                write to enterprise@upkilo.com directly.
+                write to sales@upkilo.com directly.
               </p>
             </div>
           ) : (

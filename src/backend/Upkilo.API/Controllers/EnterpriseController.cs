@@ -58,7 +58,7 @@ public class EnterpriseController : ControllerBase
         await _context.SaveChangesAsync();
 
         // Notify founder — email is configurable via Enterprise:NotificationEmail in config
-        var notificationEmail = _configuration["Enterprise:NotificationEmail"] ?? "ramrajebakle@gmail.com";
+        var notificationEmail = _configuration["Enterprise:NotificationEmail"] ?? "sales@upkilo.com";
         await _emailService.SendSystemEmailAsync(
             notificationEmail,
             $"🎯 New Enterprise Lead: {lead.CompanyName}",

@@ -47,13 +47,13 @@ const CONTACT_JSON_LD = {
       {
         '@type': 'ContactPoint',
         contactType: 'customer support',
-        email: 'hello@upkilo.com',
+        email: 'support@upkilo.com',
         availableLanguage: ['English'],
       },
       {
         '@type': 'ContactPoint',
         contactType: 'sales',
-        email: 'enterprise@upkilo.com',
+        email: 'sales@upkilo.com',
         availableLanguage: ['English'],
       },
       {
@@ -71,13 +71,13 @@ const CHANNELS = [
     icon: LifeBuoy,
     title: 'Product support',
     body: 'Questions about bookings, clients, payments or anything else in the product.',
-    email: 'hello@upkilo.com',
+    email: 'support@upkilo.com',
   },
   {
     icon: Building2,
     title: 'Enterprise & multi-location',
     body: 'Chains, franchise groups, agency sub-accounts and SSO requirements.',
-    email: 'enterprise@upkilo.com',
+    email: 'sales@upkilo.com',
   },
   {
     icon: ShieldCheck,
