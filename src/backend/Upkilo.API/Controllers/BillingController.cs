@@ -149,6 +149,36 @@ public class BillingController : ControllerBase
         return Ok(new { data = mapped, currency = responseCurrency, requestedCurrency = requested });
     }
 
+    /// <summary>
+    /// Published add-ons. Public — this backs the "Scale without changing plan" section of the
+    /// marketing pricing page, which previously listed a billing cadence with no amount beside
+    /// it because no add-on price existed anywhere outside Stripe.
+    /// </summary>
+    [HttpGet("addons")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAddOns()
+    {
+        var addOns = await _context.Set<Upkilo.Core.Entities.PricingAddOn>()
+            .OrderBy(a => a.SortOrder)
+            .AsNoTracking()
+            .ToListAsync();
+
+        // amount stays null for anything without a published price, so the client renders a
+        // sales pointer rather than a fabricated number.
+        return Ok(new
+        {
+            data = addOns.Select(a => new
+            {
+                a.Key,
+                a.Name,
+                billingUnit = a.BillingUnit,
+                amount = a.Amount,
+                currency = a.CurrencyCode,
+                isAvailable = a.IsAvailable
+            })
+        });
+    }
+
     [HttpGet("invoices")]
     public async Task<IActionResult> GetInvoices([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {

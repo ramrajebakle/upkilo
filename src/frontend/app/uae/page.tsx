@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Upkilo UAE — Booking Software for UAE Service Businesses',
-  description: 'Booking, client records and payments for UAE salons, spas, gyms and clinics. Arabic RTL interface, 5% VAT-compliant invoicing and WhatsApp reminders.',
+  description: 'Booking, client records and payments for UAE salons, spas and clinics. Arabic RTL interface, 5% VAT-compliant invoicing and WhatsApp reminders.',
   alternates: { canonical: 'https://upkilo.com/uae' },
   openGraph: {
     title: 'Upkilo UAE — Booking Software for UAE Businesses',
@@ -52,7 +52,7 @@ export default function UAEPage() {
             واجهة عربية كاملة، فواتير ضريبة القيمة المضافة، وتذكيرات WhatsApp — كل ما تحتاجه لتنمية عملك.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register?locale=ar-AE&currency=AED"
+            <Link href="/register?locale=ar-AE"
               className="bg-yellow-400 text-green-900 font-bold px-8 py-3 rounded-lg hover:bg-yellow-300 transition">
               ابدأ مجاناً / Start Free
             </Link>
@@ -61,7 +61,8 @@ export default function UAEPage() {
               احجز عرضاً توضيحياً
             </Link>
           </div>
-          <p className="mt-4 text-sm opacity-75">موثوق به من قِبل أكثر من 500 صالون وعيادة وصالة رياضية في الإمارات</p>
+          {/* "وصالة رياضية" (and gyms) removed — Upkilo no longer serves that vertical. */}
+          <p className="mt-4 text-sm opacity-75">موثوق به من قِبل أكثر من 500 صالون وعيادة في الإمارات</p>
         </div>
       </section>
 
@@ -84,8 +85,11 @@ export default function UAEPage() {
       {/* Pricing — RTL-friendly labels */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">أسعار بالدرهم الإماراتي</h2>
-          <p className="text-center text-gray-600 mb-12">شاملة ضريبة القيمة المضافة. إلغاء في أي وقت.</p>
+          {/* Heading read "أسعار بالدرهم الإماراتي" (prices in UAE Dirhams) and claimed
+              VAT-inclusive pricing, directly above USD plan cards. Upkilo bills exclusively in
+              USD, exclusive of tax. */}
+          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">أسعار بسيطة وشفافة</h2>
+          <p className="text-center text-gray-600 mb-12">الأسعار بالدولار الأمريكي، غير شاملة ضريبة القيمة المضافة. إلغاء في أي وقت.</p>
           <div className="grid md:grid-cols-3 gap-8">
             {plans.map((p) => (
               <div key={p.name} className={`rounded-2xl p-8 ${p.highlight ? 'bg-green-800 text-white shadow-xl scale-105' : 'bg-white border border-gray-200'}`}>
@@ -99,7 +103,7 @@ export default function UAEPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href={`/register?plan=${p.name.toLowerCase()}&locale=ar-AE&currency=AED`}
+                <Link href={`/register?plan=${p.name.toLowerCase()}&locale=ar-AE`}
                   className={`block text-center py-3 rounded-lg font-semibold transition ${p.highlight ? 'bg-yellow-400 text-green-900 hover:bg-yellow-300' : 'bg-green-800 text-white hover:bg-green-700'}`}>
                   ابدأ الآن
                 </Link>
@@ -121,7 +125,7 @@ export default function UAEPage() {
             ضريبة القيمة المضافة الإماراتية بنسبة 5% وواجهة عربية بالكامل.
           </p>
           <div className="mt-12">
-            <Link href="/register?locale=ar-AE&currency=AED"
+            <Link href="/register?locale=ar-AE"
               className="bg-green-800 text-white font-bold px-10 py-4 rounded-lg hover:bg-green-700 transition text-lg">
               ابدأ تجربتك المجانية لمدة 14 يوماً →
             </Link>

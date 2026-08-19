@@ -57,7 +57,16 @@ public class ServicesController : ControllerBase
                     s.Currency,
                     s.Color,
                     s.IsActive,
-                    s.MaxAttendees
+                    s.MaxAttendees,
+                    // Included so the services list and edit form can show the policy without a
+                    // per-row fetch, and so the booking page can state it before someone pays.
+                    s.FullRefundHours,
+                    s.PartialRefundHours,
+                    s.PartialRefundPercent,
+                    s.CancellationPolicy,
+                    s.RebookAfterDays,
+                    s.IsMobile,
+                    s.TravelBufferMinutes
                 })
                 .ToListAsync(),
             expiration: TimeSpan.FromMinutes(5));
@@ -119,9 +128,22 @@ public class ServicesController : ControllerBase
             MaxAttendees = request.MaxAttendees,
             RequiresPayment = request.RequiresPayment,
             DepositAmount = request.DepositAmount,
+            FullRefundHours = request.FullRefundHours ?? 18,
+            PartialRefundHours = request.PartialRefundHours ?? 12,
+            PartialRefundPercent = request.PartialRefundPercent ?? 50m,
+            CancellationPolicy = request.CancellationPolicy,
+            RebookAfterDays = request.RebookAfterDays,
+            IsMobile = request.IsMobile ?? false,
+            TravelBufferMinutes = request.TravelBufferMinutes ?? 0,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
+
+        // Validated rather than trusted: these three numbers decide whether a customer gets
+        // their money back, and the refund engine reads them directly. A negative or inverted
+        // window would otherwise be stored and silently reinterpreted at cancellation time.
+        if (ValidateRefundPolicy(service.FullRefundHours, service.PartialRefundHours, service.PartialRefundPercent) is { } createError)
+            return BadRequest(new { error = createError });
 
         _context.Services.Add(service);
         await _context.SaveChangesAsync();
@@ -150,6 +172,18 @@ public class ServicesController : ControllerBase
         if (request.Price.HasValue) service.Price = request.Price.Value;
         if (request.Color != null) service.Color = request.Color;
         if (request.IsActive.HasValue) service.IsActive = request.IsActive.Value;
+        if (request.FullRefundHours.HasValue) service.FullRefundHours = request.FullRefundHours.Value;
+        if (request.PartialRefundHours.HasValue) service.PartialRefundHours = request.PartialRefundHours.Value;
+        if (request.PartialRefundPercent.HasValue) service.PartialRefundPercent = request.PartialRefundPercent.Value;
+        if (request.CancellationPolicy != null) service.CancellationPolicy = request.CancellationPolicy;
+        if (request.RebookAfterDays.HasValue) service.RebookAfterDays = request.RebookAfterDays.Value;
+        if (request.IsMobile.HasValue) service.IsMobile = request.IsMobile.Value;
+        if (request.TravelBufferMinutes.HasValue) service.TravelBufferMinutes = request.TravelBufferMinutes.Value;
+
+        // Re-validated against the merged result, not the request: a partial update that changes
+        // only one threshold can still leave the pair inverted.
+        if (ValidateRefundPolicy(service.FullRefundHours, service.PartialRefundHours, service.PartialRefundPercent) is { } updateError)
+            return BadRequest(new { error = updateError });
 
         await _context.SaveChangesAsync();
         await _cache.InvalidateAsync(service.TenantId, "catalog:services");
@@ -325,8 +359,35 @@ public class ServicesController : ControllerBase
 
         return Ok(upsells);
     }
+
+    /// <summary>
+    /// Returns an error message if the refund policy is not coherent, otherwise null.
+    /// </summary>
+    /// <remarks>
+    /// PublicBookingController.CanCancel defends itself by ordering the two thresholds before
+    /// use, so a bad pair cannot produce a perverse refund at cancellation time. That is a last
+    /// line of defence, not a substitute for rejecting the input: a tenant who saves 12/18 the
+    /// wrong way round should be told, not silently have it reinterpreted, because they would
+    /// otherwise believe a policy is in force that is not the one being applied.
+    /// </remarks>
+    private static string? ValidateRefundPolicy(int fullRefundHours, int partialRefundHours, decimal partialRefundPercent)
+    {
+        if (fullRefundHours < 0 || partialRefundHours < 0)
+            return "Refund windows cannot be negative.";
+
+        if (partialRefundHours > fullRefundHours)
+            return "The partial-refund window must be shorter than the full-refund window — a later cancellation cannot earn a larger refund.";
+
+        if (partialRefundPercent < 0m || partialRefundPercent > 100m)
+            return "Partial refund percentage must be between 0 and 100.";
+
+        return null;
+    }
 }
 
+// Refund policy is captured per service at creation. Nullable on the request only so that an
+// older client that does not send it still works — the controller substitutes the entity
+// defaults (18h / 12h / 50%) rather than leaving a service with no policy at all.
 public record CreateServiceRequest(
     string Name,
     string? Description,
@@ -338,7 +399,14 @@ public record CreateServiceRequest(
     int BufferAfter,
     int MaxAttendees,
     bool RequiresPayment,
-    decimal? DepositAmount
+    decimal? DepositAmount,
+    int? FullRefundHours = null,
+    int? PartialRefundHours = null,
+    decimal? PartialRefundPercent = null,
+    string? CancellationPolicy = null,
+    int? RebookAfterDays = null,
+    bool? IsMobile = null,
+    int? TravelBufferMinutes = null
 );
 
 public record UpdateServiceRequest(
@@ -347,9 +415,17 @@ public record UpdateServiceRequest(
     int? DurationMinutes,
     decimal? Price,
     string? Color,
-    bool? IsActive
+    bool? IsActive,
+    int? FullRefundHours = null,
+    int? PartialRefundHours = null,
+    decimal? PartialRefundPercent = null,
+    string? CancellationPolicy = null,
+    int? RebookAfterDays = null,
+    bool? IsMobile = null,
+    int? TravelBufferMinutes = null
 );
 
 public record CreateBundleRequest(string Name, string? Description, decimal Price, List<Guid> ServiceIds);
+
 public record AddUpsellRequest(Guid UpsellServiceId, string? Pitch, decimal? DiscountedPrice);
 public record ApplyGeneratedContentRequest(bool ApplyDescription, bool ApplyMarketingCopy);

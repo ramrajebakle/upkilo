@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import '../globals.css';
+import { safeJsonLd } from '@/lib/jsonLd';
+import { breadcrumbJsonLd, SITE_URL } from '@/lib/seo';
 
 // Metadata lives in the layout rather than the page because app/enterprise/page.tsx is a
 // genuine Client Component — it holds the enterprise lead form's useState — and a Client
@@ -26,10 +28,38 @@ export const metadata: Metadata = {
   },
 };
 
+// Service, not SoftwareApplication — same reasoning as the medical-spa page: this describes the
+// enterprise engagement around the existing product, not a separate application.
+//
+// No Offer node: Enterprise is IsCustom in PricingSeeder with no price rows, and an Offer
+// without a price tells an engine nothing while inviting it to infer one. The tier is sales-led,
+// so the honest structured-data answer is that there is no published price.
+const ENTERPRISE_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Upkilo Enterprise',
+  serviceType: 'Multi-location booking, CRM and payments platform',
+  description:
+    'Enterprise booking, CRM and payments for multi-location chains and franchise groups, with SSO/SAML, agency sub-accounts and unlimited staff and locations.',
+  url: `${SITE_URL}/enterprise`,
+  provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
+  audience: { '@type': 'BusinessAudience', name: 'Multi-location chains and franchise groups' },
+};
+
+// This route sits at the apex, not under /en — the trail must match the real URL.
+const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
+  { name: 'Home', path: '/en' },
+  { name: 'Enterprise', path: '/enterprise' },
+]);
+
 export default function EnterpriseLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="en">
-            <body>{children}</body>
+            <body>
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(ENTERPRISE_JSON_LD) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
+                {children}
+            </body>
         </html>
     );
 }

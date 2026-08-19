@@ -96,8 +96,8 @@ public class SchedulingService : ISchedulingService
     private static bool DoesServiceFitInCache(string mask, int startIndex, Service service)
     {
         int slotsNeeded = (int)Math.Ceiling(service.DurationMinutes / 15.0);
-        int bufferBeforeSlots = (int)Math.Ceiling(service.BufferBeforeMinutes / 15.0);
-        int bufferAfterSlots = (int)Math.Ceiling(service.BufferAfterMinutes / 15.0);
+        int bufferBeforeSlots = (int)Math.Ceiling(service.EffectiveBufferBeforeMinutes / 15.0);
+        int bufferAfterSlots = (int)Math.Ceiling(service.EffectiveBufferAfterMinutes / 15.0);
 
         int checkStart = startIndex - bufferBeforeSlots;
         int checkEnd = startIndex + slotsNeeded + bufferAfterSlots;
@@ -208,8 +208,8 @@ public class SchedulingService : ISchedulingService
 
         var currentTime = workStart;
         var duration = service.DurationMinutes;
-        var bufferBefore = service.BufferBeforeMinutes;
-        var bufferAfter = service.BufferAfterMinutes;
+        var bufferBefore = service.EffectiveBufferBeforeMinutes;
+        var bufferAfter = service.EffectiveBufferAfterMinutes;
         var totalServiceMinutes = duration; // The client facing duration
 
         while (currentTime.AddMinutes(totalServiceMinutes) <= workEnd)
@@ -237,8 +237,8 @@ public class SchedulingService : ISchedulingService
                 int totalAttendees = 0;
                 foreach (var b in localizedBookings)
                 {
-                    var bBufferBefore = b.Service?.BufferBeforeMinutes ?? 0;
-                    var bBufferAfter = b.Service?.BufferAfterMinutes ?? 0;
+                    var bBufferBefore = b.Service?.EffectiveBufferBeforeMinutes ?? 0;
+                    var bBufferAfter = b.Service?.EffectiveBufferAfterMinutes ?? 0;
                     var bBusyStart = b.LocalStart.AddMinutes(-bBufferBefore);
                     var bBusyEnd = b.LocalEnd.AddMinutes(bBufferAfter);
 
@@ -264,8 +264,8 @@ public class SchedulingService : ISchedulingService
                 // Standard 1:1 service — any overlap blocks
                 foreach (var b in localizedBookings)
                 {
-                    var bBufferBefore = b.Service?.BufferBeforeMinutes ?? 0;
-                    var bBufferAfter = b.Service?.BufferAfterMinutes ?? 0;
+                    var bBufferBefore = b.Service?.EffectiveBufferBeforeMinutes ?? 0;
+                    var bBufferAfter = b.Service?.EffectiveBufferAfterMinutes ?? 0;
                     var bBusyStart = b.LocalStart.AddMinutes(-bBufferBefore);
                     var bBusyEnd = b.LocalEnd.AddMinutes(bBufferAfter);
 

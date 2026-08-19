@@ -320,6 +320,9 @@ public class AppDbContext : DbContext
     public DbSet<PlanPrice> PlanPrices => Set<PlanPrice>();
     public DbSet<PricingFeature> PricingFeatures => Set<PricingFeature>();
     public DbSet<PlanFeatureMapping> PlanFeatureMappings => Set<PlanFeatureMapping>();
+    public DbSet<PricingAddOn> PricingAddOns => Set<PricingAddOn>();
+    public DbSet<Vehicle> Vehicles => Set<Vehicle>();
+    public DbSet<ServiceVehiclePrice> ServiceVehiclePrices => Set<ServiceVehiclePrice>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<PromoRedemption> PromotionRedemptions => Set<PromoRedemption>();
     public DbSet<PlatformDiscount> PlatformDiscounts => Set<PlatformDiscount>();
@@ -1029,6 +1032,39 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PlanFeatureMapping>()
             .HasIndex(m => m.PricingPlanId)
             .HasDatabaseName("IX_PlanFeatureMappings_PricingPlanId");
+
+        // One price row per service per vehicle class. The unique index is what makes the
+        // fallback lookup deterministic: with duplicates, which of two prices a customer is
+        // quoted would depend on row order.
+        modelBuilder.Entity<ServiceVehiclePrice>(entity =>
+        {
+            entity.Property(e => e.Price).HasPrecision(10, 2);
+            entity.HasIndex(e => new { e.ServiceId, e.VehicleClass })
+                  .IsUnique()
+                  .HasDatabaseName("IX_ServiceVehiclePrices_Service_Class");
+        });
+
+        // Vehicles are listed per client on every booking screen for a detailer.
+        modelBuilder.Entity<Vehicle>(entity =>
+        {
+            entity.Property(e => e.Make).HasMaxLength(64);
+            entity.Property(e => e.Model).HasMaxLength(64);
+            entity.Property(e => e.LicensePlate).HasMaxLength(32);
+            entity.Property(e => e.Color).HasMaxLength(32);
+            entity.HasIndex(e => e.ClientId).HasDatabaseName("IX_Vehicles_ClientId");
+        });
+
+        // Published add-on prices. Key is the code-facing identifier, so it must be unique —
+        // two rows for "extra_staff" would make which price we advertise arbitrary.
+        modelBuilder.Entity<PricingAddOn>(entity =>
+        {
+            entity.Property(e => e.Amount).HasPrecision(10, 2);
+            entity.Property(e => e.Key).HasMaxLength(64).IsRequired();
+            entity.Property(e => e.Name).HasMaxLength(128).IsRequired();
+            entity.Property(e => e.BillingUnit).HasMaxLength(64);
+            entity.Property(e => e.CurrencyCode).HasMaxLength(3).IsRequired();
+            entity.HasIndex(e => e.Key).IsUnique().HasDatabaseName("IX_PricingAddOns_Key");
+        });
 
         // P2: AI usage log queries by tenant + date (quota enforcement + dashboard)
         modelBuilder.Entity<AIUsageLog>()

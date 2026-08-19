@@ -230,14 +230,26 @@ public class MigrationWizardController : ControllerBase
         return "generic";
     }
 
-    private static ICsvClientParser? GetParser(string platform) => platform switch
-    {
-        "mindbody" => new MindbodyCsvParser(),
-        "vagaro" => new VagaroCsvParser(),
-        "acuity" => new AcuityCsvParser(),
-        "generic" => new GenericCsvParser(),
-        _ => null
-    };
+    // Platform ids the UI can send, mapped to a parser.
+    //
+    // The settings/migration dropdown offered six options and three of them 400'd here:
+    // "generic-csv" (this switch wanted "generic"), "booker" and "square" (no case at all).
+    // "Generic CSV" is the option anyone not on Mindbody/Vagaro/Acuity would pick, so the most
+    // likely path through the migration wizard failed on a string mismatch.
+    //
+    // Booker and Square map to the generic parser rather than being rejected: every parser below
+    // is the same alias-matching implementation, so there was never a capability behind the
+    // distinction — only a name. Normalised case/separator so "Generic-CSV" and "generic_csv"
+    // cannot reintroduce the same class of mismatch.
+    private static ICsvClientParser? GetParser(string platform) =>
+        platform.ToLowerInvariant().Replace("-", "_").Replace(" ", "_") switch
+        {
+            "mindbody" => new MindbodyCsvParser(),
+            "vagaro" => new VagaroCsvParser(),
+            "acuity" or "acuity_scheduling" => new AcuityCsvParser(),
+            "generic" or "generic_csv" or "csv" or "booker" or "square" => new GenericCsvParser(),
+            _ => null
+        };
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -261,7 +273,13 @@ public class ImportedClient
 
 public class MindbodyCsvParser : ICsvClientParser
 {
-    public List<ImportedClient> Parse(string[] lines)
+    // virtual, and the subclasses below use `override` rather than `new`. They previously hid
+    // this method instead of overriding it, and GetParser hands the instance back as
+    // ICsvClientParser — so interface dispatch always landed here and a subclass body would
+    // never run. Harmless while every subclass merely called base.Parse, but it meant the first
+    // person to add real Vagaro-specific parsing would have written code that silently never
+    // executed. Making it virtual costs nothing and removes that trap.
+    public virtual List<ImportedClient> Parse(string[] lines)
     {
         if (lines.Length < 2) return new();
         var headers = ParseCsvLine(lines[0]);
@@ -315,19 +333,24 @@ public class MindbodyCsvParser : ICsvClientParser
     }
 }
 
+// These three add no behaviour today — the base parser matches columns by header alias
+// (first_name/firstname/first, email/email_address, phone/mobile/cell_phone …), which already
+// handles every export format listed. They exist as named seams for when a platform needs real
+// per-format handling. `override`, not `new`, so that when one of them does grow a body it
+// actually runs; see the note on the base method.
 public class VagaroCsvParser : MindbodyCsvParser
 {
-    public new List<ImportedClient> Parse(string[] lines) => base.Parse(lines);
+    public override List<ImportedClient> Parse(string[] lines) => base.Parse(lines);
 }
 
 public class AcuityCsvParser : MindbodyCsvParser
 {
-    public new List<ImportedClient> Parse(string[] lines) => base.Parse(lines);
+    public override List<ImportedClient> Parse(string[] lines) => base.Parse(lines);
 }
 
 public class GenericCsvParser : MindbodyCsvParser
 {
-    public new List<ImportedClient> Parse(string[] lines) => base.Parse(lines);
+    public override List<ImportedClient> Parse(string[] lines) => base.Parse(lines);
 }
 
 public class MigrationSession

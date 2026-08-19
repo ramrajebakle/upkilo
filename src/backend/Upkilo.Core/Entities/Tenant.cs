@@ -32,6 +32,19 @@ public class Tenant : BaseEntity
     public string? Sector { get; set; }
     public string? Tier { get; set; }
     public bool IsActive { get; set; } = true;
+
+    /// <summary>
+    /// Master switch for automated rebooking reminders. These go out under the tenant's name, to
+    /// the tenant's customers, against the tenant's sending reputation — and the legal duty for
+    /// marketing messages is theirs, not ours. So it has to be theirs to stop.
+    ///
+    /// Defaults to true because it is not the real opt-in: nothing sends until a service is given
+    /// a RebookAfterDays interval, which is null on every service until someone sets it. This is
+    /// the pause — for a closure, a rebrand, or a change of mind — without having to clear the
+    /// interval from every service and then remember what each one was.
+    /// </summary>
+    public bool RebookRemindersEnabled { get; set; } = true;
+
     public bool EnforceTwoFactor { get; set; } // New property for security enforcement
     public bool EnforceTwoFactorForStaff { get; set; }
     public bool EnforceTwoFactorForClients { get; set; }

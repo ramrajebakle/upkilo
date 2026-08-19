@@ -662,6 +662,9 @@ builder.Services.AddScoped<Upkilo.Infrastructure.Jobs.DataWarehouseSyncJob>();
 
 builder.Services.AddScoped<Upkilo.Infrastructure.Services.ClientRetentionService>();
 builder.Services.AddHostedService<Upkilo.Infrastructure.Services.OnboardingDripJob>();
+// Nightly retention nudge: clients whose last visit is older than the service's own
+// RebookAfterDays interval. Consent-gated — see the notes on the job itself.
+builder.Services.AddHostedService<Upkilo.Infrastructure.Services.RebookReminderJob>();
 
 // Phase 2 — Fill My Calendar AI
 builder.Services.AddScoped<Upkilo.Infrastructure.Services.CalendarGapAnalyzer>();

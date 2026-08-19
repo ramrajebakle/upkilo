@@ -571,6 +571,14 @@ public class PublicBookingController : ControllerBase
 
         var primaryLocation = tenant.Locations.FirstOrDefault(l => l.IsPrimary) ?? tenant.Locations.FirstOrDefault();
 
+        // Tell the client what cancelling right now would actually return to them, rather than
+        // making them cancel to find out. The same CanCancel call decides both, so the figure
+        // shown here cannot disagree with the one the cancel endpoint applies.
+        var cancellable = CanCancel(booking, out var penaltyIfCancelledNow);
+        var refundableNow = booking.DepositPaid > 0
+            ? Math.Round(booking.DepositPaid * (1m - penaltyIfCancelledNow / 100m), 2)
+            : 0m;
+
         return Ok(new
         {
             confirmationNumber = $"BK-{booking.Id.ToString()[..8].ToUpper()}",
@@ -583,8 +591,19 @@ public class PublicBookingController : ControllerBase
             staff = booking.Staff != null ? $"{booking.Staff.FirstName} {booking.Staff.LastName}" : "Any Professional",
             location = primaryLocation?.Name ?? tenant.Name,
             address = primaryLocation != null ? $"{primaryLocation.AddressLine1}, {primaryLocation.City}" : null,
-            canCancel = CanCancel(booking, tenant, out _),
-            canReschedule = CanReschedule(booking, tenant)
+            canCancel = cancellable,
+            canReschedule = CanReschedule(booking, tenant),
+            // Refund preview. depositPaid is echoed so the client can show "X of Y refunded"
+            // without a second call, and the policy thresholds so the page can explain why.
+            depositPaid = booking.DepositPaid,
+            refundIfCancelledNow = refundableNow,
+            refundPolicy = booking.Service == null ? null : new
+            {
+                fullRefundHours = booking.Service.FullRefundHours,
+                partialRefundHours = booking.Service.PartialRefundHours,
+                partialRefundPercent = booking.Service.PartialRefundPercent,
+                notes = booking.Service.CancellationPolicy,
+            }
         });
     }
 
@@ -592,7 +611,7 @@ public class PublicBookingController : ControllerBase
     /// Cancel a booking
     /// </summary>
     [HttpPost("cancel/{id}")]
-    public async Task<IActionResult> CancelBooking(string tenantSlug, Guid id, [FromBody] CancelBookingRequest request)
+    public async Task<IActionResult> CancelBooking(string tenantSlug, Guid id, [FromBody] PublicCancelBookingRequest request)
     {
         var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Slug == tenantSlug);
         if (tenant == null) return NotFound();
@@ -604,41 +623,107 @@ public class PublicBookingController : ControllerBase
 
         if (booking == null) return NotFound();
 
-        if (!CanCancel(booking, tenant, out var penaltyPercent))
-            return BadRequest("Cancellation is not allowed for this booking based on the policy.");
-
-        // Process refund if deposit was paid
-        if (booking.DepositPaid > 0 && booking.Payments.Any())
+        // ── Authorisation ────────────────────────────────────────────────────────────────
+        // This endpoint is anonymous by design (clients cancel from an emailed link), so the
+        // booking id was the only thing standing between a stranger and cancelling someone
+        // else's appointment — and, now that cancellation moves money, triggering a refund on
+        // it. Booking ids travel in URLs, confirmation emails, browser history and Referer
+        // headers, so "hard to guess" is not the same as "secret".
+        //
+        // The caller must therefore also present the email the booking was made under.
+        // Mismatches return NotFound rather than Forbid: a distinguishable response would turn
+        // this into an oracle for confirming that a given booking id exists.
+        if (!string.IsNullOrWhiteSpace(booking.CustomerEmail))
         {
-            var successfulPayment = booking.Payments.FirstOrDefault(p => p.Status == PaymentStatus.Succeeded);
-            if (successfulPayment != null && !string.IsNullOrEmpty(successfulPayment.StripePaymentIntentId))
+            if (string.IsNullOrWhiteSpace(request.Email) ||
+                !string.Equals(request.Email.Trim(), booking.CustomerEmail.Trim(), StringComparison.OrdinalIgnoreCase))
             {
-                decimal refundRatio = 1m - (penaltyPercent / 100m);
-                if (refundRatio > 0)
-                {
-                    decimal refundAmount = booking.DepositPaid * refundRatio;
-                    var refundResult = await _paymentService.RefundPaymentAsync(new RefundRequest(
-                        successfulPayment.StripePaymentIntentId,
-                        refundAmount,
-                        "Booking cancellation"
-                    ), tenant.Id);
-
-                    if (refundResult.Success)
-                    {
-                        successfulPayment.RefundAmount = refundAmount;
-                        successfulPayment.Status = refundRatio == 1m ? PaymentStatus.Refunded : PaymentStatus.Partial;
-                        _logger.LogInformation("Refunded {Amount} for booking {BookingId}", refundAmount, booking.Id);
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Failed to refund booking {BookingId}: {Error}", booking.Id, refundResult.Error);
-                    }
-                }
+                _logger.LogWarning("Rejected public cancel for booking {BookingId}: email did not match", booking.Id);
+                return NotFound();
             }
         }
 
+        if (!CanCancel(booking, out var penaltyPercent))
+            return BadRequest("Cancellation is not allowed for this booking based on the policy.");
+
+        // ── Refund ───────────────────────────────────────────────────────────────────────
+        // Refund what was actually captured, never what the booking merely claims. Previously
+        // the amount was computed from booking.DepositPaid and sent against a payment intent
+        // without checking the two agreed, so a DepositPaid larger than the real charge — from
+        // a partial capture, a manual edit, or a failed top-up — would ask Stripe to return
+        // more money than it ever took.
+        //
+        // Payments already refunded are excluded, so a repeated or concurrent cancel cannot
+        // refund the same charge twice.
+        var refundablePayment = booking.Payments
+            .Where(p => p.Status == PaymentStatus.Succeeded)
+            .Where(p => !string.IsNullOrEmpty(p.StripePaymentIntentId))
+            .Where(p => p.RefundedAt == null && p.RefundAmount <= 0m)
+            .OrderByDescending(p => p.Amount)
+            .FirstOrDefault();
+
+        decimal refundIssued = 0m;
+        var refundRatio = 1m - (penaltyPercent / 100m);
+
+        if (refundablePayment != null && refundRatio > 0m)
+        {
+            // The ceiling is what this payment actually captured, less anything already sent
+            // back. DepositPaid is treated as an upper bound on intent, not as the source of
+            // truth for the amount.
+            var capturedRemaining = refundablePayment.Amount - refundablePayment.RefundAmount;
+            var claimBasis = booking.DepositPaid > 0m
+                ? Math.Min(booking.DepositPaid, capturedRemaining)
+                : capturedRemaining;
+
+            var refundAmount = Math.Round(claimBasis * refundRatio, 2, MidpointRounding.ToZero);
+
+            if (refundAmount > 0m && refundAmount <= capturedRemaining)
+            {
+                var refundResult = await _paymentService.RefundPaymentAsync(new RefundRequest(
+                    refundablePayment.StripePaymentIntentId!,
+                    refundAmount,
+                    "Booking cancellation"
+                ), tenant.Id);
+
+                if (refundResult.Success)
+                {
+                    refundablePayment.RefundAmount = refundAmount;
+                    refundablePayment.RefundedAt = DateTime.UtcNow;
+                    refundablePayment.Status = refundAmount >= capturedRemaining
+                        ? PaymentStatus.Refunded
+                        : PaymentStatus.Partial;
+                    refundIssued = refundAmount;
+                    _logger.LogInformation(
+                        "Refunded {Amount} of {Captured} for booking {BookingId}",
+                        refundAmount, refundablePayment.Amount, booking.Id);
+                }
+                else
+                {
+                    // The cancellation still proceeds — the slot must be released either way —
+                    // but this is surfaced rather than swallowed so the money can be chased.
+                    _logger.LogError(
+                        "Refund FAILED for booking {BookingId} ({Amount}): {Error}. Booking cancelled; refund outstanding.",
+                        booking.Id, refundAmount, refundResult.Error);
+                }
+            }
+        }
+        else if (booking.DepositPaid > 0m && refundablePayment == null)
+        {
+            // A deposit is recorded but no unrefunded, succeeded, Stripe-backed payment backs
+            // it. Refunding on that basis would be paying out against an unverified claim.
+            _logger.LogWarning(
+                "Booking {BookingId} reports DepositPaid {Amount} with no refundable payment record; no refund issued.",
+                booking.Id, booking.DepositPaid);
+        }
+
         booking.Status = BookingStatus.Cancelled;
-        // Optionally save reason if we had a column/json for it
+        // These columns existed and were never written — the old code noted "if we had a column"
+        // while CancellationReason, CancelledAt and CancelledBy were all already on the entity,
+        // so every cancellation lost its audit trail.
+        booking.CancelledAt = DateTime.UtcNow;
+        booking.CancellationReason = string.IsNullOrWhiteSpace(request.Reason)
+            ? "Cancelled by client"
+            : request.Reason.Trim();
         await _context.SaveChangesAsync();
 
         // Dispatch Event
@@ -646,11 +731,33 @@ public class PublicBookingController : ControllerBase
         {
             BookingId = booking.Id,
             booking.StartTime,
-            Reason = "User requested via public portal"
+            Reason = booking.CancellationReason,
+            RefundIssued = refundIssued
         }, tenant.Id);
 
-        return Ok(new { message = "Booking cancelled successfully" });
+        // State what was actually refunded rather than a bare success. A client who cancelled
+        // inside the partial window needs to see that they got part of their deposit back, not
+        // discover it from a bank statement days later.
+        return Ok(new
+        {
+            message = "Booking cancelled successfully",
+            refundIssued,
+            depositPaid = booking.DepositPaid,
+            refundPending = refundIssued <= 0m && booking.DepositPaid > 0m
+        });
     }
+
+    /// <summary>
+    /// Cancellation request from the public booking portal.
+    /// </summary>
+    /// <param name="Reason">Optional free-text reason, stored on the booking.</param>
+    /// <param name="Email">
+    /// The email the booking was made under. Required whenever the booking has one: it is the
+    /// only thing proving the caller is the person who booked, on an endpoint that issues
+    /// refunds. Distinct from BookingsController's CancelBookingRequest, which is used by
+    /// authenticated staff and needs no such proof.
+    /// </param>
+    public record PublicCancelBookingRequest(string? Reason, string? Email);
 
     /// <summary>
     /// Reschedule a booking
@@ -689,46 +796,59 @@ public class PublicBookingController : ControllerBase
         }
     }
 
-    private bool CanCancel(Booking booking, Tenant tenant, out decimal penaltyPercent)
+    /// <summary>
+    /// Decides whether a booking may be cancelled and how much of the deposit is kept.
+    /// </summary>
+    /// <param name="penaltyPercent">
+    /// Percentage of the deposit RETAINED by the business. The caller refunds
+    /// (100 - penaltyPercent)%, so 0 here means a full refund and 100 means nothing is returned.
+    /// </param>
+    /// <remarks>
+    /// This previously read four keys off Tenant.Settings —
+    /// booking_notice_period_hours, booking_allow_cancel, booking_late_cancel_allow and
+    /// booking_late_cancel_penalty_percent — that nothing ever wrote. The Booking Policies
+    /// screen saves to Tenant.Settings["booking"] under entirely different names
+    /// (cancellationWindowHours, depositRefundWindowHours, …), so the settings a tenant
+    /// configured and the values enforced here never met: every tenant silently ran on the
+    /// hardcoded fallbacks below regardless of what they had saved, and no cancellation could
+    /// ever earn a partial refund because allowLateCancel defaulted to false with no way to
+    /// turn it on.
+    ///
+    /// The policy now comes from the Service being booked, which is the only place a tenant
+    /// actually sets it.
+    /// </remarks>
+    private static bool CanCancel(Booking booking, out decimal penaltyPercent)
     {
-        penaltyPercent = 0m;
+        penaltyPercent = 100m; // Fail closed: if anything below rejects, no money leaves.
         if (booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Completed) return false;
 
-        // Default: 24h
-        int noticeHours = 24;
-        bool allowCancel = true;
-        decimal latePenalty = 100m; // Default: 100% of deposit is kept if cancelled late
-        bool allowLateCancel = false;
-
-        if (tenant.Settings.TryGetValue("booking_notice_period_hours", out var hoursObj) && int.TryParse(hoursObj.ToString(), out var h))
-            noticeHours = h;
-
-        if (tenant.Settings.TryGetValue("booking_allow_cancel", out var allowObj) && bool.TryParse(allowObj.ToString(), out var a))
-            allowCancel = a;
-
-        if (tenant.Settings.TryGetValue("booking_late_cancel_allow", out var lateAllowObj) && bool.TryParse(lateAllowObj.ToString(), out var la))
-            allowLateCancel = la;
-
-        if (tenant.Settings.TryGetValue("booking_late_cancel_penalty_percent", out var penObj) && decimal.TryParse(penObj.ToString(), out var pen))
-            latePenalty = pen;
-
-        if (!allowCancel) return false;
+        var service = booking.Service;
+        if (service == null) return false; // Cannot evaluate a policy we cannot read.
 
         var hoursUntil = (booking.StartTime - DateTime.UtcNow).TotalHours;
 
-        if (hoursUntil > noticeHours)
+        // Guard against a service saved with the thresholds inverted. Ordering them here means
+        // a misconfiguration cannot produce a window that refunds more the later you cancel.
+        var fullHours = Math.Max(service.FullRefundHours, service.PartialRefundHours);
+        var partialHours = Math.Min(service.FullRefundHours, service.PartialRefundHours);
+        var partialPercent = Math.Clamp(service.PartialRefundPercent, 0m, 100m);
+
+        if (hoursUntil >= fullHours)
         {
-            penaltyPercent = 0m; // Inside free cancellation window
+            penaltyPercent = 0m; // Full refund.
             return true;
         }
 
-        if (allowLateCancel)
+        if (hoursUntil >= partialHours)
         {
-            penaltyPercent = latePenalty; // Late cancellation with penalty
+            penaltyPercent = 100m - partialPercent; // Keep the remainder.
             return true;
         }
 
-        return false;
+        // Inside the final window the booking can still be cancelled — refusing only produces a
+        // no-show, which costs the business the slot AND the goodwill — but the deposit is kept.
+        penaltyPercent = 100m;
+        return true;
     }
 
     private bool CanReschedule(Booking booking, Tenant tenant)

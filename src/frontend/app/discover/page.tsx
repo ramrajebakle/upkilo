@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SearchX } from 'lucide-react';
+import { SearchX, MapPin } from 'lucide-react';
 
 interface Business {
   id: string;
@@ -58,7 +58,13 @@ export default function DiscoverPage() {
           {b.tagline && <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{b.tagline}</p>}
           {b.reviewCount > 0 && <div className="mt-2"><StarRating rating={b.averageRating} count={b.reviewCount} /></div>}
           {b.city && (
-            <p className="text-xs text-gray-400 mt-2">📍 {b.city}{b.country ? `, ${b.country}` : ''}</p>
+            <p className="inline-flex items-center gap-1 text-xs text-gray-600 mt-2">
+              {/* Was a 📍 emoji at text-gray-400. The emoji is a font glyph that renders
+                  differently per platform and is announced as "round pushpin" by screen
+                  readers; gray-400 on white is ~2.8:1, under the 4.5:1 floor. */}
+              <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              {b.city}{b.country ? `, ${b.country}` : ''}
+            </p>
           )}
           {b.industry && (
             <span className="inline-block mt-2 text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">{b.industry}</span>
@@ -80,7 +86,7 @@ export default function DiscoverPage() {
       <section className="bg-gradient-to-br from-primary-600 to-primary-700 text-white py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-3">Find & Book Local Services</h1>
-          <p className="text-primary-100 mb-8">Salons, spas, gyms, therapists — book online in seconds.</p>
+          <p className="text-primary-100 mb-8">Salons, spas, clinics, therapists — book online in seconds.</p>
 
           <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-xl p-2 flex gap-2 flex-wrap md:flex-nowrap">
             <input
@@ -137,7 +143,7 @@ export default function DiscoverPage() {
           <>
             <h2 className="text-xl font-bold text-gray-900 mb-6">Featured Businesses</h2>
             {featured.length === 0 ? (
-              <p className="text-gray-400 text-sm">No featured listings yet.</p>
+              <p className="text-gray-600 text-sm">No featured listings yet.</p>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {featured.map(b => <BusinessCard key={b.id} b={b} />)}
@@ -148,7 +154,10 @@ export default function DiscoverPage() {
             <div className="mt-16">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Browse by Category</h3>
               <div className="flex flex-wrap gap-3">
-                {['Hair & Beauty', 'Wellness & Spa', 'Fitness & Gym', 'Yoga & Pilates', 'Nail Care', 'Massage', 'Skincare', 'Barbershop'].map(cat => (
+                {/* "Fitness & Gym" and "Yoga & Pilates" removed — Upkilo no longer serves that
+                    vertical, and offering the categories here invites searches that return
+                    nothing. */}
+                {['Hair & Beauty', 'Wellness & Spa', 'Nail Care', 'Massage', 'Skincare', 'Barbershop'].map(cat => (
                   <button
                     key={cat}
                     onClick={() => { setQ(cat); }}

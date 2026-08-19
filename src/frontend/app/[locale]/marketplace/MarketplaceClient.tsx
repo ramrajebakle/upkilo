@@ -146,7 +146,8 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {['Wellness', 'Beauty', 'Fitness', 'Automotive', 'Professional', 'Home Services'].map((cat) => (
+            {/* 'Fitness' removed — Upkilo no longer serves that vertical. */}
+            {['Wellness', 'Beauty', 'Automotive', 'Professional', 'Home Services'].map((cat) => (
               <button
                 key={cat}
                 type="button"

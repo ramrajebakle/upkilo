@@ -174,7 +174,9 @@ public class DemoModeController : ControllerBase
                 ("Deep Tissue Massage", "Wellness", 90, 120m, "#7C3AED"),
                 ("Haircut & Style", "Hair", 45, 65m, "#EC4899"),
                 ("Facial Treatment", "Skincare", 60, 95m, "#F59E0B"),
-                ("Yoga Session", "Fitness", 60, 40m, "#10B981"),
+                // Was ("Yoga Session", "Fitness", …) — replaced rather than dropped so the demo
+                // still seeds five services, in a vertical Upkilo actually serves.
+                ("Manicure & Gel Polish", "Nails", 45, 55m, "#10B981"),
             };
 
             foreach (var (name, cat, dur, price, color) in demoServices)

@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { Link } from '@/navigation';
 import { ShieldCheck, Building2, LifeBuoy } from 'lucide-react';
 import { safeJsonLd } from '@/lib/jsonLd';
+import { breadcrumbJsonLd, HOME_CRUMB } from '@/lib/seo';
+
+const BREADCRUMB_JSON_LD = breadcrumbJsonLd([HOME_CRUMB, { name: 'Contact', path: '/en/contact' }]);
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
@@ -88,6 +91,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(CONTACT_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
 
       <section className="mx-auto max-w-3xl px-4 py-20">
         <div className="mb-14">

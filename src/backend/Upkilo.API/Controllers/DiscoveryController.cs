@@ -118,14 +118,32 @@ public class DiscoveryController : ControllerBase
         {
             new { slug = "hair-salons", label = "Hair Salons", keywords = new[] { "hair", "salon", "barber" } },
             new { slug = "nail-salons", label = "Nail Salons", keywords = new[] { "nail", "manicure", "pedicure" } },
-            new { slug = "spas", label = "Spas & Massage", keywords = new[] { "spa", "massage", "wellness" } },
-            new { slug = "fitness", label = "Fitness & Gyms", keywords = new[] { "gym", "fitness", "yoga", "pilates" } },
-            new { slug = "beauty", label = "Beauty & Makeup", keywords = new[] { "beauty", "makeup", "cosmetic" } },
+            new { slug = "spas", label = "Spas", keywords = new[] { "spa", "wellness" } },
+            // Massage split out of "spas": it was only reachable as a spa keyword, so a business
+            // that calls itself a massage clinic had no category of its own to rank in.
+            new { slug = "massage", label = "Massage", keywords = new[] { "massage", "bodywork", "sports massage" } },
+            // "fitness" (Fitness & Gyms — gym/fitness/yoga/pilates) removed: Upkilo no longer
+            // serves that vertical. This list drives the public /book/{category}/{city} pages and
+            // the discovery sitemap, so leaving it here would keep publishing landing pages for
+            // businesses the product does not support. "personal-training" went with it — same
+            // vertical, same reason.
+            new { slug = "beauty", label = "Beauty & Aesthetic Clinics", keywords = new[] { "beauty", "makeup", "cosmetic", "aesthetic clinic" } },
             new { slug = "tattoo", label = "Tattoo & Piercing", keywords = new[] { "tattoo", "piercing", "ink" } },
-            new { slug = "medical-aesthetics", label = "Medical Aesthetics", keywords = new[] { "botox", "filler", "laser", "aesthetics" } },
-            new { slug = "personal-training", label = "Personal Training", keywords = new[] { "personal trainer", "training", "coaching" } },
+            new { slug = "medical-aesthetics", label = "Med Spas & Medical Aesthetics", keywords = new[] { "med spa", "medspa", "botox", "filler", "laser", "aesthetics" } },
+            // Physiotherapy and chiropractic are appointment-led clinical practices: recurring
+            // visits, treatment plans and insurance pre-auth, all of which the medical vertical
+            // already covers. They are listed separately rather than folded into "therapy",
+            // which here means counselling and psychology.
+            new { slug = "physiotherapy", label = "Physiotherapy", keywords = new[] { "physio", "physiotherapy", "physical therapy", "rehab" } },
+            new { slug = "chiropractic", label = "Chiropractic", keywords = new[] { "chiro", "chiropractic", "chiropractor" } },
             new { slug = "therapy", label = "Therapy & Counselling", keywords = new[] { "therapy", "counselling", "psychology" } },
             new { slug = "dental", label = "Dental", keywords = new[] { "dental", "dentist", "orthodont" } },
+            // Auto detailing is the one category here where the work is done on a vehicle rather
+            // than a person. It earns its place on the same mechanics as the rest — long,
+            // variable job durations, bay and technician scheduling, deposits on high-value work —
+            // and is supported by the Vehicle record and per-vehicle-class pricing, so a quote
+            // reflects an SUV taking longer than a coupe.
+            new { slug = "auto-detailing", label = "Auto Detailing", keywords = new[] { "detailing", "car detailing", "auto detail", "ceramic coating", "paint correction", "car wash" } },
         };
 
         return Ok(new { categories });
@@ -463,26 +481,57 @@ public class DiscoveryController : ControllerBase
     {
         "hair-salons" => new() { "hair", "salon", "barber" },
         "nail-salons" => new() { "nail", "manicure", "pedicure" },
-        "spas" => new() { "spa", "massage", "wellness" },
-        "fitness" => new() { "gym", "fitness", "yoga", "pilates" },
-        "beauty" => new() { "beauty", "makeup", "cosmetic" },
+        "spas" => new() { "spa", "wellness" },
+        "massage" => new() { "massage", "bodywork", "sports massage" },
+        // "fitness" and "personal-training" removed — see GetCategories. An unmatched slug falls
+        // through to the empty default, so a stale /book/fitness/... URL now resolves to no
+        // keywords and no results rather than silently continuing to serve the retired category.
+        "beauty" => new() { "beauty", "makeup", "cosmetic", "aesthetic clinic" },
         "tattoo" => new() { "tattoo", "piercing" },
-        "medical-aesthetics" => new() { "botox", "filler", "laser", "aesthetics" },
-        "personal-training" => new() { "personal trainer", "training", "coaching" },
+        "medical-aesthetics" => new() { "med spa", "medspa", "botox", "filler", "laser", "aesthetics" },
+        "physiotherapy" => new() { "physio", "physiotherapy", "physical therapy", "rehab" },
+        "chiropractic" => new() { "chiro", "chiropractic", "chiropractor" },
         "therapy" => new() { "therapy", "counselling", "psychology" },
         "dental" => new() { "dental", "dentist" },
+        "auto-detailing" => new() { "detailing", "car detailing", "auto detail", "ceramic coating", "paint correction", "car wash" },
         _ => new()
     };
 
+    /// <summary>
+    /// Maps a tenant's own industry/business-type text onto the discovery categories it belongs in.
+    /// </summary>
+    /// <remarks>
+    /// This decides which tenants a /book/{category}/{city} page can list, and therefore which of
+    /// those pages the sitemap advertises at all. It previously covered only five of the ten
+    /// categories GetCategories published: medical-aesthetics, therapy and dental had no mapping,
+    /// so no tenant could ever be placed in them and those landing pages could only ever come out
+    /// empty. The sitemap fails closed on empty categories, so the symptom was silent — the pages
+    /// simply never earned any traffic.
+    ///
+    /// Med spa is tested before the generic spa check and excluded from it: "med spa" contains
+    /// "spa", so without that the most clinical businesses on the platform would be filed under
+    /// general wellness.
+    /// </remarks>
     private static IEnumerable<string> GetCategorySlug(string? industry, string? businessType)
     {
         var combined = $"{industry} {businessType}".ToLowerInvariant();
+
+        var isMedSpa = combined.Contains("med spa") || combined.Contains("medspa")
+            || combined.Contains("medical spa") || combined.Contains("aesthetic")
+            || combined.Contains("botox") || combined.Contains("filler") || combined.Contains("laser");
+
         if (combined.Contains("hair") || combined.Contains("salon") || combined.Contains("barber")) yield return "hair-salons";
-        if (combined.Contains("nail") || combined.Contains("mani")) yield return "nail-salons";
-        if (combined.Contains("spa") || combined.Contains("massage")) yield return "spas";
-        if (combined.Contains("gym") || combined.Contains("fitness") || combined.Contains("yoga")) yield return "fitness";
-        if (combined.Contains("beauty") || combined.Contains("makeup")) yield return "beauty";
+        if (combined.Contains("nail") || combined.Contains("mani") || combined.Contains("pedi")) yield return "nail-salons";
+        if (isMedSpa) yield return "medical-aesthetics";
+        if (!isMedSpa && combined.Contains("spa")) yield return "spas";
+        if (combined.Contains("massage") || combined.Contains("bodywork")) yield return "massage";
+        if (combined.Contains("beauty") || combined.Contains("makeup") || combined.Contains("cosmetic")) yield return "beauty";
         if (combined.Contains("tattoo") || combined.Contains("piercing")) yield return "tattoo";
+        if (combined.Contains("physio") || combined.Contains("physical therapy") || combined.Contains("rehab")) yield return "physiotherapy";
+        if (combined.Contains("chiro")) yield return "chiropractic";
+        if (combined.Contains("counsel") || combined.Contains("psycholog") || combined.Contains("therapist")) yield return "therapy";
+        if (combined.Contains("dental") || combined.Contains("dentist") || combined.Contains("orthodont")) yield return "dental";
+        if (combined.Contains("detail") || combined.Contains("car wash") || combined.Contains("ceramic coating")) yield return "auto-detailing";
     }
 
     private static string FormatCategory(string slug) =>

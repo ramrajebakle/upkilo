@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Upkilo Canada — Booking Software for Canadian Service Businesses',
-  description: 'Booking, client records and payments for Canadian salons, spas, gyms and clinics. Province-aware tax handling, CASL-compliant messaging and English/French booking pages.',
+  description: 'Booking, client records and payments for Canadian salons, spas and clinics. Province-aware tax handling, CASL-compliant messaging and English/French booking pages.',
   alternates: { canonical: 'https://upkilo.com/ca' },
   openGraph: {
     title: 'Upkilo Canada — Booking Software for Canadian Businesses',
@@ -43,10 +43,10 @@ export default function CanadaPage() {
             Booking software designed for Canadian service businesses
           </h1>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Province-aware tax, CASL-compliant SMS, and CAD pricing — everything Canadian businesses need.
+            Province-aware tax, CASL-compliant SMS and local scheduling — everything Canadian businesses need.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register?locale=en-CA&currency=CAD"
+            <Link href="/register?locale=en-CA"
               className="bg-white text-red-700 font-bold px-8 py-3 rounded-lg hover:bg-red-50 transition">
               Démarrer / Start Free Trial
             </Link>
@@ -79,8 +79,10 @@ export default function CanadaPage() {
       {/* Pricing */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">Simple CAD pricing</h2>
-          <p className="text-center text-gray-600 mb-12">Tax-inclusive pricing. Cancel anytime.</p>
+          {/* Heading said "Simple CAD pricing" / "Tax-inclusive" directly above USD plan cards.
+              Upkilo bills exclusively in USD, exclusive of tax. */}
+          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">Simple, transparent pricing</h2>
+          <p className="text-center text-gray-600 mb-12">Prices in USD, excluding applicable taxes. Cancel anytime.</p>
           <div className="grid md:grid-cols-3 gap-8">
             {plans.map((p) => (
               <div key={p.name} className={`rounded-2xl p-8 ${p.highlight ? 'bg-red-700 text-white shadow-xl scale-105' : 'bg-white border border-gray-200'}`}>
@@ -94,7 +96,7 @@ export default function CanadaPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href={`/register?plan=${p.name.toLowerCase()}&locale=en-CA&currency=CAD`}
+                <Link href={`/register?plan=${p.name.toLowerCase()}&locale=en-CA`}
                   className={`block text-center py-3 rounded-lg font-semibold transition ${p.highlight ? 'bg-white text-red-700 hover:bg-red-50' : 'bg-red-700 text-white hover:bg-red-600'}`}>
                   Get Started
                 </Link>
@@ -116,7 +118,7 @@ export default function CanadaPage() {
             messaging flow.
           </p>
           <div className="mt-12">
-            <Link href="/register?locale=en-CA&currency=CAD"
+            <Link href="/register?locale=en-CA"
               className="bg-red-700 text-white font-bold px-10 py-4 rounded-lg hover:bg-red-600 transition text-lg">
               Start your free 14-day trial →
             </Link>

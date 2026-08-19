@@ -1,4 +1,23 @@
 import React from 'react';
+import type { Metadata } from 'next';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
+
+// This page carried no metadata at all, so search engines wrote their own title and snippet
+// from the body text. Legal pages are a common trust check before signup — they should resolve
+// to one canonical URL rather than one per locale prefix.
+export const metadata: Metadata = {
+  title: 'Privacy Policy — Upkilo',
+  description:
+    'How Upkilo collects, processes, stores and deletes personal data. Covers the DPDP Act 2023 (India), GDPR, UK GDPR and CCPA, plus data export and erasure rights.',
+  alternates: { canonical: `${SITE_URL}/en/privacy-policy` },
+  openGraph: {
+    title: 'Privacy Policy — Upkilo',
+    description: 'How Upkilo collects, processes, stores and deletes personal data.',
+    url: `${SITE_URL}/en/privacy-policy`,
+    type: 'website',
+  },
+};
 
 export default function PrivacyPolicyPage() {
     return (

@@ -7,6 +7,8 @@ import React from "react";
 import Link from "next/link";
 import { Check, Shield, Lock, FileCheck, Heart, Users, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { safeJsonLd } from "@/lib/jsonLd";
+import { breadcrumbJsonLd, HOME_CRUMB } from "@/lib/seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://upkilo.com";
 
@@ -54,9 +56,35 @@ const medSpaUseCases = [
 // Replaced with a claim that is true today and needs no attribution. Restore a real
 // quote here only with a named, consenting customer.
 
+// Service rather than SoftwareApplication: this is a vertical landing page describing what
+// Upkilo does *for medical spas*, not a second software product. Declaring another
+// SoftwareApplication would describe a distinct application that does not exist and split the
+// entity; a Service provided by the existing Organization is what this page actually is.
+//
+// serviceType and audience carry the vertical, which is the part an engine needs in order to
+// return this page for "booking software for medical spas" rather than the generic homepage.
+const MEDICAL_SPA_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Upkilo for Medical Spas',
+  serviceType: 'Medical spa booking and client management software',
+  description:
+    'Booking and client management for medical spas and aesthetic clinics, with digital waivers, contraindication tracking, treatment photos and a compliance audit trail.',
+  url: `${SITE_URL}/en/medical-spa`,
+  provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
+  audience: { '@type': 'BusinessAudience', name: 'Medical spas and aesthetic clinics' },
+};
+
+const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
+  HOME_CRUMB,
+  { name: 'Medical Spas', path: '/en/medical-spa' },
+]);
+
 export default function MedicalSpaPage() {
   return (
     <div className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(MEDICAL_SPA_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
       {/* Hero */}
       <section className="bg-gradient-to-br from-rose-50 to-pink-50 py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
