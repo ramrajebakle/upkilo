@@ -785,7 +785,7 @@ export default async function HomePage() {
           <Reveal delay={0.2}>
             <div className="mt-14 grid gap-4 sm:grid-cols-3">
               {[
-                { icon: Mail, label: 'Email us', value: 'hello@upkilo.com', href: 'mailto:hello@upkilo.com' },
+                { icon: Mail, label: 'Email us', value: 'support@upkilo.com', href: 'mailto:support@upkilo.com' },
                 { icon: MessageCircle, label: 'Live chat', value: 'Mon–Sat, 9am–9pm', href: '/register' },
                 { icon: Phone, label: 'Talk to sales', value: 'Book a demo', href: '/contact' },
               ].map((c) => (
