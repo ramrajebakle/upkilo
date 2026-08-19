@@ -106,14 +106,43 @@ jobs:
       # Generates the native android/ project from app.json (android.package is already
       # set there) so every step after this can assume it exists, exactly as a bare/prebuilt
       # React Native project would. --non-interactive: no TTY on a runner to answer prompts.
-      #
-      # This is the minimum change to make the job reach its own build step. It has not
-      # been run end-to-end here — a config plugin that needs a credential file not present
-      # in this repo (e.g. google-services.json) would still fail prebuild itself, which
-      # would surface as a new, different error at this step rather than the cache-glob
-      # error above.
       - name: Expo prebuild (generate native Android project)
         run: npx expo prebuild --platform android --non-interactive
+
+      # The wrapper prebuild generates pins Gradle 8.14.3, but the Android Gradle Plugin
+      # version prebuild ALSO generates into android/build.gradle requires >= 9.4.1 --
+      # an internal inconsistency in this expo/react-native version's own templates, not
+      # something under this repo's control.
+      #
+      # This edits gradle-wrapper.properties directly rather than running
+      # `./gradlew wrapper --gradle-version 9.4.1`: that command still executes on the OLD
+      # 8.14.3 binary, and Gradle's configuration phase evaluates every subproject --
+      # including :app -- before running ANY task, regardless of which one was requested.
+      # :app applies AGP, whose own version-check plugin is exactly what refused to
+      # configure under Gradle 8.14.3 in the first place ("A problem occurred evaluating
+      # project ':app'"), so invoking gradlew at all on the old binary hits the same wall
+      # before it could ever update itself. Patching the file directly needs no Gradle
+      # invocation, so there is nothing for that check to block.
+      # node, not sed: the value needed here is "https\://..." (Java .properties escapes ':'
+      # as '\:', which every real gradle-wrapper.properties file already does for its
+      # scheme separator), and getting a literal single backslash through both a bash
+      # single-quoted string AND a sed replacement is two stacked, easy-to-get-wrong
+      # escaping layers. A JS regex replacement on the file's actual text has one
+      # unambiguous escaping rule.
+      - name: Fix generated Gradle wrapper version (AGP requires >= 9.4.1)
+        run: |
+          node -e "
+            const fs = require('fs');
+            const p = 'android/gradle/wrapper/gradle-wrapper.properties';
+            const before = fs.readFileSync(p, 'utf8');
+            const after = before.replace(
+              /^distributionUrl=.*$/m,
+              'distributionUrl=https\\\\://services.gradle.org/distributions/gradle-9.4.1-bin.zip'
+            );
+            if (before === after) { throw new Error('distributionUrl line not found/replaced'); }
+            fs.writeFileSync(p, after);
+            console.log(after.match(/^distributionUrl=.*$/m)[0]);
+          "
 
       - name: Setup Java ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v5
