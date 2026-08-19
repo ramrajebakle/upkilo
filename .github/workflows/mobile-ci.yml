@@ -107,11 +107,20 @@ jobs:
       # set there) so every step after this can assume it exists, exactly as a bare/prebuilt
       # React Native project would. --non-interactive: no TTY on a runner to answer prompts.
       #
-      # This is the minimum change to make the job reach its own build step. It has not
-      # been run end-to-end here — a config plugin that needs a credential file not present
-      # in this repo (e.g. google-services.json) would still fail prebuild itself, which
-      # would surface as a new, different error at this step rather than the cache-glob
-      # error above.
+      # There was previously a step here that force-bumped the generated Gradle wrapper to
+      # 9.4.1, worked around a Kotlin-compiler-version crash that forced, then hit an
+      # unreleased-upstream-fix dead end. All three symptoms traced back to one real bug in
+      # THIS repo, not Expo: package.json had react-native pinned six minor versions past
+      # what expo ~54.0.36 was ever built or tested against (0.87.0 vs the 0.81.5 Expo SDK
+      # 54 actually bundles — see expo/expo's bundledNativeModules.json for that SDK line),
+      # plus expo-secure-store and expo-localization independently bumped past their SDK-54
+      # pairing (probably by an unguarded dependabot "mobile-major" bump treating each
+      # expo-* package as independently semver-bumpable, which Expo's own docs explicitly
+      # warn against). With the correct pairing restored, `expo prebuild` generates its
+      # default, unmodified Gradle 8.14.3 wrapper again — confirmed locally, prebuild run
+      # against the corrected package.json produces distributionUrl=...gradle-8.14.3...
+      # with no AGP-version-check failure. Forcing 9.4.1 here now would reintroduce a
+      # mismatch in the other direction, so it stays removed.
       - name: Expo prebuild (generate native Android project)
         run: npx expo prebuild --platform android --non-interactive
 
