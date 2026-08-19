@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Share2, Plus, Clock, CheckCircle2, AlertCircle, Loader2, RefreshCw, Instagram, Twitter, Facebook } from "lucide-react";
+import { Share2, Plus, Clock, CheckCircle2, AlertCircle, Loader2, RefreshCw } from "lucide-react";
+import { FaInstagram, FaXTwitter, FaFacebook } from "react-icons/fa6";
 import { apiClient } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -19,9 +20,9 @@ interface SocialPost {
 }
 
 const PLATFORM_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
-  Instagram: Instagram,
-  Twitter: Twitter,
-  Facebook: Facebook,
+  Instagram: FaInstagram,
+  Twitter: FaXTwitter,
+  Facebook: FaFacebook,
   All: Share2,
 };
 

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Share2, Link2, Instagram, ExternalLink, Loader2, Save, RefreshCw, Copy } from "lucide-react";
+import { Share2, Link2, ExternalLink, Loader2, Save, RefreshCw, Copy } from "lucide-react";
+import { FaInstagram } from "react-icons/fa6";
 import { apiClient } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -73,7 +74,7 @@ export default function BioLinkPage() {
           )}
 
           <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><Instagram className="h-4 w-4" /> Bio Link Settings</CardTitle>
+            <CardHeader><CardTitle className="flex items-center gap-2"><FaInstagram className="h-4 w-4" /> Bio Link Settings</CardTitle>
               <CardDescription>Customize what people see when they visit your link-in-bio</CardDescription></CardHeader>
             <CardContent className="space-y-4">
               <div>
