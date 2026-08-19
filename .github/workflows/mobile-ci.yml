@@ -92,6 +92,29 @@ jobs:
           cache: npm
           cache-dependency-path: src/mobile/package-lock.json
 
+      # Moved ahead of "Setup Java": this is an Expo-managed project with no android/
+      # directory checked in, and Setup Java's cache: gradle option globs for
+      # **/*.gradle*, **/gradle-wrapper.properties etc. across the whole checkout to build
+      # its cache key. With no android/ yet, that glob matches nothing, which
+      # actions/setup-java treats as a hard error ("No file in ... matched to [...]") —
+      # not a warning — and the job was failing there, before ever reaching the gradlew
+      # invocation four steps later that would have failed for the same underlying reason
+      # (cd android: No such file or directory).
+      - name: Install dependencies
+        run: npm ci
+
+      # Generates the native android/ project from app.json (android.package is already
+      # set there) so every step after this can assume it exists, exactly as a bare/prebuilt
+      # React Native project would. --non-interactive: no TTY on a runner to answer prompts.
+      #
+      # This is the minimum change to make the job reach its own build step. It has not
+      # been run end-to-end here — a config plugin that needs a credential file not present
+      # in this repo (e.g. google-services.json) would still fail prebuild itself, which
+      # would surface as a new, different error at this step rather than the cache-glob
+      # error above.
+      - name: Expo prebuild (generate native Android project)
+        run: npx expo prebuild --platform android --non-interactive
+
       - name: Setup Java ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v5
         with:
@@ -101,9 +124,6 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Install Detox CLI
         run: npm install -g detox-cli
