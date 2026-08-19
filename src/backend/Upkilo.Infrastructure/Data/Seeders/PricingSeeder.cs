@@ -7,6 +7,12 @@ public static class PricingSeeder
 {
     public static async Task SeedAsync(AppDbContext context)
     {
+        // Add-ons seed independently of the tiers. Guarding them behind the PricingPlans check
+        // below would mean they never appear on any database seeded before add-ons existed —
+        // i.e. every environment already running — leaving the pricing page with nothing to
+        // render for them.
+        await SeedAddOnsAsync(context);
+
         if (await context.PricingPlans.AnyAsync())
             return; // Already seeded
 
@@ -172,6 +178,47 @@ public static class PricingSeeder
             new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fMarketingAutomation, IsEnabled = true },
             new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fShowBranding, IsEnabled = false },
             new PlanFeatureMapping { PricingPlan = enterprise, PricingFeature = fAgencyManagement, NumericLimit = null, IsEnabled = true }
+        );
+
+        await context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Add-ons — sold alongside the tiers so customers scale without a forced upgrade.
+    /// </summary>
+    private static async Task SeedAddOnsAsync(AppDbContext context)
+    {
+        if (await context.PricingAddOns.AnyAsync())
+            return; // Already seeded
+
+        // These amounts are what the marketing pricing page advertises. The actual charge is
+        // still driven by Stripe Price IDs (StripeExtraStaffPriceId / StripeExtraLocationPriceId
+        // and the metered usage prices), so THESE MUST BE KEPT IN STEP WITH STRIPE. Verify both
+        // before launch — an advertised price that undercuts the Stripe price is the same defect
+        // that had Business advertised at $149 while the database charged $199.
+        //
+        // Amounts are derived from the tier economics in SeedAsync rather than picked freely:
+        //  - Extra staff $19/seat: Growth implies $19.96/seat (499 ÷ 25) and Starter $14.90
+        //    (149 ÷ 10). Pricing the add-on at $19 keeps a bought seat marginally cheaper than
+        //    Growth's implied rate without making seat-stacking beat upgrading outright. The old
+        //    PlanFeatures.ExtraStaffPrice default of $5 dates from the withdrawn $39 tier — at
+        //    current tiers it would let a customer buy 15 seats for $75 instead of upgrading.
+        //  - Extra location $49: the Growth benchmark note there prices the tier at ~$50/location.
+        //    (PlanFeatures.ExtraLocationPrice defaults to $19, stale for the same reason.)
+        //  - AI and SMS credits are metered; $10 per 1,000 units keeps margin over provider cost
+        //    (Twilio US SMS is ~$0.0079) while staying legible as a round number.
+        //
+        // Agency sub-accounts and premium support are announced but not yet purchasable:
+        // IsAvailable=false renders them "Coming soon" instead of as buyable today. They carry no
+        // Amount because quoting a price for something with no checkout path would be a promise
+        // we cannot honour.
+        context.PricingAddOns.AddRange(
+            new PricingAddOn { Key = "extra_staff", Name = "Extra Staff", BillingUnit = "per seat / month", Amount = 19, CurrencyCode = "USD", IsAvailable = true, SortOrder = 1 },
+            new PricingAddOn { Key = "extra_locations", Name = "Extra Locations", BillingUnit = "per location / month", Amount = 49, CurrencyCode = "USD", IsAvailable = true, SortOrder = 2 },
+            new PricingAddOn { Key = "ai_credits", Name = "AI Credits", BillingUnit = "per 1,000 actions", Amount = 10, CurrencyCode = "USD", IsAvailable = true, SortOrder = 3 },
+            new PricingAddOn { Key = "sms_credits", Name = "SMS Credits", BillingUnit = "per 1,000 messages", Amount = 10, CurrencyCode = "USD", IsAvailable = true, SortOrder = 4 },
+            new PricingAddOn { Key = "agency_sub_accounts", Name = "Agency Sub-Accounts", BillingUnit = "per account / month", Amount = null, CurrencyCode = "USD", IsAvailable = false, SortOrder = 5 },
+            new PricingAddOn { Key = "premium_support", Name = "Premium Support", BillingUnit = "monthly", Amount = null, CurrencyCode = "USD", IsAvailable = false, SortOrder = 6 }
         );
 
         await context.SaveChangesAsync();

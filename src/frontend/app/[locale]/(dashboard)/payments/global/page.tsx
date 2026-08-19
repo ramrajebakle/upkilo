@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Globe, CreditCard, Loader2, CheckCircle2, Info } from "lucide-react";
 import { apiClient } from "@/lib/api";
+import { useTenantCurrency } from "@/hooks/useTenantCurrency";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
@@ -23,7 +24,16 @@ export default function GlobalPaymentsPage() {
   const [compliance, setCompliance] = useState<ComplianceInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [initiating, setInitiating] = useState(false);
-  const [payForm, setPayForm] = useState({ amount: "", currency: "INR", methodId: "", description: "" });
+  // Defaulted to a hardcoded "INR", which charged the wrong currency for any tenant not
+  // billing in rupees. The tenant's own configured currency is the only correct default here
+  // (useTenantCurrency falls back to USD until it loads, or if the settings call fails).
+  const tenantCurrency = useTenantCurrency();
+  const [payForm, setPayForm] = useState({ amount: "", currency: "", methodId: "", description: "" });
+
+  // Seed the field once the tenant currency resolves, without clobbering a typed override.
+  useEffect(() => {
+    setPayForm((p) => (p.currency ? p : { ...p, currency: tenantCurrency }));
+  }, [tenantCurrency]);
 
   const fetchMethods = async (code: string) => {
     setLoading(true);
@@ -44,7 +54,7 @@ export default function GlobalPaymentsPage() {
     setInitiating(true);
     try {
       await apiClient.post("/api/v1/global-payments/initiate", { ...payForm, countryCode, amount: Number(payForm.amount) });
-      toastSuccess("Payment initiated"); setPayForm({ amount: "", currency: "INR", methodId: "", description: "" });
+      toastSuccess("Payment initiated"); setPayForm({ amount: "", currency: tenantCurrency, methodId: "", description: "" });
     } catch (e: any) { toastError(e?.response?.data?.error ?? "Initiation failed"); }
     finally { setInitiating(false); }
   };
@@ -122,7 +132,7 @@ export default function GlobalPaymentsPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-text-primary mb-1">Currency</label>
-                    <input value={payForm.currency} onChange={(e) => setPayForm((p) => ({ ...p, currency: e.target.value }))} placeholder="INR"
+                    <input value={payForm.currency} onChange={(e) => setPayForm((p) => ({ ...p, currency: e.target.value }))} placeholder={tenantCurrency}
                       className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-surface-50 text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
                   </div>
                 </div>

@@ -16,7 +16,17 @@ on:
     branches: [main, develop]
     paths:
       - 'src/mobile/**'
+      # Kept in step with the push filter above: a change to this file must be
+      # validated by the run that changes it, on PRs as well as on pushes.
+      - '.github/workflows/mobile-ci.yml'
   workflow_dispatch:
+
+# Path filters on the TRIGGER are the cheapest possible change detection — a run that
+# never starts bills nothing at all. The Expo app has no dependency on src/backend or
+# src/frontend, so it needs none of detect-changes.yml's cross-component reasoning and
+# deliberately does not call it.
+permissions:
+  contents: read
 
 env:
   NODE_VERSION: '20.x'
@@ -27,6 +37,7 @@ jobs:
   mobile-lint-and-types:
     name: Mobile Lint & TypeCheck
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # Skips the pull_request-triggered run when the PR's head branch already triggers this
     # workflow directly via `push` (same list as `on: push: branches:` above — keep in
     # sync). Without this, a PR from ramraje touching src/mobile/** runs this job twice for
@@ -136,6 +147,7 @@ jobs:
   eas-build-check:
     name: EAS Build Validation
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # Same anti-duplicate-run condition as mobile-lint-and-types above (keep both in sync).
     if: |
       github.event_name == 'push' ||

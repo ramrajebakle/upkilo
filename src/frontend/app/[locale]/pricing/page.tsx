@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { PRICING_FAQS } from "@/lib/pricingFaqs";
 
 // ⚠️ These figures MUST match PricingSeeder.cs. They are currently duplicated: the seeder
 // is the billing source of truth, this array only renders the page. That duplication is
@@ -51,16 +52,46 @@ const plans = [
 ];
 
 // Sold alongside the tiers so customers scale without being forced into a higher plan.
-// Extra staff, extra locations, AI credits and SMS credits are wired end-to-end today
-// (ExtraStaffCount / ExtraLocationCount and Stripe metered usage). The rest are roadmap.
-const addOns = [
-  { name: "Extra Staff", billing: "per seat / month" },
-  { name: "Extra Locations", billing: "per location / month" },
-  { name: "AI Credits", billing: "usage based" },
-  { name: "SMS Credits", billing: "usage based" },
-  { name: "Agency Sub-Accounts", billing: "per account / month" },
-  { name: "Premium Support", billing: "monthly" },
+//
+// These cards used to render a billing cadence with no amount next to it, because no add-on
+// price existed anywhere in the codebase — only a Stripe Price ID per environment. Prices now
+// come from GET /api/v1/billing/addons (seeded by PricingSeeder.SeedAddOnsAsync), which is the
+// published-price source of truth.
+//
+// The array below is the offline fallback, used only if that call fails: an empty section reads
+// as broken, and this is the same catalogue the seeder writes. It MUST be kept in step with
+// PricingSeeder — same duplication caveat as the tiers above.
+interface AddOn {
+  key: string;
+  name: string;
+  billingUnit: string;
+  amount: number | null;
+  currency: string;
+  isAvailable: boolean;
+}
+
+const FALLBACK_ADDONS: AddOn[] = [
+  { key: "extra_staff", name: "Extra Staff", billingUnit: "per seat / month", amount: 19, currency: "USD", isAvailable: true },
+  { key: "extra_locations", name: "Extra Locations", billingUnit: "per location / month", amount: 49, currency: "USD", isAvailable: true },
+  { key: "ai_credits", name: "AI Credits", billingUnit: "per 1,000 actions", amount: 10, currency: "USD", isAvailable: true },
+  { key: "sms_credits", name: "SMS Credits", billingUnit: "per 1,000 messages", amount: 10, currency: "USD", isAvailable: true },
+  { key: "agency_sub_accounts", name: "Agency Sub-Accounts", billingUnit: "per account / month", amount: null, currency: "USD", isAvailable: false },
+  { key: "premium_support", name: "Premium Support", billingUnit: "monthly", amount: null, currency: "USD", isAvailable: false },
 ];
+
+// Upkilo bills exclusively in USD, but the code is formatted from the row rather than assumed —
+// an amount rendered without the currency it is denominated in is how "₹X,XXX" shipped before.
+function formatAddOnPrice(amount: number, currency: string): string {
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `${currency} ${amount}`;
+  }
+}
 
 // Replaces the former Agency tier. Agency carried identical limits to Business and differed
 // only by 20 sub-accounts for $100/mo more — not a defensible tier. Sub-accounts are now an
@@ -82,6 +113,26 @@ const enterprisePlan = {
 
 export default function PricingPage() {
   const [annual, setAnnual] = useState(true);
+  const [addOns, setAddOns] = useState<AddOn[]>(FALLBACK_ADDONS);
+
+  useEffect(() => {
+    const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    let active = true;
+    fetch(`${base}/api/v1/billing/addons`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body) => {
+        const rows: AddOn[] = body?.data ?? [];
+        // Keep the fallback on an empty response — a database seeded before add-ons existed
+        // returns [], and rendering nothing there is worse than rendering the known catalogue.
+        if (active && rows.length > 0) setAddOns(rows);
+      })
+      .catch(() => {
+        /* keep fallback */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
@@ -188,14 +239,75 @@ export default function PricingPage() {
             Need more than your plan includes? Add exactly what you use — no forced upgrade.
           </p>
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Unavailable add-ons are distinguished by surface and border rather than by
+                dimming the whole card: opacity-50 over this text would push it under the 4.5:1
+                contrast floor, trading one defect for another. The "Coming soon" wording carries
+                the state on its own, so nothing here depends on colour alone. */}
             {addOns.map((a) => (
-              <div key={a.name} className="rounded-xl border border-gray-200 dark:border-gray-800 px-5 py-4 flex items-center justify-between">
-                <span className="font-medium text-sm">{a.name}</span>
-                <span className="text-xs text-gray-500">{a.billing}</span>
+              <div
+                key={a.key}
+                className={`rounded-xl px-5 py-4 flex items-center justify-between gap-4 ${
+                  a.isAvailable
+                    ? "border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
+                    : "border border-dashed border-gray-300 dark:border-gray-700 bg-transparent"
+                }`}
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{a.name}</span>
+                    {!a.isAvailable && (
+                      <span className="shrink-0 rounded-full bg-gray-200 dark:bg-gray-800 px-2 py-0.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                        Coming soon
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">{a.billingUnit}</p>
+                </div>
+                {/* No amount = nothing published yet (roadmap add-ons). Showing a price there
+                    would promise a checkout path that does not exist. */}
+                {a.amount != null ? (
+                  <span className="shrink-0 text-lg font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                    {formatAddOnPrice(a.amount, a.currency)}
+                  </span>
+                ) : (
+                  <span className="shrink-0 text-xs font-medium text-gray-600 dark:text-gray-400">
+                    Contact sales
+                  </span>
+                )}
               </div>
             ))}
           </div>
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Add-on prices are in USD, excluding applicable taxes, and are billed on top of your plan.
+          </p>
         </div>
+
+        {/* Rendered from the same PRICING_FAQS array the layout emits as FAQPage JSON-LD.
+            Native <details>/<summary> rather than a JS accordion: it is keyboard-operable and
+            expandable without hydration, and crawlers read the answer text whether or not the
+            item is open — a div toggled by useState would ship the same markup but depend on
+            client JS for something that needs none. */}
+        <section className="mt-20 max-w-3xl mx-auto" aria-labelledby="pricing-faq-heading">
+          <h2 id="pricing-faq-heading" className="text-2xl font-bold text-center tracking-tight text-gray-900">
+            Pricing questions
+          </h2>
+          <div className="mt-8 divide-y divide-gray-200 rounded-2xl bg-white ring-1 ring-gray-200">
+            {PRICING_FAQS.map((faq) => (
+              <details key={faq.question} className="group px-6 py-5">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 list-none font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded">
+                  {faq.question}
+                  <span
+                    aria-hidden="true"
+                    className="shrink-0 text-gray-500 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm leading-6 text-gray-600">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

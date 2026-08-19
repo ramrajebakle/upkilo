@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Link } from '@/navigation';
-import { Globe, ArrowRight } from 'lucide-react';
+import { Globe, ArrowRight, Upload, Rocket, ClipboardCheck } from 'lucide-react';
+import { safeJsonLd } from '@/lib/jsonLd';
+import { breadcrumbJsonLd, HOME_CRUMB } from '@/lib/seo';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
@@ -28,6 +30,27 @@ export const metadata: Metadata = {
 // Add entries here as guides are written.
 const GUIDES = [
   {
+    href: '/docs/getting-started',
+    icon: Rocket,
+    title: 'Getting Started',
+    description:
+      'The full setup path for a new account: business profile, working hours, services, staff, booking page, payments, and your first booking and client.',
+  },
+  {
+    href: '/docs/booking-policies',
+    icon: ClipboardCheck,
+    title: 'Booking Policies, Deposits & Cancellations',
+    description:
+      'Advance notice, booking windows, cancellation rules, buffers, reminders, deposits and no-show fees — every setting and what it does.',
+  },
+  {
+    href: '/docs/importing-clients',
+    icon: Upload,
+    title: 'Importing & Migrating Clients',
+    description:
+      'Move your client list in from a CSV export, including Mindbody, Vagaro and Acuity formats, with duplicate detection before anything is written.',
+  },
+  {
     href: '/docs/custom-domains',
     icon: Globe,
     title: 'Custom Domains',
@@ -36,9 +59,30 @@ const GUIDES = [
   },
 ];
 
+// ItemList generated from GUIDES, so the index declares exactly the guides that exist. Listing
+// a guide here that has not been written would advertise a 404 to crawlers in machine-readable
+// form — the same failure the comment above guards against for human readers.
+const DOCS_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Upkilo Documentation',
+  description: 'Setup guides and product documentation for Upkilo.',
+  itemListElement: GUIDES.map((guide, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: guide.title,
+    description: guide.description,
+    url: `${SITE_URL}/en${guide.href}`,
+  })),
+};
+
+const BREADCRUMB_JSON_LD = breadcrumbJsonLd([HOME_CRUMB, { name: 'Docs', path: '/en/docs' }]);
+
 export default function DocsIndexPage() {
   return (
     <main className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(DOCS_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
       <section className="mx-auto max-w-3xl px-4 py-20">
         <div className="mb-12">
           {/* No eyebrow pill above the heading. A "Documentation" label sitting above a

@@ -1,4 +1,20 @@
 import React from 'react';
+import type { Metadata } from 'next';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service — Upkilo',
+  description:
+    'The terms governing use of Upkilo: subscriptions and USD billing, cancellation and refunds, data ownership and portability, acceptable use, and liability.',
+  alternates: { canonical: `${SITE_URL}/en/terms-of-service` },
+  openGraph: {
+    title: 'Terms of Service — Upkilo',
+    description: 'Subscription, billing, data ownership and acceptable use terms for Upkilo.',
+    url: `${SITE_URL}/en/terms-of-service`,
+    type: 'website',
+  },
+};
 
 export default function TermsOfServicePage() {
     return (
@@ -34,7 +50,7 @@ export default function TermsOfServicePage() {
 
                     <section>
                         <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">4. Subscription &amp; Billing</h2>
-                        <p>Subscriptions are billed in advance on a monthly or annual basis. You may cancel at any time; your access continues until the end of the current billing period. Refunds are not provided for partial periods. Prices are exclusive of applicable Indian GST and other taxes unless stated. We will notify you of price changes at least 30 days in advance.</p>
+                        <p>Subscriptions are billed in advance on a monthly or annual basis, in US Dollars (USD). You may cancel at any time; your access continues until the end of the current billing period. Refunds are not provided for partial periods. Prices are exclusive of VAT, GST, sales tax and other applicable taxes unless stated. We will notify you of price changes at least 30 days in advance.</p>
                     </section>
 
                     <section>

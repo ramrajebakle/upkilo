@@ -1,5 +1,21 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { ManageCookiesButton } from '@/components/ManageCookiesButton';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
+
+export const metadata: Metadata = {
+  title: 'Cookie Policy — Upkilo',
+  description:
+    'Which cookies Upkilo sets, what each one does, how long it lasts, and how to change or withdraw your consent at any time.',
+  alternates: { canonical: `${SITE_URL}/en/cookie-policy` },
+  openGraph: {
+    title: 'Cookie Policy — Upkilo',
+    description: 'Which cookies Upkilo sets, what they do, and how to manage your consent.',
+    url: `${SITE_URL}/en/cookie-policy`,
+    type: 'website',
+  },
+};
 
 export default function CookiePolicyPage() {
     return (

@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Upkilo Australia — Booking Software for Australian Service Businesses',
-  description: 'Booking, client records and payments for Australian salons, spas, gyms and clinics. GST-ready invoicing, AEST/AEDT scheduling and local SMS sender IDs.',
+  description: 'Booking, client records and payments for Australian salons, spas and clinics. GST-ready invoicing, AEST/AEDT scheduling and local SMS sender IDs.',
   alternates: { canonical: 'https://upkilo.com/au' },
   openGraph: {
     title: 'Upkilo Australia — Booking Software for Australian Businesses',
@@ -50,10 +50,10 @@ export default function AustraliaPage() {
             Booking software built for Australian service businesses
           </h1>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            GST-compliant invoicing, AUD pricing, and local SMS — everything you need to grow your business Down Under.
+            GST-compliant invoicing, AEST/AEDT scheduling and local SMS — everything you need to grow your business Down Under.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register?locale=en-AU&currency=AUD"
+            <Link href="/register?locale=en-AU"
               className="bg-yellow-400 text-green-900 font-bold px-8 py-3 rounded-lg hover:bg-yellow-300 transition">
               Start Free Trial — No Credit Card
             </Link>
@@ -87,8 +87,10 @@ export default function AustraliaPage() {
       {/* Pricing */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">Simple AUD pricing</h2>
-          <p className="text-center text-gray-600 mb-12">All prices include GST. Cancel anytime.</p>
+          {/* Heading said "Simple AUD pricing" / "All prices include GST" directly above USD
+              plan cards. Upkilo bills exclusively in USD, exclusive of tax. */}
+          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">Simple, transparent pricing</h2>
+          <p className="text-center text-gray-600 mb-12">Prices in USD, excluding GST. Cancel anytime.</p>
           <div className="grid md:grid-cols-3 gap-8">
             {plans.map((p) => (
               <div key={p.name} className={`rounded-2xl p-8 ${p.highlight ? 'bg-green-900 text-white shadow-xl scale-105' : 'bg-white border border-gray-200'}`}>
@@ -102,7 +104,7 @@ export default function AustraliaPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href={`/register?plan=${p.name.toLowerCase()}&locale=en-AU&currency=AUD`}
+                <Link href={`/register?plan=${p.name.toLowerCase()}&locale=en-AU`}
                   className={`block text-center py-3 rounded-lg font-semibold transition ${p.highlight ? 'bg-yellow-400 text-green-900 hover:bg-yellow-300' : 'bg-green-900 text-white hover:bg-green-800'}`}>
                   Get Started
                 </Link>
@@ -128,7 +130,7 @@ export default function AustraliaPage() {
             configured for Australian tax and time zones from the first booking you take.
           </p>
           <div className="mt-12">
-            <Link href="/register?locale=en-AU&currency=AUD"
+            <Link href="/register?locale=en-AU"
               className="bg-green-900 text-white font-bold px-10 py-4 rounded-lg hover:bg-green-800 transition text-lg">
               Start your free 14-day trial →
             </Link>

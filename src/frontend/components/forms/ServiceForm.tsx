@@ -31,7 +31,27 @@ const serviceSchema = z.object({
     requiresPayment: z.boolean().default(false),
     depositAmount: z.number().min(0).optional(),
     isActive: z.boolean().default(true),
-});
+    // Refund policy, set per service. These are what the cancellation endpoint reads to decide
+    // how much of a deposit goes back, so the same rules the API enforces are validated here —
+    // catching an inverted pair at the field rather than as a 400 after save.
+    fullRefundHours: z.number().int().min(0, 'Cannot be negative').default(18),
+    partialRefundHours: z.number().int().min(0, 'Cannot be negative').default(12),
+    partialRefundPercent: z.number().min(0, 'Must be 0–100').max(100, 'Must be 0–100').default(50),
+    cancellationPolicy: z.string().optional(),
+    // Rebooking + mobile. Both are opt-in and vertical-neutral: a salon sets rebookAfterDays to
+    // 42 for a colour, a med spa to 120 for botox, a detailer to 150 for a full detail.
+    rebookAfterDays: z.number().int().min(0).max(1095, 'Three years is the practical maximum').optional(),
+    isMobile: z.boolean().default(false),
+    travelBufferMinutes: z.number().int().min(0).max(480, 'Eight hours is the practical maximum').default(0),
+}).refine(
+    // Mirrors ValidateRefundPolicy in ServicesController. Without this a tenant can save 12/18
+    // the wrong way round, which reads as "the later you cancel, the more you get back".
+    (v) => v.partialRefundHours <= v.fullRefundHours,
+    {
+        message: 'The partial-refund window must be shorter than the full-refund window.',
+        path: ['partialRefundHours'],
+    }
+);
 
 type ServiceFormData = z.infer<typeof serviceSchema>;
 
@@ -61,12 +81,29 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
             maxAttendees: 1,
             requiresPayment: false,
             isActive: true,
+            // Stated here as well as in the zod schema: schema .default() is applied at parse
+            // time, so without these the inputs render empty on a new service and the summary
+            // beneath them reads "0h", which is a policy that refunds everything. They must
+            // match the Service entity's initialisers and the migration's backfill.
+            fullRefundHours: 18,
+            partialRefundHours: 12,
+            partialRefundPercent: 50,
+            cancellationPolicy: '',
+            // No default rebooking interval: leaving it blank means no reminder, which is the
+            // only safe default for something that messages customers.
+            isMobile: false,
+            travelBufferMinutes: 0,
             ...initialData,
         },
     });
 
     const requiresPayment = watch('requiresPayment');
     const selectedCurrency = watch('currency') || 'USD';
+    // Watched so the plain-English summary under the refund fields updates as they are typed.
+    const isMobile = watch('isMobile');
+    const fullRefundHours = watch('fullRefundHours');
+    const partialRefundHours = watch('partialRefundHours');
+    const partialRefundPercent = watch('partialRefundPercent');
     const selectedDecimals = getCurrency(selectedCurrency).decimals;
 
     return (
@@ -189,7 +226,7 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                             </label>
 
                             {requiresPayment && (
-                                <div className="pl-8 animate-fade-in">
+                                <div className="pl-8 animate-fade-in space-y-6">
                                     <div className="space-y-2 max-w-[200px]">
                                         <label className="text-xs font-medium text-slate-500">Deposit Amount (Optional)</label>
                                         <div className="relative">
@@ -203,6 +240,119 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                             />
                                         </div>
                                     </div>
+
+                                    {/* Refund policy sits under "requires payment" because it only has
+                                        meaning once money is being taken — showing it on a free service
+                                        would ask the tenant a question with no consequence. */}
+                                    <fieldset className="space-y-3 border-t border-slate-100 pt-5">
+                                        <legend className="text-sm font-semibold text-slate-700">
+                                            Refund policy for this service
+                                        </legend>
+                                        <p className="text-xs text-slate-500 max-w-lg">
+                                            How much of the deposit is returned when a client cancels, based on how
+                                            much notice they give. Set per service, because a quick consultation and
+                                            a long treatment rarely warrant the same notice.
+                                        </p>
+
+                                        <div className="grid gap-4 sm:grid-cols-3 max-w-2xl">
+                                            <div className="space-y-1.5">
+                                                <label htmlFor="fullRefundHours" className="text-xs font-medium text-slate-600">
+                                                    Full refund beyond
+                                                </label>
+                                                <div className="relative">
+                                                    <input
+                                                        id="fullRefundHours"
+                                                        {...register('fullRefundHours', { valueAsNumber: true })}
+                                                        type="number"
+                                                        min={0}
+                                                        className="input py-2 pr-12"
+                                                    />
+                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                                        hours
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label htmlFor="partialRefundHours" className="text-xs font-medium text-slate-600">
+                                                    Partial refund beyond
+                                                </label>
+                                                <div className="relative">
+                                                    <input
+                                                        id="partialRefundHours"
+                                                        {...register('partialRefundHours', { valueAsNumber: true })}
+                                                        type="number"
+                                                        min={0}
+                                                        className="input py-2 pr-12"
+                                                    />
+                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                                        hours
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label htmlFor="partialRefundPercent" className="text-xs font-medium text-slate-600">
+                                                    Partial refund amount
+                                                </label>
+                                                <div className="relative">
+                                                    <input
+                                                        id="partialRefundPercent"
+                                                        {...register('partialRefundPercent', { valueAsNumber: true })}
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        className="input py-2 pr-8"
+                                                    />
+                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                                        %
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {errors.partialRefundHours && (
+                                            <p className="text-sm text-red-600">{errors.partialRefundHours.message}</p>
+                                        )}
+                                        {errors.partialRefundPercent && (
+                                            <p className="text-sm text-red-600">{errors.partialRefundPercent.message}</p>
+                                        )}
+
+                                        {/* Restates the three tiers in the tenant's own numbers. The rules are
+                                            easy to enter and hard to picture; showing the outcome is what stops
+                                            a policy going live that its author did not intend. */}
+                                        <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-700 max-w-2xl">
+                                            <p className="font-medium text-slate-900">What a client gets back</p>
+                                            <ul className="mt-2 space-y-1">
+                                                <li>
+                                                    Cancels more than <strong>{fullRefundHours || 0}h</strong> before →{' '}
+                                                    <strong>100%</strong> of the deposit
+                                                </li>
+                                                <li>
+                                                    Between <strong>{partialRefundHours || 0}h</strong> and{' '}
+                                                    <strong>{fullRefundHours || 0}h</strong> before →{' '}
+                                                    <strong>{partialRefundPercent ?? 0}%</strong>
+                                                </li>
+                                                <li>
+                                                    Less than <strong>{partialRefundHours || 0}h</strong> before →{' '}
+                                                    <strong>nothing</strong>, the deposit is kept
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div className="space-y-1.5 max-w-2xl">
+                                            <label htmlFor="cancellationPolicy" className="text-xs font-medium text-slate-600">
+                                                Policy note shown to clients (optional)
+                                            </label>
+                                            <textarea
+                                                id="cancellationPolicy"
+                                                {...register('cancellationPolicy')}
+                                                rows={2}
+                                                className="input py-2"
+                                                placeholder="e.g. Please give as much notice as you can so we can offer the slot to someone else."
+                                            />
+                                        </div>
+                                    </fieldset>
                                 </div>
                             )}
                         </div>
@@ -260,6 +410,80 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                     className="input"
                                 />
                             </div>
+                        </div>
+
+                        {/* Mobile / travel. Sits with the other timing settings because that is
+                            what it is — travel occupies the calendar exactly like turnaround. */}
+                        <div className="space-y-4 border-t border-slate-100 pt-5">
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    {...register('isMobile')}
+                                    className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                                />
+                                <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
+                                    Performed at the client&apos;s location
+                                </span>
+                            </label>
+
+                            {isMobile && (
+                                <div className="pl-8 animate-fade-in space-y-2 max-w-[260px]">
+                                    <label htmlFor="travelBufferMinutes" className="text-xs font-medium text-slate-500">
+                                        Travel time each way
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            id="travelBufferMinutes"
+                                            {...register('travelBufferMinutes', { valueAsNumber: true })}
+                                            type="number"
+                                            min={0}
+                                            className="input py-2 pr-16"
+                                        />
+                                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                            minutes
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-slate-500">
+                                        Held either side of the appointment so two mobile jobs cannot be booked
+                                        back to back with no time to drive between them.
+                                    </p>
+                                    {errors.travelBufferMinutes && (
+                                        <p className="text-sm text-red-600">{errors.travelBufferMinutes.message}</p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Rebooking interval */}
+                        <div className="space-y-2 border-t border-slate-100 pt-5 max-w-[320px]">
+                            <label htmlFor="rebookAfterDays" className="text-sm font-medium text-slate-700">
+                                Remind clients to rebook after
+                            </label>
+                            <div className="relative max-w-[200px]">
+                                <input
+                                    id="rebookAfterDays"
+                                    {...register('rebookAfterDays', {
+                                        // An empty field must mean "no reminder", not 0 — and
+                                        // valueAsNumber turns "" into NaN, which would fail
+                                        // validation rather than clearing the setting.
+                                        setValueAs: (v) => (v === '' || v === null ? undefined : Number(v)),
+                                    })}
+                                    type="number"
+                                    min={0}
+                                    placeholder="e.g. 42"
+                                    className="input py-2 pr-12"
+                                />
+                                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                    days
+                                </span>
+                            </div>
+                            <p className="text-xs text-slate-500">
+                                Leave blank for no reminder. When set, clients who have not rebooked by then get
+                                one message — only if they have opted in to marketing, and only once per visit.
+                            </p>
+                            {errors.rebookAfterDays && (
+                                <p className="text-sm text-red-600">{errors.rebookAfterDays.message}</p>
+                            )}
                         </div>
                     </div>
                 </div>

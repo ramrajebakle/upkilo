@@ -216,7 +216,6 @@ public class OnboardingController : ControllerBase
                 new { id = "spa", name = "Spa & Wellness Demo", description = "5 services, 3 staff, 20 clients, 15 bookings" },
                 new { id = "salon", name = "Hair Salon Demo", description = "8 services, 4 staff, 25 clients, 20 bookings" },
                 new { id = "dental", name = "Dental Clinic Demo", description = "6 services, 2 staff, 15 clients, 10 bookings" },
-                new { id = "fitness", name = "Fitness Studio Demo", description = "10 classes, 5 trainers, 30 clients, 25 bookings" },
                 new { id = "consulting", name = "Consulting Firm Demo", description = "4 services, 3 consultants, 12 clients, 8 bookings" }
             }
         });

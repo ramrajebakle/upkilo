@@ -32,6 +32,9 @@ jobs:
   restore-drill:
     name: Restore latest backup to scratch instance
     runs-on: ubuntu-latest
+    # A PITR restore that hangs must still reach the always() teardown step below,
+    # or the scratch Postgres server it created keeps billing indefinitely.
+    timeout-minutes: 90
     environment: production-readonly  # scoped credentials: create/read/delete scratch resources only
     steps:
       - uses: actions/checkout@v7

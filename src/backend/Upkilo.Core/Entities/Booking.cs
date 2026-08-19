@@ -54,6 +54,21 @@ public class Booking : TenantEntity
     public Dictionary<string, object> Metadata { get; set; } = new();
 
     // Recurrence
+    /// <summary>
+    /// The vehicle this booking is for, where the tenant works on vehicles rather than people.
+    /// Null for every other vertical. This is what turns a list of past bookings into a per-vehicle
+    /// service history, and therefore what a "your SUV is due again" reminder is derived from.
+    /// </summary>
+    public Guid? VehicleId { get; set; }
+    public virtual Vehicle? Vehicle { get; set; }
+
+    /// <summary>
+    /// When a "time to rebook" reminder was sent off the back of this booking. Set once and
+    /// checked before sending, so a client is nudged a single time per completed visit rather
+    /// than every night the job runs.
+    /// </summary>
+    public DateTime? RebookReminderSentAt { get; set; }
+
     public Guid? RecurringPatternId { get; set; }
     public virtual RecurringPattern? RecurringPattern { get; set; }
 

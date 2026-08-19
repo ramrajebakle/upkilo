@@ -77,6 +77,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // robots.ts has allowed /docs since it was written, but the path had no sitemap entry
     // and, until now, no index page either — so the one signal pointing at it led to a 404.
     ['/docs',               0.6, 'monthly'],
+    // The guides themselves, not just the index. They were reachable only by crawling a link
+    // from /docs, which leaves discovery to chance for the pages most likely to be cited as
+    // an answer — procedural documentation is the most quotable content the site has.
+    // Every entry here must correspond to a guide in the GUIDES array in docs/page.tsx.
+    ['/docs/getting-started',   0.6, 'monthly'],
+    ['/docs/booking-policies',  0.5, 'monthly'],
+    ['/docs/importing-clients', 0.5, 'monthly'],
+    ['/docs/custom-domains',    0.5, 'monthly'],
     // Linked from the landing footer since it was written, but the page did not exist until
     // now — the footer sent crawlers to a 404 from the site's highest-authority page.
     ['/contact',            0.4, 'yearly'],

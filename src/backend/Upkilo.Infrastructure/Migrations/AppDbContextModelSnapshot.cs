@@ -1774,6 +1774,9 @@ namespace Upkilo.Infrastructure.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)");
 
+                    b.Property<DateTime?>("RebookReminderSentAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("RecurringPatternId")
                         .HasColumnType("uuid");
 
@@ -1824,6 +1827,9 @@ namespace Upkilo.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("VehicleId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
@@ -1839,6 +1845,8 @@ namespace Upkilo.Infrastructure.Migrations
 
                     b.HasIndex("Status")
                         .HasFilter("\"Status\" = 0");
+
+                    b.HasIndex("VehicleId");
 
                     b.HasIndex("TenantId", "CreatedAt")
                         .HasDatabaseName("IX_Bookings_Tenant_CreatedAt");
@@ -10339,6 +10347,74 @@ namespace Upkilo.Infrastructure.Migrations
                     b.ToTable("PredictiveScores");
                 });
 
+            modelBuilder.Entity("Upkilo.Core.Entities.PricingAddOn", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<string>("BillingUnit")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bytea");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PricingAddOns_Key");
+
+                    b.ToTable("PricingAddOns");
+                });
+
             modelBuilder.Entity("Upkilo.Core.Entities.PricingFeature", b =>
                 {
                     b.Property<Guid>("Id")
@@ -12442,10 +12518,16 @@ namespace Upkilo.Infrastructure.Migrations
                     b.Property<int>("DurationMinutes")
                         .HasColumnType("integer");
 
+                    b.Property<int>("FullRefundHours")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsMobile")
                         .HasColumnType("boolean");
 
                     b.Property<int>("MaxAttendees")
@@ -12455,9 +12537,18 @@ namespace Upkilo.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("PartialRefundHours")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("PartialRefundPercent")
+                        .HasColumnType("numeric");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)");
+
+                    b.Property<int?>("RebookAfterDays")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("RequiresPayment")
                         .HasColumnType("boolean");
@@ -12473,6 +12564,9 @@ namespace Upkilo.Infrastructure.Migrations
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("TravelBufferMinutes")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -12649,6 +12743,62 @@ namespace Upkilo.Infrastructure.Migrations
                     b.HasIndex("UpsellServiceId");
 
                     b.ToTable("ServiceUpsells");
+                });
+
+            modelBuilder.Entity("Upkilo.Core.Entities.ServiceVehiclePrice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bytea");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("VehicleClass")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("ServiceId", "VehicleClass")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ServiceVehiclePrices_Service_Class");
+
+                    b.ToTable("ServiceVehiclePrices");
                 });
 
             modelBuilder.Entity("Upkilo.Core.Entities.SetupProgress", b =>
@@ -14455,6 +14605,9 @@ namespace Upkilo.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("RebookRemindersEnabled")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("ReviewCount")
                         .HasColumnType("integer");
 
@@ -15933,6 +16086,79 @@ namespace Upkilo.Infrastructure.Migrations
                     b.ToTable("UserUiPreferences");
                 });
 
+            modelBuilder.Entity("Upkilo.Core.Entities.Vehicle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Class")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LicensePlate")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Make")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Model")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bytea");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("IX_Vehicles_ClientId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Vehicles");
+                });
+
             modelBuilder.Entity("Upkilo.Core.Entities.VoiceCall", b =>
                 {
                     b.Property<Guid>("Id")
@@ -17270,6 +17496,10 @@ namespace Upkilo.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Upkilo.Core.Entities.Vehicle", "Vehicle")
+                        .WithMany("Bookings")
+                        .HasForeignKey("VehicleId");
+
                     b.Navigation("Client");
 
                     b.Navigation("RecurringPattern");
@@ -17279,6 +17509,8 @@ namespace Upkilo.Infrastructure.Migrations
                     b.Navigation("Staff");
 
                     b.Navigation("Tenant");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Upkilo.Core.Entities.BookingReminder", b =>
@@ -18164,6 +18396,25 @@ namespace Upkilo.Infrastructure.Migrations
                     b.Navigation("UpsellService");
                 });
 
+            modelBuilder.Entity("Upkilo.Core.Entities.ServiceVehiclePrice", b =>
+                {
+                    b.HasOne("Upkilo.Core.Entities.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Upkilo.Core.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("Upkilo.Core.Entities.SmsCampaignRegistration", b =>
                 {
                     b.HasOne("Upkilo.Core.Entities.SmsA2PBrand", "Brand")
@@ -18496,6 +18747,25 @@ namespace Upkilo.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Upkilo.Core.Entities.Vehicle", b =>
+                {
+                    b.HasOne("Upkilo.Core.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Upkilo.Core.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("Upkilo.Core.Entities.WaitlistEntry", b =>
                 {
                     b.HasOne("Upkilo.Core.Entities.Client", "Client")
@@ -18752,6 +19022,11 @@ namespace Upkilo.Infrastructure.Migrations
             modelBuilder.Entity("Upkilo.Core.Entities.User", b =>
                 {
                     b.Navigation("StaffMember");
+                });
+
+            modelBuilder.Entity("Upkilo.Core.Entities.Vehicle", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 
             modelBuilder.Entity("Upkilo.Core.Entities.WorkflowExecution", b =>

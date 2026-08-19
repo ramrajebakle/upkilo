@@ -5,6 +5,8 @@ import {
   Bot, ShieldCheck, Plug, Bell, Globe, Search, Smartphone, Clock,
   ArrowRight, Check,
 } from "lucide-react";
+import { safeJsonLd } from "@/lib/jsonLd";
+import { breadcrumbJsonLd, HOME_CRUMB } from "@/lib/seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://upkilo.com";
 
@@ -82,6 +84,28 @@ const PLATFORM = [
   { icon: Search, title: "Fast search", description: "Full-text search across clients, bookings and services that stays quick as your database grows." },
 ];
 
+// SoftwareApplication with an explicit featureList. "What does Upkilo do" is the question this
+// page exists to answer, and a prose grid of cards only answers it to a reader — featureList
+// states the same capabilities in a form an engine can quote without inferring them from markup.
+//
+// Built from the CORE and PLATFORM arrays the page renders, so the declared capabilities cannot
+// drift from the visible ones. The @id ties this to the single Organization node on the
+// homepage rather than describing a second, unrelated "Upkilo".
+const FEATURES_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Upkilo',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web, iOS, Android',
+  url: `${SITE_URL}/en/features`,
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
+  featureList: [...CORE, ...PLATFORM].map((f) => f.title),
+  description:
+    'Booking, client CRM, payments, marketing automation, AI agents and analytics for service businesses.',
+};
+
+const BREADCRUMB_JSON_LD = breadcrumbJsonLd([HOME_CRUMB, { name: 'Features', path: '/en/features' }]);
+
 export default async function FeaturesPage({
   params,
 }: {
@@ -91,6 +115,8 @@ export default async function FeaturesPage({
 
   return (
     <main className="bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FEATURES_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
       {/* ───────────────────────── HERO ───────────────────────── */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-primary-50 to-white py-20">
         <div className="mx-auto max-w-4xl px-4 text-center">

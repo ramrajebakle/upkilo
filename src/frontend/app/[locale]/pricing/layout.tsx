@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { safeJsonLd } from '@/lib/jsonLd';
+import { PRICING_FAQS } from '@/lib/pricingFaqs';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
@@ -48,6 +49,35 @@ const PRICING_JSON_LD = {
   ],
 };
 
+// "How much does X cost" is the highest-intent question an answer engine gets asked about a
+// SaaS product, and it was the one thing this page stated only in body copy — no machine-readable
+// answer existed beyond the bare Offer prices above. FAQPage is what lets the answer be quoted
+// directly, with attribution, rather than paraphrased from scraped markup.
+//
+// Built from the same PRICING_FAQS array the page renders visibly. That is not a convenience:
+// FAQPage structured data must correspond to content the visitor can actually see, so the two
+// cannot be allowed to drift apart.
+const FAQ_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: PRICING_FAQS.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// Breadcrumbs give the page a stated position in the site rather than leaving engines to infer
+// one from URL depth, and render as a path in the search result instead of a bare URL.
+const BREADCRUMB_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/en` },
+    { '@type': 'ListItem', position: 2, name: 'Pricing', item: `${SITE_URL}/en/pricing` },
+  ],
+};
+
 // This layout exists only to carry metadata. app/[locale]/pricing/page.tsx is a genuine
 // Client Component — it holds the monthly/annual billing toggle's useState — and a Client
 // Component cannot export metadata, so the page was inheriting app/[locale]/layout.tsx's
@@ -67,6 +97,7 @@ export const metadata: Metadata = {
     title: 'Upkilo Pricing — Plans for Service Businesses',
     description:
       'Bookings, CRM, payments and AI automation in one plan. 14-day free trial, no credit card required.',
+    url: `${SITE_URL}/en/pricing`,
     type: 'website',
   },
 };
@@ -75,6 +106,8 @@ export default function PricingLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(PRICING_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
       {children}
     </>
   );

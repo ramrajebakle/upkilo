@@ -20,8 +20,12 @@ import {
   TrendingUp,
   Scissors,
   Flower2,
-  Dumbbell,
-  Stethoscope,
+  Syringe,
+  Smile,
+  Car,
+  HeartHandshake,
+  Activity,
+  PersonStanding,
   Mail,
   MessageCircle,
   Phone,
@@ -43,11 +47,19 @@ export const metadata: Metadata = {
   // unsupportable claim — it is the text shown in the search result itself, read by people
   // who have not visited the site yet.
   description:
-    'AI-powered booking, CRM, payments, and marketing for salons, spas, fitness studios, and clinics. Start free, no credit card needed.',
+    'AI-powered booking, CRM, payments and marketing for med spas, aesthetic and dental clinics, hair salons, spas, massage, physiotherapy, chiropractic and auto detailing. Start free, no credit card needed.',
+  // Every locale prefix renders this same English page — the marketing pages carry no
+  // translations (only the dashboard calls useTranslations), so /en, /fr, /de … are 15 URLs
+  // of identical content competing with each other. Pinning the canonical to /en consolidates
+  // them onto one, matching what pricing/layout.tsx already does. If these pages are ever
+  // genuinely translated, this must become per-locale canonicals plus hreflang alternates —
+  // a hard canonical would otherwise deindex the translations.
+  alternates: { canonical: `${SITE_URL}/en` },
   openGraph: {
     title: 'Upkilo — Grow Your Service Business on Autopilot',
     description:
       'AI-powered booking, CRM, payments, and marketing — built for service businesses. Start your 14-day free trial.',
+    url: `${SITE_URL}/en`,
     type: 'website',
   },
 };
@@ -123,11 +135,31 @@ const GUARANTEES = [
 
 const INTEGRATIONS = ['Stripe', 'Razorpay', 'Google Calendar', 'WhatsApp', 'Twilio', 'Mailgun', 'Zoom', 'QuickBooks'];
 
+// Fitness & Yoga Studios removed — Upkilo no longer serves that vertical, and a landing page
+// that advertises it draws trials from businesses the product is not built for, which converts
+// badly and costs support time on both sides. Removed from the metadata, JSON-LD and hero copy
+// on this page too, so the claim does not survive anywhere a search engine can read it.
+//
+// The eight below are the verticals the product genuinely supports: each is appointment-led,
+// staff-and-room based, and served by features that already exist — digital waivers and
+// consent for the clinical ones, treatment plans and insurance pre-auth in the medical
+// vertical, deposits and per-service refund policies throughout. Eight also fills the
+// md:grid-cols-4 grid as two even rows, where three left a ragged 2+1.
+//
+// Auto detailing is included: the gap that argued against it — no record of the customer's
+// vehicle — is now filled by the Vehicle entity and per-vehicle-class pricing, so a quote can
+// reflect an SUV taking longer than a coupe rather than pretending every job is the same size.
+// Nine entries render as a clean 3×3; the grid below was md:grid-cols-4, which left a ragged row.
 const INDUSTRIES = [
-  { icon: Scissors, label: 'Salons & Barbershops' },
-  { icon: Flower2, label: 'Spas & Wellness' },
-  { icon: Dumbbell, label: 'Fitness & Yoga Studios' },
-  { icon: Stethoscope, label: 'Clinics & Medical Spas' },
+  { icon: Syringe, label: 'Med Spas' },
+  { icon: Sparkles, label: 'Aesthetic & Beauty Clinics' },
+  { icon: Smile, label: 'Dental Practices' },
+  { icon: Scissors, label: 'Hair Salons' },
+  { icon: Flower2, label: 'Spas' },
+  { icon: HeartHandshake, label: 'Massage Businesses' },
+  { icon: Activity, label: 'Physiotherapy Clinics' },
+  { icon: PersonStanding, label: 'Chiropractic Clinics' },
+  { icon: Car, label: 'Auto Detailing' },
 ];
 
 const SECURITY = [
@@ -137,26 +169,37 @@ const SECURITY = [
   { icon: Server, label: 'Secure cloud hosting', sub: 'Automated encrypted backups' },
 ];
 
+// planKey must match a plan Name in PricingSeeder.cs — it is the lookup key into the live
+// prices fetched below. The keys here were left on the pre-consolidation names
+// (Professional / Agency) after the tiers became Starter / Growth / Enterprise, so two of
+// the three cards silently fell through to "Contact us" instead of showing a price.
 const PLANS = [
   {
     name: 'Starter',
     planKey: 'Starter',
-    description: 'For solo practitioners getting started.',
-    features: ['1 staff member', 'Unlimited bookings', 'Online payments', 'SMS & email reminders', 'Basic analytics'],
+    description: 'For small teams running bookings and clients in one place.',
+    features: [
+      'Up to 10 staff',
+      'Up to 3 locations',
+      'Up to 5,000 clients',
+      'AI Copilot (2,000 actions/mo)',
+      'SMS & email reminders',
+    ],
     cta: 'Start free trial',
     href: '/register',
     highlight: false,
   },
   {
     name: 'Growth',
-    planKey: 'Professional',
-    description: 'For growing teams who need automation.',
+    planKey: 'Growth',
+    description: 'For scaling businesses that need AI automation.',
     features: [
-      'Up to 10 staff',
-      'Everything in Starter',
-      'Marketing automation',
-      'Loyalty & memberships',
-      'AI booking chatbot',
+      'Up to 25 staff',
+      'Up to 10 locations',
+      'Unlimited clients',
+      'AI Workflows & Insights (10,000 actions/mo)',
+      'Marketing automation & campaigns',
+      'White-label booking pages, API & webhooks',
       'Priority support',
     ],
     cta: 'Start free trial',
@@ -164,20 +207,20 @@ const PLANS = [
     highlight: true,
   },
   {
-    name: 'Pro',
-    planKey: 'Agency',
-    description: 'For multi-location and agency operations.',
+    name: 'Enterprise',
+    planKey: 'Enterprise',
+    description: 'For multi-brand and large organisations.',
     features: [
-      'Unlimited staff',
       'Everything in Growth',
-      'Multi-location',
-      'White-label portal',
-      'Agency dashboard',
-      'Custom integrations',
-      'Dedicated CSM',
+      'Unlimited staff & locations',
+      'SSO / SAML & extended audit logs',
+      '100,000 AI actions / month',
+      'Agency sub-account management',
+      'Custom integrations & SLA',
+      'Dedicated account manager',
     ],
     cta: 'Contact sales',
-    href: '/contact',
+    href: '/enterprise',
     highlight: false,
   },
 ];
@@ -189,19 +232,26 @@ const FAQS = [
   },
   {
     q: 'Can I import my existing client and booking data?',
-    a: 'Yes. Upkilo supports bulk import from CSV, Fresha, Mindbody, and Vagaro. Our migration wizard guides you step by step.',
+    // Was "CSV, Fresha, Mindbody, and Vagaro". Fresha has no parser and appears nowhere in the
+    // codebase — the claim was unsupportable. Acuity does have one and was missing from the list.
+    // Checked against MigrationWizardController.GetParser, which is the authority.
+    a: 'Yes. Upkilo imports clients from CSV exports, with built-in support for Mindbody, Vagaro and Acuity formats. Our migration wizard walks you through upload, column mapping and duplicate review.',
   },
   {
-    q: 'Is Upkilo compliant with Indian data protection law?',
-    a: "Yes. We comply with India's DPDP Act 2023, and also meet GDPR and CCPA requirements for international businesses.",
+    q: 'Is Upkilo compliant with data protection law?',
+    a: "Yes. We meet GDPR and CCPA requirements, and also comply with India's DPDP Act 2023.",
   },
   {
     q: 'Does Upkilo work for multi-location businesses?',
-    a: 'Yes. The Pro plan includes a full agency dashboard with cross-location analytics, staff management, and a white-label client portal.',
+    a: 'Yes. Growth covers up to 10 locations with white-label booking pages and cross-location analytics. Enterprise adds unlimited locations and agency sub-account management.',
+  },
+  {
+    q: 'What currency is Upkilo billed in?',
+    a: 'All Upkilo subscriptions are billed in USD, excluding applicable taxes. This is separate from what you charge your own clients — that settles through your connected Stripe account in your own currency.',
   },
   {
     q: 'What payment methods can my clients use?',
-    a: 'UPI, credit/debit cards, net banking, and international cards via Razorpay and Stripe. Gift cards and packages are also supported.',
+    a: 'Credit/debit cards and wallets via Stripe, in your own currency. In India, UPI and net banking are also supported via Razorpay. Gift cards and packages are available everywhere.',
   },
 ];
 
@@ -210,9 +260,10 @@ const FAQS = [
  * Live pricing, fetched server-side so the plan cards are crawlable.
  *
  * The cards previously rendered the literal string "₹X,XXX" — placeholder copy shipped to
- * visitors, in a currency the platform does not even price in (plans are published in USD,
- * GBP, EUR, CAD, AUD and AED). If the API is unreachable the cards fall back to "Contact us"
- * rather than inventing a number.
+ * visitors, in a currency the platform does not price in: Upkilo bills exclusively in USD
+ * (PricingIntegrityService.BillingCurrency). If the API is unreachable the cards fall back
+ * to "Contact us" rather than inventing a number. Enterprise is IsCustom in PricingSeeder —
+ * it has no price rows, so "Contact us" is the correct render for it, not a failure.
  */
 interface PublishedPlan { name: string; monthlyPrice: number | null; currency: string | null; }
 
@@ -264,7 +315,7 @@ const ORGANIZATION_JSON_LD = {
   // field, since it is what a Knowledge Panel would try to render.
   logo: `${SITE_URL}/icons/icon-512x512.png`,
   description:
-    'AI-powered booking, CRM, payments and marketing software for service businesses — salons, spas, fitness studios and clinics.',
+    'AI-powered booking, CRM, payments and marketing software for appointment-led businesses — med spas, aesthetic and dental clinics, hair salons, spas, massage, physiotherapy, chiropractic and auto detailing.',
 };
 
 // SoftwareApplication rather than Product: this is software accessed over the web, and the
@@ -362,7 +413,7 @@ export default async function HomePage() {
 
           <Reveal delay={0.16}>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-300 md:text-xl">
-              AI-powered booking, CRM, payments, and marketing — built for salons, spas, fitness studios, and clinics.
+              AI-powered booking, CRM, payments, and marketing — built for salons, spas, and clinics.
               Start free, no credit card needed.
             </p>
           </Reveal>
@@ -412,7 +463,7 @@ export default async function HomePage() {
                   </div>
                   <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
                     <p className="text-xs text-slate-400">Revenue</p>
-                    <p className="mt-1 text-2xl font-bold text-white">₹42,800</p>
+                    <p className="mt-1 text-2xl font-bold text-white">$4,280</p>
                     <p className="mt-1 text-xs text-emerald-400">▲ 8% vs last week</p>
                   </div>
                   <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
@@ -581,7 +632,7 @@ export default async function HomePage() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
             {INDUSTRIES.map((ind, i) => (
               <Reveal key={ind.label} delay={i * 0.08}>
                 <div className="group flex h-full flex-col items-center rounded-2xl border border-slate-200 bg-white p-8 text-center transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5">
@@ -690,7 +741,7 @@ export default async function HomePage() {
             ))}
           </div>
           <p className="mt-8 text-center text-sm text-slate-500">
-            Pricing in INR, plus applicable GST. Final plans &amp; pricing announced at launch.
+            All prices in USD, excluding applicable taxes. 14-day free trial — no credit card required.
           </p>
         </div>
       </section>

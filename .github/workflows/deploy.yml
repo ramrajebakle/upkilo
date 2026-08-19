@@ -19,6 +19,15 @@ on:
         default: 'staging'
         type: choice
         options: [staging, production]
+      force-rebuild:
+        description: >-
+          Rebuild both images even when an image for this exact source fingerprint
+          already exists. Needed after rotating a secret that is passed as a build arg
+          (SENTRY_DSN, VAPID_PUBLIC_KEY) — those change no tracked file, so the
+          fingerprint alone cannot see them.
+        required: false
+        default: false
+        type: boolean
 
 # Serializes runs so a double-dispatch cannot run migrate-database/deploy-production in
 # parallel against the same production App Service and database. cancel-in-progress is
@@ -36,9 +45,36 @@ env:
 
 jobs:
   # ── Build Docker Images & Push to ACR ─────────────────────────────
+  #
+  # ── Content-addressed image reuse ────────────────────────────────────────────────
+  # Both images used to be rebuilt on every single run, including the very common case
+  # where the run's commit did not touch that component at all — a frontend-only merge
+  # still paid a full .NET SDK restore + publish to produce a byte-identical API image.
+  #
+  # The fix is not a path filter. Each image now carries a third tag, `src-<fingerprint>`,
+  # derived from the git TREE hash of the source that actually goes into it. Before
+  # building, this job asks the registry whether that exact fingerprint already exists:
+  #
+  #   present -> copy the manifest onto :<sha> and :latest (a registry-side operation,
+  #              seconds, no layer transfer, no runner CPU)
+  #   absent  -> build and push, tagging :<sha>, :latest and :src-<fingerprint>
+  #
+  # This is strictly safer than diffing against the previous commit, because it depends on
+  # the CONTENT of the tree rather than on the run history. It stays correct across
+  # force-pushes, across reverts (a revert instantly reuses the pre-revert image), and
+  # across the Dependabot-merge skip below — none of which a "did the last push touch it?"
+  # filter survives, since each of them can leave `latest` describing source that is no
+  # longer what HEAD contains.
+  #
+  # Deliberately ONE job rather than two parallel ones: Actions bills the sum of every
+  # job's minutes, so splitting these into parallel jobs would improve wall-clock at the
+  # cost of a second checkout, a second buildx setup and a second registry login on every
+  # run. When only one image needs building — the common case, now — there is nothing to
+  # parallelise anyway.
   build-and-push:
     name: Build & Push Images
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     # Skip Dependabot merges specifically: workflow_dispatch always rebuilds from current
     # main regardless of this job, so this condition doesn't cost any deploy real coverage
     # — it only decides whether a build happens speculatively, ahead of anyone asking for
@@ -49,6 +85,8 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.head_commit.author.name != 'dependabot[bot]'
     outputs:
       image-tag: ${{ github.sha }}
+      api-rebuilt: ${{ steps.api.outputs.build }}
+      frontend-rebuilt: ${{ steps.frontend.outputs.build }}
 
     steps:
       - uses: actions/checkout@v7
@@ -63,7 +101,62 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      # `git rev-parse HEAD:<dir>` returns that directory's TREE object id — a hash of its
+      # entire recursive content. Two commits with identical source under that path
+      # produce the same id, which is exactly the property this reuse depends on.
+      #
+      # Each fingerprint also folds in the files OUTSIDE the source tree that change what
+      # the image contains:
+      #   API      — the root Dockerfile and .dockerignore (its build recipe and context).
+      #   Frontend — its own Dockerfile is already inside src/frontend, but the
+      #              NEXT_PUBLIC_* build args below are inlined into the client bundle and
+      #              are declared in THIS file, so deploy.yml itself is part of the input.
+      #
+      # Known limit: a rotated SECRET value passed as a build arg (SENTRY_DSN,
+      # VAPID_PUBLIC_KEY) does not change any tracked file, so it will not invalidate the
+      # fingerprint. Use the `force-rebuild` dispatch input after rotating one.
+      - name: Fingerprint deployable source
+        id: fp
+        run: |
+          set -euo pipefail
+          api=$( { git rev-parse "HEAD:src/backend"; git hash-object Dockerfile .dockerignore; } \
+                 | sha256sum | cut -c1-16 )
+          frontend=$( { git rev-parse "HEAD:src/frontend"; git hash-object .github/workflows/deploy.yml; } \
+                 | sha256sum | cut -c1-16 )
+          echo "api=$api"           >> "$GITHUB_OUTPUT"
+          echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
+          echo "API source fingerprint:      $api"
+          echo "Frontend source fingerprint: $frontend"
+
+      # ── API image ──────────────────────────────────────────────────
+      - name: Resolve API image
+        id: api
+        env:
+          FORCE: ${{ inputs.force-rebuild }}
+          SRC_TAG: ${{ env.REGISTRY }}/upkilo-api:src-${{ steps.fp.outputs.api }}
+        run: |
+          set -euo pipefail
+          if [ "$FORCE" = "true" ]; then
+            echo "force-rebuild requested — building."
+            echo "build=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          # `imagetools inspect` rather than `docker manifest inspect`: it goes through
+          # buildx (already set up above) and does not depend on the CLI's experimental
+          # manifest command being enabled on the runner image.
+          if docker buildx imagetools inspect "$SRC_TAG" >/dev/null 2>&1; then
+            echo "✅ Identical API source already built — reusing $SRC_TAG"
+            docker buildx imagetools create \
+              --tag "${{ env.REGISTRY }}/upkilo-api:${{ github.sha }}" \
+              --tag "${{ env.REGISTRY }}/upkilo-api:latest" \
+              "$SRC_TAG"
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "No image for this API source fingerprint — building."
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build & Push API Image
+        if: steps.api.outputs.build == 'true'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -72,10 +165,36 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/upkilo-api:${{ github.sha }}
             ${{ env.REGISTRY }}/upkilo-api:latest
+            ${{ env.REGISTRY }}/upkilo-api:src-${{ steps.fp.outputs.api }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/upkilo-api:latest
           cache-to: type=inline
 
+      # ── Frontend image ─────────────────────────────────────────────
+      - name: Resolve frontend image
+        id: frontend
+        env:
+          FORCE: ${{ inputs.force-rebuild }}
+          SRC_TAG: ${{ env.REGISTRY }}/upkilo-frontend:src-${{ steps.fp.outputs.frontend }}
+        run: |
+          set -euo pipefail
+          if [ "$FORCE" = "true" ]; then
+            echo "force-rebuild requested — building."
+            echo "build=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if docker buildx imagetools inspect "$SRC_TAG" >/dev/null 2>&1; then
+            echo "✅ Identical frontend source already built — reusing $SRC_TAG"
+            docker buildx imagetools create \
+              --tag "${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }}" \
+              --tag "${{ env.REGISTRY }}/upkilo-frontend:latest" \
+              "$SRC_TAG"
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "No image for this frontend source fingerprint — building."
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build & Push Frontend Image
+        if: steps.frontend.outputs.build == 'true'
         uses: docker/build-push-action@v7
         with:
           context: ./src/frontend
@@ -84,6 +203,7 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }}
             ${{ env.REGISTRY }}/upkilo-frontend:latest
+            ${{ env.REGISTRY }}/upkilo-frontend:src-${{ steps.fp.outputs.frontend }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/upkilo-frontend:latest
           cache-to: type=inline
           build-args: |
@@ -103,7 +223,12 @@ jobs:
       # every browser called its own machine — while CI stayed green, because the frontend
       # health probe hits a server route that never uses the API base URL. Assert on the
       # built artifact so the failure can never be silent again.
+      #
+      # Only runs when the image was actually built: a reused image already cleared this
+      # guard on the run that produced it, and pulling it back down to re-prove an
+      # unchanged fact is the cost this job exists to avoid.
       - name: Guard — no localhost API URL baked into production bundle
+        if: steps.frontend.outputs.build == 'true'
         run: |
           if docker run --rm --entrypoint sh \
                ${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }} \
@@ -113,6 +238,18 @@ jobs:
           fi
           echo "✅ No localhost API URL in the production bundle"
 
+      - name: Summarise image resolution
+        if: always()
+        run: |
+          verdict() { if [ "$1" = "true" ]; then echo "rebuilt"; else echo "reused (identical source)"; fi; }
+          {
+            echo "### Images for \`${{ github.sha }}\`"
+            echo
+            echo "| Image | Fingerprint | Outcome |"
+            echo "| --- | --- | --- |"
+            echo "| upkilo-api | \`src-${{ steps.fp.outputs.api }}\` | $(verdict '${{ steps.api.outputs.build }}') |"
+            echo "| upkilo-frontend | \`src-${{ steps.fp.outputs.frontend }}\` | $(verdict '${{ steps.frontend.outputs.build }}') |"
+          } >> "$GITHUB_STEP_SUMMARY"
   # ── Staging Migration (rehearsal) ─────────────────────────────────
   # Runs the same migrations against the staging database FIRST, so a destructive or
   # long-running migration fails here rather than against customer data. This job is
@@ -122,6 +259,7 @@ jobs:
     name: Migrate Staging DB (rehearsal)
     needs: build-and-push
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     # Staging infrastructure is not provisioned (budget). Set repository variable
     # STAGING_ENABLED=true after creating upkilo-staging-rg to switch this on —
     # no workflow edit required. While unset, this job and deploy-staging skip.
@@ -156,6 +294,7 @@ jobs:
     name: Deploy → Staging
     needs: [build-and-push, migrate-staging]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: vars.STAGING_ENABLED == 'true'
 
     steps:
@@ -234,6 +373,7 @@ jobs:
     name: Database Migration
     needs: [build-and-push, deploy-staging]
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     # MANUAL GATE: migrations mutate production data, so they only run on an explicit
     # workflow_dispatch — never automatically on push. GitHub Free does not offer
     # environment protection rules (required reviewers) on private repos, so this
@@ -438,6 +578,7 @@ jobs:
     name: Deploy → Production
     needs: [build-and-push, migrate-database]
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     # MANUAL GATE — see migrate-database above. Production is only ever deployed by an
     # explicit "Run workflow", never by a push to main.
     #
@@ -647,6 +788,7 @@ jobs:
   rollback:
     name: Rollback Production
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # always() + explicit result checks, same pattern as migrate-database/deploy-production
     # above: a migrate-database failure leaves deploy-production "skipped", not "failure",
     # so failure() alone (which only looks at whether upstream jobs failed) would miss it —
