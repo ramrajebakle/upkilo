@@ -219,9 +219,9 @@ function LoginForm() {
 
         <p className="text-center text-xs text-[var(--text-tertiary)]">
           By signing in you agree to our{" "}
-          <Link href={`/${locale}/terms-of-service`} className="hover:underline">Terms</Link>
+          <a href={`/${locale}/terms-of-service`} className="hover:underline">Terms</a>
           {" "}and{" "}
-          <Link href={`/${locale}/privacy-policy`} className="hover:underline">Privacy Policy</Link>.
+          <a href={`/${locale}/privacy-policy`} className="hover:underline">Privacy Policy</a>.
         </p>
       </div>
       </main>

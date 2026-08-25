@@ -52,8 +52,15 @@ export default function RegisterPage() {
       const message = response.data?.message || "Account created! Sign in to get started.";
       router.push(`/login?registered=true&next=/onboarding&message=${encodeURIComponent(message)}`);
     } catch (err: any) {
-      // The API often returns 400 Bad Request with Validation errors or a raw error message
-      setError(err.response?.data?.message || err.response?.data?.detail || "Registration failed. Please verify your fields and try again.");
+      // FluentValidation's auto-validation (RegisterRequestValidator) returns the ASP.NET
+      // Core ValidationProblemDetails shape on 400 — { errors: { Field: ["msg", ...] } } —
+      // not { message } or { detail }, so those two alone silently swallowed every
+      // validation failure (weak password, missing name, ...) behind the generic fallback.
+      const validationErrors = err.response?.data?.errors;
+      const validationMessage = validationErrors && typeof validationErrors === "object"
+        ? Object.values(validationErrors).flat().join(" ")
+        : null;
+      setError(validationMessage || err.response?.data?.message || err.response?.data?.detail || "Registration failed. Please verify your fields and try again.");
     } finally {
       setIsLoading(false);
     }
