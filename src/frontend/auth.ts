@@ -34,8 +34,19 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 // /dashboard instead of the tenant command center. Map at the auth boundary so the rest
 // of the app keeps working with its existing vocabulary. Dev-mock roles are already
 // semantic and pass through unchanged.
+// The semantic vocabulary the middleware and route guards branch on. Anything
+// not in this set is not a role as far as the frontend is concerned.
+const SEMANTIC_ROLES = new Set([
+  "platform_owner",
+  "platform_admin",
+  "tenant_owner",
+  "team_member",
+  "customer",
+]);
+
 function mapBackendRole(role: string | undefined | null): string {
-  switch ((role ?? "").toLowerCase()) {
+  const raw = (role ?? "").toLowerCase();
+  switch (raw) {
     case "superadmin":
       return "platform_owner";
     case "owner":
@@ -45,7 +56,22 @@ function mapBackendRole(role: string | undefined | null): string {
     case "staff":
       return "team_member";
     default:
-      return role || "tenant_owner"; // already-semantic (dev mock) or unknown → safe default
+      // Dev-mock logins already speak the semantic vocabulary, so pass those
+      // through — but only if they are genuinely one of it.
+      //
+      // The previous default returned the unrecognised string verbatim and fell
+      // back to "tenant_owner", described as a safe default. Neither is safe:
+      // tenant_owner is the highest tenant privilege, and an unknown value that
+      // passes through unchanged matches none of the guards written against the
+      // known roles. The platform guard was a blocklist, so a role outside it
+      // was let through to /admin and /platform rather than kept out. Adding one
+      // role to the backend enum — a receptionist, a contractor, a read-only
+      // auditor — was enough to trigger that.
+      //
+      // team_member is the least-privileged role that still belongs to a tenant:
+      // blocked from the platform back office, landing on /dashboard rather than
+      // a client portal it has no account for.
+      return SEMANTIC_ROLES.has(raw) ? raw : "team_member";
   }
 }
 

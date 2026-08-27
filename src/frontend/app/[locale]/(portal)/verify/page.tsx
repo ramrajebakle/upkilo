@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { apiClient } from '@/lib/api';
@@ -34,7 +35,7 @@ export default function VerifyPortalPage() {
 
                 setStatus('success');
                 setTimeout(() => {
-                    router.push('/portal/bookings');
+                    router.push('/portal-bookings');
                 }, 1500);
             } catch (err: any) {
                 console.error('Verification failed', err);
@@ -75,7 +76,7 @@ export default function VerifyPortalPage() {
                         <h1 className="text-2xl font-bold text-slate-900">Verification failed</h1>
                         <p className="text-red-500">{error}</p>
                         <button
-                            onClick={() => router.push('/portal/login')}
+                            onClick={() => router.push('/portal-login')}
                             className="btn btn-primary w-full mt-4"
                         >
                             Back to Login

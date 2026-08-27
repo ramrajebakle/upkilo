@@ -47,6 +47,15 @@ public class StaffController : ControllerBase
         string cacheKey = $"staff_list_{tenantId}";
         if (!_cache.TryGetValue(cacheKey, out List<object>? staff))
         {
+            // The staff list page renders join date, specialties and booking counts.
+            // None of them were projected, so the client read undefined for each and
+            // displayed a confident zero: every member showed "offline", 0 bookings
+            // today, 0 lifetime bookings and no specialties, regardless of the truth.
+            // DateJoined and Tags are columns on the entity; the two counts are
+            // subqueries EF translates in-database rather than loading bookings.
+            var todayStart = DateTime.UtcNow.Date;
+            var tomorrowStart = todayStart.AddDays(1);
+
             var staffEntries = await _context.StaffMembers
                 .Where(s => s.TenantId == tenantId && !s.IsDeleted)
                 .Select(s => new
@@ -58,7 +67,16 @@ public class StaffController : ControllerBase
                     s.Phone,
                     s.Role,
                     s.Color,
-                    s.IsActive
+                    s.IsActive,
+                    s.Title,
+                    s.AvatarUrl,
+                    s.DateJoined,
+                    Specialties = s.Tags,
+                    BookingsToday = s.Bookings.Count(b =>
+                        b.StartTime >= todayStart &&
+                        b.StartTime < tomorrowStart &&
+                        b.Status != BookingStatus.Cancelled),
+                    BookingsTotal = s.Bookings.Count(b => b.Status != BookingStatus.Cancelled)
                 })
                 .ToListAsync();
 

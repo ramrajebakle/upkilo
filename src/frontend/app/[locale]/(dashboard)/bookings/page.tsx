@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
     Search,
@@ -8,7 +8,6 @@ import {
     Filter,
     Calendar,
     Clock,
-    MoreVertical,
     ChevronRight,
     User,
     CheckCircle,
@@ -22,80 +21,75 @@ import {
 } from 'lucide-react';
 import { cn, formatDate, formatTime, formatCurrency } from '@/lib/utils';
 
-import api from '@/lib/api';
-import { SkeletonCard } from '@/components/ui';
+import { ErrorState } from '@/components/ui';
 import { BulkActionsBar } from '@/components/ui/BulkActionsBar';
-import { Trash2, Ban, CheckSquare } from 'lucide-react';
+import { Ban } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface Booking {
-    id: string;
-    clientName: string;
-    clientEmail: string;
-    clientInitials: string;
-    serviceName: string;
-    staffName: string;
-    startTime: string;
-    endTime: string;
-    status: 'confirmed' | 'pending' | 'completed' | 'cancelled' | 'no_show';
-    price: number;
-}
+import { useBookings, useCancelBookings } from '@/lib/query/bookings';
 
 export default function BookingsPage() {
-    const [bookings, setBookings] = useState<Booking[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [dateFilter, setDateFilter] = useState('today');
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-    useEffect(() => {
-        const fetchBookings = async () => {
-            setLoading(true);
-            try {
-                const now = new Date();
-                let from: Date | undefined;
-                let to: Date | undefined;
-                if (dateFilter === 'today') {
-                    from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                    to = new Date(from); to.setDate(to.getDate() + 1);
-                } else if (dateFilter === 'week') {
-                    from = new Date(now); from.setDate(now.getDate() - now.getDay());
-                    from.setHours(0, 0, 0, 0);
-                    to = new Date(from); to.setDate(to.getDate() + 7);
-                } else if (dateFilter === 'month') {
-                    from = new Date(now.getFullYear(), now.getMonth(), 1);
-                    to = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-                }
-                const response = await api.bookings.list({
-                    limit: 100,
-                    status: statusFilter === 'all' ? undefined : statusFilter,
-                    ...(from && { startDate: from.toISOString() }),
-                    ...(to && { endDate: to.toISOString() }),
-                } as any);
-                setBookings(response.data.data ?? []);
-            } catch (error) {
-                console.error('Failed to fetch bookings', error);
-                setBookings([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBookings();
-    }, [statusFilter, dateFilter]);
+    // Derived from the filter rather than stored, so the range can never go
+    // stale against the clock the way a value captured in state would.
+    const range = useMemo(() => {
+        const now = new Date();
+        if (dateFilter === 'today') {
+            const from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const to = new Date(from); to.setDate(to.getDate() + 1);
+            return { from, to };
+        }
+        if (dateFilter === 'week') {
+            const from = new Date(now); from.setDate(now.getDate() - now.getDay());
+            from.setHours(0, 0, 0, 0);
+            const to = new Date(from); to.setDate(to.getDate() + 7);
+            return { from, to };
+        }
+        if (dateFilter === 'month') {
+            return {
+                from: new Date(now.getFullYear(), now.getMonth(), 1),
+                to: new Date(now.getFullYear(), now.getMonth() + 1, 1),
+            };
+        }
+        return { from: undefined, to: undefined };
+    }, [dateFilter]);
 
-    const filteredBookings = bookings.filter(booking => {
-        const matchesSearch = booking.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            booking.serviceName.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
-        return matchesSearch && matchesStatus;
+    const {
+        data: bookings = [],
+        isPending: loading,
+        isError,
+        error,
+        refetch,
+        isFetching,
+    } = useBookings({
+        limit: 100,
+        status: statusFilter === 'all' ? undefined : statusFilter,
+        ...(range.from && { startDate: range.from.toISOString() }),
+        ...(range.to && { endDate: range.to.toISOString() }),
     });
 
-    // Stats
-    const todayBookings = bookings.length;
+    const cancelBookings = useCancelBookings();
+
+    const filteredBookings = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        if (!q) return bookings;
+        return bookings.filter(b =>
+            b.clientName.toLowerCase().includes(q) ||
+            b.serviceName.toLowerCase().includes(q)
+        );
+    }, [bookings, searchQuery]);
+
+    // Stats describe the loaded range, so they follow the date filter label
+    // instead of always claiming to be "today".
+    const totalBookings = bookings.length;
     const confirmedCount = bookings.filter(b => b.status === 'confirmed').length;
     const pendingCount = bookings.filter(b => b.status === 'pending').length;
-    const todayRevenue = bookings.filter(b => b.status !== 'cancelled').reduce((sum, b) => sum + b.price, 0);
+    const expectedRevenue = bookings
+        .filter(b => b.status !== 'cancelled')
+        .reduce((sum, b) => sum + b.price, 0);
 
     const toggleSelect = (id: string) => {
         setSelectedIds(prev => {
@@ -106,26 +100,19 @@ export default function BookingsPage() {
     };
 
     const handleBulkCancel = async () => {
+        const ids = [...selectedIds];
+        if (ids.length === 0) return;
+        const label = `${ids.length} ${ids.length === 1 ? 'booking' : 'bookings'}`;
+        if (!confirm(`Cancel ${label}? The client will be notified.`)) return;
         try {
-            await Promise.all([...selectedIds].map(id =>
-                api.bookings.update(id, { status: 'cancelled' } as any).catch(() => null)
-            ));
-            setBookings(prev => prev.map(b => selectedIds.has(b.id) ? { ...b, status: 'cancelled' as const } : b));
+            await cancelBookings.mutateAsync({ ids });
             setSelectedIds(new Set());
-            toast.success(`${selectedIds.size} bookings cancelled`);
-        } catch { toast.error('Failed to cancel bookings'); }
-    };
-
-    const handleBulkDelete = async () => {
-        if (!confirm(`Delete ${selectedIds.size} booking(s)? This cannot be undone.`)) return;
-        try {
-            await Promise.all([...selectedIds].map(id =>
-                api.bookings.cancel(id).catch(() => null)
-            ));
-            setBookings(prev => prev.filter(b => !selectedIds.has(b.id)));
-            setSelectedIds(new Set());
-            toast.success(`${selectedIds.size} bookings deleted`);
-        } catch { toast.error('Failed to delete bookings'); }
+            toast.success(`${label} cancelled`);
+        } catch (e) {
+            // Surfaces the real partial-failure count instead of a blanket
+            // "success" toast fired over swallowed rejections.
+            toast.error(e instanceof Error ? e.message : `Could not cancel ${label}`);
+        }
     };
 
     const getStatusStyles = (status: string) => {
@@ -176,10 +163,10 @@ export default function BookingsPage() {
             {/* Stats Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total', value: todayBookings, icon: CalendarDays, gradient: 'from-blue-500 to-primary-600', shadow: 'shadow-blue-500/25' },
+                    { label: 'Total', value: totalBookings, icon: CalendarDays, gradient: 'from-blue-500 to-primary-600', shadow: 'shadow-blue-500/25' },
                     { label: 'Confirmed', value: confirmedCount, icon: CheckCircle, gradient: 'from-emerald-500 to-emerald-700', shadow: 'shadow-emerald-500/25' },
                     { label: 'Pending', value: pendingCount, icon: Clock, gradient: 'from-amber-500 to-orange-600', shadow: 'shadow-amber-500/25' },
-                    { label: 'Expected Revenue', value: formatCurrency(todayRevenue), icon: DollarSign, gradient: 'from-primary-500 to-primary-700', shadow: 'shadow-primary-500/25' },
+                    { label: 'Expected Revenue', value: formatCurrency(expectedRevenue), icon: DollarSign, gradient: 'from-primary-500 to-primary-700', shadow: 'shadow-primary-500/25' },
                 ].map((stat, i) => {
                     const Icon = stat.icon;
                     return (
@@ -210,6 +197,7 @@ export default function BookingsPage() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
                     <input
                         type="text"
+                        aria-label="Search bookings by client or service"
                         placeholder="Search by client or service..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -251,7 +239,14 @@ export default function BookingsPage() {
             </div>
 
             {/* Bookings List */}
-            {loading ? (
+            {isError ? (
+                <ErrorState
+                    title="Couldn't load bookings"
+                    error={error}
+                    onRetry={() => refetch()}
+                    isRetrying={isFetching}
+                />
+            ) : loading ? (
                 <div className="space-y-4">
                     {[...Array(3)].map((_, i) => (
                         <div key={i} className="card-elevated p-6 animate-pulse">
@@ -285,7 +280,7 @@ export default function BookingsPage() {
                             <div
                                 key={booking.id}
                                 className={cn("card-elevated group overflow-hidden animate-fade-in-up transition-all", selectedIds.has(booking.id) && "ring-2 ring-primary-500 ring-offset-1")}
-                                style={{ animationDelay: `${400 + index * 100}ms` }}
+                                style={{ animationDelay: `${Math.min(400 + index * 40, 800)}ms` }}
                             >
                                 <div className="p-5">
                                     <div className="flex items-center gap-4">
@@ -294,6 +289,7 @@ export default function BookingsPage() {
                                             type="checkbox"
                                             checked={selectedIds.has(booking.id)}
                                             onChange={() => toggleSelect(booking.id)}
+                                            aria-label={`Select ${booking.clientName}'s ${booking.serviceName} booking`}
                                             className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-primary-600 focus:ring-primary-500 cursor-pointer shrink-0"
                                             onClick={e => e.stopPropagation()}
                                         />
@@ -365,12 +361,6 @@ export default function BookingsPage() {
                                                 >
                                                     <Edit className="h-4 w-4" />
                                                 </Link>
-                                                <button
-                                                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                                                    title="More actions"
-                                                >
-                                                    <MoreVertical className="h-4 w-4 text-slate-400" />
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -393,21 +383,16 @@ export default function BookingsPage() {
                 onClearSelection={() => setSelectedIds(new Set())}
                 actions={[
                     {
-                        label: 'Cancel Selected',
+                        label: 'Cancel bookings',
                         icon: <Ban className="h-3.5 w-3.5" />,
                         onClick: handleBulkCancel,
-                    },
-                    {
-                        label: 'Delete Selected',
-                        icon: <Trash2 className="h-3.5 w-3.5" />,
-                        onClick: handleBulkDelete,
                         destructive: true,
                     },
                 ]}
             />
 
             {/* Empty State */}
-            {!loading && filteredBookings.length === 0 && (
+            {!loading && !isError && filteredBookings.length === 0 && (
                 <div className="card-elevated py-20 text-center animate-fade-in dark:bg-slate-900 dark:border-slate-800">
                     <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-slate-100 dark:border-slate-700">
                         <CalendarDays className="h-10 w-10 text-slate-300 dark:text-slate-600" />

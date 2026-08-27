@@ -5,6 +5,7 @@ export type { BreadcrumbItem } from './Breadcrumb';
 export { Button } from './Button';
 export { Card } from './Card';
 export { EmptyState } from './EmptyState';
+export { ErrorState } from './ErrorState';
 export { FeatureGate } from './FeatureGate';
 export { Input } from './Input';
 export { Label } from './Label';

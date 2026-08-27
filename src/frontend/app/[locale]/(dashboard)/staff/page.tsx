@@ -10,7 +10,6 @@ import {
     Mail,
     Phone,
     Calendar,
-    Star,
     Clock,
     TrendingUp,
     Users,
@@ -19,31 +18,13 @@ import {
     Trophy,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import api from '@/lib/api';
-import { PageHeader, StatsGrid, EmptyState, Pagination, SkeletonCard, SkeletonTable } from '@/components/ui';
+import { useStaff, useDeleteStaff, type StaffMember } from '@/lib/query/staff';
+import { PageHeader, StatsGrid, EmptyState, ErrorState, Pagination, SkeletonCard, SkeletonTable } from '@/components/ui';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { Trash2 } from 'lucide-react';
 
-interface StaffMember {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    role: string;
-    avatar?: string;
-    status: 'active' | 'away' | 'offline';
-    rating: number;
-    bookingsToday: number;
-    bookingsTotal: number;
-    specialties: string[];
-    joinedAt: string;
-}
-
 export default function StaffPage() {
-    const [staff, setStaff] = useState<StaffMember[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const { success, error: toastError } = useToast();
@@ -53,37 +34,20 @@ export default function StaffPage() {
     const itemsPerPage = 8;
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [staffToDelete, setStaffToDelete] = useState<StaffMember | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
 
-    useEffect(() => {
-        const fetchStaff = async () => {
-            setLoading(true);
-            try {
-                const res = await api.staff.list();
-                const data = res.data.map((s: any) => ({
-                    id: s.id,
-                    firstName: s.firstName,
-                    lastName: s.lastName,
-                    email: s.email,
-                    phone: s.phone,
-                    role: s.role,
-                    status: s.employmentStatus === 'Active' ? 'active' : 'offline',
-                    rating: s.averageRating || 0,
-                    bookingsToday: s.bookingsToday || 0,
-                    bookingsTotal: s.totalBookings || 0,
-                    specialties: s.specialties || [],
-                    joinedAt: s.employmentStartDate
-                }));
-                setStaff(data);
-            } catch (error) {
-                console.error(error);
-                toastError('Failed to load staff list');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchStaff();
-    }, []);
+    // Replaces an effect that toasted on failure and left the list empty, so an
+    // outage rendered the "no team members yet" empty state at a salon that has
+    // a full roster.
+    const {
+        data: staff = [],
+        isPending: loading,
+        isError,
+        error,
+        refetch,
+        isFetching,
+    } = useStaff();
+
+    const deleteStaff = useDeleteStaff();
 
     const filteredStaff = staff.filter((member) =>
         `${member.firstName} ${member.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -112,7 +76,6 @@ export default function StaffPage() {
     const totalStaff = staff.length;
     const activeStaff = staff.filter(s => s.status === 'active').length;
     const todayBookings = staff.reduce((sum, s) => sum + s.bookingsToday, 0);
-    const avgRating = staff.length > 0 ? (staff.reduce((sum, s) => sum + s.rating, 0) / staff.length).toFixed(1) : "0";
 
     // Pagination
     const totalPages = Math.ceil(filteredStaff.length / itemsPerPage);
@@ -123,20 +86,15 @@ export default function StaffPage() {
 
     const handleDelete = async () => {
         if (!staffToDelete) return;
-        setIsDeleting(true);
         try {
-            await api.staff.delete(staffToDelete.id);
-            setStaff(current => current.filter(s => s.id !== staffToDelete.id));
-            success('Staff member deleted successfully');
+            await deleteStaff.mutateAsync(staffToDelete.id);
+            success('Staff member deleted');
             setIsDeleteModalOpen(false);
             if (paginatedStaff.length === 1 && currentPage > 1) {
                 setCurrentPage(currentPage - 1);
             }
         } catch (err) {
-            console.error('Failed to delete staff:', err);
-            toastError('Failed to delete staff member');
-        } finally {
-            setIsDeleting(false);
+            toastError(err instanceof Error ? err.message : 'Failed to delete staff member');
         }
     };
 
@@ -171,13 +129,12 @@ export default function StaffPage() {
                     { label: 'Total Staff', value: totalStaff, icon: Users, color: 'blue' },
                     { label: 'Active Now', value: activeStaff, icon: Clock, color: 'emerald' },
                     { label: "Today's Bookings", value: todayBookings, icon: Calendar, color: 'violet' },
-                    { label: 'Avg. Rating', value: avgRating, icon: Star, color: 'amber' },
                 ]}
                 loading={loading}
             />
 
             {/* Performance Ranking */}
-            {!loading && staff.length > 0 && (
+            {!loading && !isError && staff.length > 0 && (
                 <div className="card-elevated p-6 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800 shadow-sm" style={{ animationDelay: '150ms' }}>
                     <div className="flex items-center gap-2 mb-5">
                         <div className="p-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
@@ -205,7 +162,7 @@ export default function StaffPage() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{member.firstName} {member.lastName}</p>
-                                            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-tighter">{member.bookingsTotal} bookings • ⭐ {member.rating}</p>
+                                            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-tighter">{member.bookingsTotal} bookings</p>
                                         </div>
                                     </div>
                                 );
@@ -264,7 +221,14 @@ export default function StaffPage() {
             </div>
 
             {/* Staff content */}
-            {loading ? (
+            {isError ? (
+                <ErrorState
+                    title="Couldn't load your team"
+                    error={error}
+                    onRetry={() => refetch()}
+                    isRetrying={isFetching}
+                />
+            ) : loading ? (
                 viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {Array.from({ length: 4 }).map((_, i) => (
@@ -308,11 +272,11 @@ export default function StaffPage() {
                                     </h3>
                                     <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">{member.role}</p>
 
-                                    {/* Rating */}
+                                    {/* Lifetime bookings */}
                                     <div className="flex items-center gap-1.5 mb-5 bg-slate-50 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-700">
-                                        <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-                                        <span className="font-bold text-slate-900 dark:text-white text-sm">{member.rating}</span>
-                                        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">({member.bookingsTotal})</span>
+                                        <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                                        <span className="font-bold text-slate-900 dark:text-white text-sm">{member.bookingsTotal}</span>
+                                        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">bookings</span>
                                     </div>
 
                                     {/* Specialties */}
@@ -366,7 +330,6 @@ export default function StaffPage() {
                                     <th>Staff Member</th>
                                     <th>Role</th>
                                     <th>Status</th>
-                                    <th>Rating</th>
                                     <th>Today</th>
                                     <th>Total</th>
                                     <th></th>
@@ -394,21 +357,14 @@ export default function StaffPage() {
                                             <span className={cn(
                                                 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider',
                                                 member.status === 'active' && 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400',
-                                                member.status === 'away' && 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400',
                                                 member.status === 'offline' && 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400',
                                             )}>
                                                 <span className={cn('w-1.5 h-1.5 rounded-full', getStatusColor(member.status))} />
                                                 {member.status}
                                             </span>
                                         </td>
-                                        <td>
-                                            <div className="flex items-center gap-1.5">
-                                                <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-                                                <span className="font-bold text-slate-900 dark:text-white text-sm">{member.rating}</span>
-                                            </div>
-                                        </td>
-                                        <td className="font-bold text-slate-900 dark:text-white">{member.bookingsToday}</td>
-                                        <td className="text-slate-600 dark:text-slate-400 text-sm font-medium">{member.bookingsTotal}</td>
+                                        <td className="font-bold text-slate-900 dark:text-white tabular-nums">{member.bookingsToday}</td>
+                                        <td className="text-slate-600 dark:text-slate-400 text-sm font-medium tabular-nums">{member.bookingsTotal}</td>
                                         <td>
                                             <div className="flex gap-2 justify-end">
                                                 <Link 
@@ -433,7 +389,7 @@ export default function StaffPage() {
                 </div>
             )}
 
-            {!loading && totalPages > 1 && (
+            {!loading && !isError && totalPages > 1 && (
                 <div className="mt-4">
                     <Pagination
                         currentPage={currentPage}
@@ -445,7 +401,7 @@ export default function StaffPage() {
             )}
 
             {/* Empty State */}
-            {!loading && filteredStaff.length === 0 && (
+            {!loading && !isError && filteredStaff.length === 0 && (
                 <EmptyState
                     icon={Users}
                     title="No staff members found"
@@ -467,7 +423,7 @@ export default function StaffPage() {
                 description={`Are you sure you want to delete ${staffToDelete?.firstName} ${staffToDelete?.lastName}? This action cannot be undone.`}
                 confirmText="Delete"
                 variant="danger"
-                loading={isDeleting}
+                loading={deleteStaff.isPending}
             />
         </div>
     );

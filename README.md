@@ -160,7 +160,12 @@ cp .env.example .env          # fill in required values
 # 2. Start infrastructure
 docker compose up -d postgres redis
 
-# 3. Apply migrations
+# 3. Point the backend at your local database, then apply migrations
+#    appsettings.json defaults to port 6432 (PgBouncer), which docker compose does not
+#    start — without this copy, the command below fails with
+#    "Failed to connect to 127.0.0.1:6432".
+cp src/backend/Upkilo.API/appsettings.Development{.example,}.json
+
 dotnet ef database update \
   --project src/backend/Upkilo.Infrastructure \
   --startup-project src/backend/Upkilo.API
@@ -172,8 +177,8 @@ cd src/backend && dotnet run --project Upkilo.API
 cd src/frontend && npm install && npm run dev
 ```
 
-> ⚠️ Use `docker compose up -d postgres redis` rather than bare `docker compose up -d` —
-> the `pgbouncer` service pins an image tag that no longer exists upstream.
+> `pgbouncer` sits behind a `pooling` compose profile, so a bare `docker compose up -d`
+> skips it. It is dev-only — Azure provides connection pooling in production.
 
 ### Local URLs
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from '@/navigation';
 import { 
     Plus, 
@@ -18,44 +18,24 @@ import {
     ChevronRight,
     Loader2
 } from 'lucide-react';
-import { api } from '@/lib/api';
+import { useServices } from '@/lib/query/services';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/components/ui/Toast';
-
-interface Service {
-    id: string;
-    name: string;
-    description: string;
-    durationMinutes: number;
-    price: number;
-    currency: string;
-    color: string;
-    isActive: boolean;
-    maxAttendees: number;
-}
+import { ErrorState } from '@/components/ui';
 
 export default function ServicesPage() {
-    const [services, setServices] = useState<Service[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const { error } = useToast();
 
-    useEffect(() => {
-        fetchServices();
-    }, []);
-
-    const fetchServices = async () => {
-        try {
-            setIsLoading(true);
-            const response = await api.services.list();
-            setServices(response.data.data || []);
-        } catch (err) {
-            console.error('Error fetching services:', err);
-            error('Failed to load services');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    // The previous effect toasted on failure and left `services` empty, so the
+    // page fell through to its "no services" state — a failed load and a salon
+    // that has not added services yet looked identical.
+    const {
+        data: services = [],
+        isPending: isLoading,
+        isError,
+        error,
+        refetch,
+        isFetching,
+    } = useServices();
 
     const filteredServices = services.filter(service => 
         service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -106,7 +86,14 @@ export default function ServicesPage() {
             </div>
 
             {/* List View */}
-            {isLoading ? (
+            {isError ? (
+                <ErrorState
+                    title="Couldn't load services"
+                    error={error}
+                    onRetry={() => refetch()}
+                    isRetrying={isFetching}
+                />
+            ) : isLoading ? (
                 <div className="flex flex-col items-center justify-center py-24 gap-6">
                     <div className="relative">
                         <Loader2 className="w-12 h-12 text-primary-500 animate-spin" />

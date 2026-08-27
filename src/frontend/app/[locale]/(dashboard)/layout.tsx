@@ -33,6 +33,16 @@ type NavItem = {
     href: string;
     icon: React.ComponentType<{ className?: string }>;
     badge?: 'escalation';
+    /**
+     * Restricts the entry to the tenant owner. Set only where the API refuses
+     * every other role outright — BillingController carries a class-level
+     * [Authorize(Roles = "Owner")], and every StaffPayoutController method does
+     * — so the page could never load for anyone else. This mirrors an existing
+     * backend rule rather than inventing UI policy: entries the API merely
+     * restricts per-method (payments, branding, attendance) stay visible,
+     * because Admins genuinely use them.
+     */
+    ownerOnly?: boolean;
 };
 
 type NavGroup = {
@@ -128,6 +138,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const { user, logout, checkAuth, isInitialized } = useAuthStore();
     const { setTheme, resolvedTheme } = useTheme();
 
+    // authStore keeps the backend's own role vocabulary (owner / admin / manager /
+    // staff / superadmin), which is finer-grained than the semantic role the
+    // session carries for routing — team_member collapses admin, manager and
+    // staff into one value. Owner-only gating needs the distinction, so it reads
+    // from here.
+    const isOwner = user?.role === 'owner' || user?.role === 'superadmin';
+
     const navGroups: NavGroup[] = [
         {
             label: 'Scheduling',
@@ -164,7 +181,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { name: 'Attendance', href: '/staff/attendance', icon: UserCheck },
                 { name: 'Certifications', href: '/staff/certifications', icon: Award },
                 { name: 'Earnings', href: '/staff/earnings', icon: TrendingUp },
-                { name: 'Payouts', href: '/staff/payout', icon: CreditCard },
+                { name: 'Payouts', href: '/staff/payout', icon: CreditCard, ownerOnly: true },
                 { name: 'Shift Swaps', href: '/staff/shift-swaps', icon: ArrowLeftRight },
                 { name: 'Performance', href: '/staff/performance', icon: TrendingUp },
                 { name: 'Staff Schedule', href: '/staff/schedule', icon: Clock },
@@ -260,7 +277,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { name: 'Data Exports', href: '/settings/data-exports', icon: Download },
                 { name: 'Migration Wizard', href: '/settings/migration', icon: Database },
                 { name: 'Advanced Features', href: '/settings/advanced', icon: Zap },
-                { name: 'Demo Mode', href: '/settings/demo', icon: FlaskConical },
+                { name: 'Demo Mode', href: '/settings/demo', icon: FlaskConical, ownerOnly: true },
                 { name: 'Industry Features', href: '/settings/verticals', icon: Layers },
                 { name: 'Kiosk', href: '/kiosk', icon: Monitor },
                 { name: 'Plugins', href: '/plugins', icon: Package },
@@ -281,6 +298,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             ],
         },
     ];
+
+    // Entries the API refuses outright for this role are removed rather than
+    // shown and left to fail. A nav item that always 403s reads as a broken
+    // product, and — because a failed fetch currently renders as an empty state
+    // rather than a permission error — it reads as missing data instead of a
+    // restriction.
+    const visibleNavGroups: NavGroup[] = navGroups
+        .map(group => ({
+            ...group,
+            items: group.items.filter(item => !item.ownerOnly || isOwner),
+        }))
+        .filter(group => group.items.length > 0);
+
 
     const adminNavigation: NavItem[] = [
         { name: 'Platform Admin', href: '/admin', icon: Shield },
@@ -406,7 +436,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                             Platform Admin
                                         </Link>
                                     )}
-                                    {navGroups.map((group, idx) => (
+                                    {visibleNavGroups.map((group, idx) => (
                                         <NavGroupSection
                                             key={group.label}
                                             group={group}

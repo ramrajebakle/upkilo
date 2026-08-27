@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, usePathname } from '@/navigation';
 import { useEffect, useState } from 'react';
 import {
     Calendar,
@@ -12,7 +11,6 @@ import {
     Menu,
     X,
     Bell,
-    Gift,
     Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -25,9 +23,9 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { label: 'My Bookings', href: '/portal/bookings', icon: Calendar },
-    { label: 'My Profile', href: '/portal/profile', icon: User },
-    { label: 'Rewards', href: '/portal/rewards', icon: Gift },
+    { label: 'Overview', href: '/portal-dashboard', icon: Zap },
+    { label: 'My Bookings', href: '/portal-bookings', icon: Calendar },
+    { label: 'My Profile', href: '/profile', icon: User },
 ];
 
 function PoweredByUpkiloBadge() {
@@ -68,9 +66,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
-    // Hide portal layout on login/verify pages if they are inside the group but don't need it
-    // Actually guest pages should probably be in a separate group or handled here
-    const isGuestPage = pathname === '/portal/login' || pathname === '/portal/verify';
+    // usePathname() from '@/navigation' is locale-stripped, so these compare
+    // against the real route names rather than a /portal/* prefix that the route
+    // group never produced.
+    const isGuestPage = pathname === '/portal-login' || pathname === '/verify';
 
     if (isGuestPage) {
         return <div className="min-h-screen bg-slate-50">{children}</div>;
@@ -82,7 +81,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             <header className="bg-white border-b sticky top-0 z-50">
                 <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/" className="flex items-center gap-2">
+                        <Link href="/portal-dashboard" className="flex items-center gap-2">
                             <div className="p-1.5 bg-primary rounded-lg">
                                 <ChevronLeft className="h-5 w-5 text-white" />
                             </div>

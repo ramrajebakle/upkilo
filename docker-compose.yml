@@ -28,7 +28,15 @@ services:
       retries: 5
 
   # ── PgBouncer Connection Pooler ──────────────────────────
+  # Behind a profile, so `docker compose up -d` no longer tries to start it.
+  # The pinned tag does not exist on Docker Hub, which made a bare `up` fail on
+  # every fresh clone — the README had to tell people to name postgres and redis
+  # explicitly to work around it. Production does not use this service at all;
+  # Azure provides connection pooling. Start it deliberately when you need to
+  # exercise pooling locally, after correcting the tag:
+  #     docker compose --profile pooling up -d pgbouncer
   pgbouncer:
+    profiles: ["pooling"]
     image: edoburu/pgbouncer:1.23.1
     container_name: upkilo-pgbouncer
     environment:

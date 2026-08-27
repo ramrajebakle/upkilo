@@ -8,7 +8,12 @@
 
 ## 1. Pre-flight results
 
-Verified on the current `main` (`4ddae3f`):
+> ⚠️ **These results are from `4ddae3f` and have not been re-verified since.** `main` is
+> ~147 commits ahead. Backend build and frontend build have been confirmed green at HEAD
+> (0 errors, 0 warnings); the **test suite has not been re-run** — it needs PostgreSQL on
+> `127.0.0.1:5432`. Re-run §1 before launch rather than trusting the table below.
+
+Verified on `4ddae3f`:
 
 | Check | Command | Result |
 |---|---|---|
@@ -296,13 +301,21 @@ is reached — hitting it fails closed and silently.
 
 ## 4. Outstanding issues (not deployment blockers)
 
-- [`docker-compose.yml:32`](../docker-compose.yml#L32) pins `edoburu/pgbouncer:1.23.1`,
-  which **does not exist on Docker Hub**. `docker compose up` fails for a fresh clone.
-  Dev-only — Azure provides connection pooling in production.
-- README test counts are stale (claims 520, actual 777).
-- README references `infrastructure/azure/` (Bicep IaC) and `docs/DEVELOPER_GUIDE.md`.
-  **Neither exists in this repository.** Provisioning is therefore done with the
-  `az` CLI commands in §6 rather than infrastructure-as-code.
+- ~~`docker-compose.yml` pins a `pgbouncer` tag that does not exist on Docker Hub, so
+  `docker compose up` fails for a fresh clone.~~ **Resolved** — the service now sits behind
+  a `pooling` profile, so a bare `up` skips it. The tag still needs correcting before
+  anyone runs `docker compose --profile pooling up pgbouncer`. Dev-only either way; Azure
+  provides connection pooling in production.
+- ~~README test counts are stale.~~ **Resolved** — the README now reports 776 passing /
+  1 skipped.
+- ~~README references `infrastructure/azure/` and `docs/DEVELOPER_GUIDE.md`.~~
+  **Resolved** — those references are gone. `infrastructure/` still does not exist, so
+  provisioning remains the `az` CLI commands in §6 rather than infrastructure-as-code.
+- **164 dashboard pages render a failed request as their empty state.** A customer whose
+  request fails is told they have no bookings / clients / revenue. A global read-failure
+  notice now fires as a stopgap (`lib/api.ts`), and the per-page fix is documented in
+  [DATA_LAYER.md](DATA_LAYER.md). Not a deployment blocker; it is a trust blocker for
+  first customers.
 
 ---
 

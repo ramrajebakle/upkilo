@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosRequestConfig } from 'axios';
 import Cookies from 'js-cookie';
 import {
   ICoupon,
@@ -76,6 +76,50 @@ apiClient.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+// ── Global read-failure notification ──────────────────────────────────────────────────────────
+// 164 dashboard pages still `catch { setRows([]) }`, which renders their empty state: a failed
+// request is presented to the customer as "you have no bookings / clients / revenue". Migrating
+// each page to render a real error branch is the proper fix and is under way, but until then a
+// silent failure is the single most damaging thing this UI does.
+//
+// This is the safety net, not the fix. It only fires for GETs — a failed read is what turns into
+// a lying empty state; writes overwhelmingly have their own toast at the call site. Requests the
+// query hooks make opt out, because those pages already render <ErrorState> and would otherwise
+// say it twice.
+const READ_FAILURE_WINDOW_MS = 4000;
+let _lastReadFailureAt = 0;
+
+function notifyReadFailure(error: AxiosError): void {
+  if (typeof window === 'undefined') return;
+
+  // A dashboard can fire half a dozen parallel reads; one outage should not stack six toasts.
+  const now = Date.now();
+  if (now - _lastReadFailureAt < READ_FAILURE_WINDOW_MS) return;
+  _lastReadFailureAt = now;
+
+  const status = error.response?.status;
+  const message =
+    status === 403 ? "You don't have access to this."
+    : status === 404 ? "That isn't available."
+    : status !== undefined && status >= 500 ? "Couldn't load this — the server is having trouble."
+    : "Couldn't load this. Check your connection.";
+
+  void import('sonner').then(({ toast }) => {
+    toast.error(message, { description: 'The page may be showing incomplete data.' });
+  }).catch(() => { /* toast is a courtesy; never let it mask the original failure */ });
+}
+
+function shouldNotifyReadFailure(error: AxiosError): boolean {
+  const config = error.config as (InternalAxiosRequestConfig & { suppressErrorToast?: boolean }) | undefined;
+  if (!config || config.suppressErrorToast) return false;
+  // Only reads. GET is the default when a method is not set.
+  if ((config.method ?? 'get').toLowerCase() !== 'get') return false;
+  const status = error.response?.status;
+  // 401 redirects to login on its own; 429 is retried above and may still succeed.
+  if (status === 401 || status === 429) return false;
+  return true;
+}
 
 // Response interceptor - handle circuit breaker, 401 refresh, and 429 rate-limit retry
 apiClient.interceptors.response.use(
@@ -165,6 +209,10 @@ apiClient.interceptors.response.use(
       return apiClient(config);
     }
 
+    if (shouldNotifyReadFailure(error)) {
+      notifyReadFailure(error);
+    }
+
     return Promise.reject(error);
   }
 );
@@ -239,9 +287,9 @@ export const api = {
   
   // Bookings
   bookings: {
-    list: (params?: { page?: number; limit?: number; status?: string }) =>
-      apiClient.get('/api/v1/bookings', { params }), // Versioned
-    get: (id: string) => apiClient.get(`/api/v1/bookings/${id}`),
+    list: (params?: { page?: number; limit?: number; status?: string }, config?: AxiosRequestConfig) =>
+      apiClient.get('/api/v1/bookings', { ...config, params }), // Versioned
+    get: (id: string, config?: AxiosRequestConfig) => apiClient.get(`/api/v1/bookings/${id}`, config),
     create: (data: any) => apiClient.post('/api/v1/bookings', data),
     createRecurring: (data: any) => apiClient.post('/api/v1/bookings/recurring', data),
     update: (id: string, data: any) => apiClient.put(`/api/v1/bookings/${id}`, data),
@@ -251,8 +299,8 @@ export const api = {
   
   // Clients
   clients: {
-    list: (params?: { page?: number; limit?: number; search?: string }) =>
-      apiClient.get('/api/v1/clients', { params }),
+    list: (params?: { page?: number; limit?: number; search?: string }, config?: AxiosRequestConfig) =>
+      apiClient.get('/api/v1/clients', { ...config, params }),
     advancedSearch: (params?: any) =>
       apiClient.get('/api/v1/clients/advanced-search', { params }),
     get: (id: string) => apiClient.get(`/api/v1/clients/${id}`),
@@ -326,7 +374,7 @@ export const api = {
 
   // Services
   services: {
-    list: () => apiClient.get('/api/v1/services'),
+    list: (config?: AxiosRequestConfig) => apiClient.get('/api/v1/services', config),
     get: (id: string) => apiClient.get(`/api/v1/services/${id}`),
     create: (data: any) => apiClient.post('/api/v1/services', data),
     update: (id: string, data: any) => apiClient.put(`/api/v1/services/${id}`, data),
@@ -368,7 +416,7 @@ export const api = {
   
   // Staff
   staff: {
-    list: () => apiClient.get('/api/v1/staff'),
+    list: (config?: AxiosRequestConfig) => apiClient.get('/api/v1/staff', config),
     get: (id: string) => apiClient.get(`/api/v1/staff/${id}`),
     update: (id: string, data: any) => apiClient.put(`/api/v1/staff/${id}`, data),
     delete: (id: string) => apiClient.delete(`/api/v1/staff/${id}`),

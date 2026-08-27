@@ -14,7 +14,7 @@ const ROLE_ROUTES: Record<string, string> = {
   platform_admin: "platform/command",
   tenant_owner: "dashboard",
   team_member: "dashboard",
-  customer: "dashboard",
+  customer: "portal-dashboard",
 };
 
 export default function LoginPage() {

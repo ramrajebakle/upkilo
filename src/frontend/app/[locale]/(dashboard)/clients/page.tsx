@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import {
     Search, Plus, MoreHorizontal, Users, Star, Heart,
@@ -8,8 +8,8 @@ import {
     TrendingUp, Award, UserCheck, UserX, Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import api from '@/lib/api';
-import { PageHeader, StatsGrid, EmptyState, Pagination, SkeletonTable, Breadcrumb } from '@/components/ui';
+import { useClients, useDeleteClient, useDeleteClients, type Client } from '@/lib/query/clients';
+import { PageHeader, StatsGrid, EmptyState, ErrorState, Pagination, SkeletonTable, Breadcrumb } from '@/components/ui';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { CurrencyFormatter } from '@/components/ui/CurrencyFormatter';
@@ -21,23 +21,7 @@ import {
     ChevronDown 
 } from 'lucide-react';
 
-interface Client {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    status: string;
-    loyaltyPoints: number;
-    totalSpend: number;
-    lastVisitAt: string | null;
-    tags: string[];
-    createdAt: string;
-}
-
 export default function ClientsPage() {
-    const [clients, setClients] = useState<Client[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const { success, error: toastError } = useToast();
@@ -47,8 +31,19 @@ export default function ClientsPage() {
     const itemsPerPage = 10;
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+    const {
+        data: clients = [],
+        isPending: loading,
+        isError,
+        error,
+        refetch,
+        isFetching,
+    } = useClients(searchQuery);
+
+    const deleteClient = useDeleteClient();
+    const deleteClients = useDeleteClients();
 
     const toggleSelectAll = () => {
         if (selectedIds.size === clients.length) {
@@ -66,48 +61,20 @@ export default function ClientsPage() {
     };
 
     const handleBulkDelete = async () => {
-        if (selectedIds.size === 0) return;
-        // Implementation for bulk delete
-        const count = selectedIds.size;
+        const ids = [...selectedIds];
+        if (ids.length === 0) return;
         try {
-            // Mocking sequential deletes for now if there is no bulk endpoint
-            await Promise.all(Array.from(selectedIds).map(id => api.clients.delete(id)));
-            setClients(curr => curr.filter(c => !selectedIds.has(c.id)));
-            success(`${count} clients deleted successfully`);
+            const deleted = await deleteClients.mutateAsync(ids);
+            success(`${deleted} ${deleted === 1 ? 'client' : 'clients'} deleted`);
             setSelectedIds(new Set());
         } catch (err) {
-            toastError("Failed to perform bulk deletion");
+            // Partial success is reported as such: the old handler claimed the
+            // whole operation failed even when some deletes had gone through.
+            toastError(err instanceof Error ? err.message : 'Failed to delete clients');
+            const deleted = (err as { deleted?: number })?.deleted ?? 0;
+            if (deleted > 0) setSelectedIds(new Set());
         }
     };
-
-    useEffect(() => {
-        const fetchClients = async () => {
-            setLoading(true);
-            try {
-                const res = await api.clients.list({ search: searchQuery || undefined });
-                const data = (res.data.data || res.data || []).map((c: any) => ({
-                    id: c.id,
-                    firstName: c.firstName || '',
-                    lastName: c.lastName || '',
-                    email: c.email || '',
-                    phone: c.phone || c.phoneNumber || '',
-                    status: c.status || (c.isActive ? 'Active' : 'Inactive'),
-                    loyaltyPoints: c.loyaltyPoints || 0,
-                    totalSpend: c.totalSpend || c.lifetimeValue || 0,
-                    lastVisitAt: c.lastVisitAt || c.lastVisit || null,
-                    tags: c.tags || [],
-                    createdAt: c.createdAt || '',
-                }));
-                setClients(data);
-            } catch (err) {
-                console.error('Failed to fetch clients:', err);
-                toastError('Failed to load clients');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchClients();
-    }, []);
 
     const filtered = clients.filter((c) => {
         const name = `${c.firstName} ${c.lastName}`.toLowerCase();
@@ -135,20 +102,15 @@ export default function ClientsPage() {
 
     const handleDelete = async () => {
         if (!clientToDelete) return;
-        setIsDeleting(true);
         try {
-            await api.clients.delete(clientToDelete.id);
-            setClients(current => current.filter(c => c.id !== clientToDelete.id));
-            success('Client deleted successfully');
+            await deleteClient.mutateAsync(clientToDelete.id);
+            success('Client deleted');
             setIsDeleteModalOpen(false);
             if (paginatedClients.length === 1 && currentPage > 1) {
                 setCurrentPage(currentPage - 1);
             }
         } catch (err) {
-            console.error('Failed to delete client:', err);
-            toastError('Failed to delete client');
-        } finally {
-            setIsDeleting(false);
+            toastError(err instanceof Error ? err.message : 'Failed to delete client');
         }
     };
 
@@ -254,7 +216,14 @@ export default function ClientsPage() {
             )}
 
             {/* Table */}
-            {loading ? (
+            {isError ? (
+                <ErrorState
+                    title="Couldn't load clients"
+                    error={error}
+                    onRetry={() => refetch()}
+                    isRetrying={isFetching}
+                />
+            ) : loading ? (
                 <SkeletonTable rows={itemsPerPage} cols={7} />
             ) : (
                 <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
@@ -390,7 +359,7 @@ export default function ClientsPage() {
                 </div>
             )}
 
-            {!loading && totalPages > 1 && (
+            {!loading && !isError && totalPages > 1 && (
                 <div className="mt-4">
                     <Pagination
                         currentPage={currentPage}
@@ -409,7 +378,7 @@ export default function ClientsPage() {
                 description={`Are you sure you want to delete ${clientToDelete?.firstName} ${clientToDelete?.lastName}? This action cannot be undone.`}
                 confirmText="Delete"
                 variant="danger"
-                loading={isDeleting}
+                loading={deleteClient.isPending}
             />
         </div>
     );

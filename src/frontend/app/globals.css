@@ -244,6 +244,13 @@
     --surface-border: var(--color-neutral-200);
     --surface-border-strong: var(--color-neutral-300);
 
+    /* Cards sit ON --surface-base rather than above it in light mode: the page and
+       the card are both white, separated by border and shadow alone. Dark mode
+       cannot borrow that trick — a card at --surface-base (#080812) against a page
+       of the same colour is invisible — so it lifts to neutral-900 instead. One
+       token, so .card-elevated and .stat-card cannot drift apart again. */
+    --surface-card: var(--color-neutral-0);
+
     --text-primary: var(--color-neutral-900);
     --text-secondary: var(--color-neutral-500);
     /* Not neutral-400 (#9999b0): that measures 2.62:1 on --surface-raised, well under
@@ -265,6 +272,8 @@
 
     --surface-border: var(--color-neutral-800);
     --surface-border-strong: var(--color-neutral-700);
+
+    --surface-card: var(--color-neutral-900);
 
     --text-primary: var(--color-neutral-50);
     --text-secondary: var(--color-neutral-400);
@@ -455,15 +464,22 @@
 
   /* ---- Cards ---- */
   .card-elevated {
-    background-color: #ffffff;
-    border: 1px solid var(--color-neutral-200);
+    background-color: var(--surface-card);
+    border: 1px solid var(--surface-border);
     border-radius: 1rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
+  /* A shadow tuned for white cards on a white page all but vanishes on a dark
+     one, leaving the card to rely on its border alone. Deepening it in dark
+     restores the same sense of elevation. */
+  .dark .card-elevated {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
   .stat-card {
-    background-color: #ffffff;
-    border: 1px solid var(--color-neutral-200);
+    background-color: var(--surface-card);
+    border: 1px solid var(--surface-border);
     border-radius: 1rem;
     padding: 1.25rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -475,6 +491,14 @@
   .stat-card:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     transform: translateY(-1px);
+  }
+
+  .dark .stat-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .dark .stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
   }
 
   /* ---- Glass effects ---- */

@@ -3,7 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const SUPPORTED_LOCALES = ['en','hi','es','fr','de','ar','ja','pt','it','ru','nl','tr','zh','ko','he'];
 
-const PUBLIC_SEGMENTS = ['login', 'register', 'reset-password', 'verify-email', 'invite'];
+const PUBLIC_SEGMENTS = ['login', 'register', 'reset-password', 'verify-email', 'invite', 'portal-login', 'verify'];
+
+// The only roles permitted on Upkilo's own back office (/platform/*, /admin/*).
+// Kept as an allowlist so a new role is denied until it is deliberately added.
+const PLATFORM_ROLES = new Set(['platform_owner', 'platform_admin']);
 
 // Top-level app segments that intentionally have no locale prefix
 const NON_LOCALE_SEGMENTS = new Set(['book', 'discover', 'powered-by', 'enterprise', 'offline', 'test', 'au', 'ca', 'uk', 'uae']);
@@ -187,7 +191,12 @@ const authMiddleware = auth((req) => {
     const rest = SUPPORTED_LOCALES.includes(segments[0]) ? segments.slice(1) : segments;
     const isStaffPath = rest[0] === 'platform' || rest[0] === 'admin';
 
-    if ((role === 'tenant_owner' || role === 'team_member' || role === 'customer') && isStaffPath) {
+    // An allowlist, not a blocklist. The previous test named the three tenant
+    // roles to turn away, which meant anything NOT named was let through —
+    // including any role the backend might add later, and any value that reached
+    // the session without matching the mapping in auth.ts. Naming who may enter
+    // instead of who may not makes an unrecognised role fail closed.
+    if (isStaffPath && !PLATFORM_ROLES.has(role ?? '')) {
       return Response.redirect(new URL(`/${locale}/dashboard`, nextUrl));
     }
 
