@@ -238,6 +238,68 @@ jobs:
           fi
           echo "✅ No localhost API URL in the production bundle"
 
+      # ── Staging frontend image ─────────────────────────────────────
+      # The NEXT_PUBLIC_* values above are inlined into the client bundle at build time
+      # (that is exactly what the guard immediately above proves), so a staging deployment
+      # CANNOT reuse the production frontend image — it would serve a working site whose
+      # browsers call https://api.upkilo.com. Staging therefore needs its own build.
+      #
+      # It carries its own `src-staging-<fingerprint>` tag so the reuse optimisation still
+      # applies, and is deliberately NOT tagged `latest`: that tag feeds the production
+      # reuse lookup above and must never describe a staging build.
+      - name: Resolve staging frontend image
+        id: frontend-staging
+        if: vars.STAGING_ENABLED == 'true'
+        env:
+          FORCE: ${{ inputs.force-rebuild }}
+          SRC_TAG: ${{ env.REGISTRY }}/upkilo-frontend:src-staging-${{ steps.fp.outputs.frontend }}
+        run: |
+          set -euo pipefail
+          if [ "$FORCE" = "true" ]; then
+            echo "force-rebuild requested — building."
+            echo "build=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if docker buildx imagetools inspect "$SRC_TAG" >/dev/null 2>&1; then
+            echo "✅ Identical staging frontend source already built — reusing $SRC_TAG"
+            docker buildx imagetools create \
+              --tag "${{ env.REGISTRY }}/upkilo-frontend:staging-${{ github.sha }}" \
+              "$SRC_TAG"
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "No image for this staging frontend source fingerprint — building."
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # SITE_URL and APP_URL collapse onto one hostname because staging has no apex/app
+      # split. That is safe: hostRoutingResponse() in middleware.ts returns early for any
+      # host that is not upkilo.com/www/app, so test.upkilo.com never reaches the
+      # marketing-vs-dashboard redirect logic and nothing redirects.
+      #
+      # Hostnames are deliberately FLAT (api-test, not api.test). Cloudflare's free
+      # Universal SSL covers the apex and one subdomain level only — a nested
+      # api.test.upkilo.com would have no certificate without Advanced Certificate
+      # Manager (~$10/mo) or dropping the proxy.
+      - name: Build & Push Staging Frontend Image
+        if: vars.STAGING_ENABLED == 'true' && steps.frontend-staging.outputs.build == 'true'
+        uses: docker/build-push-action@v7
+        with:
+          context: ./src/frontend
+          file: ./src/frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/upkilo-frontend:staging-${{ github.sha }}
+            ${{ env.REGISTRY }}/upkilo-frontend:src-staging-${{ steps.fp.outputs.frontend }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/upkilo-frontend:latest
+          cache-to: type=inline
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://api-test.upkilo.com
+            NEXT_PUBLIC_SIGNALR_URL=https://api-test.upkilo.com/hubs/notifications
+            NEXT_PUBLIC_APP_NAME=Upkilo Staging
+            NEXT_PUBLIC_SITE_URL=https://test.upkilo.com
+            NEXT_PUBLIC_APP_URL=https://test.upkilo.com
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            NEXT_PUBLIC_VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
+
       - name: Summarise image resolution
         if: always()
         run: |
@@ -268,6 +330,34 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Required before any azure/CLI step. The azure/CLI action does NOT authenticate
+      # from an AZURE_CREDENTIALS env var — it relies on the session established here.
+      - name: Login to Azure
+        uses: azure/login@v3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_STAGING }}
+
+      # Same constraint as production (see migrate-database): the Postgres firewall only
+      # permits Azure services, and GitHub-hosted runners have dynamic public IPs that the
+      # rule does not cover. Without this, `dotnet ef` cannot reach the staging server at
+      # all — the rehearsal would fail on connectivity rather than on the migration.
+      - name: Allow runner IP through staging Postgres firewall
+        id: fw
+        uses: azure/CLI@v3
+        with:
+          inlineScript: |
+            RUNNER_IP=$(curl -s https://api.ipify.org)
+            RULE="gha-${{ github.run_id }}"
+            echo "rule_name=$RULE" >> $GITHUB_OUTPUT
+            az postgres flexible-server firewall-rule create \
+              --resource-group upkilo-staging-rg \
+              --server-name upkilo-staging-db \
+              --name "$RULE" \
+              --start-ip-address "$RUNNER_IP" \
+              --end-ip-address "$RUNNER_IP" \
+              --output none
+            echo "✅ Temporary firewall rule $RULE opened for $RUNNER_IP"
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
@@ -275,6 +365,13 @@ jobs:
 
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
+
+      # `dotnet ef` builds the startup project before it can read the model, and building
+      # requires restored packages — the same requirement documented on migrate-database.
+      # Without this the step fails with:
+      #   Assets file '.../Upkilo.Infrastructure/obj/project.assets.json' not found.
+      - name: Restore backend dependencies
+        run: dotnet restore src/backend/Upkilo.sln
 
       - name: Apply migrations to staging
         run: |
@@ -288,6 +385,20 @@ jobs:
           Jwt__Secret: "migration-placeholder-min-32-chars-not-used-for-auth-xxxxxxxxxx"
           Jwt__Issuer: "https://api.upkilo.com"
           Jwt__Audience: "https://app.upkilo.com"
+
+      # MUST run even when the migration fails, or a failed rehearsal leaves the staging
+      # database permanently reachable from a stale public IP. always() is deliberate.
+      - name: Remove temporary staging Postgres firewall rule
+        if: always() && steps.fw.outputs.rule_name != ''
+        uses: azure/CLI@v3
+        with:
+          inlineScript: |
+            az postgres flexible-server firewall-rule delete \
+              --resource-group upkilo-staging-rg \
+              --server-name upkilo-staging-db \
+              --name "${{ steps.fw.outputs.rule_name }}" \
+              --yes --output none || echo "⚠️ Rule already absent"
+            echo "🔒 Temporary firewall rule removed"
 
   # ── Deploy to Staging ─────────────────────────────────────────────
   deploy-staging:
@@ -309,6 +420,23 @@ jobs:
       # straight from IConfiguration with no ISecretProvider fallback, so App Service
       # application settings are the only mechanism that reaches every consumer.
       # Without this the container crash-loops on the Jwt:Secret minimum-length check.
+      #
+      # The staging container runs as ASPNETCORE_ENVIRONMENT=Production (hardcoded in the
+      # Dockerfile) so it exercises the same code paths as production — nothing branches
+      # on IsStaging(). That means it also loads appsettings.Production.json, whose
+      # production-facing values must be overridden here:
+      #
+      #   App__FrontendUrl  — builds password-reset, email-verification, invitation and
+      #                       SSO links. Left at the default, every email sent from
+      #                       staging would walk the recipient into PRODUCTION.
+      #   Cors__AllowedOrigins__N — .NET overlays configuration arrays by INDEX; it does
+      #                       not replace them. appsettings.Production.json defines three
+      #                       origins, so all three indices must be overridden or the
+      #                       production origins survive into staging. The duplicates are
+      #                       intentional and harmless — CORS matching is exact-match.
+      #
+      # AllowedHosts needs no override: it is already "*.upkilo.com;upkilo.com;
+      # *.azurewebsites.net", which covers both test.upkilo.com and api-test.upkilo.com.
       - name: Configure Staging App Service application settings
         uses: azure/CLI@v3
         with:
@@ -332,7 +460,11 @@ jobs:
                 Twilio__PhoneNumber="${{ secrets.STAGING_TWILIO_PHONE_NUMBER }}" \
                 AzureOpenAI__Endpoint="${{ secrets.AZURE_OPENAI_ENDPOINT }}" \
                 AzureOpenAI__ApiKey="${{ secrets.AZURE_OPENAI_API_KEY }}" \
-                Azure__Storage__ConnectionString="${{ secrets.AZURE_STAGING_STORAGE_CONNECTION_STRING }}"
+                Azure__Storage__ConnectionString="${{ secrets.AZURE_STAGING_STORAGE_CONNECTION_STRING }}" \
+                App__FrontendUrl="https://test.upkilo.com" \
+                Cors__AllowedOrigins__0="https://test.upkilo.com" \
+                Cors__AllowedOrigins__1="https://test.upkilo.com" \
+                Cors__AllowedOrigins__2="https://test.upkilo.com"
             echo "✅ Staging App Service settings configured"
 
       - name: Deploy API to Staging App Service
@@ -341,14 +473,41 @@ jobs:
           app-name: upkilo-api-staging
           images: ${{ env.REGISTRY }}/upkilo-api:${{ github.sha }}
 
+      # NextAuth v5 refuses to start without a signing secret and returns
+      # "There was a problem with the server configuration" from every /api/auth/* route,
+      # so login fails even though the API issues valid JWTs — the same failure mode
+      # documented on the production frontend step below. These are RUNTIME settings
+      # (unlike NEXT_PUBLIC_* which are baked at build), so they must live here.
+      - name: Configure Staging Frontend App Service application settings
+        uses: azure/CLI@v3
+        with:
+          inlineScript: |
+            az webapp config appsettings set \
+              --name upkilo-frontend-staging \
+              --resource-group upkilo-staging-rg \
+              --settings \
+                AUTH_SECRET="${{ secrets.STAGING_AUTH_SECRET }}" \
+                NEXTAUTH_SECRET="${{ secrets.STAGING_AUTH_SECRET }}" \
+                AUTH_TRUST_HOST="true" \
+                NEXTAUTH_URL="https://test.upkilo.com" \
+              --output none
+            echo "✅ Staging frontend App Service settings configured"
+
+      # Deploys the staging-specific image, NOT the production one. The production
+      # frontend image has https://api.upkilo.com inlined into its client bundle at build
+      # time, so deploying it here would produce a working staging site whose browsers
+      # all call production. See "Build & Push Staging Frontend Image" in build-and-push.
       - name: Deploy Frontend to Staging App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: upkilo-frontend-staging
-          images: ${{ env.REGISTRY }}/upkilo-frontend:${{ github.sha }}
+          images: ${{ env.REGISTRY }}/upkilo-frontend:staging-${{ github.sha }}
 
-      # Uses the default azurewebsites.net hostname — staging deliberately has no custom
-      # domain or TLS binding, which keeps it off the DNS critical path.
+      # Probes the default azurewebsites.net hostname even though staging now has a custom
+      # domain — same reasoning as the production gate below. That hostname bypasses
+      # Cloudflare, so this gate measures the app itself rather than the CDN in front of
+      # it, and it keeps working before DNS/TLS has finished propagating. The custom
+      # domain is verified separately once both apps are up.
       # Poll /ready (DB + Redis + Hangfire), not /health (liveness: memory/uptime only).
       # B-series tiers are slow to cold-start, hence the longer deadline.
       - name: Smoke test staging — await readiness
@@ -356,7 +515,7 @@ jobs:
           echo "Polling staging /ready (max 180s)..."
           deadline=$((SECONDS + 180))
           until curl -sf https://upkilo-api-staging.azurewebsites.net/ready \
-                | jq -e '.status == "Healthy"' > /dev/null 2>&1; do
+                | jq -e '.status != "Unhealthy"' > /dev/null 2>&1; do
             if [ $SECONDS -ge $deadline ]; then
               echo "❌ Staging readiness check timed out — production deploy blocked"
               curl -s https://upkilo-api-staging.azurewebsites.net/ready | jq . || true
@@ -364,14 +523,47 @@ jobs:
             fi
             sleep 5
           done
-          echo "✅ Staging readiness OK (DB + Redis + Hangfire all green)"
+          echo "✅ Staging readiness OK (nothing Unhealthy)"
+
+      # The staging frontend had no probe at all, which is why a missing AUTH_SECRET
+      # could not have been caught here — /api/health is a server route that boots the
+      # Next.js app, so a NextAuth misconfiguration surfaces before production is touched.
+      - name: Smoke test staging frontend
+        run: |
+          echo "Polling staging frontend /api/health (max 180s)..."
+          deadline=$((SECONDS + 180))
+          until curl -sf https://upkilo-frontend-staging.azurewebsites.net/api/health \
+                > /dev/null 2>&1; do
+            if [ $SECONDS -ge $deadline ]; then
+              echo "❌ Staging frontend health timed out — production deploy blocked"
+              exit 1
+            fi
+            sleep 5
+          done
+          echo "✅ Staging frontend healthy"
+
+      # Non-fatal: proves the custom domain, its TLS binding and the Cloudflare proxy are
+      # actually wired up, WITHOUT letting a DNS/CDN problem fail a deploy whose app is
+      # demonstrably healthy (both gates above already passed on the direct hostnames).
+      # Both hosts are deliberately flat — Cloudflare's free Universal SSL does not cover
+      # a nested api.test.upkilo.com.
+      - name: Verify staging custom domain (non-fatal)
+        run: |
+          for url in https://test.upkilo.com/api/health https://api-test.upkilo.com/ready; do
+            if curl -sf --max-time 20 "$url" > /dev/null 2>&1; then
+              echo "✅ $url reachable"
+            else
+              echo "⚠️ $url NOT reachable — check the Cloudflare CNAME, the App Service"
+              echo "   custom-domain binding and its managed certificate. Non-blocking."
+            fi
+          done
 
   # ── Database Migration (with backup first) ────────────────────────
   # Gated on deploy-staging: the migration has already been rehearsed against the
   # staging database and the app has been proven to boot against the new schema.
   migrate-database:
     name: Database Migration
-    needs: [build-and-push, deploy-staging]
+    needs: [build-and-push, migrate-staging, deploy-staging]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     # MANUAL GATE: migrations mutate production data, so they only run on an explicit
@@ -382,10 +574,17 @@ jobs:
     # `always()` is additionally required because a skipped `needs` dependency would
     # otherwise skip this job too. Skipped staging (not provisioned) is acceptable;
     # FAILED staging must still block production — hence the explicit result checks.
+    #
+    # migrate-staging is checked SEPARATELY from deploy-staging. When the rehearsal
+    # migration fails, deploy-staging does not run and reports `skipped`, not `failure` —
+    # which the deploy-staging clause below explicitly permits. Checking only deploy-staging
+    # therefore let a failed rehearsal wave the production migration through, defeating the
+    # entire reason migrate-staging exists.
     if: >-
       always()
       && github.event_name == 'workflow_dispatch'
       && needs.build-and-push.result == 'success'
+      && needs.migrate-staging.result != 'failure'
       && (needs.deploy-staging.result == 'success' || needs.deploy-staging.result == 'skipped')
 
     steps:
