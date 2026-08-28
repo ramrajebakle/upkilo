@@ -383,6 +383,7 @@ public class AppDbContext : DbContext
 
     // Phase 2 — Enterprise Sales
     public DbSet<EnterpriseLead> EnterpriseLeads => Set<EnterpriseLead>();
+    public DbSet<TenantAgreement> TenantAgreements => Set<TenantAgreement>();
 
     // Legal & Compliance
     public DbSet<LegalDisclosureRequest> LegalDisclosureRequests => Set<LegalDisclosureRequest>();

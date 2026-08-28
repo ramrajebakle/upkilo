@@ -78,7 +78,21 @@ public class EnterpriseController : ControllerBase
             """
         );
 
-        // Send auto-response to prospect
+        // Send auto-response to prospect.
+        //
+        // Two claims were removed from this list. Both went, in writing, to every
+        // enterprise prospect:
+        //
+        //   "SOC2 Type II compliance" — a third-party audit Upkilo has not had. The
+        //   same claim was struck from the public enterprise page (see the header
+        //   comment in app/enterprise/page.tsx) and this controller already words it
+        //   correctly 40 lines below as "SOC2 Type II (in progress)". A buyer treats
+        //   it as a procurement gate and will ask for the report.
+        //
+        //   "99.9% SLA" — production runs on a B1 App Service plan with no deployment
+        //   slots, so every release takes the app down for 30-60s (see
+        //   docs/PRODUCTION_DEPLOYMENT.md). An uptime commitment belongs in a signed
+        //   agreement, not in an automated first reply.
         await _emailService.SendSystemEmailAsync(
             lead.Email,
             $"We received your Upkilo Enterprise inquiry — {lead.CompanyName}",
@@ -86,16 +100,16 @@ public class EnterpriseController : ControllerBase
             <h2>Thank you for your interest in Upkilo Enterprise!</h2>
             <p>Hi {lead.ContactName ?? "there"},</p>
             <p>We've received your inquiry for {lead.CompanyName} and our team will be in touch within <strong>24 hours</strong> to discuss your requirements.</p>
-            <p>In the meantime, here's what Enterprise customers get:</p>
+            <p>In the meantime, here's what Enterprise covers:</p>
             <ul>
                 <li>✅ Unlimited staff, locations, and clients</li>
                 <li>✅ Custom AI budget and model routing</li>
                 <li>✅ SSO / SAML integration</li>
-                <li>✅ 99.9% SLA with dedicated support</li>
-                <li>✅ SOC2 Type II compliance</li>
                 <li>✅ White-label booking pages</li>
                 <li>✅ Custom contract and invoicing</li>
+                <li>✅ Uptime SLA and HIPAA BAA available on enterprise agreements</li>
             </ul>
+            <p style="color:#555;font-size:14px;">SOC 2 Type II is in progress and not yet certified. We'll share the report once the audit completes.</p>
             <p>The Upkilo Team</p>
             """
         );
@@ -166,6 +180,35 @@ public class EnterpriseController : ControllerBase
         var total = await _context.EnterpriseLeads.CountAsync();
 
         return Ok(new { data = leads, total, page, pageSize });
+    }
+
+    /// <summary>
+    /// PATCH /api/v1/enterprise/leads/{id}/status — move a lead through the pipeline.
+    ///
+    /// EnterpriseLead has carried a Status field (New / Contacted / Qualified / Closed)
+    /// since it was introduced, but nothing could ever change it: every lead sat on its
+    /// "New" default forever, so the list could not distinguish a lead nobody had opened
+    /// from one already closed. This is the write half of that field.
+    /// </summary>
+    [HttpPatch("leads/{id:guid}/status")]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<IActionResult> UpdateLeadStatus(Guid id, [FromBody] LeadStatusRequest request)
+    {
+        // Whitelisted rather than free text — the column drives the pipeline grouping in
+        // the admin view, and an arbitrary string would silently create a phantom stage.
+        var allowed = new[] { "New", "Contacted", "Qualified", "Closed" };
+        if (!allowed.Contains(request.Status, StringComparer.OrdinalIgnoreCase))
+            return BadRequest(ApiResponse.Fail($"Status must be one of: {string.Join(", ", allowed)}"));
+
+        var lead = await _context.EnterpriseLeads.FirstOrDefaultAsync(l => l.Id == id);
+        if (lead == null) return NotFound(ApiResponse.Fail("Lead not found"));
+
+        lead.Status = allowed.First(a => a.Equals(request.Status, StringComparison.OrdinalIgnoreCase));
+        lead.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("[Enterprise] Lead {LeadId} moved to {Status}", id, lead.Status);
+        return Ok(ApiResponse<object>.Ok(new { id = lead.Id, status = lead.Status }));
     }
 
     /// <summary>
@@ -246,6 +289,11 @@ public class EnterpriseLeadRequest
     public string? CurrentPlatform { get; set; }
     public string? UseCase { get; set; }
     public string? Message { get; set; }
+}
+
+public class LeadStatusRequest
+{
+    public string Status { get; set; } = string.Empty;
 }
 
 public class CustomPlanRequest
