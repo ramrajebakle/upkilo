@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useSession } from 'next-auth/react';
 import { NotificationCenter } from '@/components/NotificationCenter';
 import { GlobalSearch } from '@/components/GlobalSearch';
 import { useTheme } from '@/components/ThemeProvider';
@@ -136,14 +137,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [copilotOpen, setCopilotOpen] = useState(false);
     const { user, logout, checkAuth, isInitialized } = useAuthStore();
+    const { data: session } = useSession();
     const { setTheme, resolvedTheme } = useTheme();
 
-    // authStore keeps the backend's own role vocabulary (owner / admin / manager /
-    // staff / superadmin), which is finer-grained than the semantic role the
-    // session carries for routing — team_member collapses admin, manager and
-    // staff into one value. Owner-only gating needs the distinction, so it reads
-    // from here.
-    const isOwner = user?.role === 'owner' || user?.role === 'superadmin';
+    // Two role vocabularies reach this component and only one is ever populated
+    // at a time:
+    //
+    //  - authStore holds the backend's own names (owner / admin / manager /
+    //    staff / superadmin) and is filled by the real login call;
+    //  - the NextAuth session holds the semantic names (tenant_owner,
+    //    platform_owner, team_member) and is filled by every sign-in, including
+    //    the dev quick-login.
+    //
+    // AuthBridge mirrors the session's token and tenantId but not its role, so a
+    // dev quick-login leaves authStore empty. Reading only authStore meant an
+    // owner signed in that way was treated as non-owner and silently lost the
+    // owner-only entries. Consulting both makes the two paths agree.
+    const sessionRole = session?.user?.role;
+    const isOwner =
+        user?.role === 'owner' ||
+        user?.role === 'superadmin' ||
+        sessionRole === 'tenant_owner' ||
+        sessionRole === 'platform_owner';
+
+    const isPlatformStaff =
+        user?.role === 'superadmin' ||
+        sessionRole === 'platform_owner' ||
+        sessionRole === 'platform_admin';
 
     const navGroups: NavGroup[] = [
         {
@@ -315,6 +335,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const adminNavigation: NavItem[] = [
         { name: 'Platform Admin', href: '/admin', icon: Shield },
         { name: 'Tenant Management', href: '/admin/tenants', icon: Building2 },
+        { name: 'Enterprise Leads', href: '/admin/leads', icon: Briefcase },
+        { name: 'Agreements', href: '/admin/agreements', icon: CheckCircle2 },
         { name: 'Subscriptions', href: '/admin/plans', icon: CreditCard },
         { name: 'System Health', href: '/admin/health', icon: Activity },
         { name: 'AI Oversight', href: '/admin/ai-oversight', icon: Bot },
@@ -427,7 +449,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 </div>
                             ) : (
                                 <div className="space-y-2">
-                                    {user?.role === 'superadmin' && (
+                                    {isPlatformStaff && (
                                         <Link
                                             href="/admin"
                                             className="flex items-center gap-3 px-4 py-2.5 min-h-11 sm:min-h-0 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors"

@@ -723,6 +723,20 @@ export const api = {
   },
   
   // Super Admin
+  agreements: {
+    list: (params?: { status?: string }, config?: AxiosRequestConfig) =>
+      apiClient.get('/api/v1/admin/agreements', { ...config, params }),
+    upsert: (tenantId: string, type: 'HipaaBaa' | 'Sla', data: Record<string, unknown>) =>
+      apiClient.put(`/api/v1/admin/agreements/${tenantId}/${type}`, data),
+  },
+
+  enterprise: {
+    leads: (params?: { page?: number; pageSize?: number }, config?: AxiosRequestConfig) =>
+      apiClient.get('/api/v1/enterprise/leads', { ...config, params }),
+    updateLeadStatus: (id: string, status: string) =>
+      apiClient.patch(`/api/v1/enterprise/leads/${id}/status`, { status }),
+  },
+
   superAdmin: {
     // Auth
     login: (email: string, password: string) => 

@@ -31,6 +31,7 @@ import {
   Phone,
 } from 'lucide-react';
 import Reveal from '@/components/landing/Reveal';
+import HeroPreview from '@/components/landing/HeroPreview';
 import FaqAccordion from '@/components/landing/FaqAccordion';
 import LandingNav from '@/components/landing/LandingNav';
 import EmailCapture from '@/components/landing/EmailCapture';
@@ -440,60 +441,15 @@ export default async function HomePage() {
             <p className="mt-6 text-sm text-slate-400">
               No credit card · Cancel anytime · Setup in under 10 minutes
             </p>
+            <p className="mt-2 text-sm text-slate-400">
+              Your data stays yours — export your clients and bookings at any time, including if you leave.
+            </p>
           </Reveal>
 
-          {/* product preview mock */}
+          {/* Product preview. Client component so the figures can animate; see
+              HeroPreview for why it carries an explicit "example" caption. */}
           <Reveal delay={0.4}>
-            <div className="relative mx-auto mt-16 max-w-3xl">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-primary-600/20 to-blue-600/20 blur-2xl" aria-hidden="true" />
-              <div className="relative animate-float rounded-2xl border border-white/10 bg-slate-900/80 p-5 text-left shadow-2xl backdrop-blur">
-                {/* window bar */}
-                <div className="mb-4 flex items-center gap-1.5" aria-hidden="true">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
-                  <span className="ml-3 text-xs text-slate-500">Today’s schedule · Glow Studio</span>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {/* stat tiles */}
-                  <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-                    <p className="text-xs text-slate-400">Bookings today</p>
-                    <p className="mt-1 text-2xl font-bold text-white">28</p>
-                    <p className="mt-1 text-xs text-emerald-400">▲ 12% vs last week</p>
-                  </div>
-                  <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-                    <p className="text-xs text-slate-400">Revenue</p>
-                    <p className="mt-1 text-2xl font-bold text-white">$4,280</p>
-                    <p className="mt-1 text-xs text-emerald-400">▲ 8% vs last week</p>
-                  </div>
-                  <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-                    <p className="text-xs text-slate-400">Utilization</p>
-                    <p className="mt-1 text-2xl font-bold text-white">94%</p>
-                    <p className="mt-1 text-xs text-primary-300">Waitlist auto-fills gaps</p>
-                  </div>
-                </div>
-                {/* appointment rows */}
-                <div className="mt-3 space-y-2">
-                  {[
-                    { t: '10:00', s: 'Hair Color · Priya', a: 'P', st: 'Confirmed', c: 'text-emerald-400' },
-                    { t: '11:30', s: 'Deep Tissue · Rahul', a: 'R', st: 'Checked in', c: 'text-blue-400' },
-                    { t: '13:00', s: 'Manicure · Aisha', a: 'A', st: 'Deposit paid', c: 'text-primary-300' },
-                  ].map((row) => (
-                    <div
-                      key={row.t}
-                      className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5"
-                    >
-                      <span className="w-12 text-xs font-medium text-slate-400">{row.t}</span>
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-500/20 text-xs font-bold text-primary-200">
-                        {row.a}
-                      </span>
-                      <span className="flex-1 truncate text-sm text-slate-200">{row.s}</span>
-                      <span className={`text-xs font-medium ${row.c}`}>{row.st}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <HeroPreview />
           </Reveal>
         </div>
 
@@ -511,17 +467,16 @@ export default async function HomePage() {
             <p className="text-center text-sm font-medium uppercase tracking-widest text-slate-400">
               Works with the tools you already use
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
-              {INTEGRATIONS.map((name) => (
-                <span
-                  key={name}
-                  className="text-lg font-semibold text-slate-400 grayscale transition-all hover:text-slate-700"
-                >
+          </Reveal>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
+            {INTEGRATIONS.map((name, i) => (
+              <Reveal key={name} delay={i * 0.05} y={10}>
+                <span className="text-lg font-semibold text-slate-400 transition-colors hover:text-slate-700">
                   {name}
                 </span>
-              ))}
-            </div>
-          </Reveal>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -671,6 +626,24 @@ export default async function HomePage() {
               </Reveal>
             ))}
           </div>
+
+          {/* A security section that cannot be checked is just adjectives. These
+              two documents already exist and state the handling commitments in
+              full, so linking them turns the claims above into something the
+              reader can verify before signing up. */}
+          <Reveal delay={0.3}>
+            <p className="mt-10 text-center text-sm text-slate-500">
+              Read the{' '}
+              <Link href="/privacy-policy" className="font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700">
+                Privacy Policy
+              </Link>{' '}
+              and{' '}
+              <Link href="/cookie-policy" className="font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700">
+                Cookie Policy
+              </Link>{' '}
+              before you sign up — not after.
+            </p>
+          </Reveal>
         </div>
       </section>
 

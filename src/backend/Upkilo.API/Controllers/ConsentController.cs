@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Upkilo.Core.Entities;
 using Upkilo.Core.Interfaces;
+using Upkilo.Infrastructure.Data;
 
 namespace Upkilo.API.Controllers;
 
@@ -14,12 +17,14 @@ public class ConsentController : ControllerBase
     private readonly IConsentService _consentService;
     private readonly ITenantProvider _tenantProvider;
     private readonly ILogger<ConsentController> _logger;
+    private readonly AppDbContext _context;
 
-    public ConsentController(IConsentService consentService, ITenantProvider tenantProvider, ILogger<ConsentController> logger)
+    public ConsentController(IConsentService consentService, ITenantProvider tenantProvider, ILogger<ConsentController> logger, AppDbContext context)
     {
         _consentService = consentService;
         _tenantProvider = tenantProvider;
         _logger = logger;
+        _context = context;
     }
 
     private Guid GetTenantId() => _tenantProvider.GetTenantId() ?? Guid.Empty;
@@ -123,7 +128,13 @@ public class ConsentController : ControllerBase
                 new { id = "2", title = "Obligations of Business Associate", summary = "Upkilo will: (a) use PHI only as permitted; (b) implement safeguards per 45 CFR § 164.308, 164.310, 164.312; (c) report breaches within 60 days; (d) make PHI available to HHS; (e) return or destroy PHI on termination." },
                 new { id = "3", title = "Permitted Uses and Disclosures", summary = "PHI may be used only to provide services under the Master Agreement, for proper management, and as required by law." },
                 new { id = "4", title = "Term and Termination", summary = "Term matches Master Agreement. Either party may terminate if the other breaches a material BAA term and fails to cure within 30 days." },
-                new { id = "5", title = "Miscellaneous", summary = "Governed by HIPAA and HITECH. Upkilo maintains SOC 2 Type II and encrypts PHI at rest (AES-256) and in transit (TLS 1.3)." }
+                // The SOC 2 Type II assertion was removed here. It is a third-party audit
+                // with a report a counterparty can demand, Upkilo has not had that audit,
+                // and this text sits inside a BAA — a document a covered entity relies on
+                // when deciding it may lawfully disclose PHI. The same claim was already
+                // struck from the public enterprise page for the same reason.
+                // The encryption statements stay: both are implemented.
+                new { id = "5", title = "Miscellaneous", summary = "Governed by HIPAA and HITECH. Upkilo encrypts PHI at rest (AES-256) and in transit (TLS 1.3)." }
             },
             signatureRequired = new[] { "tenantName", "authorizedSignatoryName", "authorizedSignatoryTitle", "signatureDate" }
         });
@@ -148,9 +159,38 @@ public class ConsentController : ControllerBase
         var userId = GetUserId();
         var ip = GetIpAddress();
 
-        // Record as a special consent type "HIPAA_BAA" with version metadata
+        // Still written as a GdprConsent row, because VerticalsController's feature
+        // gate queries exactly that. Changing the gate and the storage in one step
+        // would risk locking medical tenants out of features they had already unlocked.
         var success = await _consentService.RecordConsentAsync(tenantId, userId, "HIPAA_BAA", true, ip);
         if (!success) return StatusCode(500, new { error = "Failed to record HIPAA BAA signature" });
+
+        // The signature block itself. RecordConsentAsync takes no signatory arguments,
+        // so before this the name and title were validated above, echoed back in the
+        // response, written to the log line below — and then lost. A BAA that cannot
+        // say who bound the entity, or in what capacity, cannot do the job a BAA exists
+        // to do.
+        var version = request.BaaVersion ?? "2024.1";
+        var agreement = await _context.TenantAgreements
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(a => a.TenantId == tenantId && a.Type == AgreementType.HipaaBaa && !a.IsDeleted);
+
+        if (agreement == null)
+        {
+            agreement = new TenantAgreement { TenantId = tenantId, Type = AgreementType.HipaaBaa };
+            _context.TenantAgreements.Add(agreement);
+        }
+
+        agreement.Status = AgreementStatus.Signed;
+        agreement.DocumentVersion = version;
+        agreement.SignatoryName = request.AuthorizedSignatoryName;
+        agreement.SignatoryTitle = request.AuthorizedSignatoryTitle;
+        agreement.SignedAt = DateTime.UtcNow;
+        agreement.SignedFromIp = ip;
+        agreement.UserAgent = Request.Headers.UserAgent.ToString();
+        agreement.EffectiveFrom ??= DateTime.UtcNow;
+        agreement.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("[C2] HIPAA BAA signed: tenant={TenantId} signatory={Name} title={Title} ip={IP} version={Version}",
             tenantId, request.AuthorizedSignatoryName, request.AuthorizedSignatoryTitle, ip, request.BaaVersion);

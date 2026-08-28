@@ -108,6 +108,15 @@ export default async function LocaleLayout({
           the other two faces unreachable; exposing all three as variables lets globals.css
           decide which face body text, display headings and code each use. */}
       <body className="font-sans" suppressHydrationWarning>
+        {/* Scroll-reveal wrappers are server-rendered with an inline
+            opacity:0 — Framer Motion serialises the `initial` prop — and only
+            JavaScript animates them back. Without scripting the marketing page
+            renders completely blank, headline included. This restores every
+            wrapper for that case; it costs nothing when scripting is on, since
+            <noscript> content is inert then. */}
+        <noscript>
+          <style>{`.reveal { opacity: 1 !important; transform: none !important; }`}</style>
+        </noscript>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>
             <AuthBridge />
