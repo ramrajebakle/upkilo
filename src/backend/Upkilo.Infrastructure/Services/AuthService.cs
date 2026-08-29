@@ -113,7 +113,7 @@ public class AuthService : IAuthService
         // Send email
         var appUrl = _configuration["APP_URL"] ?? "https://app.upkilo.com";
         var resetUrl = $"{appUrl.TrimEnd('/')}/reset-password?token={token}";
-        await _emailService.SendSystemEmailAsync(
+        await _emailService.SendSecurityEmailAsync(
             user.Email,
             "Reset Your Password - Upkilo",
             $@"<h2>Password Reset Request</h2>
@@ -216,7 +216,7 @@ public class AuthService : IAuthService
         // Include tid for robust multi-db lookup
         var verifyUrl = $"{appUrl.TrimEnd('/')}/verify-email?token={token}&tid={user.TenantId}";
 
-        await _emailService.SendSystemEmailAsync(
+        await _emailService.SendSecurityEmailAsync(
             user.Email,
             "Verify Your Email - Upkilo",
             $@"<h2>Welcome to Upkilo!</h2>
@@ -457,7 +457,7 @@ public class AuthService : IAuthService
         if (!knownIps.Contains(ipAddress) && knownIps.Any())
         {
             _logger.LogInformation("New IP {IpAddress} detected for user {Email}", ipAddress, email);
-            _ = _emailService.SendSystemEmailAsync(
+            _ = _emailService.SendSecurityEmailAsync(
                 user.Email,
                 "New Login Alert - Upkilo",
                 $@"<h2>New Login Detected</h2>
@@ -913,7 +913,7 @@ public class AuthService : IAuthService
         var status = enabled ? "enabled" : "disabled";
 
         // Fire-and-forget email notification
-        _ = _emailService.SendSystemEmailAsync(
+        _ = _emailService.SendSecurityEmailAsync(
             user.Email,
             $"Two-Factor Authentication {char.ToUpper(status[0]) + status.Substring(1)}",
             $@"<h2>Security Setting Updated</h2>
@@ -1121,7 +1121,7 @@ public class AuthService : IAuthService
 
                 await _siemLoggingService.ForwardEventAsync("TwoFaDisabledByAdmin", new { RequestId = requestId, AdminId = adminId }, user.Id, user.TenantId);
 
-                _ = _emailService.SendSystemEmailAsync(
+                _ = _emailService.SendSecurityEmailAsync(
                     user.Email,
                     "2FA Recovery Request Approved",
                     $@"<h2>2FA Recovery Approved</h2>
@@ -1136,7 +1136,7 @@ public class AuthService : IAuthService
             var user = await _context.Users.FindAsync(request.UserId);
             if (user != null)
             {
-                _ = _emailService.SendSystemEmailAsync(
+                _ = _emailService.SendSecurityEmailAsync(
                     user.Email,
                     "2FA Recovery Request Rejected",
                     $@"<h2>2FA Recovery Rejected</h2>
@@ -1260,7 +1260,7 @@ public class AuthService : IAuthService
         var appUrl = _configuration["APP_URL"] ?? "https://app.upkilo.com";
         var resetUrl = $"{appUrl.TrimEnd('/')}/forgot-password";
 
-        await _emailService.SendSystemEmailAsync(
+        await _emailService.SendSecurityEmailAsync(
             user.Email,
             "Suspicious Login Activity – Upkilo",
             $@"<h2>Suspicious Login Activity Detected</h2>

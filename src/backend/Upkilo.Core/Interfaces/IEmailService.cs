@@ -49,6 +49,14 @@ public interface IEmailService
     Task SendSystemEmailAsync(string to, string subject, string content);
 
     /// <summary>
+    /// Account-security mail (verification, password reset, login alerts). Identical to
+    /// <see cref="SendSystemEmailAsync"/> except that the provider's click tracking is
+    /// switched off, so the links are delivered verbatim instead of being rewritten to
+    /// the SendGrid link-branding host. See EmailService for why that matters.
+    /// </summary>
+    Task SendSecurityEmailAsync(string to, string subject, string content);
+
+    /// <summary>
     /// Send an invoice with PDF attachment
     /// </summary>
     Task SendInvoiceAsync(InvoiceEmailData data);
