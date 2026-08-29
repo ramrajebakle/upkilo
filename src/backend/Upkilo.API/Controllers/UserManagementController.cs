@@ -191,7 +191,7 @@ public class UserManagementController : ControllerBase
     /// Bulk import users from CSV
     /// </summary>
     [HttpPost("import")]
-    public async Task<IActionResult> ImportUsers([FromForm] IFormFile file)
+    public async Task<IActionResult> ImportUsers(IFormFile file)
     {
         var tenantId = _tenantProvider.GetTenantId();
         if (tenantId == null) return Unauthorized();

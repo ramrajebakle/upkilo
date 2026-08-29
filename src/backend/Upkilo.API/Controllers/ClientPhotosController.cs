@@ -90,9 +90,14 @@ public class ClientPhotosController : ControllerBase
     /// Upload photo
     /// </summary>
     [HttpPost]
+        // No [FromForm] on the IFormFile: it is redundant (IFormFile binds from the
+        // request form regardless) and Swashbuckle throws on the combination —
+        // "[FromForm] attribute used with IFormFile" — which failed generation for the
+        // WHOLE document, so /swagger/v1/swagger.json returned 500 and the API had no
+        // browsable docs at all. The wire contract is unchanged.
     public async Task<IActionResult> UploadPhoto(
         Guid clientId,
-        [FromForm] IFormFile file,
+        IFormFile file,
         [FromForm] PhotoType type = PhotoType.Other,
         [FromForm] string? caption = null,
         [FromForm] bool isPublic = false,
