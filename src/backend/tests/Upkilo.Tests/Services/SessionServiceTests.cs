@@ -67,21 +67,24 @@ public class SessionServiceTests : IDisposable
         }
 
         // Verify Redis calls
+        // SessionService calls StringSetAsync(key, value, TimeSpan), which binds to
+        // StringSetAsync(RedisKey, RedisValue, Expiration, ValueCondition, CommandFlags).
+        // These assertions previously described (…, TimeSpan?, bool, When, CommandFlags) —
+        // a real but never-invoked overload — so Moq matched nothing and both tests failed
+        // while the code under test was correct.
         _dbMock.Verify(d => d.StringSetAsync(
             It.Is<RedisKey>(k => k.ToString().Contains(session.Id.ToString())),
             It.IsAny<RedisValue>(),
-            It.IsAny<TimeSpan?>(),
-            It.IsAny<bool>(),
-            It.IsAny<When>(),
+            It.IsAny<Expiration>(),
+            It.IsAny<ValueCondition>(),
             It.IsAny<CommandFlags>()
         ), Times.Once);
 
         _dbMock.Verify(d => d.StringSetAsync(
             It.Is<RedisKey>(k => k.ToString().Contains(refreshToken)),
             It.Is<RedisValue>(v => v.ToString() == session.Id.ToString()),
-            It.IsAny<TimeSpan?>(),
-            It.IsAny<bool>(),
-            It.IsAny<When>(),
+            It.IsAny<Expiration>(),
+            It.IsAny<ValueCondition>(),
             It.IsAny<CommandFlags>()
         ), Times.Once);
     }
@@ -265,12 +268,13 @@ public class SessionServiceTests : IDisposable
         result.Should().NotBeNull();
         result!.Id.Should().Be(session.Id);
 
+        // Expiration exposes no instance TTL property, and renders as "EX <seconds>";
+        // 30 minutes is 1800s.
         _dbMock.Verify(d => d.StringSetAsync(
             It.Is<RedisKey>(k => k.ToString().Contains(session.Id.ToString())),
             It.IsAny<RedisValue>(),
-            It.Is<TimeSpan?>(t => t != null && t.Value.TotalMinutes == 30),
-            It.IsAny<bool>(),
-            It.IsAny<When>(),
+            It.Is<Expiration>(e => e.ToString() == "EX 1800"),
+            It.IsAny<ValueCondition>(),
             It.IsAny<CommandFlags>()
         ), Times.Once);
     }

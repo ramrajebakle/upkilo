@@ -393,9 +393,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     role="navigation"
                     aria-label="Main navigation"
                     className={cn(
-                        'fixed top-0 start-0 z-50 h-full w-72 transform transition-all duration-300 lg:translate-x-0',
+                        'fixed top-0 start-0 z-50 h-full w-72 transform transition-all duration-300',
                         'bg-white border-e border-slate-200 dark:bg-slate-900 dark:border-white/5',
-                        sidebarOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'
+                        // The off-canvas transform is scoped to BELOW lg, instead of being
+                        // applied unconditionally and then countered by `lg:translate-x-0`.
+                        // That older pairing was a specificity race the desktop rule lost:
+                        // Tailwind emits `.ltr:-translate-x-full:where(...)` after the `lg`
+                        // media block, `:where()` contributes zero specificity, so both rules
+                        // weighed (0,1,0) and the later one won. The sidebar stayed translated
+                        // -100% on desktop for every LTR locale while `lg:ps-72` still
+                        // reserved its 288px — an empty strip, no navigation, and no way back
+                        // because the hamburger that reopens it is `lg:hidden`.
+                        sidebarOpen ? 'translate-x-0' : 'max-lg:ltr:-translate-x-full max-lg:rtl:translate-x-full'
                     )}
                 >
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
