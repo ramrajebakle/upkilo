@@ -95,7 +95,7 @@ public class EmailService : IEmailService
             <p>If you didn't request this, please ignore this email.</p>
         ";
 
-        await SendEmailAsync(email, subject, body);
+        await SendEmailWithTenantAsync(email, subject, body, tenantId: null, disableClickTracking: true);
         _logger.LogInformation("Password reset email sent to {Email}", email);
     }
 
@@ -109,7 +109,7 @@ public class EmailService : IEmailService
             <p><a href='{verifyLink}' style='background-color: #06b6d4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;'>Verify Email</a></p>
         ";
 
-        await SendEmailAsync(email, subject, body);
+        await SendEmailWithTenantAsync(email, subject, body, tenantId: null, disableClickTracking: true);
         _logger.LogInformation("Verification email sent to {Email}", email);
     }
 
@@ -169,6 +169,11 @@ public class EmailService : IEmailService
     public async Task SendSystemEmailAsync(string to, string subject, string content)
     {
         await SendEmailAsync(to, subject, content);
+    }
+
+    public async Task SendSecurityEmailAsync(string to, string subject, string content)
+    {
+        await SendEmailWithTenantAsync(to, subject, content, tenantId: null, disableClickTracking: true);
     }
 
     public async Task SendInvoiceAsync(InvoiceEmailData data)
@@ -270,7 +275,7 @@ public class EmailService : IEmailService
         await SendEmailWithTenantAsync(to, subject, body, tenantId: null, isHtml, attachments);
     }
 
-    private async Task SendEmailWithTenantAsync(string toEmail, string subject, string body, Guid? tenantId = null, bool isHtml = true, List<(string FileName, byte[] Content)>? attachments = null)
+    private async Task SendEmailWithTenantAsync(string toEmail, string subject, string body, Guid? tenantId = null, bool isHtml = true, List<(string FileName, byte[] Content)>? attachments = null, bool disableClickTracking = false)
     {
         try
         {
@@ -324,6 +329,29 @@ public class EmailService : IEmailService
                     var base64Content = Convert.ToBase64String(attachment.Content);
                     msg.AddAttachment(attachment.FileName, base64Content);
                 }
+            }
+
+            // Account-level click tracking rewrites every link to the SendGrid link-branding
+            // host (url9658.upkilo.com), which is a CNAME to sendgrid.net serving a
+            // *.sendgrid.net certificate. That certificate does not cover the branded host, so
+            // the browser aborts with ERR_CERT_COMMON_NAME_INVALID - and because upkilo.com
+            // sends HSTS for its subdomains, the user cannot even click through the warning.
+            // Every verification and reset link was therefore a dead end.
+            //
+            // Security-critical links must not depend on that host being healthy, and there is
+            // no analytics worth collecting on "did the user click their own verification
+            // link", so these messages opt out of rewriting entirely and point straight at
+            // App:FrontendUrl. Campaign mail is unaffected and keeps its click tracking.
+            if (disableClickTracking)
+            {
+                msg.TrackingSettings = new SendGrid.Helpers.Mail.TrackingSettings
+                {
+                    ClickTracking = new SendGrid.Helpers.Mail.ClickTracking
+                    {
+                        Enable = false,
+                        EnableText = false
+                    }
+                };
             }
 
             var response = await client.SendEmailAsync(msg);
