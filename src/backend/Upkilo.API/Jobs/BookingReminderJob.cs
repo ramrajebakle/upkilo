@@ -40,8 +40,30 @@ public class BookingReminderJob
 
     public async Task ExecuteAsync()
     {
-        var db = _redis.GetDatabase();
-        var acquired = await db.LockTakeAsync(LockKey, LockValue, TimeSpan.FromMinutes(10));
+        // The Redis lock coordinates replicas so a booking cannot be reminded twice.
+        // Redis being unreachable is therefore a reason to SKIP this run - never to run
+        // unlocked, which would send duplicate reminders to real customers, and never to
+        // throw. An unhandled RedisConnectionException marks the Hangfire job Failed, and
+        // at 96 runs a day a brief Redis blip produces dozens of failed jobs. Hangfire
+        // keeps failed jobs forever, so that burst pins the "hangfire" health check at
+        // Degraded permanently, long after Redis has recovered. The reminder window is
+        // 23-25 hours wide, so every booking gets roughly eight further chances and a
+        // skipped run costs nothing.
+        IDatabase db;
+        bool acquired;
+        try
+        {
+            db = _redis.GetDatabase();
+            acquired = await db.LockTakeAsync(LockKey, LockValue, TimeSpan.FromMinutes(10));
+        }
+        // RedisTimeoutException derives from TimeoutException, not RedisException, so
+        // both branches are needed to cover "Redis is not answering right now".
+        catch (Exception ex) when (ex is RedisException or TimeoutException)
+        {
+            _logger.LogWarning(ex, "BookingReminderJob: Redis unavailable, skipping this run");
+            return;
+        }
+
         if (!acquired)
         {
             _logger.LogInformation("BookingReminderJob: lock held by another worker, skipping");
@@ -54,7 +76,16 @@ public class BookingReminderJob
         }
         finally
         {
-            await db.LockReleaseAsync(LockKey, LockValue);
+            // Releasing must not mask an exception from RunAsync, and must not fail the
+            // job on its own - the lock carries a 10-minute TTL and expires regardless.
+            try
+            {
+                await db.LockReleaseAsync(LockKey, LockValue);
+            }
+            catch (Exception ex) when (ex is RedisException or TimeoutException)
+            {
+                _logger.LogWarning(ex, "BookingReminderJob: could not release lock; it expires on its own");
+            }
         }
     }
 
