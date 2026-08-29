@@ -898,12 +898,23 @@ jobs:
       # Use /ready (readiness) not /health (liveness). /health only checks memory/uptime;
       # /ready verifies DB connection, Redis, and Hangfire.
       # B1 has no always-on warm instance, so cold start is slow — hence 4 minutes.
+      #
+      # Gate on "not Unhealthy", NOT on "== Healthy" — matching the staging gate above.
+      # report.Status is the WORST status across every check, and HangfireHealthCheck
+      # reports Degraded on a job BACKLOG (failed > 50 / enqueued > 1000), not on an
+      # outage. That backlog lives in the Hangfire tables in Postgres and survives every
+      # deploy, so a strict Healthy test made each subsequent deploy poll for the full
+      # 240s and roll back an API that was serving traffic correctly — postgresql, redis,
+      # connection-pool, pricing and the bus were all Healthy throughout.
+      # Degraded means "serving, but suboptimal"; only Unhealthy (enqueued > 5000) is an
+      # actual reason to refuse the release. Same reasoning as the elasticsearch tag
+      # comment in Program.cs.
       - name: Wait for API readiness
         run: |
           echo "Polling API /ready (max 240s — B1 cold start is slow)..."
           deadline=$((SECONDS + 240))
           until curl -sf https://upkilo-api-prod.azurewebsites.net/ready \
-                | jq -e '.status == "Healthy"' > /dev/null 2>&1; do
+                | jq -e '.status != "Unhealthy"' > /dev/null 2>&1; do
             if [ $SECONDS -ge $deadline ]; then
               echo "❌ API readiness timed out — rollback will trigger"
               curl -s https://upkilo-api-prod.azurewebsites.net/ready | jq . || true
@@ -912,7 +923,12 @@ jobs:
             echo "  not ready, retrying in 10s..."
             sleep 10
           done
-          echo "✅ API READY (DB + Redis + Hangfire green)"
+          echo "✅ API READY (nothing Unhealthy)"
+          # Degraded now passes the gate, so it MUST stay visible — otherwise a real job
+          # backlog or soft-dependency failure ships silently forever.
+          curl -s https://upkilo-api-prod.azurewebsites.net/ready \
+            | jq -r '.checks[]? | select(.status != "Healthy")
+                     | "::warning::readiness: \(.name) is \(.status)"' || true
 
       # NextAuth v5 refuses to start without a signing secret and returns
       # "There was a problem with the server configuration" from every /api/auth/* route —
