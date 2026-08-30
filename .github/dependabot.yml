@@ -196,6 +196,17 @@ updates:
       # rule — and ci.yml runs `npm run lint` as a blocking gate before the build.
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
+      # typescript-eslint declares `typescript: >=4.8.4 <6.1.0` as a peer, and enforces it at
+      # load time by THROWING rather than warning. A TS major outside that range does not
+      # degrade linting, it makes ESLint fail to start — `Failed to load plugin
+      # '@typescript-eslint'` — and ci.yml runs `npm run lint` as a blocking gate.
+      #
+      # This already happened: 78c0c71 bumped typescript to 7.0.2 and every frontend CI run
+      # has failed at the lint step since, on a toolchain error rather than anything in the
+      # code. typescript-eslint tracks TS >=7.1 support in typescript-eslint#10940; TS 7 moves
+      # again when that ships, as a deliberate upgrade with the linter, not a weekly bump.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   # ── Mobile (Expo / React Native) ────────────────────────────────────────
   #
