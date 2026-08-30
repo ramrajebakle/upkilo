@@ -57,5 +57,38 @@
       "cancelled": "מבוטל",
       "completed": "הושלם"
     }
+  },
+  "Theme": {
+    "accentColour": "צבע הדגשה",
+    "accentHelp": "צבע המותג שלכם, בשימוש בדף ההזמנות הציבורי ובפורטל הלקוחות. הוא משותף עם <link>מיתוג</link>, שם אפשר גם להגדיר לוגו ודומיין מותאם.",
+    "accentPreview": "להזמנה",
+    "accentSaveFailed": "שמירת צבע ההדגשה נכשלה",
+    "accentSaved": "צבע ההדגשה נשמר",
+    "appearance": "מראה",
+    "appearanceSubtitle": "בחרו כיצד Upkilo ייראה במכשיר הזה.",
+    "colourAmber": "ענבר",
+    "colourCyan": "טורקיז",
+    "colourEmerald": "אמרלד",
+    "colourIndigo": "אינדיגו",
+    "colourRose": "ורוד",
+    "colourTheme": "ערכת צבעים",
+    "colourViolet": "סגול",
+    "contrastWarning": "טקסט הכפתורים על הצבע הזה מגיע לניגודיות של {ratio}:1 בלבד, מתחת לרף הנגישות של 4.5:1. גוון מעט כהה יותר ייקרא טוב יותר לכולם.",
+    "dark": "כהה",
+    "darkHint": "תמיד ערכה כהה",
+    "darkModeActive": "מצב כהה פעיל",
+    "light": "בהיר",
+    "lightHint": "תמיד ערכה בהירה",
+    "lightModeActive": "מצב בהיר פעיל",
+    "resolvedNow": "{mode} כרגע",
+    "saveAccent": "שמירת צבע ההדגשה",
+    "saved": "נשמר",
+    "saving": "שומר…",
+    "switchToDark": "מעבר למצב כהה",
+    "switchToLight": "מעבר למצב בהיר",
+    "system": "מערכת",
+    "systemHint": "לפי הגדרת המכשיר",
+    "themeHint": "חל מיד ונשמר במכשיר הזה.",
+    "themeSection": "ערכת נושא"
   }
 }

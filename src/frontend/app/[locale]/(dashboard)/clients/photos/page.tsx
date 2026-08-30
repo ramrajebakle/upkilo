@@ -120,7 +120,7 @@ export default function ClientPhotosPage() {
               {filteredClients.map((c) => (
                 <button key={c.id} onClick={() => { setSelectedClient(c); setClientSearch(""); }}
                   className={cn("w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-surface-50",
-                    selectedClient?.id === c.id ? "bg-ai-50 text-ai-700 font-medium" : "text-text-primary")}>
+                    selectedClient?.id === c.id ? "bg-ai-subtle text-ai font-medium" : "text-text-primary")}>
                   {c.fullName}
                 </button>
               ))}
@@ -154,11 +154,11 @@ export default function ClientPhotosPage() {
               {/* Upload panel */}
               <div className="flex flex-wrap items-center gap-3 p-3 bg-surface-50 rounded-xl border border-surface-200">
                 <select value={uploadType} onChange={(e) => setUploadType(e.target.value)}
-                  className="px-2.5 py-1.5 text-xs rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-1 focus:ring-ai-500">
+                  className="px-2.5 py-1.5 text-xs rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-1 focus:ring-ai-500">
                   {PHOTO_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
                 <input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="Caption (optional)"
-                  className="flex-1 min-w-32 px-2.5 py-1.5 text-xs rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-1 focus:ring-ai-500" />
+                  className="flex-1 min-w-32 px-2.5 py-1.5 text-xs rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-1 focus:ring-ai-500" />
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
                 <Button variant="primary" size="sm" leftIcon={uploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
                   onClick={() => fileRef.current?.click()} disabled={uploading}>
@@ -179,7 +179,7 @@ export default function ClientPhotosPage() {
                         <img src={ph.fileUrl} alt={ph.caption ?? ph.fileName} className="w-full h-40 object-cover" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2 gap-1.5">
                           <button onClick={() => setAsProfile(ph.id)}
-                            className="flex items-center gap-1 text-xs bg-white/90 text-gray-800 px-2 py-1 rounded-lg hover:bg-white">
+                            className="flex items-center gap-1 text-xs bg-white/90 text-foreground px-2 py-1 rounded-lg hover:bg-card">
                             <Star size={11} />Profile
                           </button>
                           <button onClick={() => handleDelete(ph.id)}
@@ -188,7 +188,7 @@ export default function ClientPhotosPage() {
                           </button>
                         </div>
                         <div className="px-2 py-1.5">
-                          <span className="text-xs text-ai-600 font-medium">{ph.type}</span>
+                          <span className="text-xs text-ai font-medium">{ph.type}</span>
                           {ph.caption && <p className="text-xs text-text-secondary truncate">{ph.caption}</p>}
                         </div>
                       </div>

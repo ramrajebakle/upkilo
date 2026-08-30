@@ -124,11 +124,11 @@ export default function ExperimentsPage() {
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">A/B Testing</h1>
-                    <p className="text-slate-500 mt-1">Run experiments to optimize conversions and engagement</p>
+                    <h1 className="text-2xl font-bold text-foreground">A/B Testing</h1>
+                    <p className="text-foreground-secondary mt-1">Run experiments to optimize conversions and engagement</p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={fetchExperiments} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                    <button onClick={fetchExperiments} className="p-2 rounded-lg hover:bg-accent text-foreground-secondary">
                         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                     <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
@@ -140,15 +140,15 @@ export default function ExperimentsPage() {
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Total Experiments', value: experiments.length, icon: <FlaskConical className="h-5 w-5 text-primary-500" /> },
-                    { label: 'Active', value: experiments.filter(e => e.isActive).length, icon: <TrendingUp className="h-5 w-5 text-emerald-500" /> },
-                    { label: 'Paused', value: experiments.filter(e => !e.isActive).length, icon: <BarChart3 className="h-5 w-5 text-amber-500" /> },
+                    { label: 'Total Experiments', value: experiments.length, icon: <FlaskConical className="h-5 w-5 text-primary" /> },
+                    { label: 'Active', value: experiments.filter(e => e.isActive).length, icon: <TrendingUp className="h-5 w-5 text-success-fg" /> },
+                    { label: 'Paused', value: experiments.filter(e => !e.isActive).length, icon: <BarChart3 className="h-5 w-5 text-warning-fg" /> },
                 ].map(s => (
-                    <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-                        <div className="p-2 bg-slate-50 rounded-lg">{s.icon}</div>
+                    <div key={s.label} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                        <div className="p-2 bg-muted rounded-lg">{s.icon}</div>
                         <div>
-                            <div className="text-xl font-bold text-slate-900">{s.value}</div>
-                            <div className="text-xs text-slate-500">{s.label}</div>
+                            <div className="text-xl font-bold text-foreground">{s.value}</div>
+                            <div className="text-xs text-foreground-secondary">{s.label}</div>
                         </div>
                     </div>
                 ))}
@@ -156,15 +156,15 @@ export default function ExperimentsPage() {
 
             {/* Create Form */}
             {showForm && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+                <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-semibold text-slate-900">New A/B Experiment</h2>
-                        <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+                        <h2 className="font-semibold text-foreground">New A/B Experiment</h2>
+                        <button onClick={() => setShowForm(false)} className="text-foreground-muted hover:text-foreground-secondary">
                             <X className="h-4 w-4" />
                         </button>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Experiment Name</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Experiment Name</label>
                         <Input
                             value={form.name}
                             onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
@@ -173,7 +173,7 @@ export default function ExperimentsPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Variant A (Control)</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Variant A (Control)</label>
                             <Input
                                 value={form.variantA}
                                 onChange={e => setForm(p => ({ ...p, variantA: e.target.value }))}
@@ -181,7 +181,7 @@ export default function ExperimentsPage() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Variant B (Test)</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Variant B (Test)</label>
                             <Input
                                 value={form.variantB}
                                 onChange={e => setForm(p => ({ ...p, variantB: e.target.value }))}
@@ -190,8 +190,8 @@ export default function ExperimentsPage() {
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Traffic Split: <span className="text-primary-600">{form.trafficSplit}% → A</span> / <span className="text-primary-600">{100 - form.trafficSplit}% → B</span>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                            Traffic Split: <span className="text-primary">{form.trafficSplit}% → A</span> / <span className="text-primary">{100 - form.trafficSplit}% → B</span>
                         </label>
                         <input
                             type="range"
@@ -202,13 +202,13 @@ export default function ExperimentsPage() {
                             onChange={e => setForm(p => ({ ...p, trafficSplit: parseInt(e.target.value) }))}
                             className="w-full accent-primary-600"
                         />
-                        <div className="flex justify-between text-xs text-slate-400 mt-1">
+                        <div className="flex justify-between text-xs text-foreground-muted mt-1">
                             <span>10%</span>
                             <span>50/50</span>
                             <span>90%</span>
                         </div>
                     </div>
-                    <div className="flex gap-3 pt-2 border-t border-slate-100">
+                    <div className="flex gap-3 pt-2 border-t border-border-subtle">
                         <Button onClick={handleCreate} disabled={saving}>
                             {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                             {saving ? 'Creating...' : 'Create Experiment'}
@@ -221,32 +221,32 @@ export default function ExperimentsPage() {
             {/* Experiments List */}
             {loading ? (
                 <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 animate-pulse h-24" />)}
+                    {[...Array(3)].map((_, i) => <div key={i} className="bg-card border border-border rounded-xl p-5 animate-pulse h-24" />)}
                 </div>
             ) : experiments.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+                <div className="text-center py-16 bg-card rounded-xl border border-border">
                     <FlaskConical className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-slate-700">No experiments yet</h3>
-                    <p className="text-slate-500 text-sm mt-1 mb-4">Create your first A/B test to start optimizing</p>
+                    <h3 className="text-lg font-semibold text-foreground">No experiments yet</h3>
+                    <p className="text-foreground-secondary text-sm mt-1 mb-4">Create your first A/B test to start optimizing</p>
                     <Button onClick={() => setShowForm(true)}><Plus className="h-4 w-4 mr-2" /> New Experiment</Button>
                 </div>
             ) : (
                 <div className="space-y-3">
                     {experiments.map(exp => (
-                        <div key={exp.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-                            <div className="flex items-center gap-4 p-4 hover:bg-slate-50 cursor-pointer" onClick={() => handleExpand(exp.id)}>
+                        <div key={exp.id} className="bg-card border border-border rounded-xl overflow-hidden">
+                            <div className="flex items-center gap-4 p-4 hover:bg-accent cursor-pointer" onClick={() => handleExpand(exp.id)}>
                                 <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${exp.isActive ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-slate-900">{exp.name}</span>
-                                        <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${exp.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                                        <span className="font-semibold text-foreground">{exp.name}</span>
+                                        <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${exp.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-muted text-foreground-secondary'}`}>
                                             {exp.isActive ? 'Active' : 'Paused'}
                                         </span>
                                     </div>
-                                    <div className="text-xs text-slate-500 mt-0.5">
-                                        <span className="text-primary-600 font-medium">{exp.variantA}</span>
+                                    <div className="text-xs text-foreground-secondary mt-0.5">
+                                        <span className="text-primary font-medium">{exp.variantA}</span>
                                         <span className="mx-2">vs</span>
-                                        <span className="text-primary-600 font-medium">{exp.variantB}</span>
+                                        <span className="text-primary font-medium">{exp.variantB}</span>
                                         <span className="mx-2">·</span>
                                         <span>{Math.round(exp.trafficSplit * 100)}% / {Math.round((1 - exp.trafficSplit) * 100)}% split</span>
                                     </div>
@@ -254,41 +254,41 @@ export default function ExperimentsPage() {
                                 <div className="flex items-center gap-2 shrink-0">
                                     <button
                                         onClick={e => { e.stopPropagation(); handleToggle(exp); }}
-                                        className="p-1.5 hover:bg-slate-100 rounded-lg"
+                                        className="p-1.5 hover:bg-accent rounded-lg"
                                         title={exp.isActive ? 'Pause' : 'Resume'}
                                         disabled={togglingId === exp.id}
                                     >
                                         {togglingId === exp.id
-                                            ? <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+                                            ? <Loader2 className="h-4 w-4 animate-spin text-foreground-muted" />
                                             : exp.isActive
-                                                ? <ToggleRight className="h-4 w-4 text-emerald-500" />
-                                                : <ToggleLeft className="h-4 w-4 text-slate-400" />}
+                                                ? <ToggleRight className="h-4 w-4 text-success-fg" />
+                                                : <ToggleLeft className="h-4 w-4 text-foreground-muted" />}
                                     </button>
                                     <button
                                         onClick={e => { e.stopPropagation(); handleDelete(exp.id); }}
-                                        className="p-1.5 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-500"
+                                        className="p-1.5 hover:bg-red-50 rounded-lg text-foreground-muted hover:text-red-500"
                                         title="Delete"
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </button>
-                                    {expandedId === exp.id ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+                                    {expandedId === exp.id ? <ChevronUp className="h-4 w-4 text-foreground-muted" /> : <ChevronDown className="h-4 w-4 text-foreground-muted" />}
                                 </div>
                             </div>
 
                             {/* Expanded Results */}
                             {expandedId === exp.id && (
-                                <div className="border-t border-slate-100 p-4 bg-slate-50">
+                                <div className="border-t border-border-subtle p-4 bg-muted">
                                     {loadingDetail ? (
-                                        <div className="flex items-center gap-2 text-slate-500 text-sm">
+                                        <div className="flex items-center gap-2 text-foreground-secondary text-sm">
                                             <Loader2 className="h-4 w-4 animate-spin" /> Loading results...
                                         </div>
                                     ) : expandedData?.results ? (
                                         <div>
                                             <div className="flex items-center gap-2 mb-3">
-                                                <BarChart3 className="h-4 w-4 text-slate-500" />
-                                                <span className="font-semibold text-slate-900 text-sm">Experiment Results</span>
-                                                <span className="text-xs text-slate-400">· {expandedData.results.confidenceLevel}% confidence</span>
-                                                <span className={`ml-auto px-2 py-0.5 text-xs font-medium rounded-full flex items-center gap-1 ${expandedData.results.winner === 'A' ? 'bg-primary-50 text-primary-700' : 'bg-primary-50 text-primary-700'}`}>
+                                                <BarChart3 className="h-4 w-4 text-foreground-secondary" />
+                                                <span className="font-semibold text-foreground text-sm">Experiment Results</span>
+                                                <span className="text-xs text-foreground-muted">· {expandedData.results.confidenceLevel}% confidence</span>
+                                                <span className={`ml-auto px-2 py-0.5 text-xs font-medium rounded-full flex items-center gap-1 ${expandedData.results.winner === 'A' ? 'bg-brand-subtle text-primary' : 'bg-brand-subtle text-primary'}`}>
                                                     <Award className="h-3 w-3" /> Variant {expandedData.results.winner} winning
                                                 </span>
                                             </div>
@@ -298,29 +298,29 @@ export default function ExperimentsPage() {
                                                     const name = variant === 'A' ? expandedData.variantA : expandedData.variantB;
                                                     const isWinner = expandedData.results.winner === variant;
                                                     return (
-                                                        <div key={variant} className={`rounded-xl p-4 border ${isWinner ? (variant === 'A' ? 'border-primary-200 bg-primary-50' : 'border-primary-200 bg-primary-50') : 'border-slate-200 bg-white'}`}>
+                                                        <div key={variant} className={`rounded-xl p-4 border ${isWinner ? (variant === 'A' ? 'border-primary/25 bg-brand-subtle' : 'border-primary/25 bg-brand-subtle') : 'border-border bg-card'}`}>
                                                             <div className="flex items-center gap-2 mb-3">
                                                                 <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${variant === 'A' ? 'bg-primary-600 text-white' : 'bg-primary-600 text-white'}`}>
                                                                     {variant}
                                                                 </span>
-                                                                <span className="font-medium text-slate-900 text-sm">{name}</span>
-                                                                {isWinner && <CheckCircle className="h-3.5 w-3.5 text-emerald-500 ml-auto" />}
+                                                                <span className="font-medium text-foreground text-sm">{name}</span>
+                                                                {isWinner && <CheckCircle className="h-3.5 w-3.5 text-success-fg ml-auto" />}
                                                             </div>
                                                             <div className="space-y-2 text-sm">
                                                                 <div className="flex justify-between">
-                                                                    <span className="text-slate-500">Impressions</span>
+                                                                    <span className="text-foreground-secondary">Impressions</span>
                                                                     <span className="font-semibold">{data.impressions.toLocaleString()}</span>
                                                                 </div>
                                                                 <div className="flex justify-between">
-                                                                    <span className="text-slate-500">Conversions</span>
+                                                                    <span className="text-foreground-secondary">Conversions</span>
                                                                     <span className="font-semibold">{data.conversions.toLocaleString()}</span>
                                                                 </div>
                                                                 <div className="flex justify-between">
-                                                                    <span className="text-slate-500">Conv. Rate</span>
-                                                                    <span className={`font-bold ${isWinner ? 'text-emerald-600' : 'text-slate-700'}`}>{data.conversionRate}%</span>
+                                                                    <span className="text-foreground-secondary">Conv. Rate</span>
+                                                                    <span className={`font-bold ${isWinner ? 'text-success-fg' : 'text-foreground'}`}>{data.conversionRate}%</span>
                                                                 </div>
                                                                 {/* Progress bar */}
-                                                                <div className="h-1.5 bg-white rounded-full overflow-hidden mt-1">
+                                                                <div className="h-1.5 bg-muted rounded-full overflow-hidden mt-1">
                                                                     <div
                                                                         className={`h-full rounded-full ${variant === 'A' ? 'bg-primary-500' : 'bg-primary-500'}`}
                                                                         style={{ width: `${Math.min(data.conversionRate * 5, 100)}%` }}
@@ -333,7 +333,7 @@ export default function ExperimentsPage() {
                                             </div>
                                         </div>
                                     ) : (
-                                        <p className="text-sm text-slate-500">No results data available yet</p>
+                                        <p className="text-sm text-foreground-secondary">No results data available yet</p>
                                     )}
                                 </div>
                             )}

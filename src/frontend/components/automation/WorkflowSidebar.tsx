@@ -62,15 +62,15 @@ export const WorkflowSidebar = () => {
   const filteredActions = actions.filter(a => a.label.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <aside className="w-72 bg-white border-r border-gray-200 flex flex-col h-full shadow-sm">
-      <div className="p-4 border-b border-gray-100">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4">Node Library</h3>
+    <aside className="w-72 bg-card border-r border-border flex flex-col h-full shadow-sm">
+      <div className="p-4 border-b border-border-subtle">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground-secondary mb-4">Node Library</h3>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground-muted" />
           <input 
             type="text" 
             placeholder="Search triggers/actions..." 
-            className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+            className="w-full pl-9 pr-4 py-2 bg-muted border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -81,14 +81,14 @@ export const WorkflowSidebar = () => {
         {/* Triggers Section */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Triggers</h4>
+            <h4 className="text-xs font-bold text-foreground-muted uppercase tracking-widest">Triggers</h4>
             <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">YELLOW</span>
           </div>
           <div className="grid grid-cols-1 gap-2">
             {filteredTriggers.map((trigger) => (
               <div
                 key={trigger.type}
-                className="group flex items-center p-3 bg-white border border-gray-100 rounded-xl hover:border-amber-200 hover:shadow-md hover:shadow-amber-500/5 cursor-grab active:cursor-grabbing transition-all duration-200"
+                className="group flex items-center p-3 bg-card border border-border-subtle rounded-xl hover:border-amber-200 hover:shadow-md hover:shadow-amber-500/5 cursor-grab active:cursor-grabbing transition-all duration-200"
                 onDragStart={(event) => onDragStart(event, 'trigger', trigger)}
                 draggable
               >
@@ -96,8 +96,8 @@ export const WorkflowSidebar = () => {
                   <trigger.icon className="w-4 h-4" />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-700">{trigger.label}</p>
-                  <p className="text-[10px] text-gray-400">{trigger.category}</p>
+                  <p className="text-sm font-medium text-foreground">{trigger.label}</p>
+                  <p className="text-[10px] text-foreground-muted">{trigger.category}</p>
                 </div>
               </div>
             ))}
@@ -107,14 +107,14 @@ export const WorkflowSidebar = () => {
         {/* Actions Section */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Actions</h4>
+            <h4 className="text-xs font-bold text-foreground-muted uppercase tracking-widest">Actions</h4>
             <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">BLUE</span>
           </div>
           <div className="grid grid-cols-1 gap-2">
             {filteredActions.map((action) => (
               <div
                 key={action.type}
-                className="group flex items-center p-3 bg-white border border-gray-100 rounded-xl hover:border-blue-200 hover:shadow-md hover:shadow-blue-500/5 cursor-grab active:cursor-grabbing transition-all duration-200"
+                className="group flex items-center p-3 bg-card border border-border-subtle rounded-xl hover:border-blue-200 hover:shadow-md hover:shadow-blue-500/5 cursor-grab active:cursor-grabbing transition-all duration-200"
                 onDragStart={(event) => onDragStart(event, 'action', action)}
                 draggable
               >
@@ -122,8 +122,8 @@ export const WorkflowSidebar = () => {
                   <action.icon className="w-4 h-4" />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-700">{action.label}</p>
-                  <p className="text-[10px] text-gray-400">{action.category}</p>
+                  <p className="text-sm font-medium text-foreground">{action.label}</p>
+                  <p className="text-[10px] text-foreground-muted">{action.category}</p>
                 </div>
               </div>
             ))}
@@ -131,8 +131,8 @@ export const WorkflowSidebar = () => {
         </section>
       </div>
 
-      <div className="p-4 bg-gray-50 border-t border-gray-100">
-        <div className="flex items-center text-xs text-gray-400">
+      <div className="p-4 bg-muted border-t border-border-subtle">
+        <div className="flex items-center text-xs text-foreground-muted">
           <Play className="w-3 h-3 mr-2" />
           <span>Drag nodes to valid locations</span>
         </div>

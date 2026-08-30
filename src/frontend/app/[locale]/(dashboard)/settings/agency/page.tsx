@@ -111,11 +111,11 @@ export default function AgencyDashboardPage() {
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Agency Dashboard</h1>
-                    <p className="text-slate-500 mt-1">Manage white-label sub-accounts for your clients</p>
+                    <h1 className="text-2xl font-bold text-foreground">Agency Dashboard</h1>
+                    <p className="text-foreground-secondary mt-1">Manage white-label sub-accounts for your clients</p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={fetchSubtenants} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                    <button onClick={fetchSubtenants} className="p-2 rounded-lg hover:bg-accent text-foreground-secondary">
                         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                     <Button onClick={() => setShowCreate(true)} className="flex items-center gap-2">
@@ -127,15 +127,15 @@ export default function AgencyDashboardPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Total Accounts', value: stats.total, icon: <Building2 className="h-5 w-5 text-primary-500" /> },
-                    { label: 'Active', value: stats.active, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
-                    { label: 'Suspended', value: stats.suspended, icon: <Pause className="h-5 w-5 text-amber-500" /> },
+                    { label: 'Total Accounts', value: stats.total, icon: <Building2 className="h-5 w-5 text-primary" /> },
+                    { label: 'Active', value: stats.active, icon: <CheckCircle className="h-5 w-5 text-success-fg" /> },
+                    { label: 'Suspended', value: stats.suspended, icon: <Pause className="h-5 w-5 text-warning-fg" /> },
                 ].map(s => (
-                    <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-                        <div className="p-2 bg-slate-50 rounded-lg">{s.icon}</div>
+                    <div key={s.label} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                        <div className="p-2 bg-muted rounded-lg">{s.icon}</div>
                         <div>
-                            <div className="text-2xl font-bold text-slate-900">{s.value}</div>
-                            <div className="text-xs text-slate-500">{s.label}</div>
+                            <div className="text-2xl font-bold text-foreground">{s.value}</div>
+                            <div className="text-xs text-foreground-secondary">{s.label}</div>
                         </div>
                     </div>
                 ))}
@@ -143,26 +143,26 @@ export default function AgencyDashboardPage() {
 
             {/* Create Form */}
             {showCreate && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+                <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-semibold text-slate-900">Create Sub-Account</h2>
-                        <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+                        <h2 className="font-semibold text-foreground">Create Sub-Account</h2>
+                        <button onClick={() => setShowCreate(false)} className="text-foreground-muted hover:text-foreground-secondary">✕</button>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Business Name</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Business Name</label>
                             <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Client Business Name" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">URL Slug</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">URL Slug</label>
                             <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') }))} placeholder="client-business" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Admin Email</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Admin Email</label>
                             <Input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="admin@client.com" />
                         </div>
                     </div>
-                    <div className="flex gap-3 pt-2 border-t border-slate-100">
+                    <div className="flex gap-3 pt-2 border-t border-border-subtle">
                         <Button onClick={handleCreate} disabled={creating}>
                             {creating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                             Create Account
@@ -174,7 +174,7 @@ export default function AgencyDashboardPage() {
 
             {/* Search */}
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search accounts..." className="pl-9" />
             </div>
 
@@ -182,20 +182,20 @@ export default function AgencyDashboardPage() {
             {loading ? (
                 <div className="space-y-3">
                     {[...Array(4)].map((_, i) => (
-                        <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse h-20" />
+                        <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse h-20" />
                     ))}
                 </div>
             ) : filtered.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+                <div className="text-center py-16 bg-card rounded-xl border border-border">
                     <Building2 className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-slate-700">No sub-accounts yet</h3>
-                    <p className="text-slate-500 text-sm mt-1 mb-4">Create your first white-label account for a client</p>
+                    <h3 className="text-lg font-semibold text-foreground">No sub-accounts yet</h3>
+                    <p className="text-foreground-secondary text-sm mt-1 mb-4">Create your first white-label account for a client</p>
                     <Button onClick={() => setShowCreate(true)}><Plus className="h-4 w-4 mr-2" /> New Sub-Account</Button>
                 </div>
             ) : (
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div className="bg-card border border-border rounded-xl overflow-hidden">
                     {/* Header row */}
-                    <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-muted border-b border-border-subtle text-xs font-semibold text-foreground-secondary uppercase tracking-wider">
                         <div className="col-span-4">Account</div>
                         <div className="col-span-2">Slug</div>
                         <div className="col-span-2">Plan</div>
@@ -205,40 +205,40 @@ export default function AgencyDashboardPage() {
                     </div>
 
                     {filtered.map((tenant, idx) => (
-                        <div key={tenant.id} className={`grid grid-cols-12 gap-4 px-5 py-4 items-center hover:bg-slate-50 transition-colors ${idx < filtered.length - 1 ? 'border-b border-slate-50' : ''}`}>
+                        <div key={tenant.id} className={`grid grid-cols-12 gap-4 px-5 py-4 items-center hover:bg-accent transition-colors ${idx < filtered.length - 1 ? 'border-b border-slate-50' : ''}`}>
                             <div className="col-span-4 flex items-center gap-3">
                                 <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
                                     {tenant.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <p className="font-medium text-slate-900">{tenant.name}</p>
-                                    {tenant.email && <p className="text-xs text-slate-400">{tenant.email}</p>}
+                                    <p className="font-medium text-foreground">{tenant.name}</p>
+                                    {tenant.email && <p className="text-xs text-foreground-muted">{tenant.email}</p>}
                                 </div>
                             </div>
                             <div className="col-span-2">
-                                <span className="flex items-center gap-1 text-sm text-slate-600">
-                                    <Globe className="h-3.5 w-3.5 text-slate-400" />
+                                <span className="flex items-center gap-1 text-sm text-foreground-secondary">
+                                    <Globe className="h-3.5 w-3.5 text-foreground-muted" />
                                     {tenant.slug}
                                 </span>
                             </div>
                             <div className="col-span-2">
-                                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground-secondary">
                                     {tierLabel[tenant.subscriptionTier] || 'Starter'}
                                 </span>
                             </div>
                             <div className="col-span-1">
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor[tenant.status] || 'bg-slate-100 text-slate-600'}`}>
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor[tenant.status] || 'bg-muted text-foreground-secondary'}`}>
                                     {statusLabel[tenant.status] || 'Unknown'}
                                 </span>
                             </div>
-                            <div className="col-span-1 text-xs text-slate-400">
+                            <div className="col-span-1 text-xs text-foreground-muted">
                                 {new Date(tenant.createdAt).toLocaleDateString()}
                             </div>
                             <div className="col-span-2 flex items-center justify-end gap-1">
                                 <button
                                     onClick={() => handleImpersonate(tenant)}
                                     disabled={actioningId === tenant.id || tenant.status !== 0}
-                                    className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-40"
+                                    className="p-1.5 text-foreground-muted hover:text-primary hover:bg-brand-subtle rounded-lg transition-colors disabled:opacity-40"
                                     title="Enter account"
                                 >
                                     {actioningId === tenant.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ExternalLink className="h-3.5 w-3.5" />}
@@ -246,7 +246,7 @@ export default function AgencyDashboardPage() {
                                 <button
                                     onClick={() => handleToggleStatus(tenant)}
                                     disabled={actioningId === tenant.id || tenant.status === 2}
-                                    className={`p-1.5 rounded-lg transition-colors disabled:opacity-40 ${tenant.status === 0 ? 'text-slate-400 hover:text-amber-600 hover:bg-amber-50' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}`}
+                                    className={`p-1.5 rounded-lg transition-colors disabled:opacity-40 ${tenant.status === 0 ? 'text-foreground-muted hover:text-amber-600 hover:bg-amber-50' : 'text-foreground-muted hover:text-emerald-600 hover:bg-emerald-50'}`}
                                     title={tenant.status === 0 ? 'Suspend' : 'Activate'}
                                 >
                                     {tenant.status === 0 ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}

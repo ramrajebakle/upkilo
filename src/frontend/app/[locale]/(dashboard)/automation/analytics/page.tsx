@@ -51,8 +51,8 @@ export default function WorkflowAnalyticsPage() {
 
   const statCards = analytics ? [
     { label: 'Total Executions', value: analytics.totalExecutions.toLocaleString(), icon: <Activity className="h-5 w-5 text-blue-500" />, color: 'blue' },
-    { label: 'Successful', value: analytics.successfulExecutions.toLocaleString(), icon: <CheckCircle className="h-5 w-5 text-emerald-500" />, color: 'emerald' },
-    { label: 'Failed', value: analytics.failedExecutions.toLocaleString(), icon: <XCircle className="h-5 w-5 text-red-500" />, color: 'red' },
+    { label: 'Successful', value: analytics.successfulExecutions.toLocaleString(), icon: <CheckCircle className="h-5 w-5 text-success-fg" />, color: 'emerald' },
+    { label: 'Failed', value: analytics.failedExecutions.toLocaleString(), icon: <XCircle className="h-5 w-5 text-danger-fg" />, color: 'red' },
     { label: 'Success Rate', value: `${analytics.avgSuccessRate.toFixed(1)}%`, icon: <TrendingUp className="h-5 w-5 text-indigo-500" />, color: 'indigo' },
   ] : [];
 
@@ -75,7 +75,7 @@ export default function WorkflowAnalyticsPage() {
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${period === p ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${period === p ? 'bg-card text-foreground shadow-sm' : 'text-foreground-secondary hover:text-foreground'}`}
               >
                 {p === '7d' ? '7 days' : p === '30d' ? '30 days' : '90 days'}
               </button>
@@ -151,7 +151,7 @@ export default function WorkflowAnalyticsPage() {
                 <div className="space-y-3">
                   {analytics.topWorkflows.slice(0, 8).map((wf, idx) => (
                     <div key={wf.id} className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-slate-400 w-5 text-right">{idx + 1}</span>
+                      <span className="text-xs font-bold text-foreground-muted w-5 text-right">{idx + 1}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">{wf.name}</span>
@@ -164,7 +164,7 @@ export default function WorkflowAnalyticsPage() {
                           />
                         </div>
                       </div>
-                      <span className={`text-xs font-semibold w-12 text-right ${wf.successRate >= 90 ? 'text-emerald-600' : wf.successRate >= 70 ? 'text-amber-600' : 'text-red-500'}`}>
+                      <span className={`text-xs font-semibold w-12 text-right ${wf.successRate >= 90 ? 'text-success-fg' : wf.successRate >= 70 ? 'text-warning-fg' : 'text-danger-fg'}`}>
                         {wf.successRate.toFixed(0)}%
                       </span>
                     </div>
@@ -204,12 +204,12 @@ export default function WorkflowAnalyticsPage() {
           {analytics && analytics.recentFailures.length > 0 && (
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
               <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                <XCircle className="h-4 w-4 text-red-500" /> Recent Failures
+                <XCircle className="h-4 w-4 text-danger-fg" /> Recent Failures
               </h2>
               <div className="space-y-2">
                 {analytics.recentFailures.map((failure, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-red-50 dark:bg-red-500/10 rounded-lg border border-red-100 dark:border-red-900/50">
-                    <XCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                    <XCircle className="h-4 w-4 text-danger-fg shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-slate-900 dark:text-white">{failure.workflowName}</span>
@@ -229,7 +229,7 @@ export default function WorkflowAnalyticsPage() {
           {/* Empty state */}
           {analytics && analytics.totalExecutions === 0 && (
             <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-              <BarChart3 className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+              <BarChart3 className="h-12 w-12 text-slate-300 mx-auto mb-3" />
               <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">No execution data yet</h3>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-4">Analytics will appear once your workflows start running</p>
               <Button onClick={() => router.push('/automation/workflows')}>

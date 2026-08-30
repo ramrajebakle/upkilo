@@ -57,5 +57,38 @@
       "cancelled": "已取消",
       "completed": "已完成"
     }
+  },
+  "Theme": {
+    "accentColour": "强调色",
+    "accentHelp": "您的品牌色，用于公开预约页面和客户门户。它与<link>品牌设置</link>共用，在那里还可以设置徽标和自定义域名。",
+    "accentPreview": "立即预约",
+    "accentSaveFailed": "强调色保存失败",
+    "accentSaved": "强调色已保存",
+    "appearance": "外观",
+    "appearanceSubtitle": "选择 Upkilo 在此设备上的显示方式。",
+    "colourAmber": "琥珀",
+    "colourCyan": "青色",
+    "colourEmerald": "祖母绿",
+    "colourIndigo": "靛蓝",
+    "colourRose": "玫瑰红",
+    "colourTheme": "配色主题",
+    "colourViolet": "紫罗兰",
+    "contrastWarning": "该颜色上的按钮文字对比度仅为 {ratio}:1，低于 4.5:1 的无障碍最低标准。稍深一点的色调对所有人都更易读。",
+    "dark": "深色",
+    "darkHint": "始终使用深色主题",
+    "darkModeActive": "深色模式已启用",
+    "light": "浅色",
+    "lightHint": "始终使用浅色主题",
+    "lightModeActive": "浅色模式已启用",
+    "resolvedNow": "当前为{mode}",
+    "saveAccent": "保存强调色",
+    "saved": "已保存",
+    "saving": "保存中…",
+    "switchToDark": "切换到深色模式",
+    "switchToLight": "切换到浅色模式",
+    "system": "跟随系统",
+    "systemHint": "跟随本设备设置",
+    "themeHint": "立即生效，并在此设备上保存。",
+    "themeSection": "主题"
   }
 }

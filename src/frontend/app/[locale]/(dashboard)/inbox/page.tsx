@@ -177,12 +177,12 @@ export default function MultiChannelInboxPage() {
                                 <span className="ml-1 bg-primary-600 text-white text-xs rounded-full px-2 py-0.5">{totalUnread}</span>
                             )}
                         </h2>
-                        <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors">
+                        <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-foreground-muted transition-colors">
                             <RefreshCw className="h-4 w-4" />
                         </button>
                     </div>
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground-muted" />
                         <input
                             value={search}
                             onChange={e => setSearch(e.target.value)}
@@ -227,7 +227,7 @@ export default function MultiChannelInboxPage() {
                 {/* List */}
                 <div className="flex-1 overflow-y-auto">
                     {filteredConvs.length === 0 ? (
-                        <div className="text-center py-12 text-slate-400">
+                        <div className="text-center py-12 text-foreground-muted">
                             <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-30" />
                             <p className="text-sm">No conversations</p>
                         </div>
@@ -261,9 +261,9 @@ export default function MultiChannelInboxPage() {
                                                     )}
                                                 </div>
                                             </div>
-                                            <p className={cn('text-xs truncate mt-0.5', conv.unreadCount > 0 ? 'text-slate-700 dark:text-slate-300 font-medium' : 'text-slate-500 dark:text-slate-500')}>{conv.lastMessage}</p>
+                                            <p className={cn('text-xs truncate mt-0.5', conv.unreadCount > 0 ? 'text-slate-700 dark:text-slate-300 font-medium' : 'text-foreground-secondary')}>{conv.lastMessage}</p>
                                             <div className="flex items-center gap-2 mt-2">
-                                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-tighter">{formatTime(conv.lastActivity)}</span>
+                                                <span className="text-[10px] font-bold text-foreground-muted uppercase tracking-tighter">{formatTime(conv.lastActivity)}</span>
                                                 {conv.tags.map(tag => (
                                                     <span key={tag} className="text-[10px] font-bold px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-md border border-slate-200 dark:border-slate-700">{tag}</span>
                                                 ))}
@@ -287,7 +287,7 @@ export default function MultiChannelInboxPage() {
                         </div>
                         <div className="flex-1">
                             <p className="font-bold text-slate-900 dark:text-white leading-tight">{selected.clientName}</p>
-                            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest mt-0.5">
+                            <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-0.5">
                                 via {CHANNEL_CONFIG[selected.channel].label}
                                 {selected.clientPhone && ` · ${selected.clientPhone}`}
                                 {selected.clientEmail && ` · ${selected.clientEmail}`}
@@ -295,7 +295,7 @@ export default function MultiChannelInboxPage() {
                         </div>
                         <div className="flex items-center gap-1.5">
                             <button onClick={() => handleStar(selected.id)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                                <Star className={cn('h-4 w-4 transition-colors', selected.starred ? 'text-amber-400 fill-amber-400' : 'text-slate-400 dark:text-slate-500')} />
+                                <Star className={cn('h-4 w-4 transition-colors', selected.starred ? 'text-amber-400 fill-amber-400' : 'text-foreground-muted')} />
                             </button>
                             {selected.status === 'open' && (
                                 <button onClick={() => handleResolve(selected.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-all active:scale-95 shadow-sm">
@@ -327,7 +327,7 @@ export default function MultiChannelInboxPage() {
                                         {msg.from === 'ai' && <span className="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-widest block mb-1">🤖 AI Agent</span>}
                                         {msg.content}
                                     </div>
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 mt-1.5 px-1 uppercase tracking-tighter">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                    <p className="text-[10px] font-bold text-foreground-muted mt-1.5 px-1 uppercase tracking-tighter">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                 </div>
                             </div>
                         ))}
@@ -363,7 +363,7 @@ export default function MultiChannelInboxPage() {
                     )}
                 </div>
             ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-950/20">
+                <div className="flex-1 flex flex-col items-center justify-center text-foreground-muted bg-slate-50 dark:bg-slate-950/20">
                     <div className="w-20 h-20 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl flex items-center justify-center mb-4 shadow-sm">
                         <Inbox className="h-10 w-10 opacity-20" />
                     </div>

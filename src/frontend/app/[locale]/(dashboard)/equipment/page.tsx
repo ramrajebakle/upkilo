@@ -23,7 +23,7 @@ interface Equipment {
 const STATUS_CFG = {
   Active: { color: "text-green-600", bg: "bg-green-50" },
   Maintenance: { color: "text-amber-600", bg: "bg-amber-50" },
-  Retired: { color: "text-gray-500", bg: "bg-gray-50" },
+  Retired: { color: "text-foreground-secondary", bg: "bg-muted" },
 };
 
 export default function EquipmentPage() {
@@ -84,10 +84,10 @@ export default function EquipmentPage() {
 
       {maintenanceDue.length > 0 && (
         <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-          <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+          <AlertTriangle className="h-5 w-5 text-warning-fg mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-sm font-medium text-amber-800">{maintenanceDue.length} item{maintenanceDue.length !== 1 ? "s" : ""} due for maintenance</p>
-            <p className="text-xs text-amber-600">{maintenanceDue.map((e) => e.name).join(", ")}</p>
+            <p className="text-xs text-warning-fg">{maintenanceDue.map((e) => e.name).join(", ")}</p>
           </div>
         </div>
       )}
@@ -129,7 +129,7 @@ export default function EquipmentPage() {
         {statusFilter.map((f) => (
           <button key={f} onClick={() => setFilter(f)}
             className={cn("flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors",
-              filter === f ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
+              filter === f ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
             {f}
           </button>
         ))}
@@ -163,7 +163,7 @@ export default function EquipmentPage() {
                         </p>
                       )}
                       {e.nextMaintenanceDue && (
-                        <p className={cn("text-xs flex items-center gap-1", isDue ? "text-amber-600 font-medium" : "text-text-tertiary")}>
+                        <p className={cn("text-xs flex items-center gap-1", isDue ? "text-warning-fg font-medium" : "text-text-tertiary")}>
                           <Calendar className="h-3 w-3" />Next: {new Date(e.nextMaintenanceDue).toLocaleDateString()}
                           {isDue && <AlertTriangle className="h-3 w-3" />}
                         </p>

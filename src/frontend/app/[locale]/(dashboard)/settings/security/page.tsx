@@ -32,7 +32,7 @@ const EVENT_COLORS: Record<SecurityEvent['type'], string> = {
     password_change: 'text-violet-500 bg-violet-50 dark:bg-violet-500/10',
     mfa_enabled: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10',
     mfa_disabled: 'text-amber-500 bg-amber-50 dark:bg-amber-500/10',
-    api_key_created: 'text-slate-500 bg-slate-50 dark:bg-slate-500/10',
+    api_key_created: 'text-foreground-secondary bg-slate-50 dark:bg-slate-500/10',
     suspicious_login: 'text-red-500 bg-red-50 dark:bg-red-500/10',
 };
 
@@ -131,7 +131,7 @@ export default function SecuritySettingsPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
                 <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Security Matrix...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Security Matrix...</p>
             </div>
         );
     }
@@ -145,7 +145,7 @@ export default function SecuritySettingsPage() {
                 </div>
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Security & Auth</h1>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Authorized Identity Protection</p>
+                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Authorized Identity Protection</p>
                 </div>
             </div>
 
@@ -159,11 +159,11 @@ export default function SecuritySettingsPage() {
                     {/* Password */}
                     <div className="group p-8 bg-slate-50/50 dark:bg-slate-950/30 border border-transparent dark:border-slate-850 rounded-[32px] flex flex-col md:flex-row items-center gap-8 transition-all hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl hover:border-slate-100 dark:hover:border-slate-800">
                         <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 group-hover:scale-110 transition-transform">
-                            <Lock className="h-6 w-6 text-slate-400 dark:text-slate-600 group-hover:text-primary-500 transition-colors" />
+                            <Lock className="h-6 w-6 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                         </div>
                         <div className="flex-1 text-center md:text-left">
                             <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest mb-1.5">Root Access Password</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">System-wide authorization credential. Periodic rotation recommended.</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest leading-relaxed">System-wide authorization credential. Periodic rotation recommended.</p>
                         </div>
                         <Button variant="outline" className="h-12 px-8 rounded-xl font-black uppercase tracking-widest text-[9px] dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800">
                             Rotate Credential
@@ -179,7 +179,7 @@ export default function SecuritySettingsPage() {
                     )}>
                         <div>
                             <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest mb-1">Dual-Channel Verification</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">Authenticator app TOTP for account access.</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest leading-relaxed">Authenticator app TOTP for account access.</p>
                         </div>
                         <MfaSetup
                             isEnabled={securityData.twoFactorEnabled}
@@ -192,11 +192,11 @@ export default function SecuritySettingsPage() {
                     {/* API Access */}
                     <div className="group p-8 bg-slate-50/50 dark:bg-slate-950/30 border border-transparent dark:border-slate-850 rounded-[32px] flex flex-col md:flex-row items-center gap-8 transition-all hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl hover:border-slate-100 dark:hover:border-slate-800">
                         <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 group-hover:scale-110 transition-transform">
-                            <Key className="h-6 w-6 text-slate-400 dark:text-slate-600 group-hover:text-primary-500 transition-colors" />
+                            <Key className="h-6 w-6 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                         </div>
                         <div className="flex-1 text-center md:text-left">
                             <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest mb-1.5">Integration Tokens & API</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">Programmable access endpoints for cross-platform data pipeline orchestration.</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest leading-relaxed">Programmable access endpoints for cross-platform data pipeline orchestration.</p>
                         </div>
                         <Button variant="outline" className="h-12 px-8 rounded-xl font-black uppercase tracking-widest text-[9px] dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800">
                             Manage Tokens
@@ -213,8 +213,8 @@ export default function SecuritySettingsPage() {
                         <h2 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Security Activity</h2>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                        <span className="text-xs text-slate-400 uppercase tracking-widest font-bold">Live</span>
+                        <Activity className="h-4 w-4 text-foreground-muted" aria-hidden="true" />
+                        <span className="text-xs text-foreground-muted uppercase tracking-widest font-bold">Live</span>
                         {connection && (
                             <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" aria-label="Connected" />
                         )}
@@ -235,9 +235,9 @@ export default function SecuritySettingsPage() {
                     </div>
                 ) : securityEvents.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
-                        <Shield className="h-10 w-10 text-slate-300 dark:text-slate-600 mb-3" aria-hidden="true" />
+                        <Shield className="h-10 w-10 text-slate-300 mb-3" aria-hidden="true" />
                         <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">No recent security events</p>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Login attempts and account changes will appear here.</p>
+                        <p className="text-xs text-foreground-muted mt-1">Login attempts and account changes will appear here.</p>
                     </div>
                 ) : (
                     <ul className="space-y-2" aria-label="Recent security events">
@@ -253,12 +253,12 @@ export default function SecuritySettingsPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{event.description}</p>
-                                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">
+                                        <p className="text-xs text-foreground-muted mt-0.5 truncate">
                                             {event.device} · {event.ipAddress}
                                         </p>
                                     </div>
                                     <time
-                                        className="text-xs text-slate-400 dark:text-slate-500 shrink-0"
+                                        className="text-xs text-foreground-muted shrink-0"
                                         dateTime={event.timestamp}
                                     >
                                         {formatRelativeTime(event.timestamp)}

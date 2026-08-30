@@ -35,7 +35,7 @@ export default function AdminRevenuePage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Platform Revenue <TrendingUp className="text-green-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Platform Revenue <TrendingUp className="text-success-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">MRR, ARR, churn, and growth analytics across all tenants.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -60,7 +60,7 @@ export default function AdminRevenuePage() {
                 <Card key={s.label}>
                   <CardContent className="pt-5">
                     <div className="flex items-center justify-between mb-2">{s.icon}
-                      <span className={`flex items-center gap-0.5 text-xs font-medium ${s.positive ? "text-green-600" : "text-red-500"}`}>
+                      <span className={`flex items-center gap-0.5 text-xs font-medium ${s.positive ? "text-success-fg" : "text-danger-fg"}`}>
                         {s.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}{s.sub}
                       </span>
                     </div>
@@ -104,9 +104,9 @@ export default function AdminRevenuePage() {
                         <tr key={i} className="border-b border-surface-100 hover:bg-surface-50">
                           <td className="py-2 px-2 text-xs font-medium text-text-primary">{m.month}</td>
                           <td className="py-2 px-2 text-xs font-semibold text-text-primary">{fmt(m.mrr ?? 0)}</td>
-                          <td className="py-2 px-2 text-xs text-green-600">+{fmt(m.newMrr ?? 0)}</td>
-                          <td className="py-2 px-2 text-xs text-red-500">-{fmt(m.churnedMrr ?? 0)}</td>
-                          <td className={`py-2 px-2 text-xs font-semibold ${(m.netNewMrr ?? 0) >= 0 ? "text-green-600" : "text-red-500"}`}>
+                          <td className="py-2 px-2 text-xs text-success-fg">+{fmt(m.newMrr ?? 0)}</td>
+                          <td className="py-2 px-2 text-xs text-danger-fg">-{fmt(m.churnedMrr ?? 0)}</td>
+                          <td className={`py-2 px-2 text-xs font-semibold ${(m.netNewMrr ?? 0) >= 0 ? "text-success-fg" : "text-danger-fg"}`}>
                             {(m.netNewMrr ?? 0) >= 0 ? "+" : ""}{fmt(m.netNewMrr ?? 0)}
                           </td>
                         </tr>

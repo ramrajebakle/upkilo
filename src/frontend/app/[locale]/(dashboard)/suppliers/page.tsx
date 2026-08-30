@@ -51,13 +51,13 @@ function SupplierForm({ initial, onSave, onCancel, saving }: {
           <div key={f.key}>
             <label className="block text-xs font-medium text-text-secondary mb-1">{f.label}</label>
             <input type={f.type ?? "text"} value={(form as any)[f.key]} onChange={(e) => set(f.key, e.target.value)} placeholder={f.placeholder}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
+              className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
           </div>
         ))}
         <div className="sm:col-span-2">
           <label className="block text-xs font-medium text-text-secondary mb-1">Notes</label>
           <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} rows={2} placeholder="Payment terms, lead times, etc."
-            className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500 resize-none" />
+            className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500 resize-none" />
         </div>
       </div>
       <div className="flex justify-end gap-2">
@@ -172,14 +172,14 @@ export default function SuppliersPage() {
                         <div className="flex flex-wrap gap-3 mt-1.5 text-xs text-text-tertiary">
                           {s.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{s.email}</span>}
                           {s.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{s.phone}</span>}
-                          {s.website && <a href={s.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-ai-500 hover:underline"><Globe className="h-3 w-3" />Website</a>}
+                          {s.website && <a href={s.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-ai hover:underline"><Globe className="h-3 w-3" />Website</a>}
                         </div>
                         {s.notes && <p className="text-xs text-text-tertiary mt-1.5 line-clamp-1">{s.notes}</p>}
                       </div>
                     </div>
                     <div className="flex gap-1 flex-shrink-0">
                       <Button variant="outline" size="sm" leftIcon={<Pencil size={12} />} onClick={() => setEditing(s)}>Edit</Button>
-                      <Button variant="outline" size="sm" className="text-red-500 border-red-200 hover:bg-red-50"
+                      <Button variant="outline" size="sm" className="text-danger-fg border-red-200 hover:bg-red-50"
                         leftIcon={deletingId === s.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
                         onClick={() => handleDelete(s.id)} disabled={deletingId === s.id} />
                     </div>

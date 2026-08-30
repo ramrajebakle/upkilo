@@ -304,7 +304,7 @@ export default function DashboardPage() {
                                 this was its only caller. A person's own name is poor material for
                                 a legibility trade. primary-300 rather than a mid tone because this
                                 heading sits on the dark hero, alongside text-white and
-                                text-slate-400; a 600-weight accent here would be darker than the
+                                text-foreground-muted; a 600-weight accent here would be darker than the
                                 surface it sits on. */}
                             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
                                 Welcome back,{' '}
@@ -314,7 +314,7 @@ export default function DashboardPage() {
                                     <span className="inline-block w-28 h-8 bg-white/20 rounded-lg animate-pulse align-middle" aria-hidden="true" />
                                 )}
                             </h1>
-                            <p className="text-slate-400 max-w-lg">
+                            <p className="text-foreground-muted max-w-lg">
                                 Here's what's happening with your business today. You have {stats?.todayBookings} bookings scheduled.
                             </p>
                         </div>
@@ -333,8 +333,8 @@ export default function DashboardPage() {
                                         className={cn(
                                             'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
                                             dateRange === val
-                                                ? 'bg-white text-slate-900 shadow-sm'
-                                                : 'text-slate-400 hover:text-white'
+                                                ? 'bg-card text-foreground shadow-sm'
+                                                : 'text-foreground-muted hover:text-white'
                                         )}
                                         aria-pressed={dateRange === val}
                                     >
@@ -364,7 +364,7 @@ export default function DashboardPage() {
                 <h2 className="sr-only">Key Performance Indicators</h2>
                 <button
                     onClick={openKpiPanel}
-                    className="ms-auto flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="ms-auto flex items-center gap-1.5 text-xs text-foreground-muted hover:text-slate-600 dark:hover:text-slate-200 transition-colors py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                     aria-label="Customize dashboard KPI cards"
                     aria-expanded={kpiPanelOpen}
                     aria-controls="kpi-customizer"
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                             className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                             aria-label="Close KPI customizer"
                         >
-                            <X className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                            <X className="h-4 w-4 text-foreground-muted" aria-hidden="true" />
                         </button>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
@@ -426,7 +426,7 @@ export default function DashboardPage() {
                         })}
                     </div>
                     <div className="flex items-center justify-between">
-                        <p className="text-xs text-slate-400">{kpiDraft.length}/4 selected</p>
+                        <p className="text-xs text-foreground-muted">{kpiDraft.length}/4 selected</p>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setKpiPanelOpen(false)}
@@ -622,7 +622,7 @@ export default function DashboardPage() {
                     {/* Quick Actions */}
                     <div className="card-elevated p-6 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800" style={{ animationDelay: '450ms' }}>
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Zap className="h-5 w-5 text-amber-500" aria-hidden="true" />
+                            <Zap className="h-5 w-5 text-warning-fg" aria-hidden="true" />
                             Quick Actions
                         </h2>
                         <div className="grid grid-cols-2 gap-3">
@@ -671,11 +671,11 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-slate-600 dark:text-slate-400">Pending confirmation</span>
-                                <span className="font-semibold text-amber-600">{stats?.pendingBookings ?? '—'}</span>
+                                <span className="font-semibold text-warning-fg">{stats?.pendingBookings ?? '—'}</span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-slate-600 dark:text-slate-400">Completed</span>
-                                <span className="font-semibold text-emerald-600">{stats?.completedBookings ?? '—'}</span>
+                                <span className="font-semibold text-success-fg">{stats?.completedBookings ?? '—'}</span>
                             </div>
                             <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" aria-hidden="true" />
                             <div className="flex items-center justify-between">
@@ -738,7 +738,7 @@ function AiInsightCard({ todayBookings, todayRevenue }: { todayBookings?: number
             ) : (
                 // Empty state — no data yet
                 <div className="text-center py-2">
-                    <p className="text-sm text-slate-400 dark:text-slate-500">Insights will appear once you have bookings.</p>
+                    <p className="text-sm text-foreground-muted">Insights will appear once you have bookings.</p>
                 </div>
             )}
         </div>

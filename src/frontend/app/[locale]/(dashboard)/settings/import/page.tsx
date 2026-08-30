@@ -135,7 +135,7 @@ export default function MigrationWizardPage() {
           >
             <div className="text-4xl mb-2">📁</div>
             <p className="text-sm text-gray-600 dark:text-gray-400">Click to select CSV, or drag and drop</p>
-            <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">Max 10 MB</p>
+            <p className="text-xs text-foreground-muted mt-1">Max 10 MB</p>
             <input ref={fileRef} type="file" accept=".csv" className="hidden" />
           </div>
 
@@ -146,7 +146,7 @@ export default function MigrationWizardPage() {
 
           <div className="mt-6 bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
             <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">How to export your data:</p>
-            <ul className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
+            <ul className="text-xs text-slate-300 space-y-1">
               <li><strong>Mindbody:</strong> Reports → Client List → Export</li>
               <li><strong>Vagaro:</strong> Reports → Client Report → Download CSV</li>
               <li><strong>Acuity:</strong> Business Settings → Clients → Export</li>
@@ -184,13 +184,13 @@ export default function MigrationWizardPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-800 dark:text-white">{c.firstName} {c.lastName}</p>
-                  <p className="text-xs text-gray-500">{c.email || c.phone || '—'}</p>
+                  <p className="text-xs text-foreground-secondary">{c.email || c.phone || '—'}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <p className="text-xs text-gray-500 mb-4">
+          <p className="text-xs text-foreground-secondary mb-4">
             Platform: <span className="font-semibold capitalize">{preview.platform}</span>.
             Duplicates matched by email and phone are skipped.
           </p>

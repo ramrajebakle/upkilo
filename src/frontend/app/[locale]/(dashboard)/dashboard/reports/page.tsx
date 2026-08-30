@@ -174,21 +174,21 @@ export default function ReportsPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
-                    <p className="text-gray-500 mt-1">Track your business performance</p>
+                    <h1 className="text-2xl font-bold text-foreground">Reports & Analytics</h1>
+                    <p className="text-foreground-secondary mt-1">Track your business performance</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <select
                         value={period}
                         onChange={(e) => setPeriod(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="px-3 py-2 border border-border-strong rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                         <option value="7d">Last 7 days</option>
                         <option value="30d">Last 30 days</option>
                         <option value="90d">Last 90 days</option>
                     </select>
-                    <button onClick={fetchData} className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                        <RefreshCw className="h-5 w-5 text-gray-500" />
+                    <button onClick={fetchData} className="p-2 border border-border-strong rounded-lg hover:bg-accent">
+                        <RefreshCw className="h-5 w-5 text-foreground-secondary" />
                     </button>
                     <button className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                         <Download className="h-4 w-4" />
@@ -199,7 +199,7 @@ export default function ReportsPage() {
 
             {loading ? (
                 <div className="flex justify-center py-12">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
             ) : (
                 <>
@@ -209,17 +209,17 @@ export default function ReportsPage() {
                             {kpis.map((kpi, index) => (
                                 <div
                                     key={index}
-                                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                                    className="bg-card rounded-xl shadow-sm border border-border p-6"
                                 >
                                     <div className="flex items-center justify-between mb-4">
-                                        <div className="p-2 bg-primary-50 rounded-lg text-primary-500">
+                                        <div className="p-2 bg-brand-subtle rounded-lg text-primary">
                                             {kpi.icon}
                                         </div>
                                         {kpi.change !== undefined && (
                                             <div
                                                 className={cn(
                                                     'flex items-center gap-1 text-sm font-medium',
-                                                    kpi.change >= 0 ? 'text-green-600' : 'text-red-600'
+                                                    kpi.change >= 0 ? 'text-success-fg' : 'text-danger-fg'
                                                 )}
                                             >
                                                 {kpi.change >= 0 ? (
@@ -231,10 +231,10 @@ export default function ReportsPage() {
                                             </div>
                                         )}
                                     </div>
-                                    <p className="text-sm text-gray-500 mb-1">{kpi.title}</p>
-                                    <p className="text-2xl font-bold text-gray-900">{kpi.value}</p>
+                                    <p className="text-sm text-foreground-secondary mb-1">{kpi.title}</p>
+                                    <p className="text-2xl font-bold text-foreground">{kpi.value}</p>
                                     {kpi.changeLabel && (
-                                        <p className="text-xs text-gray-400 mt-1">{kpi.changeLabel}</p>
+                                        <p className="text-xs text-foreground-muted mt-1">{kpi.changeLabel}</p>
                                     )}
                                 </div>
                             ))}
@@ -242,8 +242,8 @@ export default function ReportsPage() {
                     )}
 
                     {/* Report Types */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Reports</h2>
+                    <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Available Reports</h2>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {reportTypes.map((report) => (
                                 <button
@@ -252,45 +252,45 @@ export default function ReportsPage() {
                                     className={cn(
                                         'p-4 rounded-lg border-2 text-left transition-all',
                                         selectedReport === report.id
-                                            ? 'border-primary-500 bg-primary-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                            ? 'border-primary-500 bg-brand-subtle'
+                                            : 'border-border hover:border-border-strong'
                                     )}
                                 >
-                                    <h3 className="font-medium text-gray-900">{report.name}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">{report.description}</p>
+                                    <h3 className="font-medium text-foreground">{report.name}</h3>
+                                    <p className="text-sm text-foreground-secondary mt-1">{report.description}</p>
                                 </button>
                             ))}
                         </div>
                     </div>
 
                     {/* Dynamic Table */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+                        <h2 className="text-lg font-semibold text-foreground mb-4">
                             {reportTypes.find((r) => r.id === selectedReport)?.name} Data
                         </h2>
                         {tableData.length > 0 ? (
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className="text-left text-sm text-gray-500 border-b border-gray-200">
+                                        <tr className="text-left text-sm text-foreground-secondary border-b border-border">
                                             <th className="pb-3 font-medium">Metric / Name</th>
                                             <th className="pb-3 font-medium">Value / Count</th>
                                             {tableData[0].col3 && <th className="pb-3 font-medium">Revenue / Additional</th>}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-border-subtle">
                                         {tableData.map((row, i) => (
                                             <tr key={i} className="text-sm">
-                                                <td className="py-3 font-medium text-gray-900">{row.col1}</td>
-                                                <td className="py-3 text-gray-600">{row.col2}</td>
-                                                {row.col3 && <td className="py-3 text-gray-600">{row.col3}</td>}
+                                                <td className="py-3 font-medium text-foreground">{row.col1}</td>
+                                                <td className="py-3 text-foreground-secondary">{row.col2}</td>
+                                                {row.col3 && <td className="py-3 text-foreground-secondary">{row.col3}</td>}
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
                         ) : (
-                            <p className="text-center py-8 text-gray-500">No data available for this report.</p>
+                            <p className="text-center py-8 text-foreground-secondary">No data available for this report.</p>
                         )}
                     </div>
                 </>

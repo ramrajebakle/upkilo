@@ -68,8 +68,8 @@ export const CommandPalette = () => {
                 Suggested Actions
               </div>
               <div className="px-2 py-2 rounded-lg hover:bg-neutral-50 cursor-pointer text-text-secondary flex items-center gap-3">
-                <Sparkles size={16} className="text-ai-500" />
-                <span className="text-primary-600">3 tenants need attention</span>
+                <Sparkles size={16} className="text-ai" />
+                <span className="text-primary">3 tenants need attention</span>
               </div>
             </>
           )}

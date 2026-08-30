@@ -64,7 +64,7 @@ export default function ReportBuilderPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Report Builder <BarChart3 className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Report Builder <BarChart3 className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">Create and save custom reports from any combination of metrics and dimensions.</p>
         </div>
         <div className="flex gap-2">
@@ -95,7 +95,7 @@ export default function ReportBuilderPage() {
                 <div className="flex flex-wrap gap-1.5 p-3 rounded-lg border border-surface-200 bg-surface-50 min-h-[80px]">
                   {METRICS.map((m) => (
                     <button key={m} onClick={() => setForm((p) => ({ ...p, metrics: toggleArr(p.metrics, m) }))}
-                      className={`text-xs px-2 py-1 rounded-full border transition-colors ${form.metrics.includes(m) ? "bg-ai-500 text-white border-ai-500" : "border-surface-300 text-text-secondary hover:border-ai-300"}`}>{m}</button>
+                      className={`text-xs px-2 py-1 rounded-full border transition-colors ${form.metrics.includes(m) ? "bg-ai-500 text-white border-ai-500" : "border-surface-300 text-text-secondary hover:border-ai/25"}`}>{m}</button>
                   ))}
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function ReportBuilderPage() {
           {loading ? <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-text-tertiary" /></div>
             : defs.length === 0 ? <Card><CardContent className="text-center py-8 text-text-tertiary"><p className="text-sm">No saved reports yet</p></CardContent></Card>
             : defs.map((d) => (
-              <Card key={d.id} className={activeReportId === d.id ? "border-ai-300" : ""}>
+              <Card key={d.id} className={activeReportId === d.id ? "border-ai/25" : ""}>
                 <CardContent className="pt-3 pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -135,7 +135,7 @@ export default function ReportBuilderPage() {
                     <div className="flex gap-1 flex-shrink-0">
                       <Button variant="primary" size="sm" leftIcon={running === d.id ? <Loader2 size={10} className="animate-spin" /> : <Play size={10} />}
                         onClick={() => runReport(d.id)} disabled={!!running}>Run</Button>
-                      <Button variant="outline" size="sm" leftIcon={<Trash2 size={10} className="text-red-500" />}
+                      <Button variant="outline" size="sm" leftIcon={<Trash2 size={10} className="text-danger-fg" />}
                         onClick={() => deleteReport(d.id)} />
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export default function ReportBuilderPage() {
                 </CardHeader>
                 <CardContent className="p-0 overflow-auto max-h-[500px]">
                   <table className="w-full text-sm">
-                    <thead className="sticky top-0 bg-white"><tr className="border-b border-surface-200">
+                    <thead className="sticky top-0 bg-card"><tr className="border-b border-surface-200">
                       {result.columns.map((c) => <th key={c} className="text-left py-2 px-3 text-xs font-semibold text-text-tertiary uppercase whitespace-nowrap">{c}</th>)}
                     </tr></thead>
                     <tbody>

@@ -76,7 +76,7 @@ export default function StaffSchedulePage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Staff Schedule <Clock className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Staff Schedule <Clock className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Set working hours and schedule exceptions (days off, special hours) per staff member.</p>
       </header>
 
@@ -110,7 +110,7 @@ export default function StaffSchedulePage() {
                 <div key={i} className="flex items-center gap-3 py-2 border-b border-surface-100 last:border-0">
                   <div onClick={() => setHours((prev) => prev.map((x, j) => j === i ? { ...x, isWorking: !x.isWorking } : x))}
                     className={`w-9 h-5 rounded-full flex-shrink-0 cursor-pointer relative transition-colors ${h.isWorking ? "bg-ai-500" : "bg-surface-300"}`}>
-                    <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${h.isWorking ? "translate-x-4" : "translate-x-0.5"}`} />
+                    <div className={`absolute top-0.5 w-4 h-4 bg-control-thumb rounded-full shadow transition-transform ${h.isWorking ? "translate-x-4" : "translate-x-0.5"}`} />
                   </div>
                   <span className={`text-sm w-24 flex-shrink-0 ${h.isWorking ? "text-text-primary font-medium" : "text-text-tertiary"}`}>{DAYS[h.dayOfWeek]}</span>
                   {h.isWorking ? (
@@ -134,12 +134,12 @@ export default function StaffSchedulePage() {
                 <div>
                   <label className="block text-xs font-medium text-text-primary mb-1">Date *</label>
                   <input type="date" value={excForm.date} onChange={(e) => setExcForm((p) => ({ ...p, date: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
+                    className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-text-primary mb-1">Type</label>
                   <select value={excForm.type} onChange={(e) => setExcForm((p) => ({ ...p, type: e.target.value as any }))}
-                    className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500">
+                    className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500">
                     <option value="day-off">Day Off</option>
                     <option value="special-hours">Special Hours</option>
                   </select>
@@ -149,19 +149,19 @@ export default function StaffSchedulePage() {
                     <div>
                       <label className="block text-xs font-medium text-text-primary mb-1">Start</label>
                       <input type="time" value={excForm.startTime} onChange={(e) => setExcForm((p) => ({ ...p, startTime: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
+                        className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-text-primary mb-1">End</label>
                       <input type="time" value={excForm.endTime} onChange={(e) => setExcForm((p) => ({ ...p, endTime: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
+                        className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
                     </div>
                   </>
                 )}
                 <div className="col-span-2">
                   <label className="block text-xs font-medium text-text-primary mb-1">Reason (optional)</label>
                   <input value={excForm.reason} onChange={(e) => setExcForm((p) => ({ ...p, reason: e.target.value }))} placeholder="e.g. Public holiday, Vacation"
-                    className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
+                    className="w-full px-2 py-1.5 text-sm rounded border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
                 </div>
                 <div className="col-span-2 flex justify-end">
                   <Button variant="primary" size="sm" leftIcon={<Plus size={12} />} onClick={addException} disabled={!excForm.date}>Add Exception</Button>
@@ -178,7 +178,7 @@ export default function StaffSchedulePage() {
                         {ex.reason && <span className="ml-2 text-xs text-text-tertiary">{ex.reason}</span>}
                         {ex.type === "special-hours" && ex.startTime && <span className="ml-2 text-xs text-text-secondary">{ex.startTime}–{ex.endTime}</span>}
                       </div>
-                      <Button variant="outline" size="sm" leftIcon={<Trash2 size={11} className="text-red-500" />} onClick={() => removeException(ex.id)} />
+                      <Button variant="outline" size="sm" leftIcon={<Trash2 size={11} className="text-danger-fg" />} onClick={() => removeException(ex.id)} />
                     </div>
                   ))}
                 </div>

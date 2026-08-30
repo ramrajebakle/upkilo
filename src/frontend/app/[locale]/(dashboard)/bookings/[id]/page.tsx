@@ -196,9 +196,9 @@ export default function EditBookingPage() {
     if (!booking) {
         return (
             <div className="text-center py-20">
-                <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-slate-900">Booking Not Found</h2>
-                <p className="text-slate-500 mt-2">This booking may have been deleted.</p>
+                <AlertTriangle className="h-12 w-12 text-warning-fg mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-foreground">Booking Not Found</h2>
+                <p className="text-foreground-secondary mt-2">This booking may have been deleted.</p>
                 <Link href="/bookings" className="btn btn-primary mt-6">
                     Back to Bookings
                 </Link>
@@ -211,8 +211,8 @@ export default function EditBookingPage() {
             {/* Header */}
             <div className="flex items-center justify-between gap-4 mb-8 animate-fade-in-up">
                 <div className="flex items-center gap-4">
-                    <Link href="/bookings" className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                        <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <Link href="/bookings" className="p-2 hover:bg-accent rounded-xl transition-colors">
+                        <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                     </Link>
                     <div>
                         <div className="flex items-center gap-3 mb-1">
@@ -222,16 +222,16 @@ export default function EditBookingPage() {
                             >
                                 <Calendar className="h-5 w-5 text-white" />
                             </div>
-                            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                            <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                                 Edit Booking
                             </h1>
                         </div>
-                        <p className="text-slate-500 ml-12">Booking #{bookingId.slice(0, 8)}</p>
+                        <p className="text-foreground-secondary ml-12">Booking #{bookingId.slice(0, 8)}</p>
                     </div>
                 </div>
                 <button
                     onClick={() => setShowDeleteModal(true)}
-                    className="btn btn-secondary text-red-600 hover:bg-red-50 hover:border-red-200"
+                    className="btn btn-secondary text-danger-fg hover:bg-red-50 hover:border-red-200"
                 >
                     <Trash2 className="h-4 w-4" />
                     Delete
@@ -248,15 +248,15 @@ export default function EditBookingPage() {
                         {booking.clientName.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div className="flex-1">
-                        <h2 className="text-lg font-semibold text-slate-900">{booking.clientName}</h2>
-                        <p className="text-slate-500">{booking.clientEmail}</p>
-                        <p className="text-slate-500">{booking.clientPhone}</p>
+                        <h2 className="text-lg font-semibold text-foreground">{booking.clientName}</h2>
+                        <p className="text-foreground-secondary">{booking.clientEmail}</p>
+                        <p className="text-foreground-secondary">{booking.clientPhone}</p>
                     </div>
                     <div className="text-right">
-                        <p className="font-semibold text-slate-900" style={{ color: booking.serviceColor }}>
+                        <p className="font-semibold text-foreground" style={{ color: booking.serviceColor }}>
                             {booking.serviceName}
                         </p>
-                        <p className="text-slate-500">{booking.serviceDuration} min • {formatCurrency(booking.servicePrice)}</p>
+                        <p className="text-foreground-secondary">{booking.serviceDuration} min • {formatCurrency(booking.servicePrice)}</p>
                     </div>
                 </div>
             </div>
@@ -265,7 +265,7 @@ export default function EditBookingPage() {
             <div className="space-y-6">
                 {/* Status */}
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                    <h3 className="text-sm font-medium text-slate-700 mb-4">Booking Status</h3>
+                    <h3 className="text-sm font-medium text-foreground mb-4">Booking Status</h3>
                     <div className="flex flex-wrap gap-2">
                         {statusOptions.map((option) => {
                             const Icon = option.icon;
@@ -277,7 +277,7 @@ export default function EditBookingPage() {
                                         'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all',
                                         formData.status === option.value
                                             ? `${option.color} text-white shadow-lg`
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            : 'bg-muted text-foreground-secondary hover:bg-slate-200'
                                     )}
                                 >
                                     <Icon className="h-4 w-4" />
@@ -291,13 +291,13 @@ export default function EditBookingPage() {
                 {/* Date, Time & Staff */}
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                     <div className="flex items-center gap-3 mb-6">
-                        <RefreshCw className="h-5 w-5 text-primary-500" />
-                        <h3 className="text-lg font-semibold text-slate-900">Reschedule</h3>
+                        <RefreshCw className="h-5 w-5 text-primary" />
+                        <h3 className="text-lg font-semibold text-foreground">Reschedule</h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Date</label>
+                            <label className="block text-sm font-medium text-foreground mb-2">Date</label>
                             <input
                                 type="date"
                                 value={formData.date}
@@ -306,7 +306,7 @@ export default function EditBookingPage() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Time</label>
+                            <label className="block text-sm font-medium text-foreground mb-2">Time</label>
                             <select
                                 value={formData.time}
                                 onChange={(e) => setFormData({ ...formData, time: e.target.value })}
@@ -318,7 +318,7 @@ export default function EditBookingPage() {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Staff</label>
+                            <label className="block text-sm font-medium text-foreground mb-2">Staff</label>
                             <select
                                 value={formData.staffId}
                                 onChange={(e) => setFormData({ ...formData, staffId: e.target.value })}
@@ -335,13 +335,13 @@ export default function EditBookingPage() {
                 {/* Notes */}
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                     <div className="flex items-center gap-3 mb-4">
-                        <MessageSquare className="h-5 w-5 text-slate-400" />
-                        <h3 className="text-lg font-semibold text-slate-900">Booking Notes</h3>
+                        <MessageSquare className="h-5 w-5 text-foreground-muted" />
+                        <h3 className="text-lg font-semibold text-foreground">Booking Notes</h3>
                     </div>
                     <textarea
                         value={formData.notes}
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"
+                        className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"
                         rows={4}
                         placeholder="Add notes about this booking..."
                     />
@@ -351,17 +351,17 @@ export default function EditBookingPage() {
                 {timeline.length > 0 && (
                     <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '450ms' }}>
                         <div className="flex items-center gap-3 mb-4">
-                            <RefreshCw className="h-5 w-5 text-slate-400" />
-                            <h3 className="text-lg font-semibold text-slate-900">History</h3>
+                            <RefreshCw className="h-5 w-5 text-foreground-muted" />
+                            <h3 className="text-lg font-semibold text-foreground">History</h3>
                         </div>
                         <div className="space-y-3">
                             {timeline.map((t, i) => (
                                 <div key={i} className="flex items-start gap-3">
                                     <div className="w-2 h-2 rounded-full bg-primary-500 mt-1.5 flex-shrink-0" />
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-900">{t.event}</p>
-                                        {t.description && <p className="text-xs text-slate-500">{t.description}</p>}
-                                        <p className="text-xs text-slate-400 mt-0.5">
+                                        <p className="text-sm font-medium text-foreground">{t.event}</p>
+                                        {t.description && <p className="text-xs text-foreground-secondary">{t.description}</p>}
+                                        <p className="text-xs text-foreground-muted mt-0.5">
                                             {new Date(t.timestamp).toLocaleString()}{t.actor ? ` · ${t.actor}` : ''}
                                         </p>
                                     </div>
@@ -399,17 +399,17 @@ export default function EditBookingPage() {
             {/* Delete Modal */}
             {showDeleteModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-fade-in-up">
+                    <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full p-6 animate-fade-in-up">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                                <AlertTriangle className="h-6 w-6 text-red-600" />
+                                <AlertTriangle className="h-6 w-6 text-danger-fg" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-slate-900">Delete Booking</h3>
-                                <p className="text-slate-500">This action cannot be undone.</p>
+                                <h3 className="text-lg font-semibold text-foreground">Delete Booking</h3>
+                                <p className="text-foreground-secondary">This action cannot be undone.</p>
                             </div>
                         </div>
-                        <p className="text-slate-600 mb-6">
+                        <p className="text-foreground-secondary mb-6">
                             Are you sure you want to delete this booking for <strong>{booking.clientName}</strong>?
                         </p>
                         <div className="flex gap-3">

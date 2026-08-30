@@ -18,16 +18,53 @@ public class SubscriptionsController : ControllerBase
 {
     private readonly ISubscriptionService _subscriptionService;
     private readonly ITenantProvider _tenantProvider;
+    private readonly IEntitlementService _entitlements;
     private readonly ILogger<SubscriptionsController> _logger;
 
     public SubscriptionsController(
         ISubscriptionService subscriptionService,
         ITenantProvider tenantProvider,
+        IEntitlementService entitlements,
         ILogger<SubscriptionsController> logger)
     {
         _subscriptionService = subscriptionService;
         _tenantProvider = tenantProvider;
+        _entitlements = entitlements;
         _logger = logger;
+    }
+
+    /// <summary>
+    /// The calling tenant's effective entitlements — the single payload the frontend gates
+    /// navigation, pages, actions and upgrade prompts from.
+    ///
+    /// Serving this from the same resolver the API enforces with is the point: the UI and the
+    /// backend previously derived feature access from different shapes with different key
+    /// vocabularies, so a customer could be shown a feature the API would refuse, or refused a
+    /// feature the API would allow. One payload, one source, no drift.
+    ///
+    /// This is presentation only. It is NOT the enforcement boundary — every gated endpoint is
+    /// independently checked server-side, so tampering with the response buys nothing.
+    /// </summary>
+    [HttpGet("entitlements")]
+    public async Task<IActionResult> GetEntitlements(CancellationToken ct)
+    {
+        var tenantId = _tenantProvider.GetTenantId();
+        if (!tenantId.HasValue) return Unauthorized();
+
+        var set = await _entitlements.GetEffectiveEntitlementsAsync(tenantId.Value, ct);
+
+        return Ok(new
+        {
+            planName = set.PlanName,
+            subscriptionStatus = set.SubscriptionStatus,
+            isServiceEntitled = set.IsServiceEntitled,
+            currentPeriodEnd = set.CurrentPeriodEnd,
+            // Flat key -> bool, keyed by the catalogue's own feature keys.
+            features = set.ToFlags(),
+            limits = set.Features.Values
+                .Where(e => FeatureKeys.Numeric.Contains(e.Key))
+                .ToDictionary(e => e.Key, e => e.Limit, StringComparer.Ordinal),
+        });
     }
 
     /// <summary>

@@ -66,7 +66,7 @@ export default function EnterprisePage() {
   };
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-card">
       {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 to-primary-950 text-white py-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -87,7 +87,7 @@ export default function EnterprisePage() {
       </section>
 
       {/* Social proof */}
-      <section className="bg-slate-50 py-8 px-4 border-b">
+      <section className="bg-muted py-8 px-4 border-b">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8">
           {/* Was: '10+ locations', 'HIPAA compliant', 'SOC 2 Type II', 'Custom SLA', '24/7 support'
               — presented as a trust bar, but SOC 2 Type II is an audit Upkilo has not had, and
@@ -96,8 +96,8 @@ export default function EnterprisePage() {
 
               Replaced with capabilities the codebase supports. ✓ became a drawn icon. */}
           {['Unlimited locations', 'SSO / SAML', 'Agency sub-accounts', 'Custom SLA available', 'HIPAA BAA available'].map(t => (
-            <div key={t} className="flex items-center gap-2 text-slate-600 text-sm font-medium">
-              <CheckCircle2 className="h-4 w-4 text-green-600" aria-hidden="true" /> {t}
+            <div key={t} className="flex items-center gap-2 text-foreground-secondary text-sm font-medium">
+              <CheckCircle2 className="h-4 w-4 text-success-fg" aria-hidden="true" /> {t}
             </div>
           ))}
         </div>
@@ -105,32 +105,32 @@ export default function EnterprisePage() {
 
       {/* Features grid */}
       <section className="max-w-5xl mx-auto py-20 px-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-slate-900 text-center mb-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-12">
           Everything enterprise teams need
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {FEATURES.map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
-              <Icon className="mb-3 h-7 w-7 text-slate-700" aria-hidden="true" />
-              <h3 className="font-bold text-slate-900 mb-1">{title}</h3>
-              <p className="text-sm text-slate-600">{desc}</p>
+            <div key={title} className="bg-muted rounded-2xl p-5 border border-border-subtle">
+              <Icon className="mb-3 h-7 w-7 text-foreground" aria-hidden="true" />
+              <h3 className="font-bold text-foreground mb-1">{title}</h3>
+              <p className="text-sm text-foreground-secondary">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Contact form */}
-      <section id="contact" className="bg-slate-50 py-20 px-4 border-t">
+      <section id="contact" className="bg-muted py-20 px-4 border-t">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Let's talk about your business</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Let's talk about your business</h2>
           {/* Was "our enterprise team will reach out within 24 hours" — same two unkeepable
               claims as the success state below. */}
-          <p className="text-slate-500 mb-8">Tell us what you need and we&apos;ll get back to you by email.</p>
+          <p className="text-foreground-secondary mb-8">Tell us what you need and we&apos;ll get back to you by email.</p>
 
           {submitted ? (
             <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center">
               {/* Drawn icon, not the ✅ emoji. */}
-              <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-green-600" aria-hidden="true" />
+              <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-success-fg" aria-hidden="true" />
               <h3 className="text-xl font-bold text-green-800 mb-2">Thanks — we&apos;ve got your details</h3>
               {/* Was "Expect a reply within 24 hours from our enterprise team." Both halves were
                   claims the business cannot currently keep: there is no enterprise team, and no
@@ -142,42 +142,42 @@ export default function EnterprisePage() {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-4">
+            <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 shadow-sm space-y-4">
               {error && (
                 <div className="bg-red-50 text-red-700 border border-red-200 rounded-xl px-4 py-3 text-sm">{error}</div>
               )}
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Company Name *</label>
                   <input required value={form.companyName} onChange={e => setForm(p => ({ ...p, companyName: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
+                    className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Your Name</label>
                   <input value={form.contactName} onChange={e => setForm(p => ({ ...p, contactName: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
+                    className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Work Email *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Work Email *</label>
                   <input required type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
+                    className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Phone</label>
                   <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
+                    className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Team Size</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Team Size</label>
                   <select value={form.teamSize} onChange={e => setForm(p => ({ ...p, teamSize: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none">
+                    className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none">
                     <option value="">Select...</option>
                     <option value="10-50">10–50 staff</option>
                     <option value="51-200">51–200 staff</option>
@@ -186,17 +186,17 @@ export default function EnterprisePage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Platform</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Current Platform</label>
                   <input placeholder="e.g. Mindbody, Vagaro..." value={form.currentPlatform}
                     onChange={e => setForm(p => ({ ...p, currentPlatform: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
+                    className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Primary Use Case</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Primary Use Case</label>
                 <select value={form.useCase} onChange={e => setForm(p => ({ ...p, useCase: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none">
+                  className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none">
                   <option value="">Select...</option>
                   <option value="multi-location">Multi-Location Management</option>
                   <option value="franchise">Franchise Network</option>
@@ -207,10 +207,10 @@ export default function EnterprisePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tell us more (optional)</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Tell us more (optional)</label>
                 <textarea rows={3} value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
                   placeholder="What are you trying to accomplish? What's your timeline?"
-                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none resize-none" />
+                  className="w-full border border-border-strong rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-400 outline-none resize-none" />
               </div>
 
               <button type="submit" disabled={submitting}

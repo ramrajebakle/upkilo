@@ -63,12 +63,12 @@ export default function PlatformSettingsPage() {
   const Toggle = ({ label, desc, field, danger }: { label: string; desc: string; field: keyof PlatformSettings; danger?: boolean }) => (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <p className={`text-sm font-medium ${danger ? "text-red-600" : "text-text-primary"}`}>{label}</p>
+        <p className={`text-sm font-medium ${danger ? "text-danger-fg" : "text-text-primary"}`}>{label}</p>
         <p className="text-xs text-text-tertiary mt-0.5">{desc}</p>
       </div>
       <div onClick={() => setBool(field, !(settings[field] as boolean))}
         className={`w-10 h-5 rounded-full flex-shrink-0 cursor-pointer relative transition-colors mt-0.5 ${settings[field] ? (danger ? "bg-red-500" : "bg-ai-500") : "bg-surface-300"}`}>
-        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${settings[field] ? "translate-x-5" : "translate-x-0.5"}`} />
+        <div className={`absolute top-0.5 w-4 h-4 bg-control-thumb rounded-full shadow transition-transform ${settings[field] ? "translate-x-5" : "translate-x-0.5"}`} />
       </div>
     </div>
   );

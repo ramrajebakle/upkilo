@@ -16,14 +16,29 @@ public class PricingAdminController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly ISecretProvider _secretProvider;
+    private readonly IEntitlementService _entitlements;
     private readonly ILogger<PricingAdminController> _logger;
 
-    public PricingAdminController(AppDbContext context, ISecretProvider secretProvider, ILogger<PricingAdminController> logger)
+    public PricingAdminController(
+        AppDbContext context,
+        ISecretProvider secretProvider,
+        IEntitlementService entitlements,
+        ILogger<PricingAdminController> logger)
     {
         _context = context;
         _secretProvider = secretProvider;
+        _entitlements = entitlements;
         _logger = logger;
     }
+
+    /// <summary>
+    /// Editing the pricing catalogue changes the effective entitlements of EVERY tenant on the
+    /// affected plan at once, and there is no per-tenant key to drop for that. Without this,
+    /// a plan edit took up to five minutes to reach customers — in the revoke direction that is
+    /// five minutes of unpaid access, and in the grant direction five minutes of a customer
+    /// having paid for something the product still refuses.
+    /// </summary>
+    private Task InvalidateAllEntitlementsAsync() => _entitlements.InvalidateAllAsync();
 
     /// <summary>
     /// Clones request options with an idempotency key. Without one, a retried or double-clicked
@@ -186,6 +201,7 @@ public class PricingAdminController : ControllerBase
     {
         _context.PricingPlans.Add(plan);
         await _context.SaveChangesAsync();
+        await InvalidateAllEntitlementsAsync();
         return CreatedAtAction(nameof(GetPlans), new { id = plan.Id }, plan);
     }
 
@@ -203,6 +219,7 @@ public class PricingAdminController : ControllerBase
             plan.StripeProductId = planData.StripeProductId;
 
         await _context.SaveChangesAsync();
+        await InvalidateAllEntitlementsAsync();
         return NoContent();
     }
 
@@ -214,6 +231,7 @@ public class PricingAdminController : ControllerBase
 
         _context.PricingPlans.Remove(plan);
         await _context.SaveChangesAsync();
+        await InvalidateAllEntitlementsAsync();
         return NoContent();
     }
 
@@ -224,11 +242,35 @@ public class PricingAdminController : ControllerBase
         return Ok(features);
     }
 
+    /// <summary>
+    /// Creates a catalogue feature.
+    ///
+    /// The key is validated against FeatureKeys because a PricingFeature row is only half of a
+    /// feature — the other half is a constant plus a gate in code. A row whose key nothing
+    /// checks is inert: it renders in the admin UI, an override can be granted on it, and none
+    /// of it has any effect. Rejecting it here keeps the two halves in step.
+    /// </summary>
     [HttpPost("features")]
     public async Task<IActionResult> CreateFeature([FromBody] PricingFeature feature)
     {
+        if (!FeatureKeys.IsKnown(feature.Key))
+        {
+            return BadRequest(new
+            {
+                error = "Unknown feature key",
+                message =
+                    $"'{feature.Key}' is not declared in FeatureKeys. Add the constant and a gate " +
+                    "in code first, otherwise nothing will ever check this feature.",
+                validKeys = FeatureKeys.All.OrderBy(k => k, StringComparer.Ordinal),
+            });
+        }
+
+        if (await _context.PricingFeatures.AnyAsync(f => f.Key == feature.Key))
+            return Conflict(new { error = "A feature with that key already exists" });
+
         _context.PricingFeatures.Add(feature);
         await _context.SaveChangesAsync();
+        await InvalidateAllEntitlementsAsync();
         return CreatedAtAction(nameof(GetFeatures), new { id = feature.Id }, feature);
     }
 

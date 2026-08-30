@@ -95,15 +95,15 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-card rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 {/* Header */}
-                <div className="p-6 border-b flex items-center justify-between bg-gray-50">
+                <div className="p-6 border-b flex items-center justify-between bg-muted">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900">Migration Wizard</h2>
-                        <p className="text-sm text-gray-500">Import your data from other platforms</p>
+                        <h2 className="text-xl font-bold text-foreground">Migration Wizard</h2>
+                        <p className="text-sm text-foreground-secondary">Import your data from other platforms</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                        <X className="h-5 w-5 text-gray-500" />
+                        <X className="h-5 w-5 text-foreground-secondary" />
                     </button>
                 </div>
 
@@ -119,27 +119,27 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                     {/* Step 1: Provider Selection */}
                     {step === 1 && (
                         <div className="space-y-4">
-                            <h3 className="font-semibold text-gray-900 mb-2">Select your current platform</h3>
+                            <h3 className="font-semibold text-foreground mb-2">Select your current platform</h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <button
                                     onClick={() => { setProvider('calendly'); setStep(2); }}
-                                    className="p-6 border-2 rounded-2xl hover:border-primary-500 hover:bg-primary-50 transition-all flex flex-col items-center gap-3 text-center"
+                                    className="p-6 border-2 rounded-2xl hover:border-primary-500 hover:bg-brand-subtle transition-all flex flex-col items-center gap-3 text-center"
                                 >
                                     <div className="h-12 w-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
                                         <Calendar className="h-6 w-6" />
                                     </div>
                                     <span className="font-bold">Calendly</span>
-                                    <span className="text-xs text-gray-500">Import event types and scheduled meetings</span>
+                                    <span className="text-xs text-foreground-secondary">Import event types and scheduled meetings</span>
                                 </button>
                                 <button
                                     onClick={() => { setProvider('acuity'); setStep(2); }}
-                                    className="p-6 border-2 rounded-2xl hover:border-primary-500 hover:bg-primary-50 transition-all flex flex-col items-center gap-3 text-center"
+                                    className="p-6 border-2 rounded-2xl hover:border-primary-500 hover:bg-brand-subtle transition-all flex flex-col items-center gap-3 text-center"
                                 >
-                                    <div className="h-12 w-12 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center">
+                                    <div className="h-12 w-12 bg-brand-subtle text-primary rounded-xl flex items-center justify-center">
                                         <Database className="h-6 w-6" />
                                     </div>
                                     <span className="font-bold">Acuity</span>
-                                    <span className="text-xs text-gray-500">Full sync of appointments, staff, and services</span>
+                                    <span className="text-xs text-foreground-secondary">Full sync of appointments, staff, and services</span>
                                 </button>
                             </div>
                         </div>
@@ -148,21 +148,21 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                     {/* Step 2: Credentials */}
                     {step === 2 && (
                         <div className="space-y-6">
-                            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl mb-4">
-                                <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                    {provider === 'calendly' ? <Calendar className="h-5 w-5 text-blue-600" /> : <Database className="h-5 w-5 text-primary-600" />}
+                            <div className="flex items-center gap-3 p-4 bg-muted rounded-xl mb-4">
+                                <div className="h-10 w-10 bg-card rounded-lg flex items-center justify-center shadow-sm">
+                                    {provider === 'calendly' ? <Calendar className="h-5 w-5 text-blue-600" /> : <Database className="h-5 w-5 text-primary" />}
                                 </div>
                                 <div>
                                     <h4 className="font-bold capitalize">{provider} Credentials</h4>
-                                    <p className="text-xs text-gray-500">Connect your account via API key</p>
+                                    <p className="text-xs text-foreground-secondary">Connect your account via API key</p>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">API Personal Token / Key</label>
+                                    <label className="block text-sm font-medium text-foreground mb-1">API Personal Token / Key</label>
                                     <div className="relative">
-                                        <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                        <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             type="password"
                                             value={apiKey}
@@ -175,7 +175,7 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
 
                                 {provider === 'acuity' && (
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">User ID / Serial Number</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">User ID / Serial Number</label>
                                         <input
                                             type="text"
                                             value={extraCreds}
@@ -198,14 +198,14 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                             </div>
 
                             <div className="space-y-4">
-                                <h3 className="font-bold text-gray-900">What would you like to import?</h3>
+                                <h3 className="font-bold text-foreground">What would you like to import?</h3>
                                 <div className="grid gap-3">
-                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-gray-50">
+                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-muted">
                                         <div className="flex items-center gap-3">
-                                            <Server className="h-5 w-5 text-gray-400" />
+                                            <Server className="h-5 w-5 text-foreground-muted" />
                                             <div>
                                                 <p className="text-sm font-bold">Services ({overview.serviceCount})</p>
-                                                <p className="text-xs text-gray-500 truncate max-w-[200px]">{overview.foundServices.join(', ')}</p>
+                                                <p className="text-xs text-foreground-secondary truncate max-w-[200px]">{overview.foundServices.join(', ')}</p>
                                             </div>
                                         </div>
                                         <input
@@ -216,12 +216,12 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                                         />
                                     </div>
 
-                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-gray-50">
+                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-muted">
                                         <div className="flex items-center gap-3">
-                                            <Users className="h-5 w-5 text-gray-400" />
+                                            <Users className="h-5 w-5 text-foreground-muted" />
                                             <div>
                                                 <p className="text-sm font-bold">Staff Members ({overview.staffCount})</p>
-                                                <p className="text-xs text-gray-500 truncate max-w-[200px]">{overview.foundStaff.join(', ')}</p>
+                                                <p className="text-xs text-foreground-secondary truncate max-w-[200px]">{overview.foundStaff.join(', ')}</p>
                                             </div>
                                         </div>
                                         <input
@@ -232,12 +232,12 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                                         />
                                     </div>
 
-                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-gray-50">
+                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-muted">
                                         <div className="flex items-center gap-3">
-                                            <Calendar className="h-5 w-5 text-gray-400" />
+                                            <Calendar className="h-5 w-5 text-foreground-muted" />
                                             <div>
                                                 <p className="text-sm font-bold">Bookings & History ({overview.bookingCount})</p>
-                                                <p className="text-xs text-gray-500">Complete historical migration</p>
+                                                <p className="text-xs text-foreground-secondary">Complete historical migration</p>
                                             </div>
                                         </div>
                                         <input
@@ -256,16 +256,16 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                     {step === 4 && job && (
                         <div className="flex flex-col items-center py-10 text-center gap-6">
                             <div className="relative">
-                                <div className="h-24 w-24 rounded-full border-4 border-gray-100 flex items-center justify-center">
-                                    <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
+                                <div className="h-24 w-24 rounded-full border-4 border-border-subtle flex items-center justify-center">
+                                    <Loader2 className="h-12 w-12 text-primary animate-spin" />
                                 </div>
                                 <div className="absolute top-0 right-0 h-8 w-8 bg-primary-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-lg">
                                     {Math.round((job.processedRows / (job.totalRows || 1)) * 100)}%
                                 </div>
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-gray-900">Migrating your data...</h3>
-                                <p className="text-sm text-gray-500 mt-2">
+                                <h3 className="text-xl font-bold text-foreground">Migrating your data...</h3>
+                                <p className="text-sm text-foreground-secondary mt-2">
                                     Processing record {job.processedRows} of {job.totalRows}
                                 </p>
                                 {job.status === 'completed' && (
@@ -280,12 +280,12 @@ export function MigrationWizard({ isOpen, onClose, onComplete }: MigrationWizard
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t bg-gray-50 flex items-center justify-between">
+                <div className="p-6 border-t bg-muted flex items-center justify-between">
                     <div>
                         {step > 1 && step < 4 && (
                             <button
                                 onClick={() => setStep((step - 1) as any)}
-                                className="text-sm font-medium text-gray-500 hover:text-gray-700"
+                                className="text-sm font-medium text-foreground-secondary hover:text-foreground"
                                 disabled={loading}
                             >
                                 Back

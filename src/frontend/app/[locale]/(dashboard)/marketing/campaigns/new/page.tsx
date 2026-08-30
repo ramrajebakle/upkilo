@@ -128,9 +128,9 @@ export default function NewCampaignPage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/marketing"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -138,20 +138,20 @@ export default function NewCampaignPage() {
                             <Send className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Create Campaign
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Design and send a new marketing campaign</p>
+                    <p className="text-foreground-secondary ml-12">Design and send a new marketing campaign</p>
                 </div>
             </div>
 
             {/* Progress */}
             <div className="mb-10 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
                 <div className="flex items-center justify-between relative max-w-2xl mx-auto">
-                    <div className="absolute left-0 right-0 top-5 h-0.5 bg-slate-100" />
+                    <div className="absolute left-0 right-0 top-5 h-0.5 bg-muted" />
                     <div
                         className="absolute left-0 top-5 h-0.5 bg-primary-500 transition-all duration-500"
                         style={{ width: `${((step - 1) / 2) * 100}%` }}
@@ -168,13 +168,13 @@ export default function NewCampaignPage() {
                                     'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300',
                                     step >= s.num
                                         ? 'bg-primary-600 text-white shadow-lg shadow-primary-200'
-                                        : 'bg-white border-2 border-slate-100 text-slate-400'
+                                        : 'bg-card border-2 border-border-subtle text-foreground-muted'
                                 )}>
                                     {step > s.num ? <CheckCircle2 className="h-6 w-6" /> : <Icon className="h-5 w-5" />}
                                 </div>
                                 <span className={cn(
                                     'text-xs mt-3 font-medium text-center',
-                                    step >= s.num ? 'text-slate-900' : 'text-slate-400'
+                                    step >= s.num ? 'text-foreground' : 'text-foreground-muted'
                                 )}>
                                     {s.label}
                                 </span>
@@ -190,11 +190,11 @@ export default function NewCampaignPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in-up">
                         <div className="lg:col-span-2 space-y-6">
                             <div className="card-elevated p-8">
-                                <h2 className="text-xl font-bold text-slate-900 mb-6">Campaign Basics</h2>
+                                <h2 className="text-xl font-bold text-foreground mb-6">Campaign Basics</h2>
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Campaign Name <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Campaign Name <span className="text-danger-fg">*</span>
                                         </label>
                                         <input
                                             {...register('name')}
@@ -202,10 +202,10 @@ export default function NewCampaignPage() {
                                             className={cn("input text-lg", errors.name && "border-red-500")}
                                             placeholder="e.g. Summer Special 2026"
                                         />
-                                        {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+                                        {errors.name && <p className="text-xs text-danger-fg mt-1">{errors.name.message}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-3">Choose Channel</label>
+                                        <label className="block text-sm font-medium text-foreground mb-3">Choose Channel</label>
                                         <div className="grid grid-cols-2 gap-4">
                                             <button
                                                 type="button"
@@ -214,12 +214,12 @@ export default function NewCampaignPage() {
                                                     'p-6 rounded-2xl border-2 transition-all flex flex-col items-center gap-3',
                                                     campaignType === 'email'
                                                         ? 'border-primary-600 bg-primary-50/50 shadow-md'
-                                                        : 'border-slate-100 opacity-60 hover:opacity-100'
+                                                        : 'border-border-subtle opacity-60 hover:opacity-100'
                                                 )}
                                             >
                                                 <div className={cn(
                                                     'p-3 rounded-xl',
-                                                    campaignType === 'email' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                                                    campaignType === 'email' ? 'bg-primary-600 text-white' : 'bg-muted text-foreground-secondary'
                                                 )}>
                                                     <Mail className="h-6 w-6" />
                                                 </div>
@@ -232,12 +232,12 @@ export default function NewCampaignPage() {
                                                     'p-6 rounded-2xl border-2 transition-all flex flex-col items-center gap-3',
                                                     campaignType === 'sms'
                                                         ? 'border-primary-600 bg-primary-50/50 shadow-md'
-                                                        : 'border-slate-100 opacity-60 hover:opacity-100'
+                                                        : 'border-border-subtle opacity-60 hover:opacity-100'
                                                 )}
                                             >
                                                 <div className={cn(
                                                     'p-3 rounded-xl',
-                                                    campaignType === 'sms' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                                                    campaignType === 'sms' ? 'bg-primary-600 text-white' : 'bg-muted text-foreground-secondary'
                                                 )}>
                                                     <MessageSquare className="h-6 w-6" />
                                                 </div>
@@ -249,8 +249,8 @@ export default function NewCampaignPage() {
                             </div>
 
                             <div className="card-elevated p-8">
-                                <h2 className="text-xl font-bold text-slate-900 mb-6 font-display">
-                                    Select Audience <span className="text-red-500 text-sm ml-1">*</span>
+                                <h2 className="text-xl font-bold text-foreground mb-6 font-display">
+                                    Select Audience <span className="text-danger-fg text-sm ml-1">*</span>
                                 </h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {segments.map((segment) => (
@@ -261,23 +261,23 @@ export default function NewCampaignPage() {
                                             className={cn(
                                                 'p-4 rounded-xl border-2 text-left transition-all',
                                                 segmentId === segment.id
-                                                    ? 'border-primary-600 bg-primary-50 shadow-sm'
-                                                    : 'border-slate-100 hover:border-slate-200'
+                                                    ? 'border-primary-600 bg-brand-subtle shadow-sm'
+                                                    : 'border-border-subtle hover:border-border'
                                             )}
                                         >
                                             <div className="flex justify-between items-start mb-2">
-                                                <div className="p-2 bg-slate-100 rounded-lg">
-                                                    <Users className="h-4 w-4 text-slate-600" />
+                                                <div className="p-2 bg-muted rounded-lg">
+                                                    <Users className="h-4 w-4 text-foreground-secondary" />
                                                 </div>
-                                                <span className="text-xs font-bold text-slate-500 bg-white px-2 py-1 rounded-full border border-slate-100">
+                                                <span className="text-xs font-bold text-foreground-secondary bg-card px-2 py-1 rounded-full border border-border-subtle">
                                                     {segment.count} clients
                                                 </span>
                                             </div>
-                                            <h3 className="font-bold text-slate-900">{segment.name}</h3>
+                                            <h3 className="font-bold text-foreground">{segment.name}</h3>
                                         </button>
                                     ))}
                                 </div>
-                                {errors.segmentId && <p className="text-xs text-red-500 mt-4">{errors.segmentId.message}</p>}
+                                {errors.segmentId && <p className="text-xs text-danger-fg mt-4">{errors.segmentId.message}</p>}
                             </div>
                         </div>
 
@@ -307,7 +307,7 @@ export default function NewCampaignPage() {
                     <div className="space-y-6 animate-fade-in-up">
                         <div className="card-elevated p-8">
                             <div className="flex items-center justify-between mb-8">
-                                <h2 className="text-xl font-bold text-slate-900">Design Your {campaignType.toUpperCase()}</h2>
+                                <h2 className="text-xl font-bold text-foreground">Design Your {campaignType.toUpperCase()}</h2>
                                 <div className="flex gap-2">
                                     <button type="button" className="btn btn-secondary text-sm">Preview</button>
                                     <button type="button" className="btn btn-secondary text-sm">Send Test</button>
@@ -317,8 +317,8 @@ export default function NewCampaignPage() {
                             <div className="space-y-6">
                                 {campaignType === 'email' && (
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Email Subject Line <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Email Subject Line <span className="text-danger-fg">*</span>
                                         </label>
                                         <input
                                             {...register('subject')}
@@ -326,21 +326,21 @@ export default function NewCampaignPage() {
                                             className={cn("input text-lg", errors.subject && "border-red-500")}
                                             placeholder="Catchy subject line..."
                                         />
-                                        {errors.subject && <p className="text-xs text-red-500 mt-1">{errors.subject.message as string}</p>}
+                                        {errors.subject && <p className="text-xs text-danger-fg mt-1">{errors.subject.message as string}</p>}
                                     </div>
                                 )}
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Message Content <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Message Content <span className="text-danger-fg">*</span>
                                     </label>
                                     <textarea
                                         {...register('content')}
                                         className={cn("input min-h-[300px] py-4 resize-none", errors.content && "border-red-500")}
                                         placeholder={campaignType === 'email' ? 'Dear {{firstname}}, ...' : 'Hi {{firstname}}! Summer Sale starts now...'}
                                     />
-                                    {errors.content && <p className="text-xs text-red-500 mt-1">{errors.content.message}</p>}
+                                    {errors.content && <p className="text-xs text-danger-fg mt-1">{errors.content.message}</p>}
                                     <div className="mt-4 flex flex-wrap gap-2">
-                                        <span className="text-xs text-slate-400 uppercase font-bold tracking-wider mr-2 self-center">Insert Tags:</span>
+                                        <span className="text-xs text-foreground-muted uppercase font-bold tracking-wider mr-2 self-center">Insert Tags:</span>
                                         {['{{firstname}}', '{{company}}', '{{booking_url}}', '{{unsubscribe_url}}'].map(tag => (
                                             <button
                                                 key={tag}
@@ -349,7 +349,7 @@ export default function NewCampaignPage() {
                                                     const cur = watch('content');
                                                     setValue('content', cur + tag);
                                                 }}
-                                                className="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-xs font-mono text-slate-600 transition-colors"
+                                                className="px-3 py-1 bg-muted hover:bg-slate-200 rounded text-xs font-mono text-foreground-secondary transition-colors"
                                             >
                                                 {tag}
                                             </button>
@@ -377,37 +377,37 @@ export default function NewCampaignPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in-up">
                         <div className="lg:col-span-2 space-y-6">
                             <div className="card-elevated p-8">
-                                <h2 className="text-xl font-bold text-slate-900 mb-6">Final Review</h2>
+                                <h2 className="text-xl font-bold text-foreground mb-6">Final Review</h2>
                                 <div className="space-y-4">
                                     <div className="flex justify-between py-3 border-b border-slate-50 text-sm">
-                                        <span className="text-slate-500">Campaign Name</span>
-                                        <span className="font-bold text-slate-900">{watch('name')}</span>
+                                        <span className="text-foreground-secondary">Campaign Name</span>
+                                        <span className="font-bold text-foreground">{watch('name')}</span>
                                     </div>
                                     <div className="flex justify-between py-3 border-b border-slate-50 text-sm">
-                                        <span className="text-slate-500">Type</span>
-                                        <span className="font-bold text-primary-600 flex items-center gap-2 capitalize">
+                                        <span className="text-foreground-secondary">Type</span>
+                                        <span className="font-bold text-primary flex items-center gap-2 capitalize">
                                             {campaignType === 'email' ? <Mail className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
                                             {campaignType}
                                         </span>
                                     </div>
                                     <div className="flex justify-between py-3 border-b border-slate-50 text-sm">
-                                        <span className="text-slate-500">Audience</span>
-                                        <span className="font-bold text-slate-900">
+                                        <span className="text-foreground-secondary">Audience</span>
+                                        <span className="font-bold text-foreground">
                                             {segments.find(s => s.id === segmentId)?.name || 'None selected'}
                                         </span>
                                     </div>
                                     {campaignType === 'email' && (
                                         <div className="flex justify-between py-3 border-b border-slate-50 text-sm">
-                                            <span className="text-slate-500">Subject</span>
-                                            <span className="font-bold text-slate-900">{watch('subject')}</span>
+                                            <span className="text-foreground-secondary">Subject</span>
+                                            <span className="font-bold text-foreground">{watch('subject')}</span>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
                             <div className="card-elevated p-8 overflow-hidden">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Content Preview</h3>
-                                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 whitespace-pre-wrap font-sans text-slate-700">
+                                <h3 className="text-sm font-bold text-foreground-muted uppercase tracking-widest mb-4">Content Preview</h3>
+                                <div className="p-6 bg-muted rounded-2xl border border-border-subtle whitespace-pre-wrap font-sans text-foreground">
                                     {watch('content')}
                                 </div>
                             </div>
@@ -415,27 +415,27 @@ export default function NewCampaignPage() {
 
                         <div className="space-y-6">
                             <div className="card-elevated p-6">
-                                <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                    <Calendar className="h-5 w-5 text-primary-500" />
+                                <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+                                    <Calendar className="h-5 w-5 text-primary" />
                                     Schedule
                                 </h3>
                                 <div className="space-y-4">
-                                    <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
+                                    <label className="flex items-center gap-3 p-3 rounded-xl border border-border-subtle hover:bg-accent transition-colors cursor-pointer">
                                         <input
                                             type="radio"
                                             name="schedule"
                                             defaultChecked
-                                            className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                                            className="w-4 h-4 text-primary focus:ring-primary-500"
                                         />
-                                        <span className="text-sm font-medium text-slate-700">Send Immediately</span>
+                                        <span className="text-sm font-medium text-foreground">Send Immediately</span>
                                     </label>
-                                    <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
+                                    <label className="flex items-center gap-3 p-3 rounded-xl border border-border-subtle hover:bg-accent transition-colors cursor-pointer">
                                         <input
                                             type="radio"
                                             name="schedule"
-                                            className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                                            className="w-4 h-4 text-primary focus:ring-primary-500"
                                         />
-                                        <span className="text-sm font-medium text-slate-700">Schedule for later</span>
+                                        <span className="text-sm font-medium text-foreground">Schedule for later</span>
                                     </label>
                                 </div>
                             </div>
@@ -464,7 +464,7 @@ export default function NewCampaignPage() {
                                     <Save className="h-4 w-4" />
                                     Save as Draft
                                 </button>
-                                <button type="button" onClick={() => setStep(2)} className="w-full text-sm text-slate-500 hover:text-slate-700 font-medium py-2">
+                                <button type="button" onClick={() => setStep(2)} className="w-full text-sm text-foreground-secondary hover:text-foreground font-medium py-2">
                                     Edit Design
                                 </button>
                             </div>

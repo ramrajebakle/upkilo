@@ -56,10 +56,10 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
       {/* Search Bar */}
       <form
         onSubmit={handleSearch}
-        className="max-w-4xl mx-auto p-2 bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-wrap gap-2 items-center"
+        className="max-w-4xl mx-auto p-2 bg-card rounded-2xl shadow-2xl border border-border-subtle flex flex-wrap gap-2 items-center"
       >
-        <div className="flex-1 min-w-[200px] flex items-center px-4 gap-3 border-r border-gray-100">
-          <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <div className="flex-1 min-w-[200px] flex items-center px-4 gap-3 border-r border-border-subtle">
+          <Search className="h-5 w-5 text-foreground-muted" aria-hidden="true" />
           <label htmlFor="marketplace-search" className="sr-only">What are you looking for?</label>
           <input
             id="marketplace-search"
@@ -67,11 +67,11 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
             placeholder="What are you looking for?"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-12 bg-transparent border-none text-gray-900 font-medium placeholder:text-gray-400 focus:ring-0 focus:outline-none"
+            className="w-full h-12 bg-transparent border-none text-foreground font-medium placeholder:text-foreground-muted focus:ring-0 focus:outline-none"
           />
         </div>
-        <div className="flex-1 min-w-[150px] flex items-center px-4 gap-3 border-r border-gray-100">
-          <MapPin className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <div className="flex-1 min-w-[150px] flex items-center px-4 gap-3 border-r border-border-subtle">
+          <MapPin className="h-5 w-5 text-foreground-muted" aria-hidden="true" />
           <label htmlFor="marketplace-city" className="sr-only">City or location</label>
           <input
             id="marketplace-city"
@@ -79,7 +79,7 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
             placeholder="City or Location"
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="w-full h-12 bg-transparent border-none text-gray-900 font-medium placeholder:text-gray-400 focus:ring-0 focus:outline-none"
+            className="w-full h-12 bg-transparent border-none text-foreground font-medium placeholder:text-foreground-muted focus:ring-0 focus:outline-none"
           />
         </div>
         <Button
@@ -94,14 +94,14 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
       <div className="max-w-7xl mx-auto px-6 pb-32 mt-24">
         <div className="flex flex-wrap items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-4">
-            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Featured Listings</h2>
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-tight">Featured Listings</h2>
             <span className="h-0.5 w-12 bg-primary-500 rounded-full" />
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <Filter className="h-4 w-4 text-gray-500" aria-hidden="true" />
-              <span className="text-sm font-bold text-gray-700">
+            <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border-subtle rounded-xl shadow-sm">
+              <Filter className="h-4 w-4 text-foreground-secondary" aria-hidden="true" />
+              <span className="text-sm font-bold text-foreground">
                 {category || 'All Categories'}
               </span>
             </div>
@@ -110,16 +110,16 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32">
-            <Loader2 className="h-10 w-10 text-primary-500 animate-spin mb-4" aria-hidden="true" />
-            <p className="text-gray-500 font-medium">Searching the marketplace…</p>
+            <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" aria-hidden="true" />
+            <p className="text-foreground-secondary font-medium">Searching the marketplace…</p>
           </div>
         ) : listings.length === 0 ? (
-          <div className="p-20 bg-white rounded-3xl border-2 border-dashed border-gray-100 text-center">
-            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="p-20 bg-card rounded-3xl border-2 border-dashed border-border-subtle text-center">
+            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
               <Compass className="h-10 w-10 text-gray-300" aria-hidden="true" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900">No matching listings found</h3>
-            <p className="text-gray-500 mt-2 max-w-sm mx-auto">
+            <h3 className="text-xl font-bold text-foreground">No matching listings found</h3>
+            <p className="text-foreground-secondary mt-2 max-w-sm mx-auto">
               Try broadening your search, or explore the categories below.
             </p>
             <Button
@@ -141,7 +141,7 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
         {/* Popular Categories */}
         <div className="mt-40">
           <div className="flex items-center gap-4 mb-12">
-            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Popular Categories</h2>
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-tight">Popular Categories</h2>
             <span className="h-0.5 w-12 bg-primary-500 rounded-full" />
           </div>
 
@@ -154,14 +154,14 @@ export function MarketplaceClient({ initialListings }: { initialListings: Market
                 onClick={() => { setCategory(cat); fetchListings({ category: cat }); }}
                 aria-pressed={category === cat}
                 className={cn(
-                  'group p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-primary-500 transition-all text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600',
+                  'group p-6 bg-card rounded-2xl border border-border-subtle shadow-sm hover:border-primary-500 transition-all text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600',
                   category === cat && 'border-primary-500 bg-primary-50/30'
                 )}
               >
-                <span className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-50 transition-colors">
-                  <TrendingUp className="h-6 w-6 text-gray-400 group-hover:text-primary-500 transition-colors" aria-hidden="true" />
+                <span className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-brand-subtle transition-colors">
+                  <TrendingUp className="h-6 w-6 text-foreground-muted group-hover:text-primary transition-colors" aria-hidden="true" />
                 </span>
-                <span className="text-sm font-bold text-gray-900 tracking-tight">{cat}</span>
+                <span className="text-sm font-bold text-foreground tracking-tight">{cat}</span>
               </button>
             ))}
           </div>

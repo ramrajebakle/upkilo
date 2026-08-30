@@ -72,7 +72,7 @@ export default function SessionsPage() {
           { key: "history" as const, label: `Login History (${history.length})` },
         ].map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
             {t.label}
           </button>
         ))}
@@ -86,19 +86,19 @@ export default function SessionsPage() {
                 <div className="flex items-center gap-2">
                   <label className="text-sm font-medium text-text-primary">Session timeout:</label>
                   <input type="number" min={5} max={1440} value={timeout} onChange={(e) => setSessionTimeout(parseInt(e.target.value) || 60)}
-                    className="w-20 px-2 py-1.5 text-sm rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
+                    className="w-20 px-2 py-1.5 text-sm rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
                   <span className="text-sm text-text-tertiary">minutes</span>
                 </div>
                 <Button size="sm" variant="outline" leftIcon={savingTimeout ? <Loader2 size={12} className="animate-spin" /> : undefined}
                   onClick={saveTimeout} disabled={savingTimeout}>Save</Button>
                 <div className="ml-auto">
-                  <Button variant="outline" size="sm" leftIcon={revokingAll ? <Loader2 size={12} className="animate-spin" /> : <LogOut size={12} className="text-red-500" />}
+                  <Button variant="outline" size="sm" leftIcon={revokingAll ? <Loader2 size={12} className="animate-spin" /> : <LogOut size={12} className="text-danger-fg" />}
                     onClick={revokeAll} disabled={revokingAll}>Revoke All Others</Button>
                 </div>
               </div>
               <div className="space-y-3">
                 {sessions.map((s) => (
-                  <Card key={s.id} className={s.isCurrent ? "border-ai-300" : ""}>
+                  <Card key={s.id} className={s.isCurrent ? "border-ai/25" : ""}>
                     <CardContent className="pt-4 pb-4 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-surface-100 flex items-center justify-center flex-shrink-0">
@@ -107,7 +107,7 @@ export default function SessionsPage() {
                         <div>
                           <p className="text-sm font-medium text-text-primary flex items-center gap-1.5">
                             {s.device ?? s.browser ?? "Unknown device"}
-                            {s.isCurrent && <span className="text-xs text-ai-600 bg-ai-50 px-1.5 py-0.5 rounded-full">Current</span>}
+                            {s.isCurrent && <span className="text-xs text-ai bg-ai-subtle px-1.5 py-0.5 rounded-full">Current</span>}
                           </p>
                           <div className="flex items-center gap-3 mt-0.5">
                             {s.ipAddress && <span className="text-xs text-text-tertiary font-mono flex items-center gap-1"><Globe className="h-3 w-3" />{s.ipAddress}</span>}
@@ -117,7 +117,7 @@ export default function SessionsPage() {
                         </div>
                       </div>
                       {!s.isCurrent && (
-                        <Button variant="outline" size="sm" leftIcon={revoking === s.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} className="text-red-500" />}
+                        <Button variant="outline" size="sm" leftIcon={revoking === s.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} className="text-danger-fg" />}
                           onClick={() => revokeSession(s.id)} disabled={!!revoking}>Revoke</Button>
                       )}
                     </CardContent>

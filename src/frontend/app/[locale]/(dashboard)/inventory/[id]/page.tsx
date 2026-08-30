@@ -97,10 +97,10 @@ export default function EditInventoryPage() {
     if (fetching) {
         return (
             <div className="max-w-4xl mx-auto animate-pulse space-y-8">
-                <div className="h-20 bg-slate-100 rounded-2xl w-full" />
+                <div className="h-20 bg-muted rounded-2xl w-full" />
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 h-96 bg-slate-50 rounded-2xl" />
-                    <div className="h-96 bg-slate-50 rounded-2xl" />
+                    <div className="lg:col-span-2 h-96 bg-muted rounded-2xl" />
+                    <div className="h-96 bg-muted rounded-2xl" />
                 </div>
             </div>
         );
@@ -112,9 +112,9 @@ export default function EditInventoryPage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/inventory"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -122,13 +122,13 @@ export default function EditInventoryPage() {
                             <Package className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Edit Product
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Modify product details and stock settings</p>
+                    <p className="text-foreground-secondary ml-12">Modify product details and stock settings</p>
                 </div>
                 <button className="btn btn-secondary flex items-center gap-2">
                     <History className="h-4 w-4" />
@@ -141,14 +141,14 @@ export default function EditInventoryPage() {
                     {/* Main Info */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <Tag className="h-5 w-5 text-primary-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <Tag className="h-5 w-5 text-primary" />
                                 Product Details
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Product Name <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Product Name <span className="text-danger-fg">*</span>
                                     </label>
                                     <input
                                         {...register('name')}
@@ -156,15 +156,15 @@ export default function EditInventoryPage() {
                                         className={cn("input", errors.name && "border-red-500")}
                                         placeholder="e.g. Lavender Massage Oil"
                                     />
-                                    {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+                                    {errors.name && <p className="text-xs text-danger-fg mt-1">{errors.name.message}</p>}
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             SKU / Barcode
                                         </label>
                                         <div className="relative">
-                                            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <input
                                                 {...register('sku')}
                                                 type="text"
@@ -174,11 +174,11 @@ export default function EditInventoryPage() {
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Category <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Category <span className="text-danger-fg">*</span>
                                         </label>
                                         <div className="relative">
-                                            <Layers className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Layers className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <select
                                                 {...register('category')}
                                                 className={cn("input pl-11 appearance-none", errors.category && "border-red-500")}
@@ -190,11 +190,11 @@ export default function EditInventoryPage() {
                                                 <option value="Supplies">Supplies</option>
                                             </select>
                                         </div>
-                                        {errors.category && <p className="text-xs text-red-500 mt-1">{errors.category.message}</p>}
+                                        {errors.category && <p className="text-xs text-danger-fg mt-1">{errors.category.message}</p>}
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Description
                                     </label>
                                     <textarea
@@ -207,13 +207,13 @@ export default function EditInventoryPage() {
                         </div>
 
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <DollarSign className="h-5 w-5 text-emerald-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <DollarSign className="h-5 w-5 text-success-fg" />
                                 Pricing
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Cost Price ($)
                                     </label>
                                     <input
@@ -223,20 +223,20 @@ export default function EditInventoryPage() {
                                         className={cn("input", errors.costPrice && "border-red-500")}
                                         placeholder="0.00"
                                     />
-                                    {errors.costPrice && <p className="text-xs text-red-500 mt-1">{errors.costPrice.message}</p>}
+                                    {errors.costPrice && <p className="text-xs text-danger-fg mt-1">{errors.costPrice.message}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Retail Price ($)
                                     </label>
                                     <input
                                         {...register('retailPrice', { valueAsNumber: true })}
                                         type="number"
                                         step="0.01"
-                                        className={cn("input font-bold text-primary-600", errors.retailPrice && "border-red-500")}
+                                        className={cn("input font-bold text-primary", errors.retailPrice && "border-red-500")}
                                         placeholder="0.00"
                                     />
-                                    {errors.retailPrice && <p className="text-xs text-red-500 mt-1">{errors.retailPrice.message}</p>}
+                                    {errors.retailPrice && <p className="text-xs text-danger-fg mt-1">{errors.retailPrice.message}</p>}
                                 </div>
                             </div>
                         </div>
@@ -245,13 +245,13 @@ export default function EditInventoryPage() {
                     {/* Sidebar Info */}
                     <div className="space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                                 <Boxes className="h-5 w-5 text-blue-500" />
                                 Stock & Supplier
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Current Stock
                                     </label>
                                     <div className="flex gap-2">
@@ -269,28 +269,28 @@ export default function EditInventoryPage() {
                                             <ArrowUpDown className="h-4 w-4" />
                                         </button>
                                     </div>
-                                    {errors.currentStock && <p className="text-xs text-red-500 mt-1">{errors.currentStock.message}</p>}
+                                    {errors.currentStock && <p className="text-xs text-danger-fg mt-1">{errors.currentStock.message}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Reorder Level
                                     </label>
                                     <div className="relative">
-                                        <AlertCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <AlertCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             {...register('reorderLevel', { valueAsNumber: true })}
                                             type="number"
                                             className={cn("input pl-11", errors.reorderLevel && "border-red-500")}
                                         />
                                     </div>
-                                    {errors.reorderLevel && <p className="text-xs text-red-500 mt-1">{errors.reorderLevel.message}</p>}
+                                    {errors.reorderLevel && <p className="text-xs text-danger-fg mt-1">{errors.reorderLevel.message}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Supplier
                                     </label>
                                     <div className="relative">
-                                        <Truck className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <Truck className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             {...register('supplier')}
                                             type="text"
@@ -311,7 +311,7 @@ export default function EditInventoryPage() {
                             </div>
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-slate-400">Status</span>
+                                    <span className="text-foreground-muted">Status</span>
                                     <span className={cn(
                                         'px-2 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wider',
                                         currentStock === 0 ? 'bg-red-500/20 text-red-400' :
@@ -323,7 +323,7 @@ export default function EditInventoryPage() {
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-slate-400">Potential Revenue</span>
+                                    <span className="text-foreground-muted">Potential Revenue</span>
                                     <span className="font-bold text-emerald-400">
                                         ${(currentStock * retailPrice).toLocaleString()}
                                     </span>

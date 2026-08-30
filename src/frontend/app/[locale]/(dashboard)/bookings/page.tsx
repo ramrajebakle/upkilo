@@ -194,7 +194,7 @@ export default function BookingsPage() {
             {/* Filters */}
             <div className="flex flex-col lg:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                     <input
                         type="text"
                         aria-label="Search bookings by client or service"
@@ -251,20 +251,20 @@ export default function BookingsPage() {
                     {[...Array(3)].map((_, i) => (
                         <div key={i} className="card-elevated p-6 animate-pulse">
                             <div className="flex items-center gap-4">
-                                <div className="hidden sm:flex flex-col items-center justify-center w-20 h-14 bg-slate-50 rounded-xl" />
-                                <div className="w-12 h-12 rounded-xl bg-slate-100" />
+                                <div className="hidden sm:flex flex-col items-center justify-center w-20 h-14 bg-muted rounded-xl" />
+                                <div className="w-12 h-12 rounded-xl bg-muted" />
                                 <div className="flex-1 space-y-2">
                                     <div className="h-5 w-48 bg-slate-200 rounded" />
-                                    <div className="h-4 w-32 bg-slate-100 rounded" />
+                                    <div className="h-4 w-32 bg-muted rounded" />
                                 </div>
                                 <div className="text-right hidden sm:block space-y-2">
                                     <div className="h-6 w-20 bg-slate-200 rounded ml-auto" />
-                                    <div className="h-4 w-32 bg-slate-50 rounded ml-auto" />
+                                    <div className="h-4 w-32 bg-muted rounded ml-auto" />
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <div className="w-8 h-8 rounded-lg bg-slate-50" />
-                                    <div className="w-8 h-8 rounded-lg bg-slate-50" />
-                                    <div className="w-8 h-8 rounded-lg bg-slate-50" />
+                                    <div className="w-8 h-8 rounded-lg bg-muted" />
+                                    <div className="w-8 h-8 rounded-lg bg-muted" />
+                                    <div className="w-8 h-8 rounded-lg bg-muted" />
                                 </div>
                             </div>
                         </div>
@@ -298,7 +298,7 @@ export default function BookingsPage() {
                                             <span className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
                                                 {new Date(booking.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).replace(/\s?(AM|PM)/i, '')}
                                             </span>
-                                            <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-500">
+                                            <span className="text-[10px] uppercase tracking-wider font-bold text-foreground-secondary">
                                                 {new Date(booking.startTime).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true }).match(/AM|PM/i)?.[0]} · {Math.round((new Date(booking.endTime).getTime() - new Date(booking.startTime).getTime()) / 60000)}m
                                             </span>
                                         </div>
@@ -329,11 +329,11 @@ export default function BookingsPage() {
                                             <div className="flex items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                                                 <span className="font-bold text-slate-800 dark:text-slate-300">{booking.serviceName}</span>
                                                 <span className="flex items-center gap-1.5">
-                                                    <User className="h-3.5 w-3.5 text-slate-400" />
+                                                    <User className="h-3.5 w-3.5 text-foreground-muted" />
                                                     {booking.staffName}
                                                 </span>
                                                 <span className="flex items-center gap-1.5 sm:hidden">
-                                                    <Clock className="h-3.5 w-3.5 text-slate-400" />
+                                                    <Clock className="h-3.5 w-3.5 text-foreground-muted" />
                                                     {formatBookingTime(booking.startTime, booking.endTime)}
                                                 </span>
                                             </div>
@@ -343,20 +343,20 @@ export default function BookingsPage() {
                                         <div className="flex items-center gap-4">
                                             <div className="text-right hidden sm:block">
                                                 <p className="text-lg font-bold text-slate-900 dark:text-white leading-none mb-1">{formatCurrency(booking.price)}</p>
-                                                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter">{formatBookingTime(booking.startTime, booking.endTime)}</p>
+                                                <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-tighter">{formatBookingTime(booking.startTime, booking.endTime)}</p>
                                             </div>
 
                                             <div className="flex items-center gap-1">
                                                 <Link
                                                     href={`/bookings/${booking.id}`}
-                                                    className="p-2 hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-slate-400 dark:text-slate-500"
+                                                    className="p-2 hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-foreground-muted"
                                                     title="View details"
                                                 >
                                                     <Eye className="h-4 w-4" />
                                                 </Link>
                                                 <Link
                                                     href={`/bookings/${booking.id}/edit`}
-                                                    className="p-2 hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-slate-400 dark:text-slate-500"
+                                                    className="p-2 hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-foreground-muted"
                                                     title="Edit booking"
                                                 >
                                                     <Edit className="h-4 w-4" />
@@ -395,7 +395,7 @@ export default function BookingsPage() {
             {!loading && !isError && filteredBookings.length === 0 && (
                 <div className="card-elevated py-20 text-center animate-fade-in dark:bg-slate-900 dark:border-slate-800">
                     <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-slate-100 dark:border-slate-700">
-                        <CalendarDays className="h-10 w-10 text-slate-300 dark:text-slate-600" />
+                        <CalendarDays className="h-10 w-10 text-slate-300" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No bookings found</h3>
                     <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">Adjust your filters to see more results or start fresh with a new appointment.</p>

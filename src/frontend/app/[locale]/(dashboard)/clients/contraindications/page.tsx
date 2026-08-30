@@ -14,7 +14,7 @@ const SEV_CFG: Record<string, string> = {
   Critical: "text-red-600 bg-red-50 border-red-200",
   High: "text-orange-600 bg-orange-50 border-orange-200",
   Medium: "text-amber-600 bg-amber-50 border-amber-200",
-  Low: "text-gray-600 bg-gray-50 border-gray-200",
+  Low: "text-foreground-secondary bg-muted border-border",
 };
 
 export default function ContraindicationsPage() {
@@ -59,7 +59,7 @@ export default function ContraindicationsPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Medical Alerts <AlertTriangle className="text-red-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Medical Alerts <AlertTriangle className="text-danger-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">Contraindications and medical alerts for client safety.</p>
         </div>
         <div className="flex gap-2">
@@ -70,10 +70,10 @@ export default function ContraindicationsPage() {
 
       {(criticalCount > 0 || highCount > 0) && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
-          <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <AlertTriangle className="h-5 w-5 text-danger-fg flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-red-800">Active medical alerts require attention</p>
-            <p className="text-xs text-red-600 mt-0.5">{criticalCount} critical, {highCount} high-severity alerts on file.</p>
+            <p className="text-xs text-danger-fg mt-0.5">{criticalCount} critical, {highCount} high-severity alerts on file.</p>
           </div>
         </div>
       )}
@@ -81,7 +81,7 @@ export default function ContraindicationsPage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Total Alerts", value: alerts.length, color: "text-text-primary" },
-          { label: "Critical", value: criticalCount, color: "text-red-600" },
+          { label: "Critical", value: criticalCount, color: "text-danger-fg" },
           { label: "High", value: highCount, color: "text-orange-600" },
         ].map((s) => (
           <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>

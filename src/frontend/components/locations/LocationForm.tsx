@@ -113,15 +113,15 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                 <div className="flex items-center gap-4">
                     <Link
                         href="/dashboard/locations"
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 hover:bg-accent rounded-lg transition-colors"
                     >
-                        <ArrowLeft className="h-5 w-5 text-gray-500" />
+                        <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
+                        <h1 className="text-2xl font-bold text-foreground">
                             {isEditing ? 'Edit Location' : 'Add Location'}
                         </h1>
-                        <p className="text-gray-500">
+                        <p className="text-foreground-secondary">
                             {isEditing ? 'Update location details' : 'Add a new business location'}
                         </p>
                     </div>
@@ -143,8 +143,8 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Info */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Location Details</h3>
+                    <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
+                        <h3 className="text-lg font-semibold text-foreground mb-4">Location Details</h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="col-span-2">
@@ -155,7 +155,7 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                                     placeholder="e.g. Main Office, Downtown Branch"
                                 />
                                 {errors.name && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                                    <p className="text-danger-fg text-sm mt-1">{errors.name.message}</p>
                                 )}
                             </div>
 
@@ -215,8 +215,8 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+                    <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
+                        <h3 className="text-lg font-semibold text-foreground mb-4">Contact Information</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="label">Phone Number</label>
@@ -235,7 +235,7 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                                     placeholder="location@business.com"
                                 />
                                 {errors.email && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                                    <p className="text-danger-fg text-sm mt-1">{errors.email.message}</p>
                                 )}
                             </div>
                         </div>
@@ -244,10 +244,10 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
 
                 {/* Sidebar - Hours & Settings */}
                 <div className="space-y-6">
-                    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                    <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                <Clock className="h-5 w-5 text-gray-400" />
+                            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                                <Clock className="h-5 w-5 text-foreground-muted" />
                                 Business Hours
                             </h3>
                         </div>
@@ -260,9 +260,9 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                                             type="checkbox"
                                             checked={businessHours[index].isOpen}
                                             onChange={() => toggleDay(index)}
-                                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                                            className="rounded border-border-strong text-primary focus:ring-primary-500"
                                         />
-                                        <span className={`text-sm ${businessHours[index].isOpen ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+                                        <span className={`text-sm ${businessHours[index].isOpen ? 'text-foreground font-medium' : 'text-foreground-muted'}`}>
                                             {DAYS[index]}
                                         </span>
                                     </div>
@@ -273,26 +273,26 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                                                 type="time"
                                                 value={businessHours[index].open}
                                                 onChange={(e) => updateTime(index, 'open', e.target.value)}
-                                                className="border border-gray-200 rounded px-1 py-0.5 w-20 text-center text-gray-900 focus:outline-none focus:border-primary-500"
+                                                className="border border-border rounded px-1 py-0.5 w-20 text-center text-foreground focus:outline-none focus:border-primary-500"
                                             />
-                                            <span className="text-gray-400">-</span>
+                                            <span className="text-foreground-muted">-</span>
                                             <input
                                                 type="time"
                                                 value={businessHours[index].close}
                                                 onChange={(e) => updateTime(index, 'close', e.target.value)}
-                                                className="border border-gray-200 rounded px-1 py-0.5 w-20 text-center text-gray-900 focus:outline-none focus:border-primary-500"
+                                                className="border border-border rounded px-1 py-0.5 w-20 text-center text-foreground focus:outline-none focus:border-primary-500"
                                             />
                                         </div>
                                     ) : (
-                                        <span className="text-sm text-gray-400 italic px-4">Closed</span>
+                                        <span className="text-sm text-foreground-muted italic px-4">Closed</span>
                                     )}
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Settings</h3>
+                    <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
+                        <h3 className="text-lg font-semibold text-foreground mb-4">Settings</h3>
 
                         <div className="space-y-4">
                             <div>
@@ -309,10 +309,10 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                                 </select>
                             </div>
 
-                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                                 <div>
-                                    <p className="font-medium text-gray-900">Active Status</p>
-                                    <p className="text-xs text-gray-500">Enable this location</p>
+                                    <p className="font-medium text-foreground">Active Status</p>
+                                    <p className="text-xs text-foreground-secondary">Enable this location</p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input
@@ -320,7 +320,7 @@ export default function LocationForm({ initialData, onSubmit, isEditing = false 
                                         {...register('isActive')}
                                         className="sr-only peer"
                                     />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-card after:border-border-strong after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                                 </label>
                             </div>
                         </div>

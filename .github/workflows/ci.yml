@@ -386,6 +386,13 @@ jobs:
       - name: TypeScript check
         run: npm run typecheck
 
+      # Neither ESLint nor tsc can see a broken theme: a Tailwind utility whose token was
+      # never declared compiles to nothing rather than failing, so the element silently
+      # renders with no colour and the build stays green. This check is the only thing that
+      # catches that class of regression, along with dark: pairs that move the wrong way.
+      - name: Theme token check
+        run: npm run check:theme
+
       - name: i18n translation coverage check
         run: |
           node -e "

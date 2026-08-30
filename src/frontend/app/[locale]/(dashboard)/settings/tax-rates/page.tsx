@@ -46,7 +46,7 @@ function TaxForm({
             value={f.value}
             onChange={(e) => f.onChange(e.target.value)}
             placeholder={f.placeholder}
-            className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500"
           />
         </div>
       ))}
@@ -156,14 +156,14 @@ export default function TaxRatesPage() {
                       <td className="py-3 px-3 font-mono text-text-primary">{r.rate}%</td>
                       <td className="py-3 px-3 text-text-secondary">{r.country ?? "—"}</td>
                       <td className="py-3 px-3 text-text-secondary">{r.region ?? "—"}</td>
-                      <td className="py-3 px-3">{r.isDefault ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <span className="text-text-tertiary">—</span>}</td>
+                      <td className="py-3 px-3">{r.isDefault ? <CheckCircle2 className="h-4 w-4 text-success-fg" /> : <span className="text-text-tertiary">—</span>}</td>
                       <td className="py-3 px-3">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${r.isActive ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500"}`}>{r.isActive ? "Active" : "Inactive"}</span>
                       </td>
                       <td className="py-3 px-3">
                         <div className="flex gap-1">
                           <Button variant="outline" size="sm" leftIcon={<Pencil size={12} />} onClick={() => { setEditing(r); setShowForm(false); }}>Edit</Button>
-                          <Button variant="outline" size="sm" className="text-red-500 border-red-200 hover:bg-red-50"
+                          <Button variant="outline" size="sm" className="text-danger-fg border-red-200 hover:bg-red-50"
                             leftIcon={deletingId === r.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
                             onClick={() => handleDelete(r.id)} disabled={deletingId === r.id}>Del</Button>
                         </div>

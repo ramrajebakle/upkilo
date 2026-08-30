@@ -55,8 +55,8 @@ export default function AIApprovalsPage() {
     switch (module.toUpperCase()) {
       case 'AI': return <BrainCircuit className="w-5 h-5 text-amber-400" />;
       case 'WORKFLOW': return <Workflow className="w-5 h-5 text-blue-400" />;
-      case 'SECURITY': return <ShieldAlert className="w-5 h-5 text-rose-500" />;
-      default: return <AlertTriangle className="w-5 h-5 text-gray-400" />;
+      case 'SECURITY': return <ShieldAlert className="w-5 h-5 text-danger-fg" />;
+      default: return <AlertTriangle className="w-5 h-5 text-foreground-muted" />;
     }
   };
 
@@ -69,7 +69,7 @@ export default function AIApprovalsPage() {
             <span className="text-[10px] uppercase tracking-[0.3em] text-amber-500 font-bold">Autonomous Oversight</span>
           </div>
           <h1 className="text-4xl font-light tracking-tight">Escalation <span className="font-semibold text-white">Queue</span></h1>
-          <p className="text-gray-500 mt-2 text-sm max-w-md italic">
+          <p className="text-slate-400 mt-2 text-sm max-w-md italic">
             "Human-in-the-loop oversight for high-risk autonomous decisions and system uncertainties."
           </p>
         </div>
@@ -77,10 +77,10 @@ export default function AIApprovalsPage() {
         <div className="flex gap-4">
             <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-3">
                 <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Live Bridge {isConnected ? 'Active' : 'Offline'}</span>
+                <span className="text-[10px] uppercase font-bold text-foreground-muted tracking-wider">Live Bridge {isConnected ? 'Active' : 'Offline'}</span>
             </div>
             <button className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all">
-                <History className="w-4 h-4 text-gray-400" />
+                <History className="w-4 h-4 text-foreground-muted" />
             </button>
         </div>
       </header>
@@ -89,7 +89,7 @@ export default function AIApprovalsPage() {
         {escalations.length === 0 ? (
           <div className="h-64 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-center">
             <CheckCircle2 className="w-12 h-12 text-white/10 mb-4" />
-            <p className="text-gray-500 text-sm">System stable. No pending escalations in queue.</p>
+            <p className="text-foreground-secondary text-sm">System stable. No pending escalations in queue.</p>
           </div>
         ) : (
           <div className="grid gap-6">
@@ -115,16 +115,16 @@ export default function AIApprovalsPage() {
                       <div>
                         <h3 className="text-lg font-medium text-white">{item.reason}</h3>
                         <div className="flex gap-4 mt-1">
-                          <span className={`${mono} flex items-center gap-1.5 text-gray-400 uppercase tracking-widest`}>
+                          <span className={`${mono} flex items-center gap-1.5 text-foreground-muted uppercase tracking-widest`}>
                             <Fingerprint className="w-3 h-3" />
                             TXID-{item.id.substring(0, 8)}
                           </span>
-                          <span className={`${mono} uppercase tracking-widest text-gray-400`}>
+                          <span className={`${mono} uppercase tracking-widest text-foreground-muted`}>
                             {item.module} · {item.severity}
                           </span>
                         </div>
                       </div>
-                      <time className="text-[10px] font-mono text-gray-600 uppercase tracking-tighter">
+                      <time className="text-[10px] font-mono text-foreground-secondary uppercase tracking-tighter">
                         {new Date(item.timestamp).toLocaleTimeString()}
                       </time>
                     </div>
@@ -156,7 +156,7 @@ export default function AIApprovalsPage() {
                     </button>
                     <button 
                         onClick={() => handleAction(item.id, 'Override')}
-                        className="w-full py-2 px-4 border border-white/10 text-gray-400 text-[10px] font-bold uppercase tracking-widest rounded-md hover:bg-white/5 hover:text-white transition-all"
+                        className="w-full py-2 px-4 border border-white/10 text-foreground-muted text-[10px] font-bold uppercase tracking-widest rounded-md hover:bg-white/5 hover:text-white transition-all"
                     >
                         Manual Override
                     </button>
@@ -169,8 +169,8 @@ export default function AIApprovalsPage() {
       </main>
 
       <footer className="max-w-6xl mx-auto mt-16 pt-8 border-t border-white/5 flex justify-between items-center opacity-40">
-        <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 uppercase">Secure Environment · Multi-Tenant Isolation: Active</p>
-        <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 uppercase">Upkilo Autonomous Core v1.4.2</p>
+        <p className="text-[9px] uppercase tracking-[0.4em] text-foreground-secondary uppercase">Secure Environment · Multi-Tenant Isolation: Active</p>
+        <p className="text-[9px] uppercase tracking-[0.4em] text-foreground-secondary uppercase">Upkilo Autonomous Core v1.4.2</p>
       </footer>
 
       {/* A <style jsx global> block used to live here. It was the only place Outfit and

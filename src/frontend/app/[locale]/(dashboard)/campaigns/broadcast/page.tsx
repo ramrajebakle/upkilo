@@ -159,9 +159,9 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
 function MetricBadge({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
     return (
         <div className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-3 py-1.5 dark:bg-gray-700/50">
-            <span className="text-gray-400 dark:text-gray-500">{icon}</span>
+            <span className="text-foreground-muted">{icon}</span>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{value}</span>
-            <span className="text-xs text-gray-400 dark:text-gray-500">{label}</span>
+            <span className="text-xs text-foreground-muted">{label}</span>
         </div>
     );
 }
@@ -215,7 +215,7 @@ function CampaignCard({ campaign, onSend, onCancel, sending, cancelling }: Campa
                         )}
                         {campaign.sentAt && (
                             <span className="flex items-center gap-1">
-                                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                <Check className="h-3.5 w-3.5 text-success-fg" />
                                 Sent {fmtDate(campaign.sentAt)}
                             </span>
                         )}
@@ -279,10 +279,10 @@ function CampaignCard({ campaign, onSend, onCancel, sending, cancelling }: Campa
                                 key={label}
                                 className="flex flex-col items-center rounded-lg bg-gray-50 p-3 text-center dark:bg-gray-700/50"
                             >
-                                <span className="mb-1 text-gray-400 dark:text-gray-500">{icon}</span>
+                                <span className="mb-1 text-foreground-muted">{icon}</span>
                                 <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{value}</span>
                                 <span className="text-xs text-gray-500 dark:text-gray-400">{label}</span>
-                                <span className="text-xs text-gray-400 dark:text-gray-500">({count.toLocaleString()})</span>
+                                <span className="text-xs text-foreground-muted">({count.toLocaleString()})</span>
                             </div>
                         ))}
                     </div>
@@ -397,7 +397,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                     </div>
                     <button
                         onClick={onClose}
-                        className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                        className="rounded-lg p-1.5 text-foreground-muted transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -407,7 +407,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                     {/* Campaign name */}
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Campaign Name <span className="text-red-500">*</span>
+                            Campaign Name <span className="text-danger-fg">*</span>
                         </label>
                         <input
                             type="text"
@@ -449,7 +449,7 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                     {form.channel === 'email' && (
                         <div>
                             <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                Subject Line <span className="text-red-500">*</span>
+                                Subject Line <span className="text-danger-fg">*</span>
                             </label>
                             <input
                                 type="text"
@@ -465,10 +465,10 @@ function CampaignModal({ isOpen, onClose, onSaved }: CampaignModalProps) {
                     <div>
                         <div className="mb-1.5 flex items-center justify-between">
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                Message Body <span className="text-red-500">*</span>
+                                Message Body <span className="text-danger-fg">*</span>
                             </label>
                             {form.channel === 'sms' && (
-                                <span className={cn('text-xs', smsOverLimit ? 'text-red-500 font-medium' : 'text-gray-400')}>
+                                <span className={cn('text-xs', smsOverLimit ? 'text-danger-fg font-medium' : 'text-foreground-muted')}>
                                     {charCount}/{smsMax}
                                 </span>
                             )}
@@ -812,11 +812,11 @@ export default function BroadcastCampaignPage() {
                         Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} />)
                     ) : filtered.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 py-16 dark:border-gray-700">
-                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-400 dark:bg-gray-800">
+                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-foreground-muted dark:bg-gray-800">
                                 <Megaphone className="h-6 w-6" />
                             </div>
                             <p className="font-medium text-gray-600 dark:text-gray-300">No campaigns yet</p>
-                            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+                            <p className="mt-1 text-sm text-foreground-muted">
                                 Click &ldquo;New Broadcast&rdquo; to create your first campaign.
                             </p>
                             <button

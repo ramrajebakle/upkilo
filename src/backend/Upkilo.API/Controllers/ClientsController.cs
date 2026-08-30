@@ -24,6 +24,7 @@ public class ClientsController : ControllerBase
     private readonly ILoyaltyService _loyaltyService;
     private readonly ICsvExportService _csvExportService;
     private readonly IElasticsearchService? _elasticsearch;
+    private readonly IEntitlementService _entitlements;
 
     public ClientsController(
         ILogger<ClientsController> logger,
@@ -32,8 +33,10 @@ public class ClientsController : ControllerBase
         ITenantProvider tenantProvider,
         ILoyaltyService loyaltyService,
         ICsvExportService csvExportService,
+        IEntitlementService entitlements,
         IElasticsearchService? elasticsearch = null)
     {
+        _entitlements = entitlements;
         _logger = logger;
         _eventService = eventService;
         _context = context;
@@ -286,6 +289,16 @@ public class ClientsController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         if (tenantId == null) return Unauthorized();
+
+        // max_clients is a published tier boundary (Free 150, Starter 5,000, Growth unlimited)
+        // that nothing enforced. Unlike staff and locations it was not even consulted by the
+        // downgrade handler, so it was decorative in every direction: displayed on the pricing
+        // page and in billing, never able to refuse a record.
+        var limitResult = await Upkilo.API.Helpers.SeatLimitGuard.CheckAsync(
+            _entitlements, tenantId.Value, FeatureKeys.MaxClients,
+            () => _context.Clients.CountAsync(c => c.TenantId == tenantId.Value && !c.IsDeleted),
+            "Client", HttpContext.RequestAborted, _logger);
+        if (limitResult != null) return limitResult;
 
         var client = new Client
         {

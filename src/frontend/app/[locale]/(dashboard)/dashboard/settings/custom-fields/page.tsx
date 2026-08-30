@@ -165,7 +165,7 @@ export default function CustomFieldsPage() {
                                             <TableCell className="capitalize">{field.type}</TableCell>
                                             <TableCell>
                                                 <Button variant="ghost" size="sm" onClick={() => handleDelete(field.id)}>
-                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                    <Trash2 className="h-4 w-4 text-danger-fg" />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

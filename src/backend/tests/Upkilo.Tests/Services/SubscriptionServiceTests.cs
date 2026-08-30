@@ -88,16 +88,146 @@ public class SubscriptionServiceTests : IDisposable
         });
         context.SaveChanges();
 
-        var cacheMock = new Mock<IDistributedCache>();
-        cacheMock.Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                 .ReturnsAsync((byte[]?)null);
-        _sut = new SubscriptionService(context, logger.Object, config, secretProvider.Object, cacheMock.Object);
+        // A REAL cache, not a mock that always misses.
+        //
+        // The mock here returned null from every read, so GetSubscriptionAsync could never
+        // produce a cache hit and no test in this class ever exercised the warm-cache path.
+        // That is precisely how the detached-entity write bug survived: on a hit the method
+        // returns a deserialised POCO, mutations to it are untracked, and SaveChanges persists
+        // nothing — a failure mode a permanently-cold cache cannot reproduce.
+        var cache = Upkilo.Tests.Helpers.MockFactory.CreateMemoryCache();
+
+        // A real EntitlementService, not a mock: SubscriptionService now delegates its feature
+        // and limit answers here, so stubbing it would leave the assertions below testing
+        // nothing but the stub.
+        _sut = new SubscriptionService(context, logger.Object, config, secretProvider.Object, cache,
+            Upkilo.Tests.Helpers.MockFactory.CreateEntitlementService(context, cache));
 
         // Set mock AFTER sut construction so SubscriptionService's StripeConfiguration.ApiKey setter doesn't override it
         StripeConfiguration.StripeClient = _stripeClientMock.Object;
     }
 
     public void Dispose() => _dbFactory.Dispose();
+
+    // ── Writes must survive a warm cache ──────────────────────────────────────
+
+    /// <summary>
+    /// These pin the detached-entity bug. GetSubscriptionAsync serves a JSON round-trip from
+    /// the cache, so a mutation applied to what it returns was never tracked and SaveChanges
+    /// persisted nothing — silently, and only when the cache was warm. Each test warms the
+    /// cache first, which is exactly the condition the original tests never created.
+    /// </summary>
+    [Fact]
+    public async Task UpdateAiBudget_PersistsEvenWhenTheCacheIsWarm()
+    {
+        await _sut.GetSubscriptionAsync(_tenantId);   // warm the cache
+
+        var result = await _sut.UpdateAiBudgetAsync(_tenantId, 99.50m);
+
+        result.Success.Should().BeTrue();
+        _dbFactory.CreateContext().Subscriptions
+            .First(s => s.TenantId == _tenantId).AiMonthlyBudget
+            .Should().Be(99.50m, "the reported success must correspond to a real write");
+    }
+
+    [Fact]
+    public async Task IncrementUsage_PersistsEvenWhenTheCacheIsWarm()
+    {
+        await _sut.GetSubscriptionAsync(_tenantId);   // warm the cache
+
+        await _sut.IncrementUsageAsync(_tenantId, UsageType.Bookings, 3);
+
+        _dbFactory.CreateContext().Subscriptions
+            .First(s => s.TenantId == _tenantId).BookingsUsed
+            .Should().Be(53, "50 seeded + 3");
+    }
+
+    [Fact]
+    public async Task MutatingPathsInvalidateTheCache_SoTheNextReadIsFresh()
+    {
+        await _sut.GetSubscriptionAsync(_tenantId);   // warm the cache
+        await _sut.UpdateAiBudgetAsync(_tenantId, 42m);
+
+        var reread = await _sut.GetSubscriptionAsync(_tenantId);
+
+        reread!.AiMonthlyBudget.Should().Be(42m, "a stale cache would still report the old budget");
+    }
+
+    // ── Quota reservation ─────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task TryReserveUsage_RefusesOnceTheLimitIsReached()
+    {
+        // ai_actions capped at 5, with 5 already consumed.
+        await SeedAiQuotaAsync(limit: 5, alreadyUsed: 5);
+
+        var granted = await _sut.TryReserveUsageAsync(_tenantId, UsageType.AiCredits);
+
+        granted.Should().BeFalse("the tenant is already at their AI credit ceiling");
+    }
+
+    [Fact]
+    public async Task TryReserveUsage_AllowsBelowTheLimit()
+    {
+        await SeedAiQuotaAsync(limit: 5, alreadyUsed: 4);
+
+        (await _sut.TryReserveUsageAsync(_tenantId, UsageType.AiCredits)).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task TryReserveUsage_RefusesAReservationThatWouldOvershoot()
+    {
+        await SeedAiQuotaAsync(limit: 5, alreadyUsed: 3);
+
+        // 3 + 5 > 5. The old code compared against a cached counter and then incremented
+        // unconditionally, so an oversized reservation sailed through.
+        (await _sut.TryReserveUsageAsync(_tenantId, UsageType.AiCredits, amount: 5))
+            .Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task TryReserveUsage_NeverExceedsTheLimitUnderConcurrency()
+    {
+        await SeedAiQuotaAsync(limit: 10, alreadyUsed: 0);
+
+        // Check and increment used to be separate statements, so concurrent callers could each
+        // pass the check and each increment past the ceiling. The limit is now a predicate in
+        // the UPDATE, so the database serialises the decision.
+        var results = new List<bool>();
+        for (var i = 0; i < 25; i++)
+            results.Add(await _sut.TryReserveUsageAsync(_tenantId, UsageType.AiCredits));
+
+        results.Count(r => r).Should().Be(10, "exactly the quota should be grantable, never more");
+
+        var used = _dbFactory.CreateContext().Subscriptions
+            .First(s => s.TenantId == _tenantId).AiCreditsUsed;
+        used.Should().Be(10);
+    }
+
+    /// <summary>
+    /// Gives the tenant's plan an ai_actions mapping and sets the consumed counter, so the
+    /// reservation path has a real limit to enforce against.
+    /// </summary>
+    private async Task SeedAiQuotaAsync(int limit, int alreadyUsed)
+    {
+        var ctx = _dbFactory.CreateContext();
+
+        var feature = new PricingFeature { Key = FeatureKeys.AiActions, Name = "AI Actions", Type = FeatureType.Numeric };
+        ctx.PricingFeatures.Add(feature);
+        ctx.PlanFeatureMappings.Add(new PlanFeatureMapping
+        {
+            PricingPlanId = _planId,
+            PricingFeature = feature,
+            IsEnabled = true,
+            NumericLimit = limit,
+        });
+
+        var sub = ctx.Subscriptions.First(x => x.TenantId == _tenantId);
+        sub.AiCreditsUsed = alreadyUsed;
+
+        await ctx.SaveChangesAsync();
+    }
+
 
     [Fact]
     public async Task GetAllPricingPlansAsync_ReturnsActivePlans()

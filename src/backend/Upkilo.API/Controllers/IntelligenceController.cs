@@ -18,6 +18,14 @@ namespace Upkilo.API.Controllers;
 [Route("api/v{version:apiVersion}/intelligence")]
 [Authorize]
 [ReadReplicaFilter]
+// Predictive/analytical AI, gated as a whole rather than method by method.
+//
+// Four of the eight endpoints carried [RequiresFeature(ai_insights)] and four did not —
+// no-show-risk, benchmarks, client-network and fine-tuning/export — despite being the same
+// class of paid intelligence as their gated siblings. A Free tenant could call them directly.
+// A class-level guard removes the possibility of a new endpoint landing here ungated by
+// omission, and matches how AiController and AIDashboardController are already protected.
+[Upkilo.API.Attributes.FeatureGuard(FeatureKeys.AiInsights)]
 public class IntelligenceController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -50,7 +58,7 @@ public class IntelligenceController : ControllerBase
     /// Also suggests staff scheduling adjustments.
     /// </summary>
     [HttpGet("demand-forecast")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiInsights)]
     public async Task<IActionResult> GetDemandForecast()
     {
         var tenantId = GetTenantId();
@@ -123,7 +131,7 @@ public class IntelligenceController : ControllerBase
     /// Compares current prices against booking conversion rates and time-slot demand.
     /// </summary>
     [HttpGet("price-optimization")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiInsights)]
     public async Task<IActionResult> GetPriceOptimization()
     {
         var tenantId = GetTenantId();
@@ -209,7 +217,7 @@ public class IntelligenceController : ControllerBase
     /// </summary>
     [HttpGet("staff-retention")]
     [Authorize(Roles = "Owner,Admin")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiInsights)]
     public async Task<IActionResult> GetStaffRetentionRisk()
     {
         var tenantId = GetTenantId();
@@ -381,7 +389,7 @@ public class IntelligenceController : ControllerBase
     /// Uses marketplace data to surface competitor pricing, ratings, and review trends.
     /// </summary>
     [HttpGet("competitor-report")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiInsights)]
     public async Task<IActionResult> GetCompetitorReport()
     {
         var tenantId = GetTenantId();

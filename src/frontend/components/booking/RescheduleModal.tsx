@@ -144,7 +144,7 @@ export function RescheduleModal({ isOpen, onClose, booking, confirmationCode, on
                     {/* Calendar Section */}
                     <div className="space-y-4">
                         <div className="flex items-center justify-between px-2">
-                            <h3 className="font-bold text-slate-900">{monthName}</h3>
+                            <h3 className="font-bold text-foreground">{monthName}</h3>
                             <div className="flex gap-1">
                                 <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => {
                                     const d = new Date(currentMonth);
@@ -165,7 +165,7 @@ export function RescheduleModal({ isOpen, onClose, booking, confirmationCode, on
 
                         <div className="grid grid-cols-7 gap-1 text-center">
                             {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-                                <span key={d} className="text-[10px] font-bold text-slate-400 uppercase py-2">{d}</span>
+                                <span key={d} className="text-[10px] font-bold text-foreground-muted uppercase py-2">{d}</span>
                             ))}
                             {Array.from({ length: firstDay }).map((_, i) => (
                                 <div key={`empty-${i}`} />
@@ -177,8 +177,8 @@ export function RescheduleModal({ isOpen, onClose, booking, confirmationCode, on
                                     onClick={() => setSelectedDate(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day))}
                                     className={cn(
                                         "h-9 w-9 rounded-lg text-sm font-semibold flex items-center justify-center transition-all",
-                                        isSelected(day) ? "bg-primary text-white shadow-lg shadow-primary/30" : 
-                                        isToday(day) ? "bg-slate-100 text-primary" : "text-slate-600 hover:bg-slate-50",
+                                        isSelected(day) ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30" : 
+                                        isToday(day) ? "bg-muted text-primary" : "text-foreground-secondary hover:bg-accent",
                                         isPast(day) && "opacity-20 cursor-not-allowed text-slate-300"
                                     )}
                                 >
@@ -189,15 +189,15 @@ export function RescheduleModal({ isOpen, onClose, booking, confirmationCode, on
                     </div>
 
                     {/* Slots Section */}
-                    <div className="space-y-4 border-l pl-8 border-slate-100">
-                        <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-slate-400" />
+                    <div className="space-y-4 border-l pl-8 border-border-subtle">
+                        <h3 className="font-bold text-foreground flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-foreground-muted" />
                             Available Times
                         </h3>
                         
                         <div className="h-[280px] overflow-y-auto pr-2 custom-scrollbar">
                             {loadingSlots ? (
-                                <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2">
+                                <div className="flex flex-col items-center justify-center h-full text-foreground-muted gap-2">
                                     <Loader2 className="h-6 w-6 animate-spin" />
                                     <span className="text-xs font-medium">Checking availability...</span>
                                 </div>
@@ -209,7 +209,7 @@ export function RescheduleModal({ isOpen, onClose, booking, confirmationCode, on
                                             onClick={() => setSelectedTime(slot)}
                                             className={cn(
                                                 "py-2 px-3 rounded-lg text-sm font-bold border transition-all",
-                                                selectedTime === slot ? "bg-primary border-primary text-white shadow-md shadow-primary/20" : "bg-white border-slate-200 text-slate-700 hover:border-primary/50 hover:bg-slate-50"
+                                                selectedTime === slot ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/20" : "bg-card border-border text-foreground hover:border-primary/50 hover:bg-accent"
                                             )}
                                         >
                                             {slot}
@@ -217,7 +217,7 @@ export function RescheduleModal({ isOpen, onClose, booking, confirmationCode, on
                                     ))}
                                 </div>
                             ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-slate-400 text-center px-4">
+                                <div className="flex flex-col items-center justify-center h-full text-foreground-muted text-center px-4">
                                     <CalendarIcon className="h-8 w-8 mb-2 opacity-20" />
                                     <p className="text-xs font-medium">No slots available for this date.</p>
                                 </div>
@@ -226,7 +226,7 @@ export function RescheduleModal({ isOpen, onClose, booking, confirmationCode, on
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+                <div className="flex items-center justify-end gap-3 pt-6 border-t border-border-subtle">
                     <Button variant="outline" onClick={onClose} disabled={submitting} className="font-bold">
                         Cancel
                     </Button>

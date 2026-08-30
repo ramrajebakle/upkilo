@@ -80,7 +80,7 @@ export function CustomFieldsSettings() {
     };
 
     if (loading) return (
-        <div className="py-24 flex flex-col items-center gap-6 text-slate-400">
+        <div className="py-24 flex flex-col items-center gap-6 text-foreground-muted">
             <Loader2 className="h-12 w-12 animate-spin text-primary-500" />
             <span className="text-[10px] font-black uppercase tracking-[0.4em]">Syncing Schema Matrix...</span>
         </div>
@@ -91,7 +91,7 @@ export function CustomFieldsSettings() {
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Data Schematization</h2>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Configure extended entity metadata</p>
+                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Configure extended entity metadata</p>
                 </div>
                 <div className="p-4 bg-primary-50 dark:bg-primary-900/30 rounded-2xl border border-primary-100 dark:border-primary-400/20 shadow-sm transition-all hover:scale-110">
                     <Settings2 className="h-8 w-8 text-primary-600 dark:text-primary-400" />
@@ -109,7 +109,7 @@ export function CustomFieldsSettings() {
                         
                         <div className="grid gap-6 md:grid-cols-5 items-end">
                             <div className="space-y-2 col-span-1">
-                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-1">Target Entity</Label>
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-foreground-muted pl-1">Target Entity</Label>
                                 <select
                                     className="w-full h-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all appearance-none cursor-pointer"
                                     value={newField.targetEntity}
@@ -121,7 +121,7 @@ export function CustomFieldsSettings() {
                                 </select>
                             </div>
                             <div className="space-y-2 col-span-2">
-                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-1">Descriptor Name</Label>
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-foreground-muted pl-1">Descriptor Name</Label>
                                 <Input
                                     placeholder="e.g. REFERRAL_DATA"
                                     value={newField.name}
@@ -130,7 +130,7 @@ export function CustomFieldsSettings() {
                                 />
                             </div>
                             <div className="space-y-2 col-span-1">
-                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-1">Field Type</Label>
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-foreground-muted pl-1">Field Type</Label>
                                 <select
                                     className="w-full h-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all appearance-none cursor-pointer"
                                     value={newField.type}
@@ -169,8 +169,8 @@ export function CustomFieldsSettings() {
                                         <tr>
                                             <td colSpan={4} className="py-24 text-center">
                                                 <div className="flex flex-col items-center gap-4 opacity-30 grayscale">
-                                                    <Settings2 className="h-12 w-12 text-slate-400" />
-                                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
+                                                    <Settings2 className="h-12 w-12 text-foreground-muted" />
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">
                                                         Zero Extended Nodes Allocated
                                                     </p>
                                                 </div>
@@ -188,13 +188,13 @@ export function CustomFieldsSettings() {
                                                 <td className="px-8 py-6">
                                                     <div className="flex items-center gap-2">
                                                         <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
-                                                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{field.type}</span>
+                                                        <span className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">{field.type}</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-8 py-6 text-right">
                                                     <button 
                                                         onClick={() => handleDelete(field.id)}
-                                                        className="h-10 w-10 inline-flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-400/10 rounded-xl transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-400/20"
+                                                        className="h-10 w-10 inline-flex items-center justify-center text-foreground-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-400/10 rounded-xl transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-400/20"
                                                     >
                                                         <Trash2 className="h-4.5 w-4.5" />
                                                     </button>

@@ -137,7 +137,7 @@ export default function AdminRegisterPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full h-12 bg-white hover:bg-neutral-200 text-black font-bold uppercase tracking-widest mt-4" disabled={isLoading}>
+          <Button type="submit" className="w-full h-12 bg-card hover:bg-neutral-200 text-black font-bold uppercase tracking-widest mt-4" disabled={isLoading}>
             {isLoading ? "Provisioning..." : <><UserPlus className="w-4 h-4 mr-2" /> Initialize Platform</>}
           </Button>
         </form>

@@ -76,7 +76,7 @@ export default function FinancialIntelligencePage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Financial Intelligence <DollarSign className="text-green-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Financial Intelligence <DollarSign className="text-success-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">AI-powered financial analysis, cash flow forecasting, and revenue insights.</p>
         </div>
         <Button variant="outline" leftIcon={loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />} onClick={load} disabled={loading}>Refresh</Button>
@@ -98,7 +98,7 @@ export default function FinancialIntelligencePage() {
                   <CardContent className="pt-5">
                     <div className="flex items-center justify-between mb-1">{s.icon}</div>
                     <p className="text-xs text-text-secondary">{s.label}</p>
-                    <p className={`text-xl font-bold mt-0.5 ${s.negative ? "text-red-600" : s.positive === false ? "text-red-500" : "text-text-primary"}`}>{s.value}</p>
+                    <p className={`text-xl font-bold mt-0.5 ${s.negative ? "text-danger-fg" : s.positive === false ? "text-danger-fg" : "text-text-primary"}`}>{s.value}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -139,9 +139,9 @@ export default function FinancialIntelligencePage() {
                       {cashFlow.slice(-12).map((cf, i) => (
                         <tr key={i} className="border-b border-surface-100 hover:bg-surface-50">
                           <td className="py-1.5 px-2 text-xs font-medium text-text-primary">{cf.month}</td>
-                          <td className="py-1.5 px-2 text-xs text-green-600">${(cf.revenue ?? 0).toLocaleString()}</td>
-                          <td className="py-1.5 px-2 text-xs text-red-500">${(cf.expenses ?? 0).toLocaleString()}</td>
-                          <td className={`py-1.5 px-2 text-xs font-semibold ${(cf.netCashFlow ?? 0) >= 0 ? "text-green-600" : "text-red-500"}`}>
+                          <td className="py-1.5 px-2 text-xs text-success-fg">${(cf.revenue ?? 0).toLocaleString()}</td>
+                          <td className="py-1.5 px-2 text-xs text-danger-fg">${(cf.expenses ?? 0).toLocaleString()}</td>
+                          <td className={`py-1.5 px-2 text-xs font-semibold ${(cf.netCashFlow ?? 0) >= 0 ? "text-success-fg" : "text-danger-fg"}`}>
                             {(cf.netCashFlow ?? 0) >= 0 ? "+" : ""}${(cf.netCashFlow ?? 0).toLocaleString()}
                           </td>
                         </tr>

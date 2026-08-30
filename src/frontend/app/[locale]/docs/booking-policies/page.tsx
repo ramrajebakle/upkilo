@@ -177,7 +177,7 @@ export default function BookingPoliciesGuidePage() {
           </p>
           <FieldTable rows={REFUND_TIERS} showUnit />
           <div className="mt-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" aria-hidden="true" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning-fg" aria-hidden="true" />
             <p className="text-sm text-amber-900 dark:text-amber-200">
               Deposits and no-show fees are charged to your clients through your own connected
               payment account, in your own currency. That is separate from your Upkilo

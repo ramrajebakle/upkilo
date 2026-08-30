@@ -365,7 +365,7 @@ const FAQ_JSON_LD = {
 export default async function HomePage() {
   const livePrices = await fetchPlans();
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-card text-foreground">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(ORGANIZATION_JSON_LD) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(SOFTWARE_JSON_LD) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_JSON_LD) }} />
@@ -438,10 +438,10 @@ export default async function HomePage() {
           </Reveal>
 
           <Reveal delay={0.32}>
-            <p className="mt-6 text-sm text-slate-400">
+            <p className="mt-6 text-sm text-foreground-muted">
               No credit card · Cancel anytime · Setup in under 10 minutes
             </p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-foreground-muted">
               Your data stays yours — export your clients and bookings at any time, including if you leave.
             </p>
           </Reveal>
@@ -461,17 +461,17 @@ export default async function HomePage() {
       </section>
 
       {/* ───────────────────────── TRUSTED BY / INTEGRATIONS ───────────────────────── */}
-      <section className="border-b border-slate-100 bg-white py-14" aria-label="Integrations">
+      <section className="border-b border-border-subtle bg-card py-14" aria-label="Integrations">
         <div className="mx-auto max-w-6xl px-4">
           <Reveal>
-            <p className="text-center text-sm font-medium uppercase tracking-widest text-slate-400">
+            <p className="text-center text-sm font-medium uppercase tracking-widest text-foreground-muted">
               Works with the tools you already use
             </p>
           </Reveal>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
             {INTEGRATIONS.map((name, i) => (
               <Reveal key={name} delay={i * 0.05} y={10}>
-                <span className="text-lg font-semibold text-slate-400 transition-colors hover:text-slate-700">
+                <span className="text-lg font-semibold text-foreground-muted transition-colors hover:text-foreground">
                   {name}
                 </span>
               </Reveal>
@@ -481,17 +481,17 @@ export default async function HomePage() {
       </section>
 
       {/* ───────────────────────── GUARANTEES STRIP ───────────────────────── */}
-      <section className="bg-slate-50 py-16">
+      <section className="bg-muted py-16">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {GUARANTEES.map((g, i) => (
               <Reveal key={g.label} delay={i * 0.08}>
                 <div className="flex flex-col items-center text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
-                    <g.icon className="h-6 w-6 text-primary-600" aria-hidden="true" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-card shadow-sm ring-1 ring-border">
+                    <g.icon className="h-6 w-6 text-primary" aria-hidden="true" />
                   </div>
-                  <p className="mt-3 text-base font-bold text-slate-900">{g.label}</p>
-                  <p className="mt-1 text-sm text-slate-500">{g.sub}</p>
+                  <p className="mt-3 text-base font-bold text-foreground">{g.label}</p>
+                  <p className="mt-1 text-sm text-foreground-secondary">{g.sub}</p>
                 </div>
               </Reveal>
             ))}
@@ -500,17 +500,17 @@ export default async function HomePage() {
       </section>
 
       {/* ───────────────────────── FEATURES ───────────────────────── */}
-      <section id="features" className="scroll-mt-20 bg-white py-24">
+      <section id="features" className="scroll-mt-20 bg-card py-24">
         <div className="mx-auto max-w-7xl px-4">
           <Reveal>
             <div className="mx-auto mb-16 max-w-2xl text-center">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-600">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-subtle px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Features
               </span>
-              <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 Everything you need to scale
               </h2>
-              <p className="mt-4 text-lg text-slate-600">
+              <p className="mt-4 text-lg text-foreground-secondary">
                 One platform for bookings, clients, payments, and marketing. No more juggling five different tools.
               </p>
             </div>
@@ -519,12 +519,12 @@ export default async function HomePage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((feature, i) => (
               <Reveal key={feature.title} delay={(i % 3) * 0.08}>
-                <div className="group h-full rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5">
+                <div className="group h-full rounded-2xl border border-border bg-card p-7 transition-all hover:-translate-y-1 hover:border-primary/25 hover:shadow-xl hover:shadow-primary-500/5">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25 transition-transform group-hover:scale-110">
                     <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
                   </div>
-                  <h3 className="mt-5 text-lg font-semibold text-slate-900">{feature.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">{feature.description}</p>
+                  <h3 className="mt-5 text-lg font-semibold text-foreground">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground-secondary">{feature.description}</p>
                 </div>
               </Reveal>
             ))}
@@ -533,17 +533,17 @@ export default async function HomePage() {
       </section>
 
       {/* ───────────────────────── HOW IT WORKS ───────────────────────── */}
-      <section id="how" className="scroll-mt-20 bg-slate-50 py-24">
+      <section id="how" className="scroll-mt-20 bg-muted py-24">
         <div className="mx-auto max-w-6xl px-4">
           <Reveal>
             <div className="mx-auto mb-16 max-w-2xl text-center">
-              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-600">
+              <span className="rounded-full bg-brand-subtle px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
                 How it works
               </span>
-              <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 Up and running in minutes
               </h2>
-              <p className="mt-4 text-lg text-slate-600">
+              <p className="mt-4 text-lg text-foreground-secondary">
                 From sign-up to your first booking — no technical skills required.
               </p>
             </div>
@@ -560,14 +560,14 @@ export default async function HomePage() {
                       aria-hidden="true"
                     />
                   )}
-                  <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-primary-100 bg-white shadow-md">
-                    <step.icon className="h-7 w-7 text-primary-600" aria-hidden="true" />
+                  <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/25 bg-card shadow-md">
+                    <step.icon className="h-7 w-7 text-primary" aria-hidden="true" />
                     <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white">
                       {i + 1}
                     </span>
                   </div>
-                  <h3 className="mt-5 text-base font-semibold text-slate-900">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.description}</p>
+                  <h3 className="mt-5 text-base font-semibold text-foreground">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground-secondary">{step.description}</p>
                 </div>
               </Reveal>
             ))}
@@ -576,25 +576,25 @@ export default async function HomePage() {
       </section>
 
       {/* ───────────────────────── BUILT FOR ───────────────────────── */}
-      <section id="industries" className="scroll-mt-20 bg-white py-24">
+      <section id="industries" className="scroll-mt-20 bg-card py-24">
         <div className="mx-auto max-w-6xl px-4">
           <Reveal>
             <div className="mb-16 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 Built for every service business
               </h2>
-              <p className="mt-4 text-lg text-slate-600">Whatever you book, Upkilo adapts to how you work.</p>
+              <p className="mt-4 text-lg text-foreground-secondary">Whatever you book, Upkilo adapts to how you work.</p>
             </div>
           </Reveal>
 
           <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
             {INDUSTRIES.map((ind, i) => (
               <Reveal key={ind.label} delay={i * 0.08}>
-                <div className="group flex h-full flex-col items-center rounded-2xl border border-slate-200 bg-white p-8 text-center transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5">
+                <div className="group flex h-full flex-col items-center rounded-2xl border border-border bg-card p-8 text-center transition-all hover:-translate-y-1 hover:border-primary/25 hover:shadow-xl hover:shadow-primary-500/5">
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25 transition-transform group-hover:scale-110">
                     <ind.icon className="h-7 w-7 text-white" aria-hidden="true" />
                   </div>
-                  <p className="mt-5 text-base font-semibold text-slate-900">{ind.label}</p>
+                  <p className="mt-5 text-base font-semibold text-foreground">{ind.label}</p>
                 </div>
               </Reveal>
             ))}
@@ -603,25 +603,25 @@ export default async function HomePage() {
       </section>
 
       {/* ───────────────────────── SECURITY / TRUST ───────────────────────── */}
-      <section className="bg-slate-50 py-20">
+      <section className="bg-muted py-20">
         <div className="mx-auto max-w-6xl px-4">
           <Reveal>
             <div className="mb-12 text-center">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                 Security &amp; privacy, built in
               </h2>
-              <p className="mt-3 text-slate-600">Your data — and your clients’ data — is protected by design.</p>
+              <p className="mt-3 text-foreground-secondary">Your data — and your clients’ data — is protected by design.</p>
             </div>
           </Reveal>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {SECURITY.map((item, i) => (
               <Reveal key={item.label} delay={i * 0.08}>
-                <div className="flex h-full flex-col items-center rounded-2xl border border-slate-200 bg-white p-6 text-center transition-all hover:border-emerald-200 hover:shadow-lg">
+                <div className="flex h-full flex-col items-center rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-emerald-200 hover:shadow-lg">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50">
-                    <item.icon className="h-6 w-6 text-emerald-600" aria-hidden="true" />
+                    <item.icon className="h-6 w-6 text-success-fg" aria-hidden="true" />
                   </div>
-                  <p className="mt-4 text-sm font-bold text-slate-900">{item.label}</p>
-                  <p className="mt-1 text-xs text-slate-500">{item.sub}</p>
+                  <p className="mt-4 text-sm font-bold text-foreground">{item.label}</p>
+                  <p className="mt-1 text-xs text-foreground-secondary">{item.sub}</p>
                 </div>
               </Reveal>
             ))}
@@ -632,13 +632,13 @@ export default async function HomePage() {
               full, so linking them turns the claims above into something the
               reader can verify before signing up. */}
           <Reveal delay={0.3}>
-            <p className="mt-10 text-center text-sm text-slate-500">
+            <p className="mt-10 text-center text-sm text-foreground-secondary">
               Read the{' '}
-              <Link href="/privacy-policy" className="font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700">
+              <Link href="/privacy-policy" className="font-medium text-primary underline underline-offset-2 hover:text-primary">
                 Privacy Policy
               </Link>{' '}
               and{' '}
-              <Link href="/cookie-policy" className="font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700">
+              <Link href="/cookie-policy" className="font-medium text-primary underline underline-offset-2 hover:text-primary">
                 Cookie Policy
               </Link>{' '}
               before you sign up — not after.
@@ -648,14 +648,14 @@ export default async function HomePage() {
       </section>
 
       {/* ───────────────────────── PRICING ───────────────────────── */}
-      <section id="pricing" className="scroll-mt-20 bg-white py-24">
+      <section id="pricing" className="scroll-mt-20 bg-card py-24">
         <div className="mx-auto max-w-6xl px-4">
           <Reveal>
             <div className="mb-16 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 Simple, transparent pricing
               </h2>
-              <p className="mt-4 text-lg text-slate-600">Start free. Scale as you grow. No hidden fees.</p>
+              <p className="mt-4 text-lg text-foreground-secondary">Start free. Scale as you grow. No hidden fees.</p>
             </div>
           </Reveal>
 
@@ -666,7 +666,7 @@ export default async function HomePage() {
                   className={`relative flex h-full flex-col rounded-2xl p-7 transition-all ${
                     plan.highlight
                       ? 'border-2 border-primary-500 bg-slate-950 text-white shadow-2xl shadow-primary-500/20 md:-translate-y-3'
-                      : 'border border-slate-200 bg-white hover:-translate-y-1 hover:shadow-xl hover:shadow-primary-500/5'
+                      : 'border border-border bg-card hover:-translate-y-1 hover:shadow-xl hover:shadow-primary-500/5'
                   }`}
                 >
                   {plan.highlight && (
@@ -674,17 +674,17 @@ export default async function HomePage() {
                       Most Popular
                     </span>
                   )}
-                  <h3 className={`text-xl font-bold ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>
+                  <h3 className={`text-xl font-bold ${plan.highlight ? 'text-white' : 'text-foreground'}`}>
                     {plan.name}
                   </h3>
-                  <p className={`mt-1 text-sm ${plan.highlight ? 'text-slate-300' : 'text-slate-500'}`}>
+                  <p className={`mt-1 text-sm ${plan.highlight ? 'text-slate-300' : 'text-foreground-secondary'}`}>
                     {plan.description}
                   </p>
                   <div className="mt-6 flex items-baseline gap-1">
-                    <span className={`text-4xl font-bold ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>
+                    <span className={`text-4xl font-bold ${plan.highlight ? 'text-white' : 'text-foreground'}`}>
                       {livePrices[plan.planKey] ?? 'Contact us'}
                     </span>
-                    <span className={`text-sm ${plan.highlight ? 'text-slate-400' : 'text-slate-500'}`}>
+                    <span className={`text-sm ${plan.highlight ? 'text-foreground-muted' : 'text-foreground-secondary'}`}>
                       {livePrices[plan.planKey] ? '/mo' : ''}
                     </span>
                   </div>
@@ -692,10 +692,10 @@ export default async function HomePage() {
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-center gap-2.5 text-sm">
                         <CheckCircle2
-                          className={`h-4 w-4 flex-shrink-0 ${plan.highlight ? 'text-primary-400' : 'text-primary-600'}`}
+                          className={`h-4 w-4 flex-shrink-0 ${plan.highlight ? 'text-primary-400' : 'text-primary'}`}
                           aria-hidden="true"
                         />
-                        <span className={plan.highlight ? 'text-slate-200' : 'text-slate-700'}>{f}</span>
+                        <span className={plan.highlight ? 'text-slate-200' : 'text-foreground'}>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -713,21 +713,21 @@ export default async function HomePage() {
               </Reveal>
             ))}
           </div>
-          <p className="mt-8 text-center text-sm text-slate-500">
+          <p className="mt-8 text-center text-sm text-foreground-secondary">
             All prices in USD, excluding applicable taxes. 14-day free trial — no credit card required.
           </p>
         </div>
       </section>
 
       {/* ───────────────────────── FAQ ───────────────────────── */}
-      <section id="faq" className="scroll-mt-20 bg-slate-50 py-24">
+      <section id="faq" className="scroll-mt-20 bg-muted py-24">
         <div className="mx-auto max-w-3xl px-4">
           <Reveal>
             <div className="mb-12 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 Frequently asked questions
               </h2>
-              <p className="mt-4 text-slate-600">Everything you need to know before getting started.</p>
+              <p className="mt-4 text-foreground-secondary">Everything you need to know before getting started.</p>
             </div>
           </Reveal>
           <Reveal delay={0.1}>
@@ -769,7 +769,7 @@ export default async function HomePage() {
                 >
                   <c.icon className="h-6 w-6 text-primary-300" aria-hidden="true" />
                   <p className="mt-3 text-sm font-semibold text-white">{c.label}</p>
-                  <p className="mt-1 text-xs text-slate-400">{c.value}</p>
+                  <p className="mt-1 text-xs text-foreground-muted">{c.value}</p>
                 </a>
               ))}
             </div>

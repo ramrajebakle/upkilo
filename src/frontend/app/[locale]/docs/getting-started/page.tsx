@@ -174,7 +174,7 @@ export default function GettingStartedGuidePage() {
                     <step.icon className="h-5 w-5 text-primary-600" aria-hidden="true" />
                     {step.label}
                   </h2>
-                  <p className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-500">{step.where}</p>
+                  <p className="mt-1 text-sm font-medium text-foreground-secondary">{step.where}</p>
                   <p className="mt-2 leading-relaxed text-slate-700 dark:text-slate-300">{step.detail}</p>
                 </div>
               </div>

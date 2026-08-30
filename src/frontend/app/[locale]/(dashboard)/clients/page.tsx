@@ -160,7 +160,7 @@ export default function ClientsPage() {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                 <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                     <input
                         type="text"
                         placeholder="Search by name, email, or phone..."
@@ -294,7 +294,7 @@ export default function ClientsPage() {
                                                                         <span key={tag} className="px-1.5 py-0.5 text-[10px] font-bold bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 rounded-md border border-primary-100 dark:border-primary-800">{tag}</span>
                                                                     ))}
                                                                     {client.tags.length > 2 && (
-                                                                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-slate-100 text-slate-500 rounded-full">+{client.tags.length - 2}</span>
+                                                                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-muted text-foreground-secondary rounded-full">+{client.tags.length - 2}</span>
                                                                     )}
                                                                 </div>
                                                             )}
@@ -303,7 +303,7 @@ export default function ClientsPage() {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{client.email}</div>
-                                                    <div className="text-xs text-slate-500 dark:text-slate-500">{client.phone}</div>
+                                                    <div className="text-xs text-foreground-secondary">{client.phone}</div>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className={cn(
@@ -329,7 +329,7 @@ export default function ClientsPage() {
                                                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <Link
                                                             href={`/clients/${client.id}`}
-                                                            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-primary-600"
+                                                            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-foreground-muted hover:text-primary-600"
                                                             title="View"
                                                         >
                                                             <ChevronRight className="h-4 w-4" />
@@ -338,11 +338,11 @@ export default function ClientsPage() {
                                                             <Mail className="h-4 w-4 text-blue-500" />
                                                         </button>
                                                         <button className="p-1.5 hover:bg-emerald-50 rounded-lg transition-colors" title="Call">
-                                                            <Phone className="h-4 w-4 text-emerald-500" />
+                                                            <Phone className="h-4 w-4 text-success-fg" />
                                                         </button>
                                                         <button
                                                             onClick={() => confirmDelete(client)}
-                                                            className="p-1.5 hover:bg-red-50 hover:text-red-500 rounded-lg transition-colors text-slate-400"
+                                                            className="p-1.5 hover:bg-red-50 hover:text-red-500 rounded-lg transition-colors text-foreground-muted"
                                                             title="Delete"
                                                         >
                                                             <Trash2 className="h-4 w-4" />

@@ -81,7 +81,7 @@ export default function IntelligencePage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Business Intelligence <Brain className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Business Intelligence <Brain className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">AI-powered demand forecasting, price optimization, and competitive analysis.</p>
         </div>
         <Button variant="outline" leftIcon={<RefreshCw size={14} />} onClick={() => loadTab(tab)} disabled={loading}>Refresh</Button>
@@ -90,7 +90,7 @@ export default function IntelligencePage() {
       <div className="flex flex-wrap gap-1 p-1 bg-surface-100 rounded-xl">
         {TABS.map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
             {t.icon}{t.label}
           </button>
         ))}
@@ -113,7 +113,7 @@ export default function IntelligencePage() {
                       {demand.map((d, i) => (
                         <tr key={i} className="border-b border-surface-100 hover:bg-surface-50">
                           <td className="py-2 px-3 text-xs text-text-primary">{new Date(d.date).toLocaleDateString()}</td>
-                          <td className="py-2 px-3 font-semibold text-ai-600">{d.predictedDemand} bookings</td>
+                          <td className="py-2 px-3 font-semibold text-ai">{d.predictedDemand} bookings</td>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-2">
                               <div className="w-20 h-1.5 bg-surface-200 rounded-full overflow-hidden">
@@ -143,12 +143,12 @@ export default function IntelligencePage() {
                         <p className="font-semibold text-text-primary">{p.serviceName}</p>
                         <div className="flex items-center gap-3 mt-1 text-sm">
                           <span className="text-text-tertiary">Current: <span className="font-medium text-text-primary">${p.currentPrice}</span></span>
-                          <span className="text-ai-600 font-semibold">→ Recommended: ${p.recommendedPrice}</span>
+                          <span className="text-ai font-semibold">→ Recommended: ${p.recommendedPrice}</span>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-text-tertiary">Revenue Impact</p>
-                        <p className="text-lg font-bold text-green-600">+${p.expectedRevenueIncrease?.toLocaleString()}</p>
+                        <p className="text-lg font-bold text-success-fg">+${p.expectedRevenueIncrease?.toLocaleString()}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -176,7 +176,7 @@ export default function IntelligencePage() {
                           <div className="w-16 h-1.5 bg-surface-200 rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{ width: `${n.riskScore}%`, backgroundColor: n.riskScore > 70 ? "#ef4444" : n.riskScore > 40 ? "#f59e0b" : "#22c55e" }} />
                           </div>
-                          <span className={`text-xs font-bold ${n.riskScore > 70 ? "text-red-600" : n.riskScore > 40 ? "text-amber-600" : "text-green-600"}`}>{n.riskScore}%</span>
+                          <span className={`text-xs font-bold ${n.riskScore > 70 ? "text-danger-fg" : n.riskScore > 40 ? "text-warning-fg" : "text-success-fg"}`}>{n.riskScore}%</span>
                         </div>
                       </div>
                     ))}
@@ -195,11 +195,11 @@ export default function IntelligencePage() {
                   <CardHeader><CardTitle className="text-base">{c.competitor}</CardTitle><CardDescription>Updated {new Date(c.updatedAt).toLocaleDateString()}</CardDescription></CardHeader>
                   <CardContent className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs font-semibold text-green-600 uppercase mb-2">Strengths</p>
+                      <p className="text-xs font-semibold text-success-fg uppercase mb-2">Strengths</p>
                       <ul className="space-y-1">{c.strengths?.map((s, j) => <li key={j} className="text-xs text-text-secondary">• {s}</li>)}</ul>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-red-500 uppercase mb-2">Weaknesses</p>
+                      <p className="text-xs font-semibold text-danger-fg uppercase mb-2">Weaknesses</p>
                       <ul className="space-y-1">{c.weaknesses?.map((w, j) => <li key={j} className="text-xs text-text-secondary">• {w}</li>)}</ul>
                     </div>
                   </CardContent>
@@ -225,7 +225,7 @@ export default function IntelligencePage() {
                         return (
                           <tr key={i} className="border-b border-surface-100 hover:bg-surface-50">
                             <td className="py-2 px-3 text-xs font-medium text-text-primary">{b.metric}</td>
-                            <td className={`py-2 px-3 text-xs font-bold ${aboveAvg ? "text-green-600" : "text-red-500"}`}>{b.yourValue}</td>
+                            <td className={`py-2 px-3 text-xs font-bold ${aboveAvg ? "text-success-fg" : "text-danger-fg"}`}>{b.yourValue}</td>
                             <td className="py-2 px-3 text-xs text-text-secondary">{b.industryAvg}</td>
                             <td className="py-2 px-3 text-xs text-text-tertiary">{b.topQuartile}</td>
                           </tr>
@@ -253,7 +253,7 @@ export default function IntelligencePage() {
                       {projections.map((p, i) => (
                         <tr key={i} className="border-b border-surface-100 hover:bg-surface-50">
                           <td className="py-2 px-3 text-xs font-medium text-text-primary">{p.month}</td>
-                          <td className="py-2 px-3 text-xs font-semibold text-green-600">${p.revenue?.toLocaleString()}</td>
+                          <td className="py-2 px-3 text-xs font-semibold text-success-fg">${p.revenue?.toLocaleString()}</td>
                           <td className="py-2 px-3 text-xs text-text-secondary">{p.bookings}</td>
                           <td className="py-2 px-3 text-xs text-text-secondary">{p.clients}</td>
                         </tr>

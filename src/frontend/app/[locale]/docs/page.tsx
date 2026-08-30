@@ -80,7 +80,7 @@ const BREADCRUMB_JSON_LD = breadcrumbJsonLd([HOME_CRUMB, { name: 'Docs', path: '
 
 export default function DocsIndexPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-card">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(DOCS_JSON_LD) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
       <section className="mx-auto max-w-3xl px-4 py-20">
@@ -88,10 +88,10 @@ export default function DocsIndexPage() {
           {/* No eyebrow pill above the heading. A "Documentation" label sitting above a
               heading that already reads "Upkilo documentation" restates it in smaller type —
               the heading carries its own weight. */}
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
             Upkilo documentation
           </h1>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-4 text-lg text-foreground-secondary">
             Setup guides and reference for running your business on Upkilo. More guides are
             being added — if something you need is missing, the in-app help can point you at it.
           </p>
@@ -102,20 +102,20 @@ export default function DocsIndexPage() {
             <li key={href}>
               <Link
                 href={href}
-                className="group flex gap-4 rounded-2xl border border-slate-200 p-6 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+                className="group flex gap-4 rounded-2xl border border-border p-6 transition-colors hover:border-border-strong hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
               >
-                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
+                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <span className="min-w-0">
-                  <span className="flex items-center gap-2 font-semibold text-slate-900">
+                  <span className="flex items-center gap-2 font-semibold text-foreground">
                     {title}
                     <ArrowRight
-                      className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-0.5"
+                      className="h-4 w-4 text-foreground-muted transition-transform group-hover:translate-x-0.5"
                       aria-hidden="true"
                     />
                   </span>
-                  <span className="mt-1 block text-sm text-slate-600">{description}</span>
+                  <span className="mt-1 block text-sm text-foreground-secondary">{description}</span>
                 </span>
               </Link>
             </li>

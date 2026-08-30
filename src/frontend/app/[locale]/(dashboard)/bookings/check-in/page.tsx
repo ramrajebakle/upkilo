@@ -45,7 +45,7 @@ export default function CheckInPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Front Desk Check-In <CheckCircle2 className="text-green-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Front Desk Check-In <CheckCircle2 className="text-success-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">Today's appointments — mark clients as arrived.</p>
         </div>
         <div className="flex gap-2">
@@ -56,8 +56,8 @@ export default function CheckInPage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Today's Appointments", value: bookings.length, color: "text-text-primary" },
-          { label: "Awaiting Check-in", value: pending.length, color: "text-amber-500" },
-          { label: "Checked In", value: done.length, color: "text-green-600" },
+          { label: "Awaiting Check-in", value: pending.length, color: "text-warning-fg" },
+          { label: "Checked In", value: done.length, color: "text-success-fg" },
         ].map((s) => (
           <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>
         ))}
@@ -108,13 +108,13 @@ export default function CheckInPage() {
                   <Card key={b.id} className="border-green-200 bg-green-50/30">
                     <CardContent className="pt-3 pb-3 flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <CheckCircle2 className="h-4 w-4 text-success-fg" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-text-primary truncate">{b.clientName}</p>
                         <div className="flex items-center gap-3 mt-0.5">
                           <span className="text-xs text-text-secondary">{b.serviceName}</span>
-                          {b.checkedInAt && <span className="text-xs text-green-600">Arrived {new Date(b.checkedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>}
+                          {b.checkedInAt && <span className="text-xs text-success-fg">Arrived {new Date(b.checkedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>}
                         </div>
                       </div>
                       <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">Arrived</span>

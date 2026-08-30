@@ -11,7 +11,7 @@ interface ConsentRecord { id: string; clientId: string; clientName: string; cons
 
 const STATUS_CFG: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
   Given: { color: "text-green-600", bg: "bg-green-50", icon: <CheckCircle2 className="h-3 w-3" /> },
-  Revoked: { color: "text-red-500", bg: "bg-red-50", icon: <XCircle className="h-3 w-3" /> },
+  Revoked: { color: "text-danger-fg", bg: "bg-red-50", icon: <XCircle className="h-3 w-3" /> },
   Pending: { color: "text-amber-600", bg: "bg-amber-50", icon: <Clock className="h-3 w-3" /> },
 };
 
@@ -50,8 +50,8 @@ export default function ConsentPage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Total Records", value: records.length, color: "text-text-primary" },
-          { label: "Consented", value: records.filter((r) => r.status === "Given").length, color: "text-green-600" },
-          { label: "Revoked", value: records.filter((r) => r.status === "Revoked").length, color: "text-red-500" },
+          { label: "Consented", value: records.filter((r) => r.status === "Given").length, color: "text-success-fg" },
+          { label: "Revoked", value: records.filter((r) => r.status === "Revoked").length, color: "text-danger-fg" },
         ].map((s) => (
           <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>
         ))}
@@ -66,7 +66,7 @@ export default function ConsentPage() {
         <div className="flex gap-1 p-1 bg-surface-100 rounded-xl">
           {["All", "Given", "Revoked", "Pending"].map((f) => (
             <button key={f} onClick={() => setStatusFilter(f)}
-              className={cn("px-3 py-1.5 text-xs font-medium rounded-lg transition-colors", statusFilter === f ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
+              className={cn("px-3 py-1.5 text-xs font-medium rounded-lg transition-colors", statusFilter === f ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
               {f}
             </button>
           ))}

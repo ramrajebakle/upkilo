@@ -132,7 +132,7 @@ public class ClientsControllerTests : ControllerTestBase
         var eventService = MockFactory.CreateEventService();
         var loyaltyService = new Mock<ILoyaltyService>();
         var csvExportService = new Mock<ICsvExportService>();
-        _sut = new ClientsController(logger.Object, eventService.Object, Context, TenantProvider.Object, loyaltyService.Object, csvExportService.Object);
+        _sut = new ClientsController(logger.Object, eventService.Object, Context, TenantProvider.Object, loyaltyService.Object, csvExportService.Object, Upkilo.Tests.Helpers.MockFactory.CreateEntitlementService(Context));
         WithAuth(_sut);
     }
 
@@ -236,7 +236,7 @@ public class StaffControllerTests : ControllerTestBase
         var schedulingService = MockFactory.CreateSchedulingService();
         var cache = new MemoryCache(new MemoryCacheOptions());
         var eventService = MockFactory.CreateEventService();
-        _sut = new StaffController(logger.Object, Context, schedulingService.Object, TenantProvider.Object, cache, eventService.Object);
+        _sut = new StaffController(logger.Object, Context, schedulingService.Object, TenantProvider.Object, cache, eventService.Object, Upkilo.Tests.Helpers.MockFactory.CreateEntitlementService(Context));
         WithAuth(_sut);
     }
 

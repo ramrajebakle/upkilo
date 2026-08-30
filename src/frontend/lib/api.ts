@@ -763,6 +763,28 @@ export const api = {
     aiTenantUsage: (id: string, days?: number) => apiClient.get(`/api/v1/super-admin/ai/tenants/${id}`, { params: { days } }),
     securityOverview: (days?: number) => apiClient.get('/api/v1/super-admin/security/overview', { params: { days } }),
   },
+
+  /**
+   * Customer-specific entitlement overrides (SuperAdmin only).
+   *
+   * Note the route prefix: these live under /api/admin/entitlements, NOT /api/v1/... —
+   * EntitlementsAdminController is routed outside the versioned group, matching the other
+   * /api/admin/* controllers.
+   */
+  entitlementsAdmin: {
+    catalog: () => apiClient.get('/api/admin/entitlements/catalog'),
+    effective: (tenantId: string) => apiClient.get(`/api/admin/entitlements/${tenantId}`),
+    overrides: (tenantId: string) => apiClient.get(`/api/admin/entitlements/${tenantId}/overrides`),
+    upsertOverride: (
+      tenantId: string,
+      featureKey: string,
+      data: { isEnabled: boolean; numericLimit?: number | null; startsAt?: string | null; expiresAt?: string | null; reason?: string | null },
+    ) => apiClient.put(`/api/admin/entitlements/${tenantId}/overrides/${featureKey}`, data),
+    deleteOverride: (tenantId: string, featureKey: string) =>
+      apiClient.delete(`/api/admin/entitlements/${tenantId}/overrides/${featureKey}`),
+    unboundedGrants: () => apiClient.get('/api/admin/entitlements/audit/unbounded-grants'),
+    invalidateAllCaches: () => apiClient.post('/api/admin/entitlements/cache/invalidate-all'),
+  },
   
   // Performance & Commissions
   performance: {

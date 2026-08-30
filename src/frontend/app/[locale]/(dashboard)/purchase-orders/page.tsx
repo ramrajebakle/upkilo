@@ -20,7 +20,7 @@ interface PurchaseOrder {
 }
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: React.ComponentType<{ className?: string }> }> = {
-  Draft:     { color: "text-gray-600",   bg: "bg-gray-50",   icon: ClipboardList },
+  Draft:     { color: "text-foreground-secondary",   bg: "bg-muted",   icon: ClipboardList },
   Submitted: { color: "text-blue-600",   bg: "bg-blue-50",   icon: Send },
   Received:  { color: "text-green-600",  bg: "bg-green-50",  icon: PackageCheck },
   Cancelled: { color: "text-red-600",    bg: "bg-red-50",    icon: XCircle },
@@ -80,9 +80,9 @@ export default function PurchaseOrdersPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Draft", value: stats.draft, color: "text-gray-600" },
+          { label: "Draft", value: stats.draft, color: "text-foreground-secondary" },
           { label: "Submitted", value: stats.submitted, color: "text-blue-600" },
-          { label: "Received", value: stats.received, color: "text-green-600" },
+          { label: "Received", value: stats.received, color: "text-success-fg" },
           { label: "Total value", value: `$${stats.totalValue.toFixed(0)}`, color: "text-text-primary" },
         ].map((s) => (
           <Card key={s.label}>
@@ -126,7 +126,7 @@ export default function PurchaseOrdersPage() {
                       const cfg = STATUS_CONFIG[o.status] ?? STATUS_CONFIG.Draft;
                       return (
                         <tr key={o.id} onClick={() => setSelected(selected?.id === o.id ? null : o)}
-                          className={cn("border-b border-surface-100 hover:bg-surface-50 transition-colors cursor-pointer", selected?.id === o.id && "bg-ai-50")}>
+                          className={cn("border-b border-surface-100 hover:bg-surface-50 transition-colors cursor-pointer", selected?.id === o.id && "bg-ai-subtle")}>
                           <td className="py-3 px-3 font-mono text-xs text-text-primary">#{o.id.slice(-8).toUpperCase()}</td>
                           <td className="py-3 px-3 font-medium text-text-primary">{o.supplierName ?? "—"}</td>
                           <td className="py-3 px-3 text-xs text-text-secondary">{new Date(o.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })}</td>
@@ -183,12 +183,12 @@ export default function PurchaseOrdersPage() {
                     onClick={() => doAction(selected.id, "submit")} disabled={!!actionLoading}>Submit Order</Button>
                 )}
                 {selected.status === "Submitted" && (
-                  <Button variant="primary" size="sm" className="w-full bg-green-600 hover:bg-green-700"
+                  <Button variant="primary" size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white"
                     leftIcon={actionLoading === selected.id + "receive" ? <Loader2 size={13} className="animate-spin" /> : <PackageCheck size={13} />}
                     onClick={() => doAction(selected.id, "receive")} disabled={!!actionLoading}>Mark Received</Button>
                 )}
                 {(selected.status === "Draft" || selected.status === "Submitted") && (
-                  <Button variant="outline" size="sm" className="w-full text-red-500 border-red-200 hover:bg-red-50"
+                  <Button variant="outline" size="sm" className="w-full text-danger-fg border-red-200 hover:bg-red-50"
                     leftIcon={actionLoading === selected.id + "cancel" ? <Loader2 size={13} className="animate-spin" /> : <XCircle size={13} />}
                     onClick={() => doAction(selected.id, "cancel")} disabled={!!actionLoading}>Cancel</Button>
                 )}

@@ -2,11 +2,18 @@
 
 import React from 'react';
 import { useSubscription } from '@/hooks/useSubscription';
+import type { FeatureKey } from '@/lib/featureKeys';
 import { Lock } from 'lucide-react';
 import Link from 'next/link';
 
 interface FeatureGateProps {
-  featureName: string;
+  /**
+   * Typed against the catalogue rather than `string`. Every call site here once passed an
+   * invented PascalCase name that existed nowhere in the API payload, so the lookup silently
+   * missed and the gate showed "Upgrade your plan" to customers who had already paid. A union
+   * type makes that a compile error instead of a rendered lie.
+   */
+  featureName: FeatureKey;
   children: React.ReactNode;
   fallback?: React.ReactNode;
   title?: string;

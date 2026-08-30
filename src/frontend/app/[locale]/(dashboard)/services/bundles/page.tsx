@@ -128,8 +128,8 @@ export default function ServiceBundlesPage() {
                   </div>
                   {b.description && <p className="text-sm text-text-secondary mb-3">{b.description}</p>}
                   <div className="flex items-center gap-2 mb-3">
-                    <DollarSign className="h-4 w-4 text-green-500" />
-                    <span className="text-lg font-bold text-green-600">${b.price}</span>
+                    <DollarSign className="h-4 w-4 text-success-fg" />
+                    <span className="text-lg font-bold text-success-fg">${b.price}</span>
                     {b.discountPercent && <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{b.discountPercent}% off</span>}
                   </div>
                   <div className="flex flex-wrap gap-1.5">

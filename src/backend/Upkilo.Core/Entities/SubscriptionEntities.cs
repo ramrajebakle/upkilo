@@ -1,7 +1,25 @@
 namespace Upkilo.Core.Entities;
 
 /// <summary>
-/// Feature privileges and limits for a subscription plan
+/// Feature privileges and limits for a subscription plan.
+///
+/// NOT THE ENTITLEMENT SOURCE. Do not gate anything on the names in this class.
+///
+/// This type is a leftover from a static plan model that the dynamic PricingPlan /
+/// PricingFeature / PlanFeatureMapping tables replaced. Nothing populates it: its only
+/// reference is SubscriptionPlanDto.Features, on a DTO that is itself never constructed.
+///
+/// It is left here deliberately flagged rather than deleted because it is where the entitlement
+/// outage came from. The PascalCase property names below — AiFeatures, CustomBranding,
+/// WhiteLabelDomain, Webhooks, ApiAccess — read exactly like feature keys, so gates were written
+/// against them: [RequiresFeature("AiFeatures")], featureName="CustomBranding", and so on. None
+/// of those strings has ever existed in the PricingFeature catalogue, which stores snake_case
+/// keys ("ai_copilot", "white_label", "api_access"), so every one of those gates missed its
+/// lookup and denied the feature to every tenant on every plan, Enterprise included.
+///
+/// The real vocabulary is <see cref="FeatureKeys"/>, and it is the only thing
+/// IEntitlementService will resolve. EntitlementCatalogTests fails the build if a
+/// [RequiresFeature] ever names something outside it again.
 /// </summary>
 public class PlanFeatures
 {

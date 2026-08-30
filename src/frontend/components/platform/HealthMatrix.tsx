@@ -184,8 +184,8 @@ export const HealthMatrix: React.FC<HealthMatrixProps> = ({ tenants }) => {
       </Card>
       
       {/* AI Contextual Annotation */}
-      <div className="bg-ai-50 border border-ai-100 rounded-lg p-3 flex items-start gap-3">
-        <Sparkles className="text-ai-500 shrink-0 mt-0.5" size={16} />
+      <div className="bg-ai-subtle border border-ai-100 rounded-lg p-3 flex items-start gap-3">
+        <Sparkles className="text-ai shrink-0 mt-0.5" size={16} />
         <p className="text-sm text-text-secondary">
           <strong className="text-text-primary">Insight:</strong> 3 tenants in the bottom-left danger zone this week. 
           The top-right cluster grew 18% MoM. 

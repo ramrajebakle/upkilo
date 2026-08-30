@@ -53,7 +53,7 @@ export default function ZapierPage() {
           <Card className={info.isConnected ? "border-green-200" : "border-surface-200"}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                {info.isConnected ? <CheckCircle2 className="h-5 w-5 text-green-500" /> : <Zap className="h-5 w-5 text-amber-400" />}
+                {info.isConnected ? <CheckCircle2 className="h-5 w-5 text-success-fg" /> : <Zap className="h-5 w-5 text-amber-400" />}
                 Connection Status
               </CardTitle>
             </CardHeader>
@@ -67,7 +67,7 @@ export default function ZapierPage() {
                   <label className="block text-xs font-medium text-text-secondary mb-1">Your Zapier API Key</label>
                   <div className="flex gap-2">
                     <code className="flex-1 px-3 py-2 bg-slate-900 text-green-400 rounded-lg text-xs font-mono truncate">{info.apiKey}</code>
-                    <Button variant="outline" size="sm" leftIcon={copiedKey ? <Check size={13} className="text-green-500" /> : <Copy size={13} />}
+                    <Button variant="outline" size="sm" leftIcon={copiedKey ? <Check size={13} className="text-success-fg" /> : <Copy size={13} />}
                       onClick={() => copy(info.apiKey!, setCopiedKey)}>{copiedKey ? "Copied" : "Copy"}</Button>
                   </div>
                   <p className="text-xs text-text-tertiary mt-1.5">Use this key in the Upkilo Zapier app to authenticate your Zaps.</p>
@@ -86,7 +86,7 @@ export default function ZapierPage() {
                 <ul className="space-y-2">
                   {SUPPORTED_TRIGGERS.map((t) => (
                     <li key={t} className="flex items-center gap-2 text-sm text-text-secondary">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />{t}
+                      <CheckCircle2 className="h-3.5 w-3.5 text-success-fg flex-shrink-0" />{t}
                     </li>
                   ))}
                 </ul>
@@ -120,7 +120,7 @@ export default function ZapierPage() {
                     {info.zaps.map((z, i) => (
                       <tr key={i} className="border-b border-surface-100 hover:bg-surface-50">
                         <td className="py-2.5 px-3 font-medium text-text-primary">{z.name}</td>
-                        <td className="py-2.5 px-3"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${z.isEnabled ? "text-green-600 bg-green-50" : "text-gray-500 bg-gray-50"}`}>{z.isEnabled ? "Active" : "Paused"}</span></td>
+                        <td className="py-2.5 px-3"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${z.isEnabled ? "text-green-600 bg-green-50" : "text-foreground-secondary bg-muted"}`}>{z.isEnabled ? "Active" : "Paused"}</span></td>
                         <td className="py-2.5 px-3 text-xs text-text-secondary">{z.lastRun ? new Date(z.lastRun).toLocaleDateString() : "Never"}</td>
                       </tr>
                     ))}

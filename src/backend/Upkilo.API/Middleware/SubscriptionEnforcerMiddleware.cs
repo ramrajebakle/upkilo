@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
-using Microsoft.Extensions.Caching.Distributed;
 using Upkilo.Core.Interfaces;
 
 namespace Upkilo.API.Middleware;
@@ -24,41 +23,35 @@ public class SubscriptionEnforcerMiddleware
         HttpContext context,
         ISubscriptionService subscriptionService,
         ITenantProvider tenantProvider,
-        Microsoft.Extensions.Caching.Distributed.IDistributedCache cache)
+        IEntitlementService entitlements)
     {
         // Resolve tenant ID
         var tenantId = tenantProvider.GetTenantId();
 
         if (tenantId.HasValue)
         {
-            // Store tier for rate limiting / analytics, read from Redis first
-            var cacheKey = $"tenant_tier:{tenantId.Value}";
-            var cachedTier = await cache.GetStringAsync(cacheKey);
+            // Tier for rate limiting / analytics, derived from the same resolved entitlement
+            // snapshot the feature gates use.
+            //
+            // This replaces a separate tenant_tier: Redis entry with its own 15-minute TTL and
+            // its own invalidation path. Having two caches for one question is what let them
+            // disagree: a plan change dropped one and not the other, so a tenant could be gated
+            // as Growth and rate-limited as Free (or the reverse) for a quarter of an hour.
+            // One snapshot, one lifetime, one invalidation.
+            //
+            // PastDue now keeps its tier rather than collapsing to Free. The old check admitted
+            // only Active/Trialing, so a tenant inside the 14-day dunning grace kept feature
+            // access but was throttled to the free-tier rate limit — punishing a customer we
+            // are actively trying to retain.
+            var set = await entitlements.GetEffectiveEntitlementsAsync(tenantId.Value);
+            var planName = set.IsServiceEntitled ? set.PlanName : string.Empty;
 
-            Upkilo.Core.Entities.SubscriptionTier tier;
-
-            if (!string.IsNullOrEmpty(cachedTier) && Enum.TryParse(cachedTier, out tier))
-            {
-                context.Items["TenantTier"] = tier;
-            }
-            else
-            {
-                var subscription = await subscriptionService.GetSubscriptionAsync(tenantId.Value);
-                var isActiveOrTrialing = subscription?.Status is
-                    Upkilo.Core.Entities.SubscriptionStatus.Active or
-                    Upkilo.Core.Entities.SubscriptionStatus.Trialing;
-                var planName = isActiveOrTrialing ? (subscription?.PricingPlan?.Name ?? string.Empty) : string.Empty;
-                tier = Enum.TryParse<Upkilo.Core.Entities.SubscriptionTier>(planName, out var parsed)
-                    ? parsed
-                    : Upkilo.Core.Entities.SubscriptionTier.Free;
-
-                await cache.SetStringAsync(cacheKey, tier.ToString(), new Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15)
-                });
-
-                context.Items["TenantTier"] = tier;
-            }
+            // SubscriptionTierMap, not Enum.TryParse. The plan NAME and the tier NAME are not the
+            // same vocabulary: "Professional" is a legacy plan folded into Growth, and TryParse
+            // has no member by that name, so it failed and fell through to Free — throttling a
+            // customer on a legacy paid plan to the free-tier rate limit. The map knows the
+            // aliases; parsing the string does not.
+            context.Items["TenantTier"] = Upkilo.Core.Entities.SubscriptionTierMap.FromPlanName(planName);
         }
 
         // Skip for non-authenticated requests or non-API routes
@@ -80,7 +73,7 @@ public class SubscriptionEnforcerMiddleware
 
         if (featureAttribute != null)
         {
-            var hasAccess = await subscriptionService.CheckFeatureAccessAsync(tenantId.Value, featureAttribute.FeatureName);
+            var hasAccess = await entitlements.HasFeatureAsync(tenantId.Value, featureAttribute.FeatureName);
             if (!hasAccess)
             {
                 _logger.LogWarning("Access denied to feature {Feature} for tenant {TenantId}",

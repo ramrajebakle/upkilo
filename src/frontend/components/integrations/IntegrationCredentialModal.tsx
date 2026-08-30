@@ -96,7 +96,7 @@ export function IntegrationCredentialModal({ integration, isOpen, onClose, onSav
               {field.secret && (
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground-secondary"
                   onClick={() => toggleReveal(field.key)}
                   tabIndex={-1}
                 >

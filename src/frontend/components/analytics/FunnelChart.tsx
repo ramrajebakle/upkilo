@@ -22,14 +22,14 @@ export function FunnelChart() {
   const maxCount = STEPS[0].count;
 
   return (
-    <div className="space-y-6 p-6 bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50">
+    <div className="space-y-6 p-6 bg-card rounded-3xl border border-border-subtle shadow-xl shadow-gray-200/50">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <TrendingUp className="h-6 w-w text-emerald-500" />
+          <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <TrendingUp className="h-6 w-w text-success-fg" />
             Conversion Funnel
           </h3>
-          <p className="text-gray-500 text-sm mt-1">Analyzing drop-off rates across the booking journey.</p>
+          <p className="text-foreground-secondary text-sm mt-1">Analyzing drop-off rates across the booking journey.</p>
         </div>
         <div className="px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-700 font-bold text-lg">
           {( (STEPS[3].count / STEPS[0].count) * 100).toFixed(1)}% Conv.
@@ -63,13 +63,13 @@ export function FunnelChart() {
 
                 <div className="flex-1 space-y-1.5">
                   <div className="flex justify-between items-end">
-                    <span className="text-sm font-bold text-gray-700">{step.name}</span>
-                    <span className="text-sm font-mono font-medium text-gray-400">
+                    <span className="text-sm font-bold text-foreground">{step.name}</span>
+                    <span className="text-sm font-mono font-medium text-foreground-muted">
                       {step.count.toLocaleString()} <span className="text-[10px] uppercase">events</span>
                     </span>
                   </div>
                   
-                  <div className="h-3 w-full bg-gray-50 rounded-full overflow-hidden border border-gray-100/50">
+                  <div className="h-3 w-full bg-muted rounded-full overflow-hidden border border-gray-100/50">
                     <div 
                       className={cn("h-full rounded-full transition-all duration-1000 ease-out", step.color)}
                       style={{ width: `${percentage}%` }}
@@ -78,7 +78,7 @@ export function FunnelChart() {
                 </div>
 
                 <div className="w-12 text-right">
-                  <div className="text-xs font-bold text-gray-400">{percentage.toFixed(0)}%</div>
+                  <div className="text-xs font-bold text-foreground-muted">{percentage.toFixed(0)}%</div>
                 </div>
               </div>
             </div>
@@ -86,7 +86,7 @@ export function FunnelChart() {
         })}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-center gap-2 text-primary-600 font-bold text-sm cursor-pointer hover:underline group">
+      <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-center gap-2 text-primary font-bold text-sm cursor-pointer hover:underline group">
         View Detailed Attribution
         <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
       </div>

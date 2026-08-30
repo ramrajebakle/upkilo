@@ -110,36 +110,36 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 animate-fade-in">
             {/* Basic Information Section */}
             <div className="card p-6 md:p-8 space-y-6">
-                <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600">
+                <div className="flex items-center gap-3 border-b border-border-subtle pb-4">
+                    <div className="w-10 h-10 rounded-xl bg-brand-subtle flex items-center justify-center text-primary">
                         <Info className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-semibold text-slate-900">Basic Information</h3>
-                        <p className="text-sm text-slate-500">How your service appears to clients</p>
+                        <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+                        <p className="text-sm text-foreground-secondary">How your service appears to clients</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 ml-1">Service Name</label>
+                        <label className="text-sm font-medium text-foreground ml-1">Service Name</label>
                         <input
                             {...register('name')}
                             className={cn("input", errors.name && "border-red-500")}
                             placeholder="e.g. Initial Consultation"
                         />
-                        {errors.name && <p className="text-xs text-red-500 ml-1">{errors.name.message}</p>}
+                        {errors.name && <p className="text-xs text-danger-fg ml-1">{errors.name.message}</p>}
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 ml-1">Service Color</label>
+                        <label className="text-sm font-medium text-foreground ml-1">Service Color</label>
                         <div className="flex gap-3">
                             <input
                                 {...register('color')}
                                 type="color"
                                 className="h-10 w-20 rounded-lg cursor-pointer bg-transparent"
                             />
-                            <div className="flex-1 flex items-center gap-2 px-3 border border-slate-200 rounded-lg text-sm text-slate-500 bg-slate-50">
+                            <div className="flex-1 flex items-center gap-2 px-3 border border-border rounded-lg text-sm text-foreground-secondary bg-muted">
                                 <Palette className="w-4 h-4" />
                                 {watch('color')}
                             </div>
@@ -147,7 +147,7 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                     </div>
 
                     <div className="md:col-span-2 space-y-2">
-                        <label className="text-sm font-medium text-slate-700 ml-1">Description</label>
+                        <label className="text-sm font-medium text-foreground ml-1">Description</label>
                         <textarea
                             {...register('description')}
                             className="input min-h-[100px] py-3"
@@ -160,25 +160,25 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
             {/* Pricing & Duration Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="card p-6 md:p-8 space-y-6">
-                    <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div className="flex items-center gap-3 border-b border-border-subtle pb-4">
                         <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
                             <DollarSign className="w-5 h-5" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-slate-900">Pricing</h3>
-                            <p className="text-sm text-slate-500">Set your service rates</p>
+                            <h3 className="text-lg font-semibold text-foreground">Pricing</h3>
+                            <p className="text-sm text-foreground-secondary">Set your service rates</p>
                         </div>
                     </div>
 
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700 ml-1">Price</label>
+                                <label className="text-sm font-medium text-foreground ml-1">Price</label>
                                 <div className="relative">
                                     {/* Symbol and step follow the selected currency. Both were
                                         hardcoded to dollars, so a tenant pricing in yen saw "$"
                                         beside the field and could enter fractional yen. */}
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted">
                                         {currencySymbol(selectedCurrency)}
                                     </div>
                                     <input
@@ -189,10 +189,10 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                         placeholder={selectedDecimals === 0 ? '0' : '0.00'}
                                     />
                                 </div>
-                                {errors.price && <p className="text-xs text-red-500 ml-1">{errors.price.message}</p>}
+                                {errors.price && <p className="text-xs text-danger-fg ml-1">{errors.price.message}</p>}
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700 ml-1">Currency</label>
+                                <label className="text-sm font-medium text-foreground ml-1">Currency</label>
                                 {/* Read-only, and deliberately so. Currency is a property of the
                                     Stripe account the business settles through — the account's
                                     country fixes it — so offering a choice here only lets a tenant
@@ -200,14 +200,14 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                     kept prices within a business in a single currency, which the
                                     revenue totals depend on. */}
                                 <div
-                                    className="input bg-slate-50 text-slate-600 flex items-center justify-between cursor-not-allowed"
+                                    className="input bg-muted text-foreground-secondary flex items-center justify-between cursor-not-allowed"
                                     aria-readonly="true"
                                 >
                                     <span>{selectedCurrency} ({currencySymbol(selectedCurrency)})</span>
-                                    <span className="text-xs text-slate-400">from Stripe</span>
+                                    <span className="text-xs text-foreground-muted">from Stripe</span>
                                 </div>
                                 <input type="hidden" {...register('currency')} />
-                                <p className="text-xs text-slate-500 ml-1">
+                                <p className="text-xs text-foreground-secondary ml-1">
                                     Set by your connected Stripe account.
                                 </p>
                             </div>
@@ -218,9 +218,9 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                 <input
                                     type="checkbox"
                                     {...register('requiresPayment')}
-                                    className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                                    className="w-5 h-5 rounded border-border-strong text-primary focus:ring-primary-500"
                                 />
-                                <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
+                                <span className="text-sm font-medium text-foreground group-hover:text-foreground transition-colors">
                                     Requires payment at booking
                                 </span>
                             </label>
@@ -228,9 +228,9 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                             {requiresPayment && (
                                 <div className="pl-8 animate-fade-in space-y-6">
                                     <div className="space-y-2 max-w-[200px]">
-                                        <label className="text-xs font-medium text-slate-500">Deposit Amount (Optional)</label>
+                                        <label className="text-xs font-medium text-foreground-secondary">Deposit Amount (Optional)</label>
                                         <div className="relative">
-                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</div>
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted">$</div>
                                             <input
                                                 {...register('depositAmount', { valueAsNumber: true })}
                                                 type="number"
@@ -244,11 +244,11 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                     {/* Refund policy sits under "requires payment" because it only has
                                         meaning once money is being taken — showing it on a free service
                                         would ask the tenant a question with no consequence. */}
-                                    <fieldset className="space-y-3 border-t border-slate-100 pt-5">
-                                        <legend className="text-sm font-semibold text-slate-700">
+                                    <fieldset className="space-y-3 border-t border-border-subtle pt-5">
+                                        <legend className="text-sm font-semibold text-foreground">
                                             Refund policy for this service
                                         </legend>
-                                        <p className="text-xs text-slate-500 max-w-lg">
+                                        <p className="text-xs text-foreground-secondary max-w-lg">
                                             How much of the deposit is returned when a client cancels, based on how
                                             much notice they give. Set per service, because a quick consultation and
                                             a long treatment rarely warrant the same notice.
@@ -256,7 +256,7 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
 
                                         <div className="grid gap-4 sm:grid-cols-3 max-w-2xl">
                                             <div className="space-y-1.5">
-                                                <label htmlFor="fullRefundHours" className="text-xs font-medium text-slate-600">
+                                                <label htmlFor="fullRefundHours" className="text-xs font-medium text-foreground-secondary">
                                                     Full refund beyond
                                                 </label>
                                                 <div className="relative">
@@ -267,14 +267,14 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                                         min={0}
                                                         className="input py-2 pr-12"
                                                     />
-                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-secondary">
                                                         hours
                                                     </span>
                                                 </div>
                                             </div>
 
                                             <div className="space-y-1.5">
-                                                <label htmlFor="partialRefundHours" className="text-xs font-medium text-slate-600">
+                                                <label htmlFor="partialRefundHours" className="text-xs font-medium text-foreground-secondary">
                                                     Partial refund beyond
                                                 </label>
                                                 <div className="relative">
@@ -285,14 +285,14 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                                         min={0}
                                                         className="input py-2 pr-12"
                                                     />
-                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-secondary">
                                                         hours
                                                     </span>
                                                 </div>
                                             </div>
 
                                             <div className="space-y-1.5">
-                                                <label htmlFor="partialRefundPercent" className="text-xs font-medium text-slate-600">
+                                                <label htmlFor="partialRefundPercent" className="text-xs font-medium text-foreground-secondary">
                                                     Partial refund amount
                                                 </label>
                                                 <div className="relative">
@@ -304,7 +304,7 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                                         max={100}
                                                         className="input py-2 pr-8"
                                                     />
-                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-secondary">
                                                         %
                                                     </span>
                                                 </div>
@@ -312,17 +312,17 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                         </div>
 
                                         {errors.partialRefundHours && (
-                                            <p className="text-sm text-red-600">{errors.partialRefundHours.message}</p>
+                                            <p className="text-sm text-danger-fg">{errors.partialRefundHours.message}</p>
                                         )}
                                         {errors.partialRefundPercent && (
-                                            <p className="text-sm text-red-600">{errors.partialRefundPercent.message}</p>
+                                            <p className="text-sm text-danger-fg">{errors.partialRefundPercent.message}</p>
                                         )}
 
                                         {/* Restates the three tiers in the tenant's own numbers. The rules are
                                             easy to enter and hard to picture; showing the outcome is what stops
                                             a policy going live that its author did not intend. */}
-                                        <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-700 max-w-2xl">
-                                            <p className="font-medium text-slate-900">What a client gets back</p>
+                                        <div className="rounded-xl bg-muted p-4 text-sm text-foreground max-w-2xl">
+                                            <p className="font-medium text-foreground">What a client gets back</p>
                                             <ul className="mt-2 space-y-1">
                                                 <li>
                                                     Cancels more than <strong>{fullRefundHours || 0}h</strong> before →{' '}
@@ -341,7 +341,7 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                         </div>
 
                                         <div className="space-y-1.5 max-w-2xl">
-                                            <label htmlFor="cancellationPolicy" className="text-xs font-medium text-slate-600">
+                                            <label htmlFor="cancellationPolicy" className="text-xs font-medium text-foreground-secondary">
                                                 Policy note shown to clients (optional)
                                             </label>
                                             <textarea
@@ -360,26 +360,26 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                 </div>
 
                 <div className="card p-6 md:p-8 space-y-6">
-                    <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div className="flex items-center gap-3 border-b border-border-subtle pb-4">
                         <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                             <Clock className="w-5 h-5" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-slate-900">Duration & Scheduling</h3>
-                            <p className="text-sm text-slate-500">Manage your time effectively</p>
+                            <h3 className="text-lg font-semibold text-foreground">Duration & Scheduling</h3>
+                            <p className="text-sm text-foreground-secondary">Manage your time effectively</p>
                         </div>
                     </div>
 
                     <div className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700 ml-1">Service Duration (Minutes)</label>
+                            <label className="text-sm font-medium text-foreground ml-1">Service Duration (Minutes)</label>
                             <div className="grid grid-cols-4 gap-2">
                                 {[15, 30, 45, 60].map((val) => (
                                     <button
                                         key={val}
                                         type="button"
                                         onClick={() => {}} // Handle quick select if needed
-                                        className="py-2 text-xs font-medium border border-slate-200 rounded-lg hover:border-primary-500 hover:text-primary-600 transition-all"
+                                        className="py-2 text-xs font-medium border border-border rounded-lg hover:border-primary-500 hover:text-primary transition-all"
                                     >
                                         {val}m
                                     </button>
@@ -390,12 +390,12 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                 type="number"
                                 className={cn("input mt-2", errors.durationMinutes && "border-red-500")}
                             />
-                            {errors.durationMinutes && <p className="text-xs text-red-500 ml-1">{errors.durationMinutes.message}</p>}
+                            {errors.durationMinutes && <p className="text-xs text-danger-fg ml-1">{errors.durationMinutes.message}</p>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-xs font-medium text-slate-500 ml-1">Buffer Before (m)</label>
+                                <label className="text-xs font-medium text-foreground-secondary ml-1">Buffer Before (m)</label>
                                 <input
                                     {...register('bufferBefore', { valueAsNumber: true })}
                                     type="number"
@@ -403,7 +403,7 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs font-medium text-slate-500 ml-1">Buffer After (m)</label>
+                                <label className="text-xs font-medium text-foreground-secondary ml-1">Buffer After (m)</label>
                                 <input
                                     {...register('bufferAfter', { valueAsNumber: true })}
                                     type="number"
@@ -414,21 +414,21 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
 
                         {/* Mobile / travel. Sits with the other timing settings because that is
                             what it is — travel occupies the calendar exactly like turnaround. */}
-                        <div className="space-y-4 border-t border-slate-100 pt-5">
+                        <div className="space-y-4 border-t border-border-subtle pt-5">
                             <label className="flex items-center gap-3 cursor-pointer group">
                                 <input
                                     type="checkbox"
                                     {...register('isMobile')}
-                                    className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                                    className="w-5 h-5 rounded border-border-strong text-primary focus:ring-primary-500"
                                 />
-                                <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
+                                <span className="text-sm font-medium text-foreground group-hover:text-foreground transition-colors">
                                     Performed at the client&apos;s location
                                 </span>
                             </label>
 
                             {isMobile && (
                                 <div className="pl-8 animate-fade-in space-y-2 max-w-[260px]">
-                                    <label htmlFor="travelBufferMinutes" className="text-xs font-medium text-slate-500">
+                                    <label htmlFor="travelBufferMinutes" className="text-xs font-medium text-foreground-secondary">
                                         Travel time each way
                                     </label>
                                     <div className="relative">
@@ -439,24 +439,24 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                             min={0}
                                             className="input py-2 pr-16"
                                         />
-                                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-secondary">
                                             minutes
                                         </span>
                                     </div>
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-foreground-secondary">
                                         Held either side of the appointment so two mobile jobs cannot be booked
                                         back to back with no time to drive between them.
                                     </p>
                                     {errors.travelBufferMinutes && (
-                                        <p className="text-sm text-red-600">{errors.travelBufferMinutes.message}</p>
+                                        <p className="text-sm text-danger-fg">{errors.travelBufferMinutes.message}</p>
                                     )}
                                 </div>
                             )}
                         </div>
 
                         {/* Rebooking interval */}
-                        <div className="space-y-2 border-t border-slate-100 pt-5 max-w-[320px]">
-                            <label htmlFor="rebookAfterDays" className="text-sm font-medium text-slate-700">
+                        <div className="space-y-2 border-t border-border-subtle pt-5 max-w-[320px]">
+                            <label htmlFor="rebookAfterDays" className="text-sm font-medium text-foreground">
                                 Remind clients to rebook after
                             </label>
                             <div className="relative max-w-[200px]">
@@ -473,16 +473,16 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                     placeholder="e.g. 42"
                                     className="input py-2 pr-12"
                                 />
-                                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-secondary">
                                     days
                                 </span>
                             </div>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-foreground-secondary">
                                 Leave blank for no reminder. When set, clients who have not rebooked by then get
                                 one message — only if they have opted in to marketing, and only once per visit.
                             </p>
                             {errors.rebookAfterDays && (
-                                <p className="text-sm text-red-600">{errors.rebookAfterDays.message}</p>
+                                <p className="text-sm text-danger-fg">{errors.rebookAfterDays.message}</p>
                             )}
                         </div>
                     </div>
@@ -491,24 +491,24 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
 
             {/* Advanced Settings */}
             <div className="card p-6 md:p-8 space-y-6">
-                <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600">
+                <div className="flex items-center gap-3 border-b border-border-subtle pb-4">
+                    <div className="w-10 h-10 rounded-xl bg-brand-subtle flex items-center justify-center text-primary">
                         <Settings className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-semibold text-slate-900">Advanced Settings</h3>
-                        <p className="text-sm text-slate-500">Capacity and status control</p>
+                        <h3 className="text-lg font-semibold text-foreground">Advanced Settings</h3>
+                        <p className="text-sm text-foreground-secondary">Capacity and status control</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex items-center justify-between p-4 bg-muted rounded-xl border border-border-subtle">
                             <div className="flex items-center gap-3">
-                                <Users className="w-5 h-5 text-slate-400" />
+                                <Users className="w-5 h-5 text-foreground-muted" />
                                 <div>
-                                    <p className="text-sm font-medium text-slate-700">Maximum Attendees</p>
-                                    <p className="text-xs text-slate-500">Set for group sessions</p>
+                                    <p className="text-sm font-medium text-foreground">Maximum Attendees</p>
+                                    <p className="text-xs text-foreground-secondary">Set for group sessions</p>
                                 </div>
                             </div>
                             <input
@@ -520,12 +520,12 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                     </div>
 
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex items-center justify-between p-4 bg-muted rounded-xl border border-border-subtle">
                             <div className="flex items-center gap-3">
-                                <ShieldCheck className="w-5 h-5 text-slate-400" />
+                                <ShieldCheck className="w-5 h-5 text-foreground-muted" />
                                 <div>
-                                    <p className="text-sm font-medium text-slate-700">Service Status</p>
-                                    <p className="text-xs text-slate-500">Currently accepting bookings</p>
+                                    <p className="text-sm font-medium text-foreground">Service Status</p>
+                                    <p className="text-xs text-foreground-secondary">Currently accepting bookings</p>
                                 </div>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
@@ -534,7 +534,7 @@ export default function ServiceForm({ initialData, onSubmit, isLoading }: Servic
                                     {...register('isActive')}
                                     className="sr-only peer"
                                 />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-card after:border-border-strong after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                             </label>
                         </div>
                     </div>

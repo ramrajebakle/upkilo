@@ -24,8 +24,8 @@ const CANCEL_COLOR = '#fca5a5';
 function CustomTooltip({ active, payload, label }: any) {
     if (!active || !payload?.length) return null;
     return (
-        <div className="bg-slate-900 text-white rounded-xl px-4 py-3 shadow-2xl text-sm">
-            <p className="text-slate-400 mb-2 font-medium">{label}</p>
+        <div className="bg-popover text-popover-foreground border border-border shadow-[var(--shadow-popover)] rounded-xl px-4 py-3 shadow-2xl text-sm">
+            <p className="text-foreground-secondary mb-2 font-medium">{label}</p>
             {payload.map((entry: any) => (
                 <div key={entry.dataKey} className="flex items-center gap-2">
                     <span
@@ -43,7 +43,7 @@ function CustomTooltip({ active, payload, label }: any) {
 export function BookingsBarChart({ data, height = 280, showCancelled = false }: BookingsBarChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-[280px] text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-[280px] text-foreground-muted text-sm">
                 No data available
             </div>
         );
@@ -54,15 +54,15 @@ export function BookingsBarChart({ data, height = 280, showCancelled = false }: 
     return (
         <ResponsiveContainer width="100%" height={height}>
             <BarChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis
                     dataKey="label"
-                    tick={{ fontSize: 12, fill: '#94a3b8' }}
+                    tick={{ fontSize: 12 }}
                     axisLine={false}
                     tickLine={false}
                 />
                 <YAxis
-                    tick={{ fontSize: 12, fill: '#94a3b8' }}
+                    tick={{ fontSize: 12 }}
                     axisLine={false}
                     tickLine={false}
                     allowDecimals={false}

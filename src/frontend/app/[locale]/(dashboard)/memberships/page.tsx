@@ -85,10 +85,10 @@ export default function MembershipsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                         Memberships
                     </h1>
-                    <p className="text-sm text-slate-500">Manage recurring client membership tiers</p>
+                    <p className="text-sm text-foreground-secondary">Manage recurring client membership tiers</p>
                 </div>
                 <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
                     <Plus className="h-4 w-4" />
@@ -97,9 +97,9 @@ export default function MembershipsPage() {
             </div>
 
             <div className="card-elevated">
-                <div className="p-4 border-b border-slate-100 flex gap-4">
+                <div className="p-4 border-b border-border-subtle flex gap-4">
                     <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                         <input
                             type="text"
                             placeholder="Search membership tiers..."
@@ -110,7 +110,7 @@ export default function MembershipsPage() {
                 
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 text-slate-500 font-medium border-b border-slate-100">
+                        <thead className="bg-muted text-foreground-secondary font-medium border-b border-border-subtle">
                             <tr>
                                 <th className="px-6 py-4">Name</th>
                                 <th className="px-6 py-4">Price</th>
@@ -119,41 +119,41 @@ export default function MembershipsPage() {
                                 <th className="px-6 py-4"></th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-border-subtle">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                                    <td colSpan={5} className="px-6 py-8 text-center text-foreground-secondary">
                                         Loading memberships...
                                     </td>
                                 </tr>
                             ) : memberships.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-12 text-center">
-                                        <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                                            <CreditCard className="h-6 w-6 text-slate-400" />
+                                        <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center mx-auto mb-3">
+                                            <CreditCard className="h-6 w-6 text-foreground-muted" />
                                         </div>
-                                        <h3 className="text-sm font-medium text-slate-900 mb-1">No membership tiers</h3>
-                                        <p className="text-sm text-slate-500">Create a recurring membership plan to generate steady revenue.</p>
+                                        <h3 className="text-sm font-medium text-foreground mb-1">No membership tiers</h3>
+                                        <p className="text-sm text-foreground-secondary">Create a recurring membership plan to generate steady revenue.</p>
                                     </td>
                                 </tr>
                             ) : (
                                 memberships.map((tier) => (
-                                    <tr key={tier.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-slate-900">
+                                    <tr key={tier.id} className="hover:bg-muted/50 transition-colors">
+                                        <td className="px-6 py-4 font-medium text-foreground">
                                             {tier.name}
-                                            {tier.description && <div className="text-xs text-slate-500 font-normal">{tier.description}</div>}
+                                            {tier.description && <div className="text-xs text-foreground-secondary font-normal">{tier.description}</div>}
                                         </td>
                                         <td className="px-6 py-4">{formatCurrency(tier.price)}</td>
-                                        <td className="px-6 py-4 text-slate-500 capitalize">{tier.billingInterval}</td>
+                                        <td className="px-6 py-4 text-foreground-secondary capitalize">{tier.billingInterval}</td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                                                tier.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-600'
+                                                tier.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-muted text-foreground-secondary'
                                             }`}>
                                                 {tier.isActive ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
+                                            <button className="p-2 text-foreground-muted hover:text-foreground-secondary rounded-lg hover:bg-accent">
                                                 <MoreVertical className="h-4 w-4" />
                                             </button>
                                         </td>
@@ -167,10 +167,10 @@ export default function MembershipsPage() {
 
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex justify-between items-center p-6 border-b border-slate-100 shrink-0">
-                            <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>New Membership Tier</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                    <div className="bg-card rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex justify-between items-center p-6 border-b border-border-subtle shrink-0">
+                            <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>New Membership Tier</h2>
+                            <button onClick={() => setIsModalOpen(false)} className="text-foreground-muted hover:text-foreground-secondary transition-colors">
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
@@ -178,7 +178,7 @@ export default function MembershipsPage() {
                         <div className="flex-1 overflow-y-auto p-6">
                             <form id="membershipForm" onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Plan Name *</label>
+                                    <label className="block text-sm font-medium text-foreground mb-1">Plan Name *</label>
                                     <input
                                         type="text"
                                         required
@@ -189,7 +189,7 @@ export default function MembershipsPage() {
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                                    <label className="block text-sm font-medium text-foreground mb-1">Description</label>
                                     <input
                                         type="text"
                                         className="input-field w-full"
@@ -200,7 +200,7 @@ export default function MembershipsPage() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Price *</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">Price *</label>
                                         <input
                                             type="number"
                                             required
@@ -212,7 +212,7 @@ export default function MembershipsPage() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Billing Interval *</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">Billing Interval *</label>
                                         <select
                                             required
                                             className="input-field w-full"
@@ -228,7 +228,7 @@ export default function MembershipsPage() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Services Included (per interval)</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">Services Included (per interval)</label>
                                         <input
                                             type="number"
                                             min="-1"
@@ -236,10 +236,10 @@ export default function MembershipsPage() {
                                             value={formData.servicesIncluded}
                                             onChange={(e) => setFormData({...formData, servicesIncluded: e.target.value})}
                                         />
-                                        <p className="text-xs text-slate-500 mt-1">-1 for unlimited</p>
+                                        <p className="text-xs text-foreground-secondary mt-1">-1 for unlimited</p>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Service Discount (%)</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">Service Discount (%)</label>
                                         <input
                                             type="number"
                                             min="0"
@@ -252,7 +252,7 @@ export default function MembershipsPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Features (one per line)</label>
+                                    <label className="block text-sm font-medium text-foreground mb-1">Features (one per line)</label>
                                     <textarea
                                         className="input-field w-full resize-none"
                                         rows={4}
@@ -264,11 +264,11 @@ export default function MembershipsPage() {
                             </form>
                         </div>
                         
-                        <div className="p-6 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                        <div className="p-6 border-t border-border-subtle flex justify-end gap-3 shrink-0">
                             <button
                                 type="button"
                                 onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
+                                className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground transition-colors"
                             >
                                 Cancel
                             </button>

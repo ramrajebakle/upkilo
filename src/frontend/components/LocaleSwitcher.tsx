@@ -63,7 +63,7 @@ export default function LocaleSwitcher() {
         <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
         <span className="hidden sm:inline">{currentLocale.name}</span>
         <span className="sm:hidden">{currentLocale.flag}</span>
-        <ChevronDown className={cn("h-3 w-3 text-slate-400 dark:text-slate-500 transition-transform", isOpen && "rotate-180")} />
+        <ChevronDown className={cn("h-3 w-3 text-foreground-muted transition-transform", isOpen && "rotate-180")} />
       </button>
 
       {isOpen && (

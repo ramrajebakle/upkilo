@@ -59,7 +59,7 @@ export const AICopilotRail = () => {
       >
         {/* Header */}
         <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-ai-600">
+          <div className="flex items-center gap-2 text-ai">
             <Sparkles size={18} />
             <span className="font-bold tracking-tight">Copilot</span>
           </div>
@@ -75,7 +75,7 @@ export const AICopilotRail = () => {
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
           
           {isThinking ? (
-            <div className="flex flex-col items-center justify-center py-12 text-ai-500 animate-pulse">
+            <div className="flex flex-col items-center justify-center py-12 text-ai animate-pulse">
               <Sparkles size={32} className="mb-4 opacity-50" />
               <div className="flex items-center gap-2">
                 <Loader2 size={16} className="animate-spin" />
@@ -91,8 +91,8 @@ export const AICopilotRail = () => {
                 </h3>
 
                 {locked && (
-                  <div className="bg-ai-50 border border-ai-100 rounded-lg p-3 text-sm text-text-secondary leading-relaxed flex gap-2">
-                    <Lock size={16} className="text-ai-500 shrink-0 mt-0.5" />
+                  <div className="bg-ai-subtle border border-ai-100 rounded-lg p-3 text-sm text-text-secondary leading-relaxed flex gap-2">
+                    <Lock size={16} className="text-ai shrink-0 mt-0.5" />
                     <span>AI recommendations are not included in your current plan.</span>
                   </div>
                 )}
@@ -110,7 +110,7 @@ export const AICopilotRail = () => {
                         key={i}
                         className="w-full text-left p-3 rounded-lg border border-surface-200 flex gap-3"
                       >
-                        <Zap size={16} className="text-ai-500 shrink-0 mt-0.5" />
+                        <Zap size={16} className="text-ai shrink-0 mt-0.5" />
                         <div className="text-sm text-text-primary leading-relaxed">{rec}</div>
                       </div>
                     ))}
@@ -131,7 +131,7 @@ export const AICopilotRail = () => {
               placeholder="Ask Copilot..." 
               className="w-full bg-surface-50 border border-surface-200 rounded-lg py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-ai-500/50 focus:border-ai-500 transition-all text-text-primary placeholder:text-text-tertiary"
             />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-ai-500 hover:bg-ai-50 rounded-md transition-colors">
+            <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-ai hover:bg-ai-subtle rounded-md transition-colors">
               <ArrowRight size={16} />
             </button>
           </div>

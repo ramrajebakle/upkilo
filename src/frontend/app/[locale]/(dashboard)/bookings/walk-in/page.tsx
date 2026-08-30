@@ -145,7 +145,7 @@ export default function WalkInPage() {
         <div>
           <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
             Walk-In Booking
-            <Zap className="h-5 w-5 text-amber-500" />
+            <Zap className="h-5 w-5 text-warning-fg" />
           </h1>
           <p className="text-sm text-text-secondary mt-0.5">Create an instant booking for a walk-in client.</p>
         </div>
@@ -158,7 +158,7 @@ export default function WalkInPage() {
             <div className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors",
               i < stepIndex ? "bg-green-100 text-green-700" :
-              i === stepIndex ? "bg-ai-100 text-ai-700" :
+              i === stepIndex ? "bg-ai-subtle text-ai" :
               "bg-surface-100 text-text-tertiary"
             )}>
               {i < stepIndex && <CheckCircle2 className="h-3 w-3" />}
@@ -202,7 +202,7 @@ export default function WalkInPage() {
                     className={cn(
                       "w-full text-left p-3 rounded-xl border transition-all hover:shadow-sm",
                       selectedService?.id === svc.id
-                        ? "border-ai-400 bg-ai-50"
+                        ? "border-ai-400 bg-ai-subtle"
                         : "border-surface-200 hover:border-surface-300 bg-surface-50"
                     )}
                   >
@@ -241,11 +241,11 @@ export default function WalkInPage() {
               onClick={() => { setAutoAssign(true); setSelectedStaff(null); setStep("client"); }}
               className={cn(
                 "w-full text-left p-4 rounded-xl border-2 transition-all",
-                autoAssign ? "border-ai-400 bg-ai-50" : "border-surface-200 hover:border-ai-300"
+                autoAssign ? "border-ai-400 bg-ai-subtle" : "border-surface-200 hover:border-ai/25"
               )}
             >
               <div className="flex items-center gap-3">
-                <Zap className="h-5 w-5 text-ai-500" />
+                <Zap className="h-5 w-5 text-ai" />
                 <div>
                   <p className="font-semibold text-text-primary text-sm">Auto-assign</p>
                   <p className="text-xs text-text-secondary">Assign the least busy available staff member</p>
@@ -311,7 +311,7 @@ export default function WalkInPage() {
                     className={cn(
                       "w-full text-left p-3 rounded-xl border transition-all text-sm",
                       selectedClient?.id === c.id
-                        ? "border-ai-400 bg-ai-50"
+                        ? "border-ai-400 bg-ai-subtle"
                         : "border-surface-200 hover:border-surface-300"
                     )}
                   >
@@ -352,7 +352,7 @@ export default function WalkInPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" /> Confirm Walk-In
+              <CheckCircle2 className="h-4 w-4 text-success-fg" /> Confirm Walk-In
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">

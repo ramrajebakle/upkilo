@@ -34,26 +34,26 @@ export default function HeroPreview() {
             <span className="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
             <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
-            <span className="ml-3 text-xs text-slate-500">Today&rsquo;s schedule · Glow Studio</span>
+            <span className="ml-3 text-xs text-slate-300">Today&rsquo;s schedule · Glow Studio</span>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-              <p className="text-xs text-slate-400">Bookings today</p>
+              <p className="text-xs text-foreground-muted">Bookings today</p>
               <p className="mt-1 text-2xl font-bold text-white">
                 <CountUp value={28} />
               </p>
               <p className="mt-1 text-xs text-emerald-400">▲ 12% vs last week</p>
             </div>
             <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-              <p className="text-xs text-slate-400">Revenue</p>
+              <p className="text-xs text-foreground-muted">Revenue</p>
               <p className="mt-1 text-2xl font-bold text-white">
                 <CountUp value={4280} prefix="$" />
               </p>
               <p className="mt-1 text-xs text-emerald-400">▲ 8% vs last week</p>
             </div>
             <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-              <p className="text-xs text-slate-400">Utilization</p>
+              <p className="text-xs text-foreground-muted">Utilization</p>
               <p className="mt-1 text-2xl font-bold text-white">
                 <CountUp value={94} suffix="%" />
               </p>
@@ -72,7 +72,7 @@ export default function HeroPreview() {
                 transition={{ duration: 0.4, delay: 0.5 + i * 0.12, ease: [0.23, 1, 0.32, 1] }}
                 className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5"
               >
-                <span className="w-12 text-xs font-medium text-slate-400 tabular-nums">{row.t}</span>
+                <span className="w-12 text-xs font-medium text-foreground-muted tabular-nums">{row.t}</span>
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-500/20 text-xs font-bold text-primary-200">
                   {row.a}
                 </span>
@@ -83,7 +83,7 @@ export default function HeroPreview() {
           </div>
         </div>
 
-        <figcaption className="mt-3 text-center text-xs text-slate-500">
+        <figcaption className="mt-3 text-center text-xs text-foreground-secondary">
           Example dashboard. Figures are illustrative, not a customer&rsquo;s results.
         </figcaption>
       </figure>

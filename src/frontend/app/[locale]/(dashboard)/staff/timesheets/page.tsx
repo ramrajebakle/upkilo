@@ -159,7 +159,7 @@ export default function StaffTimesheetsPage() {
                 "w-12 h-12 rounded-full flex items-center justify-center",
                 clockStatus.isClockedIn ? "bg-green-100 dark:bg-green-900" : "bg-surface-100"
               )}>
-                <Clock className={cn("h-6 w-6", clockStatus.isClockedIn ? "text-green-600" : "text-text-tertiary")} />
+                <Clock className={cn("h-6 w-6", clockStatus.isClockedIn ? "text-success-fg" : "text-text-tertiary")} />
               </div>
               <div>
                 <p className="font-semibold text-text-primary">
@@ -178,7 +178,7 @@ export default function StaffTimesheetsPage() {
                 leftIcon={clockLoading ? <Loader2 size={15} className="animate-spin" /> : <LogOut size={15} />}
                 onClick={handleClockOut}
                 disabled={clockLoading}
-                className="border-red-200 text-red-600 hover:bg-red-50"
+                className="border-red-200 text-danger-fg hover:bg-red-50"
               >
                 Clock Out
               </Button>
@@ -200,7 +200,7 @@ export default function StaffTimesheetsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: "Total hours (period)", value: formatDuration(totalHoursThisPeriod), icon: Clock, color: "text-blue-500" },
-          { label: "Active sessions", value: activeSessions, icon: CheckCircle2, color: "text-green-500" },
+          { label: "Active sessions", value: activeSessions, icon: CheckCircle2, color: "text-success-fg" },
           { label: "Staff members", value: staff.length, icon: Users, color: "text-primary-500" },
         ].map((s) => (
           <Card key={s.label}>

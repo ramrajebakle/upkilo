@@ -46,7 +46,7 @@ public class StripeWebhookControllerTests : IDisposable
             new Mock<IPaymentService>().Object,
             NullLogger<Upkilo.Infrastructure.Services.TenantCurrencySyncService>.Instance);
 
-        _sut = new StripeWebhookController(_logger.Object, _dbContext, _subscriptionService.Object, _secretProvider.Object, downgradeHandler, _emailService.Object, new Mock<IDistributedCache>().Object, currencySync);
+        _sut = new StripeWebhookController(_logger.Object, _dbContext, _subscriptionService.Object, _secretProvider.Object, downgradeHandler, _emailService.Object, new Mock<IDistributedCache>().Object, Upkilo.Tests.Helpers.MockFactory.CreateEntitlementService(_dbContext), currencySync);
         _sut.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()

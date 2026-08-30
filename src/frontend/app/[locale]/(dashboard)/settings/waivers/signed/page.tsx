@@ -54,7 +54,7 @@ export default function SignedWaiversPage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Signed Waivers <FileText className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Signed Waivers <FileText className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Look up a client's signed waivers, preview the signed document, or revoke a signature.</p>
       </header>
 
@@ -87,7 +87,7 @@ export default function SignedWaiversPage() {
                 <Card key={w.waiverId}>
                   <CardContent className="pt-4 pb-4 flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-surface-100 flex items-center justify-center flex-shrink-0">
-                      <FileText className="h-4 w-4 text-ai-500" />
+                      <FileText className="h-4 w-4 text-ai" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -98,14 +98,14 @@ export default function SignedWaiversPage() {
                       </div>
                       <div className="flex items-center gap-3 mt-0.5">
                         <span className="text-xs text-text-tertiary">Signed {new Date(w.signedAt).toLocaleDateString()}</span>
-                        {w.expiresAt && <span className="text-xs text-amber-600">Expires {new Date(w.expiresAt).toLocaleDateString()}</span>}
+                        {w.expiresAt && <span className="text-xs text-warning-fg">Expires {new Date(w.expiresAt).toLocaleDateString()}</span>}
                       </div>
                     </div>
                     <div className="flex gap-1 flex-shrink-0">
                       <Button variant="outline" size="sm" leftIcon={<Eye size={11} />} onClick={() => viewPdf(w.waiverId)}>View</Button>
                       {w.status !== "Revoked" && (
                         <Button variant="outline" size="sm"
-                          leftIcon={revoking === w.waiverId ? <Loader2 size={11} className="animate-spin" /> : <Ban size={11} className="text-red-500" />}
+                          leftIcon={revoking === w.waiverId ? <Loader2 size={11} className="animate-spin" /> : <Ban size={11} className="text-danger-fg" />}
                           onClick={() => revoke(w.waiverId)} disabled={!!revoking}>Revoke</Button>
                       )}
                     </div>

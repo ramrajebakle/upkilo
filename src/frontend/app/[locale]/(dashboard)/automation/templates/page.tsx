@@ -37,7 +37,7 @@ const CATEGORY_COLORS: Record<string, string> = {
     'Sales': 'bg-emerald-50 text-emerald-700',
     'Marketing': 'bg-amber-50 text-amber-700',
     'Support': 'bg-rose-50 text-rose-700',
-    'Operations': 'bg-slate-100 text-slate-700',
+    'Operations': 'bg-muted text-foreground',
 };
 
 // Fallback static templates if API doesn't return any
@@ -152,7 +152,7 @@ export default function WorkflowTemplatesPage() {
             {/* Filters */}
             <div className="flex gap-3 flex-wrap">
                 <div className="relative flex-1 min-w-48">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                     <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search templates..." className="pl-9" />
                 </div>
                 <div className="flex gap-1 flex-wrap">
@@ -175,7 +175,7 @@ export default function WorkflowTemplatesPage() {
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-                    <Layers className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+                    <Layers className="h-12 w-12 text-slate-300 mx-auto mb-3" />
                     <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200">No templates found</h3>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Try a different search or category</p>
                 </div>
@@ -201,20 +201,20 @@ export default function WorkflowTemplatesPage() {
                             <div className="mb-3 space-y-1">
                                 {(template.previewSteps || []).slice(0, 3).map((step, i) => (
                                     <div key={i} className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                                        <div className="h-4 w-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[9px] font-bold text-slate-500 dark:text-slate-500 shrink-0">
+                                        <div className="h-4 w-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[9px] font-bold text-foreground-secondary shrink-0">
                                             {i + 1}
                                         </div>
                                         <span className="truncate">{step}</span>
                                     </div>
                                 ))}
                                 {(template.previewSteps || []).length > 3 && (
-                                    <div className="text-xs text-slate-400 pl-5">+{template.previewSteps.length - 3} more steps</div>
+                                    <div className="text-xs text-foreground-muted pl-5">+{template.previewSteps.length - 3} more steps</div>
                                 )}
                             </div>
 
                             {/* Footer */}
-                            <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                                <span className="text-xs text-slate-400">{template.usageCount?.toLocaleString() || 0} uses</span>
+                            <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
+                                <span className="text-xs text-foreground-muted">{template.usageCount?.toLocaleString() || 0} uses</span>
                                 <Button
                                     size="sm"
                                     onClick={() => handleClone(template)}

@@ -15,7 +15,7 @@ namespace Upkilo.API.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/domains")]
 [Authorize(Roles = "Owner,Admin")]
-[RequiresFeature("WhiteLabelDomain")]
+[RequiresFeature(FeatureKeys.WhiteLabel)]
 public class CustomDomainsController : ControllerBase
 {
     private readonly AppDbContext _context;

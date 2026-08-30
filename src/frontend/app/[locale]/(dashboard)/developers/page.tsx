@@ -78,7 +78,7 @@ export default function DevelopersDashboardPage() {
     return (
         <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
             <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Developer Nexus...</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Developer Nexus...</p>
         </div>
     );
   }
@@ -93,18 +93,18 @@ export default function DevelopersDashboardPage() {
             </div>
             <div>
                 <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Developer Nexus</h1>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Direct System Access and API Protocol Interface</p>
+                <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Direct System Access and API Protocol Interface</p>
             </div>
         </div>
         <div className="flex items-center gap-4">
             <div className="flex -space-x-3">
                 {[1,2,3].map(i => (
                     <div key={i} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-950 flex items-center justify-center shadow-lg">
-                        <Shield className="h-4 w-4 text-slate-400" />
+                        <Shield className="h-4 w-4 text-foreground-muted" />
                     </div>
                 ))}
             </div>
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-2">Shield Status: Optimal</span>
+            <span className="text-[9px] font-black text-foreground-muted uppercase tracking-widest ml-2">Shield Status: Optimal</span>
         </div>
       </div>
 
@@ -116,22 +116,22 @@ export default function DevelopersDashboardPage() {
                     <Activity className="h-5 w-5 text-primary-500" />
                     <h2 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Temporal Protocol Telemetry</h2>
                 </div>
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Period: 7 Lifecycle Cycles</span>
+                <span className="text-[9px] font-black text-foreground-muted uppercase tracking-widest">Period: 7 Lifecycle Cycles</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 {[
                     { label: 'Total Requests', value: usageData?.totalRequests?.toLocaleString() || 0, icon: Globe, color: 'text-primary-500', trend: '+12.4%' },
-                    { label: 'Avg Latency', value: `${usageData?.averageLatency || 0}ms`, icon: Zap, color: 'text-emerald-500', trend: '-2ms' },
+                    { label: 'Avg Latency', value: `${usageData?.averageLatency || 0}ms`, icon: Zap, color: 'text-success-fg', trend: '-2ms' },
                     { label: 'Active Tokens', value: apiKeys.length, icon: Key, color: 'text-primary-500', trend: 'Stable' }
                 ].map((stat, i) => (
                     <div key={i} className="p-6 bg-slate-50 dark:bg-slate-950 rounded-[32px] border border-transparent dark:border-slate-850 shadow-inner group">
                         <div className="flex items-center justify-between mb-4">
                             <stat.icon className={cn("h-5 w-5", stat.color)} />
-                            <span className="text-[9px] font-black text-emerald-500">{stat.trend}</span>
+                            <span className="text-[9px] font-black text-success-fg">{stat.trend}</span>
                         </div>
                         <p className="text-3xl font-black text-slate-900 dark:text-white tabular-nums tracking-tighter">{stat.value}</p>
-                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-2">{stat.label}</p>
+                        <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest mt-2">{stat.label}</p>
                     </div>
                 ))}
             </div>
@@ -146,7 +146,7 @@ export default function DevelopersDashboardPage() {
                         <Database className="h-5 w-5 text-primary-400" />
                         <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Isolated Sandbox</h3>
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest leading-relaxed">
                         Clone your primary environment node into an ephemeral container for secure protocol testing.
                     </p>
                 </div>
@@ -170,7 +170,7 @@ export default function DevelopersDashboardPage() {
                 <div className="h-10 w-1 rounded-full bg-primary-500 shadow-lg" />
                 <h2 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Authorization Matrix</h2>
             </div>
-            <Button variant="outline" className="h-12 px-6 rounded-2xl font-black uppercase tracking-widest text-[9px] border-slate-100 dark:border-slate-800 text-slate-500 hover:text-primary-500">
+            <Button variant="outline" className="h-12 px-6 rounded-2xl font-black uppercase tracking-widest text-[9px] border-slate-100 dark:border-slate-800 text-foreground-secondary hover:text-primary-500">
                 <Plus className="h-4 w-4 mr-2" /> Initialize Token
             </Button>
         </div>
@@ -178,7 +178,7 @@ export default function DevelopersDashboardPage() {
         <div className="space-y-6">
             {apiKeys.length === 0 ? (
                 <div className="p-20 text-center border-2 border-dashed border-slate-100 dark:border-slate-850 rounded-[32px]">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Zero Active Tokens Detected in the Matrix</p>
+                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">Zero Active Tokens Detected in the Matrix</p>
                 </div>
             ) : (
                 apiKeys.map(key => (
@@ -188,7 +188,7 @@ export default function DevelopersDashboardPage() {
                                 "p-4 rounded-2xl shadow-inner border",
                                 key.isActive ? "bg-white dark:bg-slate-900 border-emerald-500/10" : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                             )}>
-                                <Key className={cn("h-6 w-6", key.isActive ? "text-emerald-500" : "text-slate-400")} />
+                                <Key className={cn("h-6 w-6", key.isActive ? "text-success-fg" : "text-foreground-muted")} />
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center gap-3">
@@ -203,14 +203,14 @@ export default function DevelopersDashboardPage() {
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-850 shadow-sm">
-                                    <code className="text-[10px] font-black text-slate-400 dark:text-slate-500 tracking-widest">
+                                    <code className="text-[10px] font-black text-foreground-muted tracking-widest">
                                         {key.prefix}••••••••••••••••••••••••••••{key.lastFourChars}
                                     </code>
                                     <button onClick={() => copyToClipboard(`${key.prefix}...${key.lastFourChars}`)} className="p-1 hover:text-primary-500 transition-colors">
                                         <Copy className="h-3.5 w-3.5" />
                                     </button>
                                 </div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest pl-1">Born: {new Date(key.createdAt).toLocaleDateString()}</p>
+                                <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest pl-1">Born: {new Date(key.createdAt).toLocaleDateString()}</p>
                             </div>
                         </div>
 
@@ -248,7 +248,7 @@ export default function DevelopersDashboardPage() {
                     </div>
                     <div>
                         <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{res.title}</h4>
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-1">{res.desc}</p>
+                        <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1">{res.desc}</p>
                     </div>
                 </div>
                 <ExternalLink className="h-4 w-4 text-slate-300 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />

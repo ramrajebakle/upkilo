@@ -51,13 +51,13 @@ export default function PushNotificationsPage() {
   return (
     <div className="max-w-xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Push Notifications <Bell className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Push Notifications <Bell className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Enable browser push notifications to get real-time alerts for bookings, payments, and messages.</p>
       </header>
 
       {!swSupported && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200">
-          <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-warning-fg flex-shrink-0 mt-0.5" />
           <p className="text-sm text-amber-800">Push notifications require a modern browser with Service Worker support (Chrome, Edge, Firefox, Safari 16+).</p>
         </div>
       )}
@@ -66,7 +66,7 @@ export default function PushNotificationsPage() {
         <CardHeader><CardTitle>Browser Push Notifications</CardTitle><CardDescription>Get notified in real time, even when the dashboard is not open</CardDescription></CardHeader>
         <CardContent className="space-y-4">
           <div className={`flex items-center gap-3 p-3 rounded-lg ${permission === "granted" ? "bg-green-50" : permission === "denied" ? "bg-red-50" : "bg-surface-50"} border border-surface-200`}>
-            {permission === "granted" ? <CheckCircle2 className="h-5 w-5 text-green-600" /> : <Bell className="h-5 w-5 text-text-tertiary" />}
+            {permission === "granted" ? <CheckCircle2 className="h-5 w-5 text-success-fg" /> : <Bell className="h-5 w-5 text-text-tertiary" />}
             <div>
               <p className="text-sm font-medium text-text-primary">
                 {permission === "granted" ? "Notifications allowed" : permission === "denied" ? "Notifications blocked" : "Notifications not enabled"}
@@ -104,7 +104,7 @@ export default function PushNotificationsPage() {
               "AI recommendations ready",
             ].map((item) => (
               <div key={item} className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-success-fg flex-shrink-0" />
                 <span className="text-sm text-text-secondary">{item}</span>
               </div>
             ))}

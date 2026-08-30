@@ -67,10 +67,10 @@ export default function ProactiveMessagingPage() {
       {stats && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: "At-Risk Clients", value: stats.totalAtRisk, color: "text-amber-500" },
+            { label: "At-Risk Clients", value: stats.totalAtRisk, color: "text-warning-fg" },
             { label: "Contacted", value: stats.contacted, color: "text-blue-500" },
-            { label: "Reactivated", value: stats.reactivated, color: "text-green-500" },
-            { label: "Revenue Recovered", value: `$${(stats.revenue ?? 0).toLocaleString()}`, color: "text-green-600" },
+            { label: "Reactivated", value: stats.reactivated, color: "text-success-fg" },
+            { label: "Revenue Recovered", value: `$${(stats.revenue ?? 0).toLocaleString()}`, color: "text-success-fg" },
           ].map((s) => (
             <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>
           ))}
@@ -97,7 +97,7 @@ export default function ProactiveMessagingPage() {
                 <div className="flex gap-2">
                   {["email", "sms", "push"].map((c) => (
                     <button key={c} onClick={() => setChannel(c)}
-                      className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-colors capitalize ${channel === c ? "border-ai-500 bg-ai-50 text-ai-700" : "border-surface-200 text-text-secondary hover:bg-surface-50"}`}>
+                      className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-colors capitalize ${channel === c ? "border-ai-500 bg-ai-subtle text-ai" : "border-surface-200 text-text-secondary hover:bg-surface-50"}`}>
                       {c}
                     </button>
                   ))}
@@ -125,7 +125,7 @@ export default function ProactiveMessagingPage() {
                       <p className="text-sm font-medium text-text-primary">{t.name}</p>
                       <p className="text-xs text-text-tertiary">{t.description}</p>
                     </div>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${t.isEnabled ? "text-green-600 bg-green-50" : "text-gray-500 bg-gray-50"}`}>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${t.isEnabled ? "text-green-600 bg-green-50" : "text-foreground-secondary bg-muted"}`}>
                       {t.isEnabled ? "On" : "Off"}
                     </span>
                   </div>
@@ -143,7 +143,7 @@ export default function ProactiveMessagingPage() {
                   <div key={i} className="p-3 rounded-xl border border-surface-100 bg-surface-50">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs font-medium text-text-primary">{p.clientName}</span>
-                      <span className="text-xs bg-ai-50 text-ai-600 px-2 py-0.5 rounded-full capitalize">{p.channel}</span>
+                      <span className="text-xs bg-ai-subtle text-ai px-2 py-0.5 rounded-full capitalize">{p.channel}</span>
                     </div>
                     <p className="text-xs text-text-secondary">{p.message}</p>
                   </div>

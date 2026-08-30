@@ -40,7 +40,7 @@ export function AIToolsOverview() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Hero: Credit Usage Meter */}
-      <Card variant="glow" className="bg-surface-base border-ai-200 overflow-hidden relative">
+      <Card variant="glow" className="bg-surface-base border-ai/25 overflow-hidden relative">
         <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-ai-50/50 to-transparent pointer-events-none" />
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-8 items-center justify-between">
@@ -48,7 +48,7 @@ export function AIToolsOverview() {
               <div className="flex justify-between items-end mb-2">
                 <div>
                   <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
-                    <Zap size={18} className="text-ai-500" />
+                    <Zap size={18} className="text-ai" />
                     Monthly AI Credits
                   </h3>
                   <p className="text-sm text-text-secondary">
@@ -79,7 +79,7 @@ export function AIToolsOverview() {
                 />
               </div>
               {nearLimit && (
-                <p className="text-xs text-ai-600 font-medium mt-2">
+                <p className="text-xs text-ai font-medium mt-2">
                   Approaching limit. Some background workflows may pause soon.
                 </p>
               )}
@@ -107,10 +107,10 @@ export function AIToolsOverview() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Workflow 1 */}
-          <Card className={`transition-colors duration-200 ${workflows.autoDraft ? 'border-ai-300 shadow-sm bg-surface-0' : 'bg-surface-50 opacity-80'}`}>
+          <Card className={`transition-colors duration-200 ${workflows.autoDraft ? 'border-ai/25 shadow-sm bg-surface-0' : 'bg-surface-50 opacity-80'}`}>
             <CardContent className="p-5">
               <div className="flex justify-between items-start mb-4">
-                <div className={`p-2 rounded-lg ${workflows.autoDraft ? 'bg-ai-100 text-ai-600' : 'bg-surface-200 text-text-tertiary'}`}>
+                <div className={`p-2 rounded-lg ${workflows.autoDraft ? 'bg-ai-subtle text-ai' : 'bg-surface-200 text-text-tertiary'}`}>
                   <Mail size={20} />
                 </div>
                 <Switch 
@@ -131,10 +131,10 @@ export function AIToolsOverview() {
           </Card>
 
           {/* Workflow 2 */}
-          <Card className={`transition-colors duration-200 ${workflows.churnPrediction ? 'border-ai-300 shadow-sm bg-surface-0' : 'bg-surface-50 opacity-80'}`}>
+          <Card className={`transition-colors duration-200 ${workflows.churnPrediction ? 'border-ai/25 shadow-sm bg-surface-0' : 'bg-surface-50 opacity-80'}`}>
             <CardContent className="p-5">
               <div className="flex justify-between items-start mb-4">
-                <div className={`p-2 rounded-lg ${workflows.churnPrediction ? 'bg-ai-100 text-ai-600' : 'bg-surface-200 text-text-tertiary'}`}>
+                <div className={`p-2 rounded-lg ${workflows.churnPrediction ? 'bg-ai-subtle text-ai' : 'bg-surface-200 text-text-tertiary'}`}>
                   <Shield size={20} />
                 </div>
                 <Switch 
@@ -155,10 +155,10 @@ export function AIToolsOverview() {
           </Card>
 
           {/* Workflow 3 */}
-          <Card className={`transition-colors duration-200 ${workflows.sentimentAnalysis ? 'border-ai-300 shadow-sm bg-surface-0' : 'bg-surface-50 opacity-80'}`}>
+          <Card className={`transition-colors duration-200 ${workflows.sentimentAnalysis ? 'border-ai/25 shadow-sm bg-surface-0' : 'bg-surface-50 opacity-80'}`}>
             <CardContent className="p-5">
               <div className="flex justify-between items-start mb-4">
-                <div className={`p-2 rounded-lg ${workflows.sentimentAnalysis ? 'bg-ai-100 text-ai-600' : 'bg-surface-200 text-text-tertiary'}`}>
+                <div className={`p-2 rounded-lg ${workflows.sentimentAnalysis ? 'bg-ai-subtle text-ai' : 'bg-surface-200 text-text-tertiary'}`}>
                   <FileText size={20} />
                 </div>
                 <Switch 

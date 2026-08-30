@@ -58,7 +58,7 @@ function VerifyEmailContent() {
 
             {status === 'success' && (
                 <div className="space-y-6 animate-fade-in-up">
-                    <div className="flex flex-col items-center gap-3 text-emerald-500">
+                    <div className="flex flex-col items-center gap-3 text-success-fg">
                         <div className="p-3 bg-emerald-500/10 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                             <CheckCircle2 className="h-16 w-16" />
                         </div>

@@ -104,7 +104,7 @@ export default function AffiliateDashboardPage() {
             {copied ? '✓ Copied' : 'Copy Link'}
           </button>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+        <p className="text-xs text-foreground-secondary mt-2">
           Share this link. You earn {stats.revenueSharePercent}% of their monthly subscription — forever.
         </p>
       </div>
@@ -139,7 +139,7 @@ export default function AffiliateDashboardPage() {
           <h2 className="text-base font-semibold text-gray-800 dark:text-white">Commission History</h2>
         </div>
         {stats.commissions.length === 0 ? (
-          <div className="px-6 py-10 text-center text-gray-400 dark:text-gray-600">
+          <div className="px-6 py-10 text-center text-foreground-muted">
             No commissions yet. Share your referral link to start earning.
           </div>
         ) : (
@@ -154,7 +154,7 @@ export default function AffiliateDashboardPage() {
             <tbody>
               {stats.commissions.map(c => (
                 <tr key={c.id} className="border-t border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td className="px-6 py-3 text-xs text-gray-500">{new Date(c.createdAt).toLocaleDateString()}</td>
+                  <td className="px-6 py-3 text-xs text-foreground-secondary">{new Date(c.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-3 text-sm font-medium text-gray-800 dark:text-white">{c.tenantName}</td>
                   <td className="px-6 py-3 text-sm font-semibold text-gray-900 dark:text-white">${c.amount.toFixed(2)}</td>
                   <td className="px-6 py-3">

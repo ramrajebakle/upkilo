@@ -166,8 +166,8 @@ export default function AdminLoginPage() {
 
         {stage === "setup" && setupData && (
           <div className="space-y-6 text-center animate-fade-in">
-            <div className="bg-white p-4 rounded-xl mx-auto w-fit shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-              <div className="w-48 h-48 flex items-center justify-center bg-white rounded-lg p-2">
+            <div className="bg-card p-4 rounded-xl mx-auto w-fit shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+              <div className="w-48 h-48 flex items-center justify-center bg-card rounded-lg p-2">
                 <QRCodeSVG 
                   value={setupData.qrCodeUri} 
                   size={176}
@@ -179,7 +179,7 @@ export default function AdminLoginPage() {
             
             <div className="space-y-2">
               <p className="text-xs text-neutral-400">Scan this QR in your Auth App (Google/Authy)</p>
-              <div className="bg-black p-2 rounded border border-neutral-800 text-[10px] font-mono text-red-500 select-all">
+              <div className="bg-black p-2 rounded border border-neutral-800 text-[10px] font-mono text-danger-fg select-all">
                 {setupData.manualEntryKey}
               </div>
             </div>

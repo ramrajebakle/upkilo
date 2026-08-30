@@ -61,13 +61,13 @@ export default function BiometricsPage() {
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Biometric Authentication <Fingerprint className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Biometric Authentication <Fingerprint className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Register passkeys and biometric credentials for passwordless sign-in.</p>
       </header>
 
       {!webAuthnSupported && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200">
-          <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-warning-fg flex-shrink-0 mt-0.5" />
           <p className="text-sm text-amber-800">Your browser doesn't support WebAuthn/Passkeys. Use Chrome, Edge, Safari, or Firefox on a modern device.</p>
         </div>
       )}
@@ -102,17 +102,17 @@ export default function BiometricsPage() {
                 <Card key={c.id}>
                   <CardContent className="pt-3 pb-3 flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-surface-100 flex items-center justify-center flex-shrink-0">
-                      <Fingerprint className="h-4 w-4 text-ai-500" />
+                      <Fingerprint className="h-4 w-4 text-ai" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-text-primary">{c.name}</p>
                       <div className="flex items-center gap-3 mt-0.5">
                         {c.deviceType && <span className="text-xs text-text-tertiary">{c.deviceType}</span>}
                         <span className="text-xs text-text-tertiary">Added {new Date(c.createdAt).toLocaleDateString()}</span>
-                        {c.lastUsedAt && <span className="text-xs text-green-600">Last used {new Date(c.lastUsedAt).toLocaleDateString()}</span>}
+                        {c.lastUsedAt && <span className="text-xs text-success-fg">Last used {new Date(c.lastUsedAt).toLocaleDateString()}</span>}
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" leftIcon={deleting === c.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} className="text-red-500" />}
+                    <Button variant="outline" size="sm" leftIcon={deleting === c.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} className="text-danger-fg" />}
                       onClick={() => remove(c.id)} disabled={!!deleting}>Remove</Button>
                   </CardContent>
                 </Card>

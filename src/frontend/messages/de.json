@@ -57,5 +57,38 @@
       "cancelled": "Storniert",
       "completed": "Abgeschlossen"
     }
+  },
+  "Theme": {
+    "accentColour": "Akzentfarbe",
+    "accentHelp": "Ihre Markenfarbe, verwendet auf Ihrer öffentlichen Buchungsseite und im Kundenportal. Sie wird mit <link>Branding</link> geteilt, wo Sie auch Logo und eigene Domain festlegen können.",
+    "accentPreview": "Jetzt buchen",
+    "accentSaveFailed": "Akzentfarbe konnte nicht gespeichert werden",
+    "accentSaved": "Akzentfarbe gespeichert",
+    "appearance": "Darstellung",
+    "appearanceSubtitle": "Legen Sie fest, wie Upkilo auf diesem Gerät aussieht.",
+    "colourAmber": "Bernstein",
+    "colourCyan": "Cyan",
+    "colourEmerald": "Smaragd",
+    "colourIndigo": "Indigo",
+    "colourRose": "Rosé",
+    "colourTheme": "Farbschema",
+    "colourViolet": "Violett",
+    "contrastWarning": "Beschriftungen auf dieser Farbe erreichen nur {ratio}:1 Kontrast und liegen damit unter dem Barrierefreiheits-Minimum von 4,5:1. Ein etwas dunklerer Ton ist für alle besser lesbar.",
+    "dark": "Dunkel",
+    "darkHint": "Immer das dunkle Design",
+    "darkModeActive": "Dunkler Modus aktiv",
+    "light": "Hell",
+    "lightHint": "Immer das helle Design",
+    "lightModeActive": "Heller Modus aktiv",
+    "resolvedNow": "derzeit {mode}",
+    "saveAccent": "Akzentfarbe speichern",
+    "saved": "Gespeichert",
+    "saving": "Wird gespeichert…",
+    "switchToDark": "Zum dunklen Modus wechseln",
+    "switchToLight": "Zum hellen Modus wechseln",
+    "system": "System",
+    "systemHint": "Diesem Gerät folgen",
+    "themeHint": "Wird sofort übernommen und auf diesem Gerät gespeichert.",
+    "themeSection": "Design"
   }
 }

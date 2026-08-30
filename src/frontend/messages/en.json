@@ -366,5 +366,38 @@
         "description": "Ask the AI to write a client follow-up message or suggest a promotion. Most owners save 2+ hours on Day 1."
       }
     }
+  },
+  "Theme": {
+    "accentColour": "Accent colour",
+    "accentHelp": "Your brand colour, used on your public booking page and client portal. It is shared with <link>Branding</link>, where you can also set a logo and custom domain.",
+    "accentPreview": "Book now",
+    "accentSaveFailed": "Failed to save accent colour",
+    "accentSaved": "Accent colour saved",
+    "appearance": "Appearance",
+    "appearanceSubtitle": "Choose how Upkilo looks on this device.",
+    "colourAmber": "Amber",
+    "colourCyan": "Cyan",
+    "colourEmerald": "Emerald",
+    "colourIndigo": "Indigo",
+    "colourRose": "Rose",
+    "colourTheme": "Colour theme",
+    "colourViolet": "Violet",
+    "contrastWarning": "Button labels on this colour reach only {ratio}:1 contrast, below the 4.5:1 accessibility minimum. A slightly darker shade will read better for everyone.",
+    "dark": "Dark",
+    "darkHint": "Always the dark theme",
+    "darkModeActive": "Dark mode active",
+    "light": "Light",
+    "lightHint": "Always the light theme",
+    "lightModeActive": "Light mode active",
+    "resolvedNow": "{mode} right now",
+    "saveAccent": "Save accent colour",
+    "saved": "Saved",
+    "saving": "Saving…",
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode",
+    "system": "System",
+    "systemHint": "Follow this device",
+    "themeHint": "Applies immediately and is remembered on this device.",
+    "themeSection": "Theme"
   }
 }

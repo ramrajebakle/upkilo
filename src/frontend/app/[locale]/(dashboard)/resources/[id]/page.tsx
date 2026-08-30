@@ -109,10 +109,10 @@ export default function EditResourcePage() {
     if (fetching) {
         return (
             <div className="max-w-4xl mx-auto animate-pulse space-y-8">
-                <div className="h-20 bg-slate-100 rounded-2xl w-full" />
+                <div className="h-20 bg-muted rounded-2xl w-full" />
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 h-96 bg-slate-50 rounded-2xl" />
-                    <div className="h-96 bg-slate-50 rounded-2xl" />
+                    <div className="lg:col-span-2 h-96 bg-muted rounded-2xl" />
+                    <div className="h-96 bg-muted rounded-2xl" />
                 </div>
             </div>
         );
@@ -124,9 +124,9 @@ export default function EditResourcePage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/resources"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -134,13 +134,13 @@ export default function EditResourcePage() {
                             <Monitor className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Edit Resource
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Modify resource details and availability</p>
+                    <p className="text-foreground-secondary ml-12">Modify resource details and availability</p>
                 </div>
                 <button 
                     type="button"
@@ -157,14 +157,14 @@ export default function EditResourcePage() {
                     {/* Main Info */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <Tag className="h-5 w-5 text-primary-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <Tag className="h-5 w-5 text-primary" />
                                 Resource Overview
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Resource Name <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Resource Name <span className="text-danger-fg">*</span>
                                     </label>
                                     <input
                                         {...register('name')}
@@ -172,15 +172,15 @@ export default function EditResourcePage() {
                                         className={cn("input", errors.name && "border-red-500")}
                                         placeholder="e.g. VIP Treatment Room 1"
                                     />
-                                    {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+                                    {errors.name && <p className="text-xs text-danger-fg mt-1">{errors.name.message}</p>}
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Resource Type <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Resource Type <span className="text-danger-fg">*</span>
                                         </label>
                                         <div className="relative">
-                                            <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <select
                                                 {...register('type')}
                                                 className={cn("input pl-11 appearance-none", errors.type && "border-red-500")}
@@ -191,14 +191,14 @@ export default function EditResourcePage() {
                                                 <option value="Vehicle">Vehicle</option>
                                             </select>
                                         </div>
-                                        {errors.type && <p className="text-xs text-red-500 mt-1">{errors.type.message}</p>}
+                                        {errors.type && <p className="text-xs text-danger-fg mt-1">{errors.type.message}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Capacity <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Capacity <span className="text-danger-fg">*</span>
                                         </label>
                                         <div className="relative">
-                                            <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <input
                                                 {...register('capacity', { valueAsNumber: true })}
                                                 type="number"
@@ -206,15 +206,15 @@ export default function EditResourcePage() {
                                                 className={cn("input pl-11", errors.capacity && "border-red-500")}
                                             />
                                         </div>
-                                        {errors.capacity && <p className="text-xs text-red-500 mt-1">{errors.capacity.message}</p>}
+                                        {errors.capacity && <p className="text-xs text-danger-fg mt-1">{errors.capacity.message}</p>}
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Location
                                     </label>
                                     <div className="relative">
-                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             {...register('location')}
                                             type="text"
@@ -224,7 +224,7 @@ export default function EditResourcePage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Description
                                     </label>
                                     <textarea
@@ -237,14 +237,14 @@ export default function EditResourcePage() {
                         </div>
 
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <Activity className="h-5 w-5 text-emerald-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <Activity className="h-5 w-5 text-success-fg" />
                                 Status & Availability
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Resource Status <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Resource Status <span className="text-danger-fg">*</span>
                                     </label>
                                     <select
                                         {...register('status')}
@@ -255,7 +255,7 @@ export default function EditResourcePage() {
                                         <option value="maintenance">Maintenance</option>
                                         <option value="unavailable">Unavailable</option>
                                     </select>
-                                    {errors.status && <p className="text-xs text-red-500 mt-1">{errors.status.message}</p>}
+                                    {errors.status && <p className="text-xs text-danger-fg mt-1">{errors.status.message}</p>}
                                 </div>
                             </div>
                         </div>
@@ -264,11 +264,11 @@ export default function EditResourcePage() {
                     {/* Sidebar Info */}
                     <div className="space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                                 <Info className="h-5 w-5 text-blue-500" />
                                 Usage Stats
                             </h2>
-                            <div className="space-y-4 text-sm text-slate-600">
+                            <div className="space-y-4 text-sm text-foreground-secondary">
                                 <p>Used in 12 bookings this week.</p>
                                 <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-xl text-emerald-700 border border-emerald-100">
                                     <Sparkles className="h-4 w-4 mt-0.5 flex-shrink-0" />

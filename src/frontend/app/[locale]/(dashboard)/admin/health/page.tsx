@@ -143,7 +143,7 @@ export default function AdminHealthPage() {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>System Uptime</h2>
-            <div className="flex items-center gap-2 text-emerald-500 text-sm font-semibold">
+            <div className="flex items-center gap-2 text-success-fg text-sm font-semibold">
               <CheckCircle2 className="h-4 w-4" />
               99.98%
             </div>
@@ -159,7 +159,7 @@ export default function AdminHealthPage() {
             ))}
           </div>
 
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Recent Events</h3>
+          <h3 className="text-sm font-bold text-foreground-muted uppercase tracking-wider mb-4">Recent Events</h3>
           <div className="space-y-4">
             <EventItem 
               title="Database Maintenance Completed" 
@@ -193,7 +193,7 @@ function ServiceStatusItem({ name, status, icon: Icon, details }: { name: string
         </div>
         <div>
           <div className="font-bold text-slate-900 dark:text-white">{name}</div>
-          {details && <div className="text-xs text-slate-500">{details}</div>}
+          {details && <div className="text-xs text-foreground-secondary">{details}</div>}
         </div>
       </div>
       <Badge variant={isHealthy ? 'success' : 'secondary'} className="capitalize">
@@ -209,7 +209,7 @@ function EventItem({ title, time, type }: { title: string; time: string; type: '
       <div className={`mt-1.5 h-2 w-2 rounded-full ${type === 'success' ? 'bg-emerald-500' : type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'}`} />
       <div>
         <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">{title}</div>
-        <div className="text-xs text-slate-500 flex items-center gap-1">
+        <div className="text-xs text-foreground-secondary flex items-center gap-1">
           <Clock className="h-3 w-3" />
           {time}
         </div>

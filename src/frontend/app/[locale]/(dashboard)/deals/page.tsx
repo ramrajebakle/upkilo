@@ -79,10 +79,10 @@ export default function DealsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Sales Pipeline</h1>
           <p className="text-muted-foreground">
             Track and manage your deals through the sales lifecycle.
-            {!loading && <span className="ml-2 text-sm text-slate-500">({totalDeals} deals · ${totalValue.toLocaleString()} total value)</span>}
+            {!loading && <span className="ml-2 text-sm text-foreground-secondary">({totalDeals} deals · ${totalValue.toLocaleString()} total value)</span>}
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors">
+        <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors">
           <Plus className="w-4 h-4" /> New Deal
         </button>
       </div>

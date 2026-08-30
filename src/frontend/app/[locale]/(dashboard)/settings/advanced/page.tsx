@@ -52,7 +52,7 @@ export default function AdvancedFeaturesPage() {
       </div>
       <div onClick={() => toggle(feature.key)}
         className={`w-10 h-5 rounded-full flex-shrink-0 cursor-pointer relative transition-colors mt-0.5 ${feature.enabled ? "bg-ai-500" : "bg-surface-300"}`}>
-        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${feature.enabled ? "translate-x-5" : "translate-x-0.5"}`} />
+        <div className={`absolute top-0.5 w-4 h-4 bg-control-thumb rounded-full shadow transition-transform ${feature.enabled ? "translate-x-5" : "translate-x-0.5"}`} />
       </div>
     </div>
   );
@@ -61,7 +61,7 @@ export default function AdvancedFeaturesPage() {
     <div className="max-w-2xl space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Advanced Features <Zap className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Advanced Features <Zap className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">Enable or disable advanced platform capabilities. Changes apply immediately.</p>
         </div>
         {dirty && (

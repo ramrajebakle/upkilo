@@ -44,7 +44,7 @@ function StarDisplay({ rating }: { rating: number }) {
     return (
         <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className={cn('w-4 h-4', s <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300 dark:text-slate-600')} />
+                <Star key={s} className={cn('w-4 h-4', s <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300')} />
             ))}
         </div>
     );
@@ -156,7 +156,7 @@ export default function ReviewsPage() {
                     <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm">
                         <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Response Rate</p>
                         <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{stats.responseRate}%</p>
-                        <p className="text-xs text-slate-400 mt-1">Google rewards fast responses</p>
+                        <p className="text-xs text-foreground-muted mt-1">Google rewards fast responses</p>
                     </div>
                     <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm">
                         <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">By Platform</p>
@@ -187,7 +187,7 @@ export default function ReviewsPage() {
                                     <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                         <div className="h-full bg-amber-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
                                     </div>
-                                    <span className="text-xs text-slate-500 w-8 text-right">{count}</span>
+                                    <span className="text-xs text-foreground-secondary w-8 text-right">{count}</span>
                                 </div>
                             );
                         })}
@@ -229,12 +229,12 @@ export default function ReviewsPage() {
 
             {/* Review List */}
             {loading ? (
-                <div className="text-center py-16 text-slate-400">Loading reviews…</div>
+                <div className="text-center py-16 text-foreground-muted">Loading reviews…</div>
             ) : reviews.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <Star className="w-12 h-12 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
+                    <Star className="w-12 h-12 text-slate-200 mx-auto mb-3" />
                     <p className="font-medium text-slate-600 dark:text-slate-300">No reviews yet</p>
-                    <p className="text-sm text-slate-400 mt-1">Import your first review or send review requests to clients after their appointments.</p>
+                    <p className="text-sm text-foreground-muted mt-1">Import your first review or send review requests to clients after their appointments.</p>
                     <button onClick={() => setShowAddModal(true)} className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium">Import Review</button>
                 </div>
             ) : (
@@ -244,14 +244,14 @@ export default function ReviewsPage() {
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 flex-wrap mb-2">
-                                        <span className={cn('text-xs font-semibold px-2.5 py-1 rounded-full', PLATFORM_COLORS[r.platform] ?? 'bg-slate-100 text-slate-600')}>{r.platform}</span>
+                                        <span className={cn('text-xs font-semibold px-2.5 py-1 rounded-full', PLATFORM_COLORS[r.platform] ?? 'bg-muted text-foreground-secondary')}>{r.platform}</span>
                                         <span className={cn('text-xs font-semibold px-2.5 py-1 rounded-full', SENTIMENT_BADGE[r.sentiment])}>{r.sentiment}</span>
                                         {r.hasResponse && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Responded</span>}
                                     </div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <StarDisplay rating={r.rating} />
                                         <span className="font-semibold text-slate-900 dark:text-white text-sm">{r.reviewerName}</span>
-                                        <span className="text-xs text-slate-400">{new Date(r.reviewDate).toLocaleDateString()}</span>
+                                        <span className="text-xs text-foreground-muted">{new Date(r.reviewDate).toLocaleDateString()}</span>
                                     </div>
                                     {r.reviewText && <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">{r.reviewText}</p>}
                                     {r.responseText && (

@@ -73,8 +73,8 @@ export default function AdminUsersPage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Total Users", value: stats.total, color: "text-text-primary" },
-          { label: "Active", value: stats.active, color: "text-green-500" },
-          { label: "Inactive", value: stats.inactive, color: "text-gray-400" },
+          { label: "Active", value: stats.active, color: "text-success-fg" },
+          { label: "Inactive", value: stats.inactive, color: "text-foreground-muted" },
         ].map((s) => (
           <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>
         ))}
@@ -90,7 +90,7 @@ export default function AdminUsersPage() {
           {roles.map((r) => (
             <button key={r} onClick={() => setRoleFilter(r)}
               className={cn("px-3 py-1 text-xs font-medium rounded-md transition-colors",
-                roleFilter === r ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
+                roleFilter === r ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
               {r}
             </button>
           ))}
@@ -118,14 +118,14 @@ export default function AdminUsersPage() {
                       <td className="py-3 px-4 text-xs text-text-secondary">{u.tenantName ?? "—"}</td>
                       <td className="py-3 px-4">
                         <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full",
-                          u.isActive ? "text-green-600 bg-green-50" : "text-gray-500 bg-gray-50")}>
+                          u.isActive ? "text-green-600 bg-green-50" : "text-foreground-secondary bg-muted")}>
                           {u.isActive ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-xs text-text-tertiary">{u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleDateString() : "Never"}</td>
                       <td className="py-3 px-4">
                         <Button variant="outline" size="sm"
-                          leftIcon={actioning === u.id ? <Loader2 size={12} className="animate-spin" /> : u.isActive ? <UserX size={12} className="text-red-500" /> : <UserCheck size={12} className="text-green-500" />}
+                          leftIcon={actioning === u.id ? <Loader2 size={12} className="animate-spin" /> : u.isActive ? <UserX size={12} className="text-danger-fg" /> : <UserCheck size={12} className="text-success-fg" />}
                           onClick={() => setStatus(u.id, u.isActive ? "deactivate" : "activate")} disabled={!!actioning}>
                           {u.isActive ? "Deactivate" : "Activate"}
                         </Button>

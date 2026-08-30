@@ -27,10 +27,10 @@ interface WaitlistEntry {
 const STATUS_COLORS: Record<string, string> = {
     Pending: 'bg-blue-50 text-blue-700',
     Waiting: 'bg-amber-50 text-amber-700',
-    Notified: 'bg-primary-50 text-primary-700',
+    Notified: 'bg-brand-subtle text-primary',
     Converted: 'bg-emerald-50 text-emerald-700',
     Booked: 'bg-emerald-50 text-emerald-700',
-    Expired: 'bg-slate-100 text-slate-500',
+    Expired: 'bg-muted text-foreground-secondary',
     Cancelled: 'bg-red-50 text-red-600',
 };
 
@@ -115,10 +115,10 @@ export default function WaitlistPage() {
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Waitlist</h1>
-                    <p className="text-slate-500 mt-1">Manage clients waiting for appointment slots</p>
+                    <h1 className="text-2xl font-bold text-foreground">Waitlist</h1>
+                    <p className="text-foreground-secondary mt-1">Manage clients waiting for appointment slots</p>
                 </div>
-                <button onClick={fetchData} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                <button onClick={fetchData} className="p-2 rounded-lg hover:bg-accent text-foreground-secondary">
                     <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 </button>
             </div>
@@ -127,16 +127,16 @@ export default function WaitlistPage() {
             {summary && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                        { label: 'Total', value: summary.total, icon: <Users className="h-5 w-5 text-slate-500" />, color: 'text-slate-900' },
-                        { label: 'Waiting', value: summary.pending, icon: <Clock className="h-5 w-5 text-amber-500" />, color: 'text-amber-700' },
-                        { label: 'Notified', value: summary.notified, icon: <Bell className="h-5 w-5 text-primary-500" />, color: 'text-primary-700' },
-                        { label: 'Converted', value: summary.converted, icon: <CheckCircle className="h-5 w-5 text-emerald-500" />, color: 'text-emerald-700' },
+                        { label: 'Total', value: summary.total, icon: <Users className="h-5 w-5 text-foreground-secondary" />, color: 'text-foreground' },
+                        { label: 'Waiting', value: summary.pending, icon: <Clock className="h-5 w-5 text-warning-fg" />, color: 'text-amber-700' },
+                        { label: 'Notified', value: summary.notified, icon: <Bell className="h-5 w-5 text-primary" />, color: 'text-primary' },
+                        { label: 'Converted', value: summary.converted, icon: <CheckCircle className="h-5 w-5 text-success-fg" />, color: 'text-emerald-700' },
                     ].map(s => (
-                        <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-                            <div className="p-2 bg-slate-50 rounded-lg">{s.icon}</div>
+                        <div key={s.label} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                            <div className="p-2 bg-muted rounded-lg">{s.icon}</div>
                             <div>
                                 <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
-                                <div className="text-xs text-slate-500">{s.label}</div>
+                                <div className="text-xs text-foreground-secondary">{s.label}</div>
                             </div>
                         </div>
                     ))}
@@ -144,12 +144,12 @@ export default function WaitlistPage() {
             )}
 
             {/* Filters */}
-            <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
+            <div className="flex gap-1 bg-muted p-1 rounded-xl w-fit">
                 {(['all', 'active', 'notified', 'converted'] as FilterStatus[]).map(f => (
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className={`px-4 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${filter === f ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${filter === f ? 'bg-card text-foreground shadow-sm' : 'text-foreground-secondary hover:text-foreground'}`}
                     >
                         {f}
                     </button>
@@ -159,17 +159,17 @@ export default function WaitlistPage() {
             {/* Waitlist Table */}
             {loading ? (
                 <div className="space-y-3">
-                    {[...Array(4)].map((_, i) => <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse h-20" />)}
+                    {[...Array(4)].map((_, i) => <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse h-20" />)}
                 </div>
             ) : filteredEntries.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+                <div className="text-center py-16 bg-card rounded-xl border border-border">
                     <Clock className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-slate-700">No waitlist entries</h3>
-                    <p className="text-slate-500 text-sm mt-1">Clients will appear here when they join the waitlist</p>
+                    <h3 className="text-lg font-semibold text-foreground">No waitlist entries</h3>
+                    <p className="text-foreground-secondary text-sm mt-1">Clients will appear here when they join the waitlist</p>
                 </div>
             ) : (
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-                    <div className="grid grid-cols-12 gap-3 px-5 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider bg-slate-50 border-b border-slate-100">
+                <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <div className="grid grid-cols-12 gap-3 px-5 py-2 text-xs font-semibold text-foreground-secondary uppercase tracking-wider bg-muted border-b border-border-subtle">
                         <div className="col-span-3">Client</div>
                         <div className="col-span-2">Contact</div>
                         <div className="col-span-2">Preferred Date</div>
@@ -178,31 +178,31 @@ export default function WaitlistPage() {
                         <div className="col-span-2 text-right">Actions</div>
                     </div>
                     {filteredEntries.map((entry, idx) => (
-                        <div key={entry.id} className={`grid grid-cols-12 gap-3 px-5 py-3 items-center ${idx < filteredEntries.length - 1 ? 'border-b border-slate-50' : ''} hover:bg-slate-50`}>
+                        <div key={entry.id} className={`grid grid-cols-12 gap-3 px-5 py-3 items-center ${idx < filteredEntries.length - 1 ? 'border-b border-slate-50' : ''} hover:bg-accent`}>
                             <div className="col-span-3">
                                 <div className="flex items-center gap-2">
                                     <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                                         {entry.firstName?.[0] || entry.email?.[0]?.toUpperCase() || 'W'}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-slate-900">{entry.firstName} {entry.lastName}</p>
-                                        {entry.service && <p className="text-xs text-slate-400">{entry.service.name}</p>}
+                                        <p className="text-sm font-medium text-foreground">{entry.firstName} {entry.lastName}</p>
+                                        {entry.service && <p className="text-xs text-foreground-muted">{entry.service.name}</p>}
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-span-2 text-xs text-slate-600 space-y-0.5">
-                                <div className="flex items-center gap-1"><Mail className="h-3 w-3 text-slate-400" />{entry.email}</div>
-                                {entry.phone && <div className="flex items-center gap-1"><Phone className="h-3 w-3 text-slate-400" />{entry.phone}</div>}
+                            <div className="col-span-2 text-xs text-foreground-secondary space-y-0.5">
+                                <div className="flex items-center gap-1"><Mail className="h-3 w-3 text-foreground-muted" />{entry.email}</div>
+                                {entry.phone && <div className="flex items-center gap-1"><Phone className="h-3 w-3 text-foreground-muted" />{entry.phone}</div>}
                             </div>
-                            <div className="col-span-2 text-sm text-slate-600">
+                            <div className="col-span-2 text-sm text-foreground-secondary">
                                 <div>{new Date(entry.preferredDate).toLocaleDateString()}</div>
-                                {entry.preferredTimeRange && <div className="text-xs text-slate-400">{entry.preferredTimeRange}</div>}
+                                {entry.preferredTimeRange && <div className="text-xs text-foreground-muted">{entry.preferredTimeRange}</div>}
                             </div>
                             <div className="col-span-1">
-                                <span className="text-sm font-semibold text-slate-700">#{entry.priority || 1}</span>
+                                <span className="text-sm font-semibold text-foreground">#{entry.priority || 1}</span>
                             </div>
                             <div className="col-span-2">
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[entry.status] || 'bg-slate-100 text-slate-600'}`}>
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[entry.status] || 'bg-muted text-foreground-secondary'}`}>
                                     {entry.status}
                                 </span>
                             </div>
@@ -211,7 +211,7 @@ export default function WaitlistPage() {
                                     <button
                                         onClick={() => handleNotify(entry)}
                                         disabled={notifyingId === entry.id}
-                                        className="p-1.5 rounded-lg text-primary-500 hover:bg-primary-50 hover:text-primary-700"
+                                        className="p-1.5 rounded-lg text-primary hover:bg-brand-subtle hover:text-primary"
                                         title="Notify client"
                                     >
                                         {notifyingId === entry.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Bell className="h-3.5 w-3.5" />}
@@ -221,7 +221,7 @@ export default function WaitlistPage() {
                                     <button
                                         onClick={() => handleConvert(entry)}
                                         disabled={convertingId === entry.id}
-                                        className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 hover:text-emerald-700"
+                                        className="p-1.5 rounded-lg text-success-fg hover:bg-emerald-50 hover:text-emerald-700"
                                         title="Convert to booking"
                                     >
                                         {convertingId === entry.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowRight className="h-3.5 w-3.5" />}

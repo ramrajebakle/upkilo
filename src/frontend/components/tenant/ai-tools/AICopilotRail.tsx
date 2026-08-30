@@ -140,7 +140,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: '100%', opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="fixed right-0 top-0 h-full w-[360px] z-40 flex flex-col bg-white border-l border-surface-200 shadow-2xl"
+                    className="fixed right-0 top-0 h-full w-[360px] z-40 flex flex-col bg-card border-l border-surface-200 shadow-2xl"
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-surface-200 bg-gradient-to-r from-primary-50 to-primary-100">
@@ -175,7 +175,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
 
                     {/* Context hint banner */}
                     {contextHint && (
-                        <div className="px-4 py-2 bg-primary-50 border-b border-primary-100 text-xs text-primary-700 flex items-center gap-1.5">
+                        <div className="px-4 py-2 bg-brand-subtle border-b border-primary/25 text-xs text-primary flex items-center gap-1.5">
                             <ChevronRight className="h-3 w-3" />
                             Context: {contextHint}
                         </div>
@@ -186,8 +186,8 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                         {messages.length === 0 && (
                             <div className="space-y-4">
                                 <div className="text-center py-6">
-                                    <div className="mx-auto mb-3 w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center">
-                                        <Sparkles className="h-6 w-6 text-primary-500" />
+                                    <div className="mx-auto mb-3 w-12 h-12 bg-brand-subtle rounded-2xl flex items-center justify-center">
+                                        <Sparkles className="h-6 w-6 text-primary" />
                                     </div>
                                     <p className="text-sm font-medium text-text-primary">How can I help?</p>
                                     <p className="text-xs text-text-tertiary mt-1">Ask me anything about your business</p>
@@ -199,7 +199,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                                         <button
                                             key={prompt}
                                             onClick={() => send(prompt)}
-                                            className="w-full text-left text-sm px-3 py-2.5 rounded-xl border border-surface-200 text-text-secondary hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-all"
+                                            className="w-full text-left text-sm px-3 py-2.5 rounded-xl border border-surface-200 text-text-secondary hover:border-primary-300 hover:bg-brand-subtle hover:text-primary transition-all"
                                         >
                                             {prompt}
                                         </button>
@@ -238,7 +238,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                                                 className="p-1 rounded text-text-tertiary hover:text-text-primary transition-colors"
                                                 title="Copy"
                                             >
-                                                {copiedId === msg.id ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+                                                {copiedId === msg.id ? <Check className="h-3 w-3 text-success-fg" /> : <Copy className="h-3 w-3" />}
                                             </button>
                                             <button className="p-1 rounded text-text-tertiary hover:text-green-500 transition-colors" title="Helpful">
                                                 <ThumbsUp className="h-3 w-3" />
@@ -258,7 +258,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
                                     <Bot className="h-3.5 w-3.5 text-white" />
                                 </div>
                                 <div className="bg-surface-100 rounded-2xl rounded-tl-sm px-3.5 py-2.5 flex items-center gap-1.5">
-                                    <Loader2 className="h-3.5 w-3.5 text-primary-500 animate-spin" />
+                                    <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
                                     <span className="text-sm text-text-secondary">Thinking…</span>
                                 </div>
                             </div>
@@ -269,7 +269,7 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
 
                     {/* Input */}
                     <div className="px-4 py-3 border-t border-surface-200 bg-surface-50">
-                        <div className="flex items-end gap-2 bg-white rounded-2xl border border-surface-200 px-3 py-2 focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-100 transition-all">
+                        <div className="flex items-end gap-2 bg-card rounded-2xl border border-surface-200 px-3 py-2 focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-100 transition-all">
                             <textarea
                                 ref={inputRef}
                                 rows={1}

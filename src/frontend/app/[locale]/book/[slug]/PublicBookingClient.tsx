@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { BookingWizard } from "@/components/booking/BookingWizard";
+import { applyTenantBrand } from '@/lib/brand';
 
 interface Business {
   name: string;
@@ -29,15 +30,10 @@ export default function PublicBookingClient({ business, slug, mode, color, trans
   const primaryColor = color || business.primaryColor;
 
   // Inject brand colours into CSS variables (widget `color` overrides the tenant default).
+  // applyTenantBrand also derives a contrast-safe label colour, which matters here more than
+  // anywhere else: the tenant picks this hue, and white-on-amber is not readable.
   useEffect(() => {
-    if (!primaryColor) return;
-    const hex = primaryColor.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    document.documentElement.style.setProperty('--primary-color', primaryColor);
-    document.documentElement.style.setProperty('--primary-color-hover', `rgb(${Math.max(0, r - 20)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)})`);
-    document.documentElement.style.setProperty('--primary-color-light', `rgba(${r}, ${g}, ${b}, 0.1)`);
+    applyTenantBrand(primaryColor);
   }, [primaryColor]);
 
   // Widget mode: post the content height to the parent page so the embedding
@@ -55,10 +51,10 @@ export default function PublicBookingClient({ business, slug, mode, color, trans
   }, [isWidget]);
 
   return (
-    <div className={`min-h-screen flex flex-col ${transparent ? 'bg-transparent' : 'bg-slate-50'}`}>
+    <div className={`min-h-screen flex flex-col ${transparent ? 'bg-transparent' : 'bg-muted'}`}>
       {/* Header — hidden in widget mode (the host site provides its own branding) */}
       {!isWidget && (
-      <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
+      <header className="bg-card border-b sticky top-0 z-10 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {business.logo ? (
@@ -71,7 +67,7 @@ export default function PublicBookingClient({ business, slug, mode, color, trans
                 {business.name?.[0] || 'U'}
               </div>
             )}
-            <span className="font-bold text-lg tracking-tight text-slate-900">
+            <span className="font-bold text-lg tracking-tight text-foreground">
               {business.name}
             </span>
           </div>
@@ -90,10 +86,10 @@ export default function PublicBookingClient({ business, slug, mode, color, trans
 
       {/* Footer — hidden in widget mode to keep the embed compact */}
       {!isWidget && (
-      <footer className="py-8 text-center text-xs text-slate-400">
+      <footer className="py-8 text-center text-xs text-foreground-muted">
         &copy; {new Date().getFullYear()} {business.name}. All rights reserved.
         <span className="mx-2">·</span>
-        <a href="https://upkilo.com" target="_blank" rel="noopener" className="hover:text-slate-600 transition-colors">
+        <a href="https://upkilo.com" target="_blank" rel="noopener" className="hover:text-foreground-secondary transition-colors">
           Powered by Upkilo
         </a>
       </footer>

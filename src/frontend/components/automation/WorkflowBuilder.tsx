@@ -108,7 +108,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
     const selectedNode = nodes.find((n) => n.id === selectedNodeId) || null;
 
     return (
-        <div className="flex w-full h-[calc(100vh-140px)] border border-gray-200 rounded-2xl overflow-hidden bg-gray-50 shadow-inner">
+        <div className="flex w-full h-[calc(100vh-140px)] border border-border rounded-2xl overflow-hidden bg-muted shadow-inner">
             <WorkflowSidebar />
             
             <div className="flex-1 relative" ref={reactFlowWrapper}>

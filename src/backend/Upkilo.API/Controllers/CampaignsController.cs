@@ -53,7 +53,7 @@ public class CampaignsController : ControllerBase
     /// Generate AI content for a campaign
     /// </summary>
     [HttpPost("generate-ai-content")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     public async Task<IActionResult> GenerateAIContent([FromBody] GenerateContentRequest request)
     {
         var tenantId = _tenantProvider.GetTenantId();

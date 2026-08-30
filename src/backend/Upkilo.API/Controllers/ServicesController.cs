@@ -289,7 +289,7 @@ public class ServicesController : ControllerBase
     /// caller decides whether to apply via PATCH /services/{id}.
     /// </summary>
     [HttpPost("{id}/ai-content")]
-    [RequiresFeature("AiCopilot")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     public async Task<IActionResult> GenerateServiceContent(Guid id)
     {
         var tenantId = _tenantProvider.GetTenantId();

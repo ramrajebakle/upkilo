@@ -151,12 +151,12 @@ export function CustomDomainSettings() {
                     </div>
                     <div>
                         <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Identity Nexus</h2>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Foundational Domain Uplinks and Protocol Authority</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Foundational Domain Uplinks and Protocol Authority</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="px-5 py-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-transparent dark:border-slate-850 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                        <Shield className="h-4 w-4 text-emerald-500" /> Security: Optimal
+                        <Shield className="h-4 w-4 text-success-fg" /> Security: Optimal
                     </div>
                 </div>
             </div>
@@ -165,7 +165,7 @@ export function CustomDomainSettings() {
             <div className="p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-8 relative overflow-hidden group">
                 <div className="relative z-10 flex flex-col md:flex-row gap-6">
                     <div className="relative flex-1 group">
-                        <Globe className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                        <Globe className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                         <input
                             type="text"
                             value={newHostname}
@@ -185,7 +185,7 @@ export function CustomDomainSettings() {
                 </div>
                 <div className="relative z-10 flex items-center gap-4 pl-2 opacity-60">
                     <Zap className="h-4 w-4 text-primary-500" />
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Requires CNAME allocation at regional DNS registry</p>
+                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">Requires CNAME allocation at regional DNS registry</p>
                 </div>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 blur-3xl rounded-full" />
             </div>
@@ -193,12 +193,12 @@ export function CustomDomainSettings() {
             {/* Matrix Fleet (List) */}
             <div className="space-y-6">
                 {loading ? (
-                    <div className="py-24 flex flex-col items-center gap-6 text-slate-400">
+                    <div className="py-24 flex flex-col items-center gap-6 text-foreground-muted">
                         <Loader2 className="h-12 w-12 animate-spin text-primary-500" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em]">Syncing Host Matrix...</span>
                     </div>
                 ) : domains.length === 0 ? (
-                    <div className="py-24 flex flex-col items-center gap-8 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 rounded-[40px] text-slate-300 dark:text-slate-800 group">
+                    <div className="py-24 flex flex-col items-center gap-8 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 rounded-[40px] text-slate-300 group">
                         <div className="p-8 bg-white dark:bg-slate-900 rounded-full shadow-inner transform group-hover:rotate-12 transition-transform duration-700">
                             <Shield className="h-16 w-16" />
                         </div>
@@ -214,7 +214,7 @@ export function CustomDomainSettings() {
                                             "h-16 w-16 rounded-[24px] flex items-center justify-center shadow-xl transition-all group-hover:scale-110",
                                             domain.isVerified 
                                                 ? "bg-emerald-500 text-white shadow-emerald-500/20" 
-                                                : "bg-slate-100 dark:bg-slate-950 text-slate-400 border border-transparent dark:border-slate-850"
+                                                : "bg-slate-100 dark:bg-slate-950 text-foreground-muted border border-transparent dark:border-slate-850"
                                         )}>
                                             {domain.isVerified ? <CheckCircle2 className="h-8 w-8" /> : <RefreshCw className="h-8 w-8 animate-spin-slow opacity-50" />}
                                         </div>
@@ -231,9 +231,9 @@ export function CustomDomainSettings() {
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-4">
-                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol: SSL {domain.sslStatus}</span>
+                                                <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">Protocol: SSL {domain.sslStatus}</span>
                                                 <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
-                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Edge Node: Global</span>
+                                                <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">Edge Node: Global</span>
                                             </div>
                                         </div>
                                     </div>
@@ -251,11 +251,11 @@ export function CustomDomainSettings() {
                                         )}
                                         <button
                                             onClick={() => handleDelete(domain.id)}
-                                            className="h-14 w-14 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-2xl transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-900/40"
+                                            className="h-14 w-14 flex items-center justify-center text-foreground-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-2xl transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-900/40"
                                         >
                                             <Trash2 className="h-5 w-5" />
                                         </button>
-                                        <ChevronRight className="h-6 w-6 text-slate-100 dark:text-slate-850 hidden xl:block group-hover:translate-x-1 transition-transform" />
+                                        <ChevronRight className="h-6 w-6 text-slate-100 hidden xl:block group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </div>
 
@@ -272,7 +272,7 @@ export function CustomDomainSettings() {
                                                 { label: 'Target Value', value: 'proxy.upkilo.com', copy: true }
                                             ].map((record, idx) => (
                                                 <div key={idx} className="p-5 bg-white dark:bg-slate-900 rounded-[24px] border border-slate-200 dark:border-slate-800 shadow-sm relative group/record">
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">{record.label}</p>
+                                                    <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest mb-2">{record.label}</p>
                                                     <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-tighter">
                                                         <span className="truncate">{record.value}</span>
                                                         {record.copy && (
@@ -302,7 +302,7 @@ export function CustomDomainSettings() {
                         </div>
                         <div>
                             <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Comms Authority</h2>
-                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Authorized Dispatch Protocols and Sender Integrity</p>
+                            <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Authorized Dispatch Protocols and Sender Integrity</p>
                         </div>
                     </div>
                 </div>
@@ -310,7 +310,7 @@ export function CustomDomainSettings() {
                 <div className="p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-10">
                     <div className="flex flex-col lg:flex-row gap-6">
                         <div className="relative flex-1 group">
-                            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 dark:text-slate-700 group-focus-within:text-emerald-500 transition-colors" />
+                            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-emerald-500 transition-colors" />
                             <input
                                 type="text"
                                 value={emailDomain}
@@ -323,7 +323,7 @@ export function CustomDomainSettings() {
                             <Button
                                 onClick={handleSaveEmailDomain}
                                 disabled={savingEmail || !emailDomain}
-                                className="h-16 px-8 rounded-[24px] font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-emerald-500/30 active:scale-95 transition-all bg-emerald-600 hover:bg-emerald-700"
+                                className="h-16 px-8 rounded-[24px] font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-emerald-500/30 active:scale-95 transition-all bg-emerald-600 hover:bg-emerald-700 text-white"
                             >
                                 {savingEmail ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5 mr-3" />}
                                 Commit Domain
@@ -358,15 +358,15 @@ export function CustomDomainSettings() {
                                     {/* SPF Record */}
                                     <div className="p-8 bg-slate-50 dark:bg-slate-950 rounded-[32px] border border-slate-100 dark:border-slate-850 space-y-6 relative overflow-hidden group/proto">
                                         <div className="relative z-10 flex items-center justify-between">
-                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                            <div className="text-[10px] font-black text-foreground-muted uppercase tracking-widest flex items-center gap-2">
                                                 <Shield className="h-3.5 w-3.5" /> Protocol: SPF (TXT)
                                             </div>
                                             {emailStatus?.spfValid ? (
-                                                <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20 uppercase tracking-widest flex items-center gap-2">
+                                                <span className="text-[9px] font-black text-success-fg bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20 uppercase tracking-widest flex items-center gap-2">
                                                     <Check className="h-3 w-3" /> Operational
                                                 </span>
                                             ) : (
-                                                <span className="text-[9px] font-black text-amber-500 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20 uppercase tracking-widest">Pending Sync</span>
+                                                <span className="text-[9px] font-black text-warning-fg bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20 uppercase tracking-widest">Pending Sync</span>
                                             )}
                                         </div>
                                         <div className="relative z-10 p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 font-mono text-[10px] text-slate-900 dark:text-white flex items-center justify-between group/code overflow-hidden">
@@ -381,20 +381,20 @@ export function CustomDomainSettings() {
                                     {/* DKIM Record */}
                                     <div className="p-8 bg-slate-50 dark:bg-slate-950 rounded-[32px] border border-slate-100 dark:border-slate-850 space-y-6 relative overflow-hidden group/proto">
                                         <div className="relative z-10 flex items-center justify-between">
-                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                            <div className="text-[10px] font-black text-foreground-muted uppercase tracking-widest flex items-center gap-2">
                                                 <Shield className="h-3.5 w-3.5" /> Protocol: DKIM (CNAME)
                                             </div>
                                             {emailStatus?.dkimValid ? (
-                                                <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20 uppercase tracking-widest flex items-center gap-2">
+                                                <span className="text-[9px] font-black text-success-fg bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20 uppercase tracking-widest flex items-center gap-2">
                                                     <Check className="h-3 w-3" /> Operational
                                                 </span>
                                             ) : (
-                                                <span className="text-[9px] font-black text-amber-500 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20 uppercase tracking-widest">Pending Sync</span>
+                                                <span className="text-[9px] font-black text-warning-fg bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20 uppercase tracking-widest">Pending Sync</span>
                                             )}
                                         </div>
                                         <div className="relative z-10 space-y-4">
                                             <div className="space-y-2">
-                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Selector Hash</p>
+                                                <p className="text-[8px] font-black text-foreground-muted uppercase tracking-widest ml-1">Selector Hash</p>
                                                 <div className="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 font-mono text-[10px] text-slate-900 dark:text-white flex items-center justify-between group/code">
                                                     <code>upkilo._domainkey</code>
                                                     <button onClick={() => copyToClipboard('upkilo._domainkey', 'dkim-h')} className="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all text-slate-300 hover:text-primary-500">
@@ -403,7 +403,7 @@ export function CustomDomainSettings() {
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Operational Value</p>
+                                                <p className="text-[8px] font-black text-foreground-muted uppercase tracking-widest ml-1">Operational Value</p>
                                                 <div className="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 font-mono text-[10px] text-slate-900 dark:text-white flex items-center justify-between group/code">
                                                     <code>dkim.upkilo.com</code>
                                                     <button onClick={() => copyToClipboard('dkim.upkilo.com', 'dkim-v')} className="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all text-slate-300 hover:text-primary-500">
@@ -436,7 +436,7 @@ export function CustomDomainSettings() {
                             <button className="h-12 px-8 rounded-xl bg-white/5 border border-white/10 text-primary-400 font-black uppercase tracking-widest text-[9px] hover:bg-white/10 flex items-center gap-2">
                                 <ExternalLink className="h-4 w-4" /> GoDaddy Sync
                             </button>
-                            <button className="h-12 px-8 rounded-xl bg-white/5 border border-white/10 text-slate-400 font-black uppercase tracking-widest text-[9px] hover:bg-white/10 flex items-center gap-2">
+                            <button className="h-12 px-8 rounded-xl bg-white/5 border border-white/10 text-foreground-muted font-black uppercase tracking-widest text-[9px] hover:bg-white/10 flex items-center gap-2">
                                 <ExternalLink className="h-4 w-4" /> Cloudflare Sync
                             </button>
                         </div>

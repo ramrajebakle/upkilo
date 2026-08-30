@@ -10,12 +10,12 @@ export default function Loading() {
                 </div>
                 <div className="space-y-2">
                     <h2
-                        className="text-xl font-semibold text-slate-700"
+                        className="text-xl font-semibold text-foreground"
                         style={{ fontFamily: 'var(--font-display)' }}
                     >
                         Loading...
                     </h2>
-                    <p className="text-sm text-slate-400">Setting things up for you</p>
+                    <p className="text-sm text-foreground-muted">Setting things up for you</p>
                 </div>
                 <div className="flex justify-center gap-1.5">
                     {[0, 1, 2].map((i) => (

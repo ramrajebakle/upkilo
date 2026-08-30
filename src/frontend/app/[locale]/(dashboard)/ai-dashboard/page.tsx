@@ -23,11 +23,11 @@ interface AIMetrics {
 }
 
 function MetricCard({ label, value, sub, trend }: { label: string; value: string; sub?: string; trend?: 'up' | 'down' | 'neutral' }) {
-  const trendColor = trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-500' : 'text-gray-500';
+  const trendColor = trend === 'up' ? 'text-success-fg' : trend === 'down' ? 'text-danger-fg' : 'text-foreground-secondary';
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
-      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{label}</div>
-      <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
+    <div className="bg-card rounded-xl border border-border-subtle p-5 shadow-sm">
+      <div className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider mb-1">{label}</div>
+      <div className="text-2xl font-bold text-foreground mb-1">{value}</div>
       {sub && <div className={`text-sm ${trendColor}`}>{sub}</div>}
     </div>
   );
@@ -38,10 +38,10 @@ function ForecastBar({ label, value, max }: { label: string; value: number; max:
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
-        <span className="text-gray-600">{label}</span>
-        <span className="font-semibold text-gray-900">${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+        <span className="text-foreground-secondary">{label}</span>
+        <span className="font-semibold text-foreground">${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
       </div>
-      <div className="w-full bg-gray-100 rounded-full h-2">
+      <div className="w-full bg-muted rounded-full h-2">
         <div className="bg-primary-500 h-2 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -79,7 +79,7 @@ export default function AIDashboardPage() {
   );
 
   if (error) return (
-    <div className="p-6 text-red-600">{error}</div>
+    <div className="p-6 text-danger-fg">{error}</div>
   );
 
   const maxForecast = forecast ? Math.max(forecast.forecast30Days, forecast.forecast60Days, forecast.forecast90Days) : 1;
@@ -88,12 +88,12 @@ export default function AIDashboardPage() {
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">AI Business Intelligence</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-foreground">AI Business Intelligence</h1>
+          <p className="text-foreground-secondary text-sm mt-1">
             {forecast ? `Updated ${new Date(forecast.generatedAt).toLocaleTimeString()}` : 'Revenue forecasts and AI recommendations'}
           </p>
         </div>
-        <div className="bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+        <div className="bg-brand-subtle text-primary px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
           AI Active
         </div>
@@ -133,14 +133,14 @@ export default function AIDashboardPage() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Forecast Bars */}
         {forecast && (
-          <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Projections</h2>
+          <div className="bg-card rounded-xl border border-border-subtle p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Revenue Projections</h2>
             <div className="space-y-4">
               <ForecastBar label="30-Day Forecast" value={forecast.forecast30Days} max={maxForecast} />
               <ForecastBar label="60-Day Forecast" value={forecast.forecast60Days} max={maxForecast} />
               <ForecastBar label="90-Day Forecast" value={forecast.forecast90Days} max={maxForecast} />
             </div>
-            <p className="text-xs text-gray-400 mt-4">
+            <p className="text-xs text-foreground-muted mt-4">
               Based on booking velocity, confirmed appointments, and membership recurring revenue.
             </p>
           </div>
@@ -148,8 +148,8 @@ export default function AIDashboardPage() {
 
         {/* AI Recommendations */}
         {forecast && forecast.aiRecommendations.length > 0 && (
-          <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary/25 p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <span>🧠</span> AI Recommendations
             </h2>
             <div className="space-y-3">
@@ -158,35 +158,35 @@ export default function AIDashboardPage() {
                   <div className="w-6 h-6 rounded-full bg-primary-500 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">
                     {i + 1}
                   </div>
-                  <p className="text-sm text-gray-700">{rec}</p>
+                  <p className="text-sm text-foreground">{rec}</p>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-gray-400 mt-4">Powered by AI — updated daily based on your business data.</p>
+            <p className="text-xs text-foreground-muted mt-4">Powered by AI — updated daily based on your business data.</p>
           </div>
         )}
       </div>
 
       {/* AI Decision Metrics */}
       {metrics && (
-        <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">AI Decision Engine (Today)</h2>
+        <div className="bg-card rounded-xl border border-border-subtle p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-foreground mb-4">AI Decision Engine (Today)</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">{metrics.decisionsToday ?? '—'}</div>
-              <div className="text-sm text-gray-500 mt-1">Decisions Made</div>
+              <div className="text-3xl font-bold text-foreground">{metrics.decisionsToday ?? '—'}</div>
+              <div className="text-sm text-foreground-secondary mt-1">Decisions Made</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">{metrics.autoApproved ?? '—'}</div>
-              <div className="text-sm text-gray-500 mt-1">Auto-Approved</div>
+              <div className="text-3xl font-bold text-success-fg">{metrics.autoApproved ?? '—'}</div>
+              <div className="text-sm text-foreground-secondary mt-1">Auto-Approved</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-amber-500">{metrics.pendingReview ?? '—'}</div>
-              <div className="text-sm text-gray-500 mt-1">Pending Review</div>
+              <div className="text-3xl font-bold text-warning-fg">{metrics.pendingReview ?? '—'}</div>
+              <div className="text-sm text-foreground-secondary mt-1">Pending Review</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary-600">{metrics.accuracy ? `${metrics.accuracy}%` : '—'}</div>
-              <div className="text-sm text-gray-500 mt-1">Accuracy Score</div>
+              <div className="text-3xl font-bold text-primary">{metrics.accuracy ? `${metrics.accuracy}%` : '—'}</div>
+              <div className="text-sm text-foreground-secondary mt-1">Accuracy Score</div>
             </div>
           </div>
         </div>

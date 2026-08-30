@@ -112,15 +112,15 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-card rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 {/* Header */}
-                <div className="p-6 border-b flex items-center justify-between bg-gray-50">
+                <div className="p-6 border-b flex items-center justify-between bg-muted">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900">Import {entityType === 'clients' ? 'Clients' : 'Bookings'}</h2>
-                        <p className="text-sm text-gray-500">Fast bulk data migration from CSV</p>
+                        <h2 className="text-xl font-bold text-foreground">Import {entityType === 'clients' ? 'Clients' : 'Bookings'}</h2>
+                        <p className="text-sm text-foreground-secondary">Fast bulk data migration from CSV</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                        <X className="h-5 w-5 text-gray-500" />
+                        <X className="h-5 w-5 text-foreground-secondary" />
                     </button>
                 </div>
 
@@ -140,13 +140,13 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                                 <div className={cn(
                                     "h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors",
                                     step === s ? "bg-primary-500 text-white" :
-                                        step > s ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400"
+                                        step > s ? "bg-green-500 text-white" : "bg-muted text-foreground-muted"
                                 )}>
                                     {step > s ? <CheckCircle2 className="h-5 w-5" /> : s}
                                 </div>
                                 {s < 3 && (
                                     <div className={cn(
-                                        "w-12 h-0.5 mx-2 bg-gray-100",
+                                        "w-12 h-0.5 mx-2 bg-muted",
                                         step > s && "bg-green-500"
                                     )} />
                                 )}
@@ -157,7 +157,7 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                     {/* Step 1: Upload */}
                     {step === 1 && (
                         <div className="space-y-6">
-                            <div className="border-2 border-dashed border-gray-200 rounded-2xl p-10 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer relative">
+                            <div className="border-2 border-dashed border-border rounded-2xl p-10 flex flex-col items-center justify-center bg-muted hover:bg-accent transition-colors cursor-pointer relative">
                                 <input
                                     type="file"
                                     accept=".csv"
@@ -168,15 +168,15 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                                 <div className="h-16 w-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
                                     <Upload className="h-8 w-8" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Choose a CSV file</h3>
-                                <p className="text-sm text-gray-500 mb-6 text-center">Drag and drop your file here or click to browse</p>
+                                <h3 className="text-lg font-semibold text-foreground">Choose a CSV file</h3>
+                                <p className="text-sm text-foreground-secondary mb-6 text-center">Drag and drop your file here or click to browse</p>
                                 <Button variant="outline" size="sm">
                                     Select File
                                 </Button>
                             </div>
 
                             <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 flex items-start gap-3">
-                                <Table className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                                <Table className="h-5 w-5 text-warning-fg shrink-0 mt-0.5" />
                                 <div className="text-xs text-amber-800">
                                     <p className="font-bold mb-1">Recommended Format</p>
                                     <p>Make sure your CSV has a header row. You'll be able to map columns in the next step.</p>
@@ -192,7 +192,7 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                     {step === 2 && analysis && (
                         <div className="space-y-6">
                             <div className="bg-gray-900 text-white p-4 rounded-xl overflow-x-auto">
-                                <p className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">CSV Preview (Top 3 rows)</p>
+                                <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">CSV Preview (Top 3 rows)</p>
                                 <table className="w-full text-xs">
                                     <thead>
                                         <tr>
@@ -214,13 +214,13 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                             </div>
 
                             <div className="space-y-4">
-                                <h3 className="font-bold text-gray-900">Map your columns</h3>
+                                <h3 className="font-bold text-foreground">Map your columns</h3>
                                 <div className="grid gap-3">
                                     {targetFields.map(field => (
-                                        <div key={field} className="flex items-center justify-between p-3 border rounded-xl bg-gray-50">
-                                            <span className="text-sm font-medium text-gray-700">{field}</span>
+                                        <div key={field} className="flex items-center justify-between p-3 border rounded-xl bg-muted">
+                                            <span className="text-sm font-medium text-foreground">{field}</span>
                                             <select
-                                                className="bg-white border border-gray-200 rounded-lg text-sm p-1.5 focus:ring-2 focus:ring-primary-500 outline-none"
+                                                className="bg-card border border-border rounded-lg text-sm p-1.5 focus:ring-2 focus:ring-primary-500 outline-none"
                                                 value={mapping[field] || ''}
                                                 onChange={(e) => setMapping({ ...mapping, [field]: e.target.value })}
                                             >
@@ -242,14 +242,14 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                             {job.status === 'processing' || job.status === 'pending' ? (
                                 <>
                                     <div className="relative">
-                                        <Loader2 className="h-20 w-20 text-primary-500 animate-spin" />
+                                        <Loader2 className="h-20 w-20 text-primary animate-spin" />
                                         <div className="absolute inset-0 flex items-center justify-center font-bold text-lg">
                                             {Math.round((job.processedRows / (job.totalRows || 1)) * 100)}%
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Importing Data...</h3>
-                                        <p className="text-gray-500 mt-1">Processing {job.processedRows} of {job.totalRows} records</p>
+                                        <h3 className="text-xl font-bold text-foreground">Importing Data...</h3>
+                                        <p className="text-foreground-secondary mt-1">Processing {job.processedRows} of {job.totalRows} records</p>
                                     </div>
                                 </>
                             ) : job.status === 'completed' || job.status === 'completed_with_errors' ? (
@@ -258,10 +258,10 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                                         <CheckCircle2 className="h-12 w-12" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Import Complete!</h3>
-                                        <p className="text-gray-500 mt-1">Successfully imported {job.successfulRows} records.</p>
+                                        <h3 className="text-xl font-bold text-foreground">Import Complete!</h3>
+                                        <p className="text-foreground-secondary mt-1">Successfully imported {job.successfulRows} records.</p>
                                         {job.failedRows > 0 && (
-                                            <p className="text-red-600 mt-2 font-medium flex items-center justify-center gap-1">
+                                            <p className="text-danger-fg mt-2 font-medium flex items-center justify-center gap-1">
                                                 <AlertCircle className="h-4 w-4" /> {job.failedRows} records failed to import.
                                             </p>
                                         )}
@@ -273,21 +273,21 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                                         <AlertCircle className="h-12 w-12" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Import Failed</h3>
-                                        <p className="text-gray-500 mt-1">An unexpected error occurred during processing.</p>
+                                        <h3 className="text-xl font-bold text-foreground">Import Failed</h3>
+                                        <p className="text-foreground-secondary mt-1">An unexpected error occurred during processing.</p>
                                     </div>
                                 </>
                             )}
 
                             {/* Stats Grid */}
                             <div className="grid grid-cols-2 gap-4 w-full max-w-sm mt-4">
-                                <div className="p-4 bg-gray-50 rounded-2xl border">
-                                    <p className="text-2xl font-bold text-gray-900">{job.totalRows}</p>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Total</p>
+                                <div className="p-4 bg-muted rounded-2xl border">
+                                    <p className="text-2xl font-bold text-foreground">{job.totalRows}</p>
+                                    <p className="text-xs text-foreground-secondary uppercase font-bold">Total</p>
                                 </div>
-                                <div className="p-4 bg-gray-50 rounded-2xl border">
-                                    <p className="text-2xl font-bold text-green-600">{job.successfulRows}</p>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Success</p>
+                                <div className="p-4 bg-muted rounded-2xl border">
+                                    <p className="text-2xl font-bold text-success-fg">{job.successfulRows}</p>
+                                    <p className="text-xs text-foreground-secondary uppercase font-bold">Success</p>
                                 </div>
                             </div>
                         </div>
@@ -295,12 +295,12 @@ export function ImportWizard({ entityType, isOpen, onClose, onComplete }: Import
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t bg-gray-50 flex items-center justify-between">
+                <div className="p-6 border-t bg-muted flex items-center justify-between">
                     <div>
                         {step === 2 && (
                             <button
                                 onClick={() => setStep(1)}
-                                className="text-sm font-medium text-gray-500 hover:text-gray-700"
+                                className="text-sm font-medium text-foreground-secondary hover:text-foreground"
                                 disabled={loading}
                             >
                                 Back to Upload

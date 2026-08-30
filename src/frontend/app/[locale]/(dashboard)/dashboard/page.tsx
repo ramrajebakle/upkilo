@@ -199,9 +199,9 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-lg px-3 py-2 shadow-sm">
-          <Activity className="h-4 w-4 text-emerald-500" />
+          <Activity className="h-4 w-4 text-success-fg" />
           <span className="font-medium">Live</span>
-          <span className="text-slate-400">·</span>
+          <span className="text-foreground-muted">·</span>
           <span>Last 30 days</span>
         </div>
       </div>
@@ -257,7 +257,7 @@ export default function DashboardPage() {
                       )}
                       {Math.abs(s.delta)}%
                     </span>
-                    <span className="text-slate-500">{s.deltaLabel}</span>
+                    <span className="text-foreground-secondary">{s.deltaLabel}</span>
                   </div>
                 </div>
               );
@@ -341,7 +341,7 @@ export default function DashboardPage() {
           {activity.length === 0 ? (
             <div className="py-10 text-center">
               <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center">
-                <Activity className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+                <Activity className="h-5 w-5 text-foreground-muted" />
               </div>
               <p className="text-sm font-medium text-slate-900 dark:text-white">
                 {EMPTY_ACTIVITY_HINT.title}
@@ -375,7 +375,7 @@ export default function DashboardPage() {
                         </p>
                       )}
                     </div>
-                    <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
+                    <span className="text-xs text-foreground-muted whitespace-nowrap">
                       {relativeTime(a.timestamp)}
                     </span>
                   </div>

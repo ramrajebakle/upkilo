@@ -43,7 +43,7 @@ export function TenantTable({ tenants, loading }: TenantTableProps) {
   if (tenants.length === 0) {
     return (
       <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-dashed">
-        <p className="text-slate-500">No tenants found matching your criteria.</p>
+        <p className="text-foreground-secondary">No tenants found matching your criteria.</p>
       </div>
     );
   }
@@ -87,7 +87,7 @@ export function TenantTable({ tenants, loading }: TenantTableProps) {
                 </Badge>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-4 text-xs text-slate-500">
+                <div className="flex items-center gap-4 text-xs text-foreground-secondary">
                   <span className="flex items-center gap-1">
                     <Users className="h-3 w-3" /> {tenant.userCount}
                   </span>
@@ -99,8 +99,8 @@ export function TenantTable({ tenants, loading }: TenantTableProps) {
               <TableCell>
                 <div className="space-y-1.5 min-w-[120px]">
                   <div className="flex justify-between text-[10px] font-medium">
-                    <span className="text-slate-500">${tenant.aiUsed?.toFixed(2) || '0.00'}</span>
-                    <span className="text-slate-400">/ ${tenant.aiBudget?.toFixed(0) || '0'}</span>
+                    <span className="text-foreground-secondary">${tenant.aiUsed?.toFixed(2) || '0.00'}</span>
+                    <span className="text-foreground-muted">/ ${tenant.aiBudget?.toFixed(0) || '0'}</span>
                   </div>
                   <div className="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
                     <div 
@@ -113,7 +113,7 @@ export function TenantTable({ tenants, loading }: TenantTableProps) {
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="text-xs text-slate-500">
+              <TableCell className="text-xs text-foreground-secondary">
                 {new Date(tenant.createdAt).toLocaleDateString()}
               </TableCell>
               <TableCell className="text-right">
@@ -135,6 +135,6 @@ function getColorForTier(tier: string) {
     case 'enterprise': return 'border-primary-200 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400';
     case 'business': return 'border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400';
     case 'professional': return 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400';
-    default: return 'border-slate-200 bg-slate-50 text-slate-700';
+    default: return 'border-border bg-muted text-foreground';
   }
 }

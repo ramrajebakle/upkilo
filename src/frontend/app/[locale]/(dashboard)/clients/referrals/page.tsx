@@ -97,9 +97,9 @@ export default function ReferralsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Total referrals", value: analytics.totalReferrals, icon: Users, color: "text-blue-500" },
-          { label: "Completed", value: analytics.completedReferrals, icon: Check, color: "text-green-500" },
-          { label: "Pending", value: analytics.pendingReferrals, icon: TrendingUp, color: "text-amber-500" },
-          { label: "Rewards paid", value: `$${analytics.totalRewards.toFixed(0)}`, icon: Gift, color: "text-primary-500" },
+          { label: "Completed", value: analytics.completedReferrals, icon: Check, color: "text-success-fg" },
+          { label: "Pending", value: analytics.pendingReferrals, icon: TrendingUp, color: "text-warning-fg" },
+          { label: "Rewards paid", value: `$${analytics.totalRewards.toFixed(0)}`, icon: Gift, color: "text-primary" },
         ].map((s) => (
           <Card key={s.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -118,7 +118,7 @@ export default function ReferralsPage() {
             <CardContent className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="flex-1 px-4 py-3 bg-surface-50 rounded-lg border border-surface-200 font-mono font-bold text-lg text-text-primary tracking-widest">{referralCode}</div>
-                <Button variant="outline" leftIcon={copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />} onClick={copyCode}>
+                <Button variant="outline" leftIcon={copied ? <Check size={14} className="text-success-fg" /> : <Copy size={14} />} onClick={copyCode}>
                   {copied ? "Copied!" : "Copy"}
                 </Button>
               </div>
@@ -173,7 +173,7 @@ export default function ReferralsPage() {
                       <td className="py-3 px-3 font-medium text-text-primary">{r.referrerName ?? r.referrerEmail ?? "—"}</td>
                       <td className="py-3 px-3 text-text-secondary">{r.refereeName ?? r.refereeEmail ?? "—"}</td>
                       <td className="py-3 px-3"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_COLOR[r.status] ?? ""}`}>{r.status}</span></td>
-                      <td className="py-3 px-3 font-medium text-green-600">{r.rewardAmount ? `$${r.rewardAmount}` : "—"}</td>
+                      <td className="py-3 px-3 font-medium text-success-fg">{r.rewardAmount ? `$${r.rewardAmount}` : "—"}</td>
                     </tr>
                   ))}
                 </tbody>

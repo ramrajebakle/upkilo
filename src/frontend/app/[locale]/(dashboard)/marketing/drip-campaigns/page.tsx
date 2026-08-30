@@ -64,7 +64,7 @@ const TRIGGER_LABELS: Record<TriggerType, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-    draft: 'bg-slate-100 text-slate-600',
+    draft: 'bg-muted text-foreground-secondary',
     active: 'bg-emerald-100 text-emerald-700',
     paused: 'bg-amber-100 text-amber-700',
     archived: 'bg-red-50 text-red-600',
@@ -254,7 +254,7 @@ export default function DripCampaignsPage() {
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-5 animate-scale-in">
                     <div className="flex items-center justify-between">
                         <h2 className="font-semibold text-slate-900 dark:text-white">New Drip Campaign</h2>
-                        <button onClick={() => setShowCreateForm(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><X className="h-4 w-4" /></button>
+                        <button onClick={() => setShowCreateForm(false)} className="text-foreground-muted hover:text-slate-600 dark:hover:text-slate-200"><X className="h-4 w-4" /></button>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -294,7 +294,7 @@ export default function DripCampaignsPage() {
                                             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Step {i + 1}</span>
                                         </div>
                                         {newSteps.length > 1 && (
-                                            <button onClick={() => removeStep(i)} className="text-slate-400 hover:text-red-500 dark:hover:text-red-400"><X className="h-3.5 w-3.5" /></button>
+                                            <button onClick={() => removeStep(i)} className="text-foreground-muted hover:text-red-500 dark:hover:text-red-400"><X className="h-3.5 w-3.5" /></button>
                                         )}
                                     </div>
 
@@ -367,11 +367,11 @@ export default function DripCampaignsPage() {
             {/* Campaign List */}
             {loading ? (
                 <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 animate-pulse h-24" />)}
+                    {[...Array(3)].map((_, i) => <div key={i} className="bg-card border border-border rounded-xl p-5 animate-pulse h-24" />)}
                 </div>
             ) : campaigns.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-                    <GitBranch className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+                    <GitBranch className="h-12 w-12 text-slate-300 mx-auto mb-3" />
                     <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">No drip campaigns yet</h3>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-4">Create multi-step sequences to nurture your clients automatically</p>
                     <Button onClick={() => setShowCreateForm(true)}><Plus className="h-4 w-4 mr-2" /> New Campaign</Button>
@@ -402,23 +402,23 @@ export default function DripCampaignsPage() {
                                     {/* Stats row */}
                                     <div className="flex gap-5 mt-2">
                                         <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-                                            <Users className="h-3 w-3 text-slate-400 dark:text-slate-500" />
+                                            <Users className="h-3 w-3 text-foreground-muted" />
                                             <span className="font-medium text-slate-900 dark:text-white">{campaign.enrolledCount}</span> enrolled
                                         </div>
                                         <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-                                            <CheckCircle className="h-3 w-3 text-slate-400 dark:text-slate-500" />
+                                            <CheckCircle className="h-3 w-3 text-foreground-muted" />
                                             <span className="font-medium text-slate-900 dark:text-white">{campaign.completedCount}</span> completed
                                         </div>
                                         <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-                                            <Eye className="h-3 w-3 text-slate-400 dark:text-slate-500" />
+                                            <Eye className="h-3 w-3 text-foreground-muted" />
                                             <span className="font-medium text-emerald-600 dark:text-emerald-400">{campaign.openRate}%</span> open
                                         </div>
                                         <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-                                            <BarChart2 className="h-3 w-3 text-slate-400 dark:text-slate-500" />
+                                            <BarChart2 className="h-3 w-3 text-foreground-muted" />
                                             <span className="font-medium text-primary-600 dark:text-primary-400">{campaign.clickRate}%</span> click
                                         </div>
                                         <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
-                                            <GitBranch className="h-3 w-3 text-slate-400 dark:text-slate-500" />
+                                            <GitBranch className="h-3 w-3 text-foreground-muted" />
                                             {campaign.steps.length} steps
                                         </div>
                                     </div>
@@ -433,7 +433,7 @@ export default function DripCampaignsPage() {
                                                         ? `+${step.delayDays}d${step.delayHours > 0 ? `${step.delayHours}h` : ''}`
                                                         : 'immediate'}
                                                 </span>
-                                                {si < campaign.steps.length - 1 && <ArrowRight className="h-3 w-3 text-slate-300 dark:text-slate-700" />}
+                                                {si < campaign.steps.length - 1 && <ArrowRight className="h-3 w-3 text-slate-300" />}
                                             </React.Fragment>
                                         ))}
                                     </div>
@@ -442,20 +442,20 @@ export default function DripCampaignsPage() {
                                 <div className="flex items-center gap-1.5 shrink-0">
                                     <button
                                         onClick={() => setExpandedId(expandedId === campaign.id ? null : campaign.id)}
-                                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500"
+                                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-foreground-muted"
                                     >
                                         {expandedId === campaign.id ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                                     </button>
                                     <button
                                         onClick={() => handleToggleStatus(campaign)}
-                                        className={`p-1.5 rounded-lg text-sm ${campaign.status === 'active' ? 'hover:bg-amber-50 text-amber-500' : 'hover:bg-emerald-50 text-emerald-500'}`}
+                                        className={`p-1.5 rounded-lg text-sm ${campaign.status === 'active' ? 'hover:bg-amber-50 text-warning-fg' : 'hover:bg-emerald-50 text-success-fg'}`}
                                         title={campaign.status === 'active' ? 'Pause' : 'Activate'}
                                     >
                                         {campaign.status === 'active' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                                     </button>
                                     <button
                                         onClick={() => handleDelete(campaign.id)}
-                                        className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500"
+                                        className="p-1.5 rounded-lg hover:bg-red-50 text-foreground-muted hover:text-red-500"
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </button>

@@ -199,12 +199,12 @@ export default function AnalyticsPage() {
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                     <div className="flex items-center justify-between mb-5">
                         <div>
-                            <h3 className="text-base font-semibold text-slate-900">
+                            <h3 className="text-base font-semibold text-foreground">
                                 By Service
                             </h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Booking distribution</p>
+                            <p className="text-xs text-foreground-secondary mt-0.5">Booking distribution</p>
                         </div>
-                        <PieChart className="h-4 w-4 text-slate-400" />
+                        <PieChart className="h-4 w-4 text-foreground-muted" />
                     </div>
                     <ServiceDonutChart data={serviceStats} height={160} />
                 </div>
@@ -216,12 +216,12 @@ export default function AnalyticsPage() {
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                     <div className="flex items-center justify-between mb-5">
                         <div>
-                            <h3 className="text-base font-semibold text-slate-900">
+                            <h3 className="text-base font-semibold text-foreground">
                                 Bookings
                             </h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Daily booking count</p>
+                            <p className="text-xs text-foreground-secondary mt-0.5">Daily booking count</p>
                         </div>
-                        <Calendar className="h-4 w-4 text-slate-400" />
+                        <Calendar className="h-4 w-4 text-foreground-muted" />
                     </div>
                     <BookingsBarChart data={bookingsTrend} height={200} showCancelled />
                 </div>
@@ -230,12 +230,12 @@ export default function AnalyticsPage() {
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                     <div className="flex items-center justify-between mb-5">
                         <div>
-                            <h3 className="text-base font-semibold text-slate-900">
+                            <h3 className="text-base font-semibold text-foreground">
                                 Peak Hours
                             </h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Busiest times of day</p>
+                            <p className="text-xs text-foreground-secondary mt-0.5">Busiest times of day</p>
                         </div>
-                        <Clock className="h-4 w-4 text-slate-400" />
+                        <Clock className="h-4 w-4 text-foreground-muted" />
                     </div>
                     <PeakHoursChart data={peakHours} height={180} />
                 </div>
@@ -244,12 +244,12 @@ export default function AnalyticsPage() {
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '250ms' }}>
                     <div className="flex items-center justify-between mb-5">
                         <div>
-                            <h3 className="text-base font-semibold text-slate-900">
+                            <h3 className="text-base font-semibold text-foreground">
                                 Top Performers
                             </h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Staff by revenue</p>
+                            <p className="text-xs text-foreground-secondary mt-0.5">Staff by revenue</p>
                         </div>
-                        <Zap className="h-4 w-4 text-slate-400" />
+                        <Zap className="h-4 w-4 text-foreground-muted" />
                     </div>
                     <StaffPerformanceChart data={staffStats} />
                 </div>
@@ -261,12 +261,12 @@ export default function AnalyticsPage() {
                 <div className="lg:col-span-2 card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '250ms' }}>
                     <div className="flex items-center justify-between mb-5">
                         <div>
-                            <h3 className="text-base font-semibold text-slate-900">
+                            <h3 className="text-base font-semibold text-foreground">
                                 Client Retention
                             </h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Monthly retention rate vs 75% target</p>
+                            <p className="text-xs text-foreground-secondary mt-0.5">Monthly retention rate vs 75% target</p>
                         </div>
-                        <TrendingUp className="h-4 w-4 text-slate-400" />
+                        <TrendingUp className="h-4 w-4 text-foreground-muted" />
                     </div>
                     <RetentionLineChart data={retentionData} targetRate={75} />
                 </div>
@@ -275,29 +275,29 @@ export default function AnalyticsPage() {
                 <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                     <div className="flex items-center justify-between mb-5">
                         <div>
-                            <h3 className="text-base font-semibold text-slate-900">
+                            <h3 className="text-base font-semibold text-foreground">
                                 Quick Insights
                             </h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Key metrics snapshot</p>
+                            <p className="text-xs text-foreground-secondary mt-0.5">Key metrics snapshot</p>
                         </div>
-                        <Eye className="h-4 w-4 text-slate-400" />
+                        <Eye className="h-4 w-4 text-foreground-muted" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         {[
-                            { label: 'Retention Rate', value: `${dashboardMetrics?.retentionRate || 78}%`, gradient: 'from-emerald-500 to-emerald-600', text: 'text-emerald-600' },
-                            { label: 'No-show Rate', value: `${dashboardMetrics?.noShowRate || 4.2}%`, gradient: 'from-rose-500 to-red-600', text: 'text-rose-600' },
+                            { label: 'Retention Rate', value: `${dashboardMetrics?.retentionRate || 78}%`, gradient: 'from-emerald-500 to-emerald-600', text: 'text-success-fg' },
+                            { label: 'No-show Rate', value: `${dashboardMetrics?.noShowRate || 4.2}%`, gradient: 'from-rose-500 to-red-600', text: 'text-danger-fg' },
                             { label: 'Avg. Booking', value: formatCurrency(bookingsData?.averageValue || 0), gradient: 'from-blue-500 to-primary-600', text: 'text-blue-600' },
                             { label: 'Active Clients', value: (dashboardMetrics?.activeClients || 0).toLocaleString(), gradient: 'from-primary-500 to-primary-600', text: 'text-primary-600' },
                         ].map((metric, i) => (
                             <div
                                 key={metric.label}
-                                className="bg-slate-50 rounded-xl p-3 text-center animate-fade-in border border-slate-100 hover:border-slate-200 transition-colors"
+                                className="bg-muted rounded-xl p-3 text-center animate-fade-in border border-border-subtle hover:border-border transition-colors"
                                 style={{ animationDelay: `${800 + i * 80}ms` }}
                             >
                                 <p className={`text-xl font-bold ${metric.text}`}>
                                     {metric.value}
                                 </p>
-                                <p className="text-[10px] text-slate-500 mt-1 leading-tight">{metric.label}</p>
+                                <p className="text-[10px] text-foreground-secondary mt-1 leading-tight">{metric.label}</p>
                             </div>
                         ))}
                     </div>

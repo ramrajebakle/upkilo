@@ -1,122 +1,61 @@
 import Link from 'next/link';
+import { RootHtml } from '@/components/layout/RootHtml';
+import '../globals.css';
 
+/**
+ * The 404 page rendered its own `<html>` with every colour inlined as a literal — a #F8F8FA
+ * body and #111120 headline — and never imported globals.css. That gave it two problems at
+ * once: a dark-mode user hitting a bad link got a full-screen white flash, and because no
+ * stylesheet or font variables were loaded, the whole page fell back to the browser's default
+ * serif. It was the only route in the app in Times New Roman.
+ *
+ * It renders through RootHtml like every other root now, so it inherits the fonts, the
+ * pre-paint theme script and the token layer, and the markup is plain utilities.
+ */
 export default function NotFound() {
   return (
-    <html lang="en">
-      <body style={{ margin: 0, fontFamily: 'Inter, system-ui, sans-serif', backgroundColor: '#F8F8FA' }}>
-        <div
-          style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-            textAlign: 'center',
-          }}
-        >
-          {/* Logo mark */}
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: 20,
-              background: 'linear-gradient(135deg, #7C3AED 0%, #5B4CF5 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 32,
-              boxShadow: '0 8px 24px rgba(124,58,237,0.3)',
-            }}
-          >
-            <span style={{ color: '#fff', fontSize: 32, fontWeight: 800 }}>U</span>
-          </div>
-
-          {/* 404 number */}
-          <p
-            style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: '#7C3AED',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              marginBottom: 12,
-            }}
-          >
-            Error 404
-          </p>
-
-          <h1
-            style={{
-              fontSize: 'clamp(32px, 6vw, 56px)',
-              fontWeight: 800,
-              color: '#111120',
-              lineHeight: 1.1,
-              marginBottom: 16,
-            }}
-          >
-            Page not found
-          </h1>
-
-          <p
-            style={{
-              fontSize: 18,
-              color: '#66667A',
-              maxWidth: 420,
-              lineHeight: 1.6,
-              marginBottom: 40,
-            }}
-          >
-            The page you're looking for doesn't exist or has been moved.
-          </p>
-
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link
-              href="/en"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '14px 28px',
-                backgroundColor: '#7C3AED',
-                color: '#fff',
-                borderRadius: 12,
-                fontWeight: 600,
-                fontSize: 15,
-                textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(124,58,237,0.35)',
-              }}
-            >
-              Go to homepage
-            </Link>
-            <Link
-              href="/en/dashboard"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '14px 28px',
-                backgroundColor: '#F0F0F4',
-                color: '#333344',
-                borderRadius: 12,
-                fontWeight: 600,
-                fontSize: 15,
-                textDecoration: 'none',
-              }}
-            >
-              Open dashboard
-            </Link>
-          </div>
-
-          {/* Subtle help text */}
-          <p style={{ marginTop: 48, fontSize: 13, color: '#9999B0' }}>
-            Need help?{' '}
-            <a href="mailto:support@upkilo.com" style={{ color: '#7C3AED', textDecoration: 'none' }}>
-              Contact support
-            </a>
-          </p>
+    <RootHtml lang="en">
+      <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+        {/* Brand mark. The gradient and its white letter are fixed on purpose: this is the
+            logo, not a themed surface. */}
+        <div className="mb-8 flex h-18 w-18 items-center justify-center rounded-[20px] bg-gradient-to-br from-ai-500 to-primary-500 shadow-[0_8px_24px_rgba(124,58,237,0.3)]">
+          <span className="text-[32px] font-extrabold text-white">U</span>
         </div>
-      </body>
-    </html>
+
+        <p className="mb-3 text-[13px] font-bold uppercase tracking-[0.1em] text-primary">
+          Error 404
+        </p>
+
+        <h1 className="mb-4 text-[clamp(32px,6vw,56px)] font-extrabold leading-[1.1] text-foreground">
+          Page not found
+        </h1>
+
+        <p className="mb-10 max-w-[420px] text-lg leading-relaxed text-foreground-secondary">
+          The page you&rsquo;re looking for doesn&rsquo;t exist or has been moved.
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-3">
+          <Link
+            href="/en"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-[15px] font-semibold text-primary-foreground no-underline shadow-[var(--shadow-glow)]"
+          >
+            Go to homepage
+          </Link>
+          <Link
+            href="/en/dashboard"
+            className="inline-flex items-center gap-2 rounded-xl bg-muted px-7 py-3.5 text-[15px] font-semibold text-foreground no-underline hover:bg-accent"
+          >
+            Open dashboard
+          </Link>
+        </div>
+
+        <p className="mt-12 text-[13px] text-foreground-muted">
+          Need help?{' '}
+          <a href="mailto:support@upkilo.com" className="text-primary no-underline hover:underline">
+            Contact support
+          </a>
+        </p>
+      </div>
+    </RootHtml>
   );
 }

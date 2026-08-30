@@ -33,10 +33,10 @@ interface Workflow {
 }
 
 const statusColors: Record<string, string> = {
-  draft: 'bg-slate-100 text-slate-700',
+  draft: 'bg-muted text-foreground',
   active: 'bg-emerald-100 text-emerald-700',
   paused: 'bg-amber-100 text-amber-700',
-  archived: 'bg-slate-100 text-slate-500',
+  archived: 'bg-muted text-foreground-secondary',
 };
 
 const statusIcons: Record<string, React.ReactNode> = {
@@ -151,9 +151,9 @@ export default function WorkflowsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total Workflows', value: stats.total, icon: <Zap className="h-5 w-5 text-primary-500" /> },
-          { label: 'Active', value: stats.active, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
+          { label: 'Active', value: stats.active, icon: <CheckCircle className="h-5 w-5 text-success-fg" /> },
           { label: 'Total Executions', value: stats.totalExecutions.toLocaleString(), icon: <BarChart3 className="h-5 w-5 text-blue-500" /> },
-          { label: 'Avg Success Rate', value: `${stats.avgSuccessRate}%`, icon: <CheckCircle className="h-5 w-5 text-green-500" /> },
+          { label: 'Avg Success Rate', value: `${stats.avgSuccessRate}%`, icon: <CheckCircle className="h-5 w-5 text-success-fg" /> },
         ].map(stat => (
           <div key={stat.label} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center gap-3">
             <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800">{stat.icon}</div>
@@ -168,7 +168,7 @@ export default function WorkflowsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
           <Input
             placeholder="Search workflows..."
             value={searchQuery}
@@ -177,7 +177,7 @@ export default function WorkflowsPage() {
           />
         </div>
         <div className="flex gap-2">
-          <Filter className="h-4 w-4 text-slate-400 self-center" />
+          <Filter className="h-4 w-4 text-foreground-muted self-center" />
           {['all', 'active', 'paused', 'draft', 'archived'].map(s => (
             <button
               key={s}
@@ -202,7 +202,7 @@ export default function WorkflowsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-          <Zap className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+          <Zap className="h-12 w-12 text-slate-300 mx-auto mb-3" />
           <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">No workflows yet</h3>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-4">Create your first automation workflow to get started</p>
           <Button onClick={() => router.push('/automation/workflows/new')}>
@@ -233,26 +233,26 @@ export default function WorkflowsPage() {
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400">
                         <Zap className="h-3 w-3" /> {triggerLabels[workflow.triggerType] || workflow.triggerType}
                       </span>
-                      <span className="text-xs text-slate-400 dark:text-slate-500">v{workflow.version}</span>
+                      <span className="text-xs text-foreground-muted">v{workflow.version}</span>
                     </div>
                     {workflow.description && (
                       <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 truncate">{workflow.description}</p>
                     )}
                     <div className="flex items-center gap-6 mt-3">
                       <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400">
-                        <BarChart3 className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                        <BarChart3 className="h-4 w-4 text-foreground-muted" />
                         <span>{(workflow.executionCount || 0).toLocaleString()} runs</span>
                       </div>
                       {successRate !== null && (
                         <div className="flex items-center gap-1.5 text-sm">
-                          <CheckCircle className={`h-4 w-4 ${successRate >= 90 ? 'text-emerald-500' : successRate >= 70 ? 'text-amber-500' : 'text-red-400'}`} />
+                          <CheckCircle className={`h-4 w-4 ${successRate >= 90 ? 'text-success-fg' : successRate >= 70 ? 'text-warning-fg' : 'text-red-400'}`} />
                           <span className={successRate >= 90 ? 'text-emerald-600 dark:text-emerald-400' : successRate >= 70 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}>
                             {successRate}% success
                           </span>
                         </div>
                       )}
                       {workflow.lastExecutedAt && (
-                        <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                        <div className="flex items-center gap-1.5 text-sm text-foreground-secondary">
                           <Clock className="h-4 w-4" />
                           <span>Last run {new Date(workflow.lastExecutedAt).toLocaleDateString()}</span>
                         </div>
@@ -262,7 +262,7 @@ export default function WorkflowsPage() {
                   <div className="flex items-center gap-2 ml-4">
                     <button
                       onClick={() => handleToggleStatus(workflow)}
-                      className={`p-2 rounded-lg transition-colors ${workflow.status === 'active' ? 'text-amber-600 hover:bg-amber-50' : 'text-emerald-600 hover:bg-emerald-50'}`}
+                      className={`p-2 rounded-lg transition-colors ${workflow.status === 'active' ? 'text-warning-fg hover:bg-amber-50' : 'text-success-fg hover:bg-emerald-50'}`}
                       title={workflow.status === 'active' ? 'Pause' : 'Activate'}
                     >
                       {workflow.status === 'active' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}

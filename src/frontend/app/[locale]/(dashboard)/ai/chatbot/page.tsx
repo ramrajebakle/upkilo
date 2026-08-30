@@ -116,12 +116,12 @@ export default function ChatbotAdminPage() {
                         <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg shadow-primary-500/25">
                             <Bot className="h-6 w-6 text-white" />
                         </div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">AI Chatbot Management</h1>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-foreground">AI Chatbot Management</h1>
                     </div>
-                    <p className="text-slate-500">Train and monitor your 24/7 AI appointment assistant</p>
+                    <p className="text-foreground-secondary">Train and monitor your 24/7 AI appointment assistant</p>
                 </div>
-                <div className="flex items-center gap-3 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                    <span className="text-sm font-medium text-slate-600 ml-2">Status:</span>
+                <div className="flex items-center gap-3 bg-card p-2 rounded-xl border border-border shadow-sm">
+                    <span className="text-sm font-medium text-foreground-secondary ml-2">Status:</span>
                     <Badge variant={settings.isEnabled ? 'success' : 'outline'}>
                         {settings.isEnabled ? 'Active' : 'Disabled'}
                     </Badge>
@@ -139,7 +139,7 @@ export default function ChatbotAdminPage() {
                         <MessageSquare className="h-6 w-6" />
                     </div>
                     <div>
-                        <p className="text-sm text-slate-500">Total Chats</p>
+                        <p className="text-sm text-foreground-secondary">Total Chats</p>
                         <p className="text-2xl font-bold">{stats.totalConversations}</p>
                     </div>
                 </Card>
@@ -148,7 +148,7 @@ export default function ChatbotAdminPage() {
                         <Activity className="h-6 w-6" />
                     </div>
                     <div>
-                        <p className="text-sm text-slate-500">Resolution Rate</p>
+                        <p className="text-sm text-foreground-secondary">Resolution Rate</p>
                         <p className="text-2xl font-bold">{stats.resolutionRate}%</p>
                     </div>
                 </Card>
@@ -157,7 +157,7 @@ export default function ChatbotAdminPage() {
                         <Users className="h-6 w-6" />
                     </div>
                     <div>
-                        <p className="text-sm text-slate-500">Live Handoffs</p>
+                        <p className="text-sm text-foreground-secondary">Live Handoffs</p>
                         <p className="text-2xl font-bold">{stats.activeHandoffs}</p>
                     </div>
                 </Card>
@@ -167,7 +167,7 @@ export default function ChatbotAdminPage() {
                 {/* Configuration */}
                 <Card className="lg:col-span-1 p-6 space-y-6 self-start">
                     <div className="flex items-center gap-2 mb-2">
-                        <Settings className="h-5 w-5 text-primary-500" />
+                        <Settings className="h-5 w-5 text-primary" />
                         <h2 className="text-lg font-bold">Bot Persona</h2>
                     </div>
 
@@ -205,13 +205,13 @@ export default function ChatbotAdminPage() {
                 <Card className="lg:col-span-2 p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
-                            <ShieldCheck className="h-5 w-5 text-emerald-500" />
+                            <ShieldCheck className="h-5 w-5 text-success-fg" />
                             <h2 className="text-lg font-bold">Knowledge Base & Training</h2>
                         </div>
                     </div>
 
                     {/* Training Form */}
-                    <form onSubmit={handleAddKb} className="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-8 space-y-4">
+                    <form onSubmit={handleAddKb} className="bg-muted p-4 rounded-xl border border-border-subtle mb-8 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Question / Trigger</Label>
@@ -248,20 +248,20 @@ export default function ChatbotAdminPage() {
 
                     {/* KB Grid */}
                     <div className="space-y-4">
-                        <h3 className="font-semibold text-sm text-slate-500 uppercase tracking-wider">Trained Responses</h3>
+                        <h3 className="font-semibold text-sm text-foreground-secondary uppercase tracking-wider">Trained Responses</h3>
                         <div className="grid gap-4">
                             {kbItems.map((item) => (
-                                <div key={item.id} className="group flex items-start gap-4 p-4 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-all">
+                                <div key={item.id} className="group flex items-start gap-4 p-4 bg-card border border-border-subtle rounded-xl hover:shadow-md transition-all">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Badge variant="outline" className="bg-slate-50">{item.category}</Badge>
-                                            <p className="font-semibold text-slate-900">{item.question}</p>
+                                            <Badge variant="outline" className="bg-muted">{item.category}</Badge>
+                                            <p className="font-semibold text-foreground">{item.question}</p>
                                         </div>
-                                        <p className="text-sm text-slate-600 leading-relaxed italic">"{item.answer}"</p>
+                                        <p className="text-sm text-foreground-secondary leading-relaxed italic">"{item.answer}"</p>
                                     </div>
                                     <button
                                         onClick={() => handleDeleteKb(item.id)}
-                                        className="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-red-500 transition-all"
+                                        className="opacity-0 group-hover:opacity-100 p-2 text-foreground-muted hover:text-red-500 transition-all"
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </button>

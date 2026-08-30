@@ -68,10 +68,10 @@ export default function TipsPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Total tips", value: stats.totalTips, icon: Heart, color: "text-red-400" },
-          { label: "Total amount", value: `$${stats.totalAmount.toFixed(2)}`, icon: DollarSign, color: "text-green-500" },
+          { label: "Total tips", value: stats.totalTips, icon: Heart, color: "text-danger-fg" },
+          { label: "Total amount", value: `$${stats.totalAmount.toFixed(2)}`, icon: DollarSign, color: "text-success-fg" },
           { label: "Average tip", value: `$${stats.averageTip.toFixed(2)}`, icon: TrendingUp, color: "text-blue-500" },
-          { label: "Top earner", value: stats.topStaffName ?? "—", icon: Users, color: "text-primary-500" },
+          { label: "Top earner", value: stats.topStaffName ?? "—", icon: Users, color: "text-primary" },
         ].map((s) => (
           <Card key={s.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -117,7 +117,7 @@ export default function TipsPage() {
                       <td className="py-3 px-3 text-text-secondary text-xs">{new Date(t.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })}</td>
                       <td className="py-3 px-3 font-medium text-text-primary">{t.staffName ?? "—"}</td>
                       <td className="py-3 px-3 text-text-secondary">{t.clientName ?? "—"}</td>
-                      <td className="py-3 px-3 font-bold text-green-600">${t.amount.toFixed(2)}</td>
+                      <td className="py-3 px-3 font-bold text-success-fg">${t.amount.toFixed(2)}</td>
                       <td className="py-3 px-3 text-text-tertiary text-xs">{t.paymentMethod ?? "—"}</td>
                     </tr>
                   ))}

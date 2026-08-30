@@ -59,7 +59,7 @@ export default function CustomDomainsGuidePage() {
                             </p>
                             
                             <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-primary-500 shadow-sm space-y-4">
-                                <div className="grid grid-cols-3 gap-4 text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
+                                <div className="grid grid-cols-3 gap-4 text-xs font-bold text-slate-300 uppercase tracking-wider">
                                     <div>Type</div>
                                     <div>Name (Host)</div>
                                     <div>Value (Points to)</div>
@@ -83,7 +83,7 @@ export default function CustomDomainsGuidePage() {
                                         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                             GoDaddy
                                         </h3>
-                                        <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                                        <ExternalLink className="h-4 w-4 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                                     </div>
                                     <ol className="list-decimal pl-5 space-y-2 text-sm text-slate-600 dark:text-slate-400">
                                         <li>Log in to your <strong>GoDaddy Domain Portfolio</strong>.</li>
@@ -102,7 +102,7 @@ export default function CustomDomainsGuidePage() {
                                         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                             Cloudflare
                                         </h3>
-                                        <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                                        <ExternalLink className="h-4 w-4 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                                     </div>
                                     <ol className="list-decimal pl-5 space-y-2 text-sm text-slate-600 dark:text-slate-400">
                                         <li>Log in to your <strong>Cloudflare dashboard</strong>.</li>
@@ -123,7 +123,7 @@ export default function CustomDomainsGuidePage() {
                                         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                             Namecheap
                                         </h3>
-                                        <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                                        <ExternalLink className="h-4 w-4 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                                     </div>
                                     <ol className="list-decimal pl-5 space-y-2 text-sm text-slate-600 dark:text-slate-400">
                                         <li>Sign in to your <strong>Namecheap account</strong>.</li>
@@ -183,7 +183,7 @@ export default function CustomDomainsGuidePage() {
                             <hr className="my-6 border-slate-100 dark:border-slate-800" />
                             
                             <div className="space-y-4">
-                                <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Help & Support</h4>
+                                <h4 className="text-xs font-bold text-foreground-muted uppercase tracking-widest">Help & Support</h4>
                                 <div className="space-y-1">
                                     <Link href="#" className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 transition-colors">
                                         <Info className="h-4 w-4" />

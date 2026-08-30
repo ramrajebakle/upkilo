@@ -144,7 +144,7 @@ export function NotificationCenter() {
                             <div className="p-4 text-center text-slate-500 dark:text-slate-400" role="status">Loading...</div>
                         ) : notifications.length === 0 ? (
                             <div className="p-8 text-center" role="status">
-                                <Bell className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" aria-hidden="true" />
+                                <Bell className="h-12 w-12 text-slate-300 mx-auto mb-3" aria-hidden="true" />
                                 <p className="text-slate-500 dark:text-slate-400">No notifications</p>
                             </div>
                         ) : (
@@ -172,7 +172,7 @@ export function NotificationCenter() {
                                                 >
                                                     {notification.title}
                                                 </p>
-                                                <span className="text-xs text-slate-400 dark:text-slate-500 flex-shrink-0">
+                                                <span className="text-xs text-foreground-muted flex-shrink-0">
                                                     {formatTimeAgo(notification.createdAt)}
                                                 </span>
                                             </div>

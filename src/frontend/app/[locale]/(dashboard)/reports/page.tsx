@@ -172,7 +172,7 @@ export default function ReportsPage() {
                                 </option>
                             ))}
                         </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-primary-500 transition-colors" />
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted pointer-events-none group-hover:text-primary-500 transition-colors" />
                     </div>
 
                     <button className="btn btn-secondary px-6 py-3 rounded-2xl dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-bold uppercase tracking-widest text-[10px] shadow-sm hover:translate-y-[-1px] transition-all">
@@ -257,7 +257,7 @@ export default function ReportsPage() {
                                     {Math.abs(stat.change)}%
                                 </div>
                             </div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">{stat.label}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-foreground-muted mb-1.5">{stat.label}</p>
                             <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{stat.value}</p>
                         </div>
                     ))
@@ -274,7 +274,7 @@ export default function ReportsPage() {
                             'flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all',
                             activeTab === tab.id
                                 ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-white shadow-lg'
-                                : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
+                                : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                         )}
                     >
                         <tab.icon className="h-4 w-4" />
@@ -296,7 +296,7 @@ export default function ReportsPage() {
                             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Daily revenue capitalization metrics</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-foreground-muted">
                                 <span className="w-2.5 h-2.5 rounded-full bg-primary-500 shadow-sm shadow-primary-500/50" />
                                 Revenue
                             </span>
@@ -320,7 +320,7 @@ export default function ReportsPage() {
                                         {formatCurrency(data.value)}
                                     </div>
                                 </div>
-                                <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400 dark:text-slate-500">{data.day}</span>
+                                <span className="text-[10px] font-black uppercase tracking-tighter text-foreground-muted">{data.day}</span>
                             </div>
                         ))}
                     </div>
@@ -333,10 +333,10 @@ export default function ReportsPage() {
                             <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                 Premier Services
                             </h3>
-                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mt-1">Growth Tier List</p>
+                            <p className="text-xs font-bold uppercase tracking-widest text-foreground-muted mt-1">Growth Tier List</p>
                         </div>
                         <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
-                            <Sparkles className="h-5 w-5 text-amber-500" />
+                            <Sparkles className="h-5 w-5 text-warning-fg" />
                         </div>
                     </div>
 
@@ -346,18 +346,18 @@ export default function ReportsPage() {
                                 key={service.name}
                                 className="flex items-center gap-4 group"
                             >
-                                <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-xs font-black text-slate-400 dark:text-slate-500 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-xs font-black text-foreground-muted group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-all">
                                     0{i + 1}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-slate-900 dark:text-white text-sm truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-tight">{service.name}</p>
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase">{service.bookings} Reservations</p>
+                                    <p className="text-[10px] font-bold text-foreground-muted tracking-widest uppercase">{service.bookings} Reservations</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="font-black text-slate-900 dark:text-white text-sm">{formatCurrency(service.revenue)}</p>
                                     <p className={cn(
                                         'text-[10px] font-black flex items-center justify-end gap-0.5 uppercase tracking-widest',
-                                        service.growth >= 0 ? 'text-emerald-500' : 'text-rose-500'
+                                        service.growth >= 0 ? 'text-success-fg' : 'text-danger-fg'
                                     )}>
                                         {service.growth >= 0 ? '+' : ''}{service.growth}%
                                         <ArrowUpRight className={cn('h-3 w-3', service.growth < 0 && 'rotate-90')} />
@@ -379,7 +379,7 @@ export default function ReportsPage() {
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Peak Velocity</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Booking Density</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-0.5">Booking Density</p>
                         </div>
                     </div>
                     <div className="space-y-5">
@@ -408,7 +408,7 @@ export default function ReportsPage() {
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Loyalty Index</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Retention Rate</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-0.5">Retention Rate</p>
                         </div>
                     </div>
                     <div className="flex items-center justify-center py-2">
@@ -421,7 +421,7 @@ export default function ReportsPage() {
                                     r="68"
                                     fill="none"
                                     stroke="currentColor"
-                                    className="text-slate-100 dark:text-slate-800"
+                                    className="text-slate-100"
                                     strokeWidth="14"
                                 />
                                 <circle
@@ -444,7 +444,7 @@ export default function ReportsPage() {
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <span className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{retention}%</span>
-                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Returning</span>
+                                <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest mt-1">Returning</span>
                             </div>
                         </div>
                     </div>
@@ -458,7 +458,7 @@ export default function ReportsPage() {
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Origin Analysis</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Booking Sources</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-0.5">Booking Sources</p>
                         </div>
                     </div>
                     <div className="space-y-4">

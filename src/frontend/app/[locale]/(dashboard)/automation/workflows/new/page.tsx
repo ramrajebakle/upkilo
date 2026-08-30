@@ -95,9 +95,9 @@ export default function WorkflowPage() {
 
     return (
         <ReactFlowProvider>
-            <div className="h-screen flex flex-col bg-white overflow-hidden">
+            <div className="h-screen flex flex-col bg-card overflow-hidden">
                 {/* Header */}
-                <header className="h-16 border-b border-gray-200 px-6 flex items-center justify-between bg-white z-10 shrink-0">
+                <header className="h-16 border-b border-border px-6 flex items-center justify-between bg-card z-10 shrink-0">
                     <div className="flex items-center space-x-4">
                         <Button 
                             variant="ghost" 
@@ -112,10 +112,10 @@ export default function WorkflowPage() {
                             <Input
                                 value={workflowName}
                                 onChange={(e) => setWorkflowName(e.target.value)}
-                                className="h-8 py-0 px-2 text-lg font-bold border-transparent hover:border-gray-200 focus:border-primary bg-transparent transition-all w-64"
+                                className="h-8 py-0 px-2 text-lg font-bold border-transparent hover:border-border focus:border-primary bg-transparent transition-all w-64"
                                 placeholder="Enter workflow name..."
                             />
-                            <p className="text-[10px] text-gray-400 px-2 uppercase font-bold tracking-widest">Visual Builder Mode</p>
+                            <p className="text-[10px] text-foreground-muted px-2 uppercase font-bold tracking-widest">Visual Builder Mode</p>
                         </div>
                     </div>
 
@@ -131,7 +131,7 @@ export default function WorkflowPage() {
                             size="sm"
                             onClick={handleTestRun}
                             disabled={isTesting || isSaving}
-                            className="rounded-xl font-bold text-primary-600 border-primary-200 bg-primary-50 hover:bg-primary-100"
+                            className="rounded-xl font-bold text-primary border-primary/25 bg-brand-subtle hover:bg-brand-subtle"
                         >
                             {isTesting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}
                             {isTesting ? 'Testing...' : 'Test Run'}
@@ -148,7 +148,7 @@ export default function WorkflowPage() {
                 </header>
 
                 {/* Builder Area */}
-                <main className="flex-1 min-h-0 bg-gray-50/50">
+                <main className="flex-1 min-h-0 bg-muted/50">
                     <WorkflowBuilder
                         nodes={nodes}
                         edges={edges}

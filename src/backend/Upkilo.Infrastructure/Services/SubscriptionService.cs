@@ -22,6 +22,7 @@ public class SubscriptionService : ISubscriptionService
     private readonly IConfiguration _configuration;
     private readonly ISecretProvider _secretProvider;
     private readonly IDistributedCache _cache;
+    private readonly IEntitlementService _entitlements;
 
     // C-02 FIX: Store Stripe key as instance field instead of setting global static.
     // Use via RequestOptions on each Stripe API call, matching PaymentService pattern.
@@ -42,13 +43,15 @@ public class SubscriptionService : ISubscriptionService
         ILogger<SubscriptionService> logger,
         IConfiguration configuration,
         ISecretProvider secretProvider,
-        IDistributedCache cache)
+        IDistributedCache cache,
+        IEntitlementService entitlements)
     {
         _context = context;
         _logger = logger;
         _configuration = configuration;
         _secretProvider = secretProvider;
         _cache = cache;
+        _entitlements = entitlements;
 
         // C-02 FIX: Do NOT set global StripeConfiguration.ApiKey — it is process-wide
         // and creates race conditions. Store locally for per-request RequestOptions.
@@ -66,6 +69,13 @@ public class SubscriptionService : ISubscriptionService
     }
 
     private static string SubCacheKey(Guid tenantId) => $"sub:{tenantId}";
+
+    /// <summary>
+    /// Storage ceiling. Not a catalogue feature — there is no max_storage key — so it is a
+    /// flat platform limit rather than a plan entitlement. Named here so the reservation
+    /// path and the usage summary cannot drift apart on the number.
+    /// </summary>
+    private const long StorageLimitBytes = 5L * 1024 * 1024 * 1024;
 
     public async Task<CheckoutSessionResult> CreateCheckoutSessionAsync(Guid tenantId, string priceId, bool isAnnual = false, string? promoCode = null)
     {
@@ -174,8 +184,72 @@ public class SubscriptionService : ISubscriptionService
         return sub;
     }
 
+    /// <summary>
+    /// Drops every cache that can answer an entitlement question for this tenant.
+    ///
+    /// There are three, written by three different components, and they used to be invalidated
+    /// independently — which meant they disagreed. This method previously dropped only sub:,
+    /// leaving SubscriptionEnforcerMiddleware's tenant_tier: entry to serve the OLD tier for up
+    /// to 15 minutes after a plan change; meanwhile StripeWebhookController dropped only
+    /// tenant_tier:, leaving sub: to serve a cancelled subscription's features for 5 more
+    /// minutes. Both directions were live defects, so all three are now dropped together and
+    /// every mutation path calls this one method.
+    /// </summary>
+    /// <summary>
+    /// Writes the denormalised plan columns on Tenant to match the subscription.
+    ///
+    /// Tenant.SubscriptionTier and Tenant.PricingPlanId are a cache of the subscription's plan,
+    /// consulted by AiModelResolver, JobQuotaService and the churn/digest jobs. Only
+    /// SyncWithStripeAsync used to write them, so a plan change made through any other path left
+    /// them stale: the customer's subscription said Growth while the tenant row still said
+    /// Starter, and they kept the cheaper AI model and lower job quota they had paid to leave.
+    ///
+    /// Called from every path that changes PricingPlanId so the copy cannot drift.
+    /// </summary>
+    private async Task SyncTenantPlanColumnsAsync(Guid tenantId, Guid planId)
+    {
+        var plan = await _context.PricingPlans.AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == planId);
+        if (plan == null) return;
+
+        var tenant = await _context.Set<Tenant>().FindAsync(tenantId);
+        if (tenant == null) return;
+
+        tenant.SubscriptionTier = SubscriptionTierMap.FromPlanName(plan.Name);
+        tenant.PricingPlanId = planId;
+    }
+
+    /// <summary>
+    /// Loads the subscription as a TRACKED entity, bypassing the cache. Use this — never
+    /// <see cref="GetSubscriptionAsync"/> — whenever the row is about to be modified.
+    ///
+    /// GetSubscriptionAsync serves a JSON round-trip from Redis on a hit, so what it returns is
+    /// a detached POCO with no connection to the DbContext. Mutating that object and calling
+    /// SaveChangesAsync persists NOTHING, silently, and only when the cache happens to be warm —
+    /// which is most of the time. Seven methods did exactly that:
+    ///
+    ///   - Cancel / Pause / Resume left the local status unchanged, so the app disagreed with
+    ///     Stripe until a webhook happened to correct it.
+    ///   - IncrementUsageAsync recorded no usage at all.
+    ///   - UpdateAiBudgetAsync reported "budget updated to $X" and saved nothing.
+    ///   - AddExtraStaffAsync / AddExtraLocationAsync were the worst: Stripe was charged for the
+    ///     extra seats, and ExtraStaffCount never moved — so the customer paid for capacity the
+    ///     entitlement resolver never granted them.
+    ///
+    /// The bug is invisible on a cold cache, which is why it survived: every test that exercised
+    /// these paths started with an empty cache and a tracked entity.
+    /// </summary>
+    private Task<Upkilo.Core.Entities.Subscription?> GetTrackedSubscriptionAsync(Guid tenantId)
+        => _context.Set<Upkilo.Core.Entities.Subscription>()
+            .Include(sub => sub.PricingPlan)
+            .FirstOrDefaultAsync(sub => sub.TenantId == tenantId);
+
     private async Task InvalidateSubscriptionCacheAsync(Guid tenantId)
-        => await _cache.RemoveAsync(SubCacheKey(tenantId));
+    {
+        await _cache.RemoveAsync(SubCacheKey(tenantId));
+        await _cache.RemoveAsync($"tenant_tier:{tenantId}");
+        await _entitlements.InvalidateAsync(tenantId);
+    }
 
     public async Task<SubscriptionResult> CreateSubscriptionAsync(
         Guid tenantId, Guid planId, BillingInterval interval, string? promoCode = null)
@@ -326,7 +400,7 @@ public class SubscriptionService : ISubscriptionService
     public async Task<SubscriptionResult> ChangeSubscriptionAsync(
         Guid tenantId, Guid newPlanId, BillingInterval? newInterval = null)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
             return new SubscriptionResult { Success = false, Message = "No active Stripe subscription found" };
 
@@ -366,6 +440,7 @@ public class SubscriptionService : ISubscriptionService
             // Optimistic local update; Stripe webhook will confirm
             subscription.PricingPlanId = newPlanId;
             if (newInterval.HasValue) subscription.BillingInterval = newInterval.Value;
+            await SyncTenantPlanColumnsAsync(tenantId, newPlanId);
             await _context.SaveChangesAsync();
             await InvalidateSubscriptionCacheAsync(tenantId);
 
@@ -379,7 +454,7 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionResult> CancelSubscriptionAsync(Guid tenantId, bool immediate = false)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
             return new SubscriptionResult { Success = false, Message = "No active subscription found" };
 
@@ -417,7 +492,7 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionResult> PauseSubscriptionAsync(Guid tenantId, DateTime? resumeAt = null)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
             return new SubscriptionResult { Success = false, Message = "No active Stripe subscription found" };
 
@@ -450,7 +525,7 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionResult> ResumeSubscriptionAsync(Guid tenantId)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
             return new SubscriptionResult { Success = false, Message = "No active Stripe subscription found" };
 
@@ -497,7 +572,11 @@ public class SubscriptionService : ISubscriptionService
             {
                 var stripeSubId = subs.Data[0].Id;
                 var stripeSub = await service.GetAsync(stripeSubId);
-                var localSub = await GetSubscriptionAsync(tenantId);
+                // Tracked, not cached — this method writes to the row. Reading it through the
+                // cache returned a detached copy whose updates SaveChanges silently dropped, so
+                // a Stripe sync appeared to succeed while leaving local status, period dates and
+                // seat counts untouched.
+                var localSub = await GetTrackedSubscriptionAsync(tenantId);
 
                 if (localSub == null)
                 {
@@ -604,19 +683,7 @@ public class SubscriptionService : ISubscriptionService
                         // silently downgraded — cheaper AI model, lower rate limits, fewer jobs.
                         // Professional/Business/Agency are kept as aliases: those plans were
                         // folded into Growth, so any subscription still naming one resolves there.
-                        var tier = resolvedPlan.Name.ToLowerInvariant() switch
-                        {
-                            "free" => SubscriptionTier.Free,
-                            "starter" => SubscriptionTier.Starter,
-                            "growth" => SubscriptionTier.Growth,
-                            "professional" => SubscriptionTier.Growth,
-                            "business" => SubscriptionTier.Growth,
-                            "agency" => SubscriptionTier.Growth,
-                            "enterprise" => SubscriptionTier.Enterprise,
-                            // Still a downgrade, but now only reachable via a genuinely unknown
-                            // plan name rather than one of our own tiers.
-                            _ => SubscriptionTier.Starter
-                        };
+                        var tier = SubscriptionTierMap.FromPlanName(resolvedPlan.Name);
                         var tenantToUpdate = await _context.Tenants.FindAsync(tenantId);
                         if (tenantToUpdate != null)
                         {
@@ -669,13 +736,14 @@ public class SubscriptionService : ISubscriptionService
             .ToListAsync();
         var aiCost = aiCostLogs.Sum();
 
-        var mappings = subscription?.PricingPlan?.FeatureMappings
-            .ToDictionary(fm => fm.PricingFeature.Key, fm => fm) ?? new Dictionary<string, PlanFeatureMapping>();
+        // Limits and flags come from the entitlement engine, not from the plan mappings
+        // directly, so that a customer-specific override and the subscription-status gate are
+        // reflected in the usage figures the dashboard renders. Reading mappings here was the
+        // second copy of the resolution rules and would have drifted from the gates.
+        var entitlements = await _entitlements.GetEffectiveEntitlementsAsync(tenantId);
 
-        int GetNumericLimit(string key) =>
-            mappings.TryGetValue(key, out var m) && m.IsEnabled ? (m.NumericLimit ?? -1) : 0;
-        bool GetFlag(string key) =>
-            mappings.TryGetValue(key, out var m) && m.IsEnabled;
+        int GetNumericLimit(string key) => entitlements.LimitOf(key);
+        bool GetFlag(string key) => entitlements.Has(key);
 
         // Trial expiry / non-payment gate. Bookings are unlimited (-1) while the subscription
         // entitles the tenant to service, and 0 once it does not — blocking NEW bookings without
@@ -692,43 +760,45 @@ public class SubscriptionService : ISubscriptionService
         // moment a card declines would defeat that: a salon would stop trading over a single
         // failed charge, producing churn instead of a successful retry. Service stops when the
         // job flips the status to Suspended, not before.
-        var bookingsAllowed = subscription?.Status is SubscriptionStatus.Active
-                                                  or SubscriptionStatus.Trialing
-                                                  or SubscriptionStatus.Trial     // Stripe-mapping alias
-                                                  or SubscriptionStatus.PastDue;  // within dunning grace
+        // The status list this used to spell out inline now lives in EntitlementService, which
+        // applies the same rule to every feature gate. Reading it from there keeps bookings and
+        // features from ever disagreeing about whether a subscription is in good standing.
+        var bookingsAllowed = entitlements.IsServiceEntitled;
 
         return new UsageSummary
         {
             BookingsUsed = subscription?.BookingsUsed ?? 0,
             BookingsLimit = bookingsAllowed ? -1 : 0,
             SmsUsed = subscription?.SmsUsed ?? 0,
-            SmsLimit = GetFlag("sms_reminders") ? -1 : 0,
+            SmsLimit = GetFlag(FeatureKeys.SmsReminders) ? -1 : 0,
             AiCreditsUsed = subscription?.AiCreditsUsed ?? 0,
-            AiCreditsLimit = GetNumericLimit("ai_actions"),
+            AiCreditsLimit = GetNumericLimit(FeatureKeys.AiActions),
             StorageUsedBytes = subscription?.StorageUsedBytes ?? 0,
-            StorageLimitBytes = 5L * 1024 * 1024 * 1024,
+            StorageLimitBytes = StorageLimitBytes,
             StaffCount = staffCount,
-            StaffLimit = GetNumericLimit("max_staff") + (subscription?.ExtraStaffCount ?? 0),
+            // ExtraStaffCount/ExtraLocationCount are NOT added here: EntitlementService already
+            // folds purchased expansion seats into the effective limit. Adding them again would
+            // double-count every bought seat and hand out free headroom.
+            StaffLimit = GetNumericLimit(FeatureKeys.MaxStaff),
             LocationCount = locationCount,
-            LocationLimit = GetNumericLimit("max_locations") + (subscription?.ExtraLocationCount ?? 0),
+            LocationLimit = GetNumericLimit(FeatureKeys.MaxLocations),
             AiCostUsed = aiCost,
             AiCostLimit = subscription?.AiMonthlyBudget ?? 0,
             PeriodStart = subscription?.CurrentPeriodStart ?? DateTime.UtcNow,
             PeriodEnd = subscription?.CurrentPeriodEnd ?? DateTime.UtcNow.AddMonths(1),
-            EnabledFeatures = mappings.ToDictionary(kv => kv.Key, kv => kv.Value.IsEnabled)
+            EnabledFeatures = entitlements.ToFlags()
         };
     }
 
-    public async Task<bool> CheckFeatureAccessAsync(Guid tenantId, string featureName)
-    {
-        var subscription = await GetSubscriptionAsync(tenantId);
-        if (subscription == null) return false;
-
-        if (subscription.PricingPlan == null) return false;
-        var mapping = subscription.PricingPlan.FeatureMappings
-            .FirstOrDefault(fm => string.Equals(fm.PricingFeature.Key, featureName, StringComparison.OrdinalIgnoreCase));
-        return mapping?.IsEnabled == true;
-    }
+    /// <summary>
+    /// Delegates to the entitlement engine. This method used to resolve access itself, and got
+    /// two things wrong that the engine now handles: it never consulted the subscription's
+    /// status (so a cancelled tenant kept every paid feature), and it matched keys with
+    /// OrdinalIgnoreCase against caller-invented names, which never matched the catalogue.
+    /// Kept on ISubscriptionService so existing callers need not change.
+    /// </summary>
+    public Task<bool> CheckFeatureAccessAsync(Guid tenantId, string featureName)
+        => _entitlements.HasFeatureAsync(tenantId, featureName);
 
     public async Task<bool> CheckUsageLimitAsync(Guid tenantId, UsageType usageType, int amount = 1)
     {
@@ -745,7 +815,7 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task IncrementUsageAsync(Guid tenantId, UsageType usageType, int amount = 1)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null) return;
 
         switch (usageType)
@@ -758,37 +828,102 @@ public class SubscriptionService : ISubscriptionService
 
         subscription.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        await InvalidateSubscriptionCacheAsync(tenantId);
     }
 
+    /// <summary>
+    /// Atomically reserves quota, refusing when the reservation would exceed the tenant's limit.
+    ///
+    /// The limit is evaluated INSIDE the UPDATE's WHERE clause, so the database performs
+    /// check-and-increment as one operation against the live counter. Two things were wrong
+    /// before, and both let a tenant spend past a metered limit we bill for:
+    ///
+    ///  1. The check read its counter from GetUsageAsync, which reads the subscription through a
+    ///     five-minute Redis cache. A tenant sitting at their AI-credit ceiling kept being
+    ///     approved until that entry aged out, because the cached "used" figure was behind.
+    ///
+    ///  2. Check and increment were separate statements. Only the increment was atomic — the
+    ///     comment claiming atomicity described the UPDATE, not the decision — so concurrent
+    ///     requests could each pass the check and each increment. `rows > 0` merely confirmed
+    ///     the subscription row existed; it never confirmed the reservation was permitted.
+    ///
+    /// Limits still come from the entitlement resolver, which is correct to read from cache:
+    /// limits change on plan and override edits, and both invalidate. Counters change on every
+    /// call, so they are read live by the database itself.
+    ///
+    /// Written out per usage type rather than through a shared helper: the predicate has to be
+    /// an expression tree EF can translate to SQL, and hiding that behind a generic wrapper
+    /// obscured which column the limit was actually being compared against.
+    /// </summary>
     public async Task<bool> TryReserveUsageAsync(Guid tenantId, UsageType usageType, int amount = 1)
     {
-        // Check limits first using the unified GetUsageAsync (supports both plan systems)
-        var usage = await GetUsageAsync(tenantId);
+        // Limits come straight from the resolved entitlement set, not from GetUsageAsync.
+        //
+        // GetUsageAsync builds a full dashboard summary: it counts staff, counts locations, and
+        // materialises every AIUsageLog cost row for the billing period. This path needs exactly
+        // one number — the ceiling — and it runs on every booking and every AI call, so paying
+        // three extra queries (one of them an unbounded scan) to obtain it was pure waste on the
+        // hottest path in the entitlement system.
+        var entitlements = await _entitlements.GetEffectiveEntitlementsAsync(tenantId);
+        var subscriptions = _context.Subscriptions.Where(sub => sub.TenantId == tenantId);
 
-        bool withinLimit = usageType switch
+        int rows;
+
+        switch (usageType)
         {
-            UsageType.Bookings => usage.BookingsLimit == -1 || usage.BookingsUsed + amount <= usage.BookingsLimit,
-            UsageType.Sms => usage.SmsLimit == -1 || usage.SmsUsed + amount <= usage.SmsLimit,
-            UsageType.AiCredits => usage.AiCreditsLimit == -1 || usage.AiCreditsUsed + amount <= usage.AiCreditsLimit,
-            UsageType.Storage => usage.StorageLimitBytes == -1 || usage.StorageUsedBytes + amount <= usage.StorageLimitBytes,
-            _ => true
-        };
+            case UsageType.Bookings:
+            {
+                var limit = entitlements.IsServiceEntitled ? -1 : 0;
+                // 0 = not entitled to service at all; refuse without touching the row.
+                if (limit == 0) return false;
+                rows = limit == -1
+                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount))
+                    : await subscriptions.Where(sub => sub.BookingsUsed + amount <= limit)
+                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount));
+                break;
+            }
+            case UsageType.Sms:
+            {
+                var limit = entitlements.Has(FeatureKeys.SmsReminders) ? -1 : 0;
+                if (limit == 0) return false;
+                rows = limit == -1
+                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount))
+                    : await subscriptions.Where(sub => sub.SmsUsed + amount <= limit)
+                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount));
+                break;
+            }
+            case UsageType.AiCredits:
+            {
+                var limit = entitlements.LimitOf(FeatureKeys.AiActions);
+                if (limit == 0) return false;
+                rows = limit == -1
+                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount))
+                    : await subscriptions.Where(sub => sub.AiCreditsUsed + amount <= limit)
+                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount));
+                break;
+            }
+            case UsageType.Storage:
+            {
+                var limit = StorageLimitBytes;
+                if (limit == 0) return false;
+                rows = limit == -1
+                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount))
+                    : await subscriptions.Where(sub => sub.StorageUsedBytes + amount <= limit)
+                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount));
+                break;
+            }
+            default:
+                return true;
+        }
 
-        if (!withinLimit) return false;
-
-        // Atomic increment — works regardless of plan system because Subscription counters are universal
-        int rows = usageType switch
+        if (rows > 0)
         {
-            UsageType.Bookings => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
-                                    .ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount)),
-            UsageType.Sms => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
-                                    .ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount)),
-            UsageType.AiCredits => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
-                                    .ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount)),
-            UsageType.Storage => await _context.Subscriptions.Where(s => s.TenantId == tenantId)
-                                    .ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount)),
-            _ => 1
-        };
+            // The cached subscription now holds a stale counter. Dropping it keeps the usage the
+            // dashboard renders honest — otherwise a tenant refused at their ceiling would still
+            // be shown comfortably under it. Metered actions are user-initiated and low-volume,
+            // so repopulating on the next read is a fair trade for not lying about the number.
+            await _cache.RemoveAsync(SubCacheKey(tenantId));
+        }
 
         return rows > 0;
     }
@@ -814,6 +949,11 @@ public class SubscriptionService : ISubscriptionService
                     .ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => Math.Max(0, b.StorageUsedBytes - amount)));
                 break;
         }
+
+        // Symmetric with TryReserveUsageAsync. The enforcer refunds when the protected operation
+        // fails after reserving, so without this the tenant would keep seeing the consumption of
+        // an action that never happened until the cache aged out.
+        await _cache.RemoveAsync(SubCacheKey(tenantId));
     }
 
     public async Task<Upkilo.Core.Entities.PromoCode?> ValidatePromoCodeAsync(string code, Guid tenantId)
@@ -895,7 +1035,7 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionResult> AddExtraStaffAsync(Guid tenantId, int count)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
             return new SubscriptionResult { Success = false, Message = "No active subscription found" };
 
@@ -927,6 +1067,10 @@ public class SubscriptionService : ISubscriptionService
             subscription.ExtraStaffCount = newTotal;
             subscription.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+            // Expansion seats change the effective limit, so the resolved entitlement set and
+            // the cached subscription must both be dropped — otherwise the customer is billed
+            // for capacity the resolver keeps refusing them for up to five minutes.
+            await InvalidateSubscriptionCacheAsync(tenantId);
 
             return new SubscriptionResult { Success = true, Message = $"Added {count} staff seats. Total extra: {newTotal}" };
         }
@@ -939,7 +1083,7 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionResult> AddExtraLocationAsync(Guid tenantId, int count)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
             return new SubscriptionResult { Success = false, Message = "No active subscription found" };
 
@@ -971,6 +1115,10 @@ public class SubscriptionService : ISubscriptionService
             subscription.ExtraLocationCount = newTotal;
             subscription.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+            // Expansion seats change the effective limit, so the resolved entitlement set and
+            // the cached subscription must both be dropped — otherwise the customer is billed
+            // for capacity the resolver keeps refusing them for up to five minutes.
+            await InvalidateSubscriptionCacheAsync(tenantId);
 
             return new SubscriptionResult { Success = true, Message = $"Added {count} locations. Total extra: {newTotal}" };
         }
@@ -983,12 +1131,13 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionResult> UpdateAiBudgetAsync(Guid tenantId, decimal budget)
     {
-        var subscription = await GetSubscriptionAsync(tenantId);
+        var subscription = await GetTrackedSubscriptionAsync(tenantId);
         if (subscription == null) return new SubscriptionResult { Success = false, Message = "No subscription found" };
 
         subscription.AiMonthlyBudget = budget;
         subscription.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        await InvalidateSubscriptionCacheAsync(tenantId);
         return new SubscriptionResult { Success = true, Message = $"AI monthly budget updated to ${budget:F2}" };
     }
 

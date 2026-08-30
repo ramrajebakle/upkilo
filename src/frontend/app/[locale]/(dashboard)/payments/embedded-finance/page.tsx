@@ -46,7 +46,7 @@ export default function EmbeddedFinancePage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Embedded Finance <CreditCard className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Embedded Finance <CreditCard className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">Staff payouts, BNPL, and revenue advance financing.</p>
         </div>
         <Button variant="outline" leftIcon={<RefreshCw size={14} />} onClick={() => location.reload()} disabled={loading}>Refresh</Button>
@@ -57,8 +57,8 @@ export default function EmbeddedFinancePage() {
           {status && (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Wallet Balance", value: `$${(status.walletBalance ?? 0).toLocaleString()}`, color: "text-green-600", icon: <DollarSign className="h-5 w-5 text-green-400" /> },
-                { label: "Pending Payouts", value: `$${(status.pendingPayouts ?? 0).toLocaleString()}`, color: "text-amber-600", icon: <CreditCard className="h-5 w-5 text-amber-400" /> },
+                { label: "Wallet Balance", value: `$${(status.walletBalance ?? 0).toLocaleString()}`, color: "text-success-fg", icon: <DollarSign className="h-5 w-5 text-green-400" /> },
+                { label: "Pending Payouts", value: `$${(status.pendingPayouts ?? 0).toLocaleString()}`, color: "text-warning-fg", icon: <CreditCard className="h-5 w-5 text-amber-400" /> },
                 { label: "Advances This Month", value: `$${(status.totalAdvancedThisMonth ?? 0).toLocaleString()}`, color: "text-text-primary", icon: <TrendingUp className="h-5 w-5 text-text-tertiary" /> },
                 { label: "Payout Staff", value: payouts.length.toString(), color: "text-text-primary", icon: <CheckCircle2 className="h-5 w-5 text-text-tertiary" /> },
               ].map((s) => (
@@ -70,7 +70,7 @@ export default function EmbeddedFinancePage() {
           <div className="flex gap-1 p-1 bg-surface-100 rounded-xl max-w-md">
             {TABS.map((t) => (
               <button key={t.key} onClick={() => setTab(t.key)}
-                className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+                className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
                 {t.label}
               </button>
             ))}
@@ -87,12 +87,12 @@ export default function EmbeddedFinancePage() {
                     { label: "Revenue Advance", enabled: status.advanceEnabled, desc: "Access early working capital based on your revenue" },
                   ].map((f) => (
                     <div key={f.label} className="flex items-start gap-3 p-3 rounded-xl bg-surface-50 border border-surface-200">
-                      {f.enabled ? <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" /> : <AlertCircle className="h-4 w-4 text-text-tertiary mt-0.5 flex-shrink-0" />}
+                      {f.enabled ? <CheckCircle2 className="h-4 w-4 text-success-fg mt-0.5 flex-shrink-0" /> : <AlertCircle className="h-4 w-4 text-text-tertiary mt-0.5 flex-shrink-0" />}
                       <div>
                         <p className="text-sm font-medium text-text-primary">{f.label}</p>
                         <p className="text-xs text-text-tertiary">{f.desc}</p>
                       </div>
-                      <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${f.enabled ? "text-green-600 bg-green-50" : "text-gray-500 bg-gray-50"}`}>
+                      <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${f.enabled ? "text-green-600 bg-green-50" : "text-foreground-secondary bg-muted"}`}>
                         {f.enabled ? "Active" : "Inactive"}
                       </span>
                     </div>
@@ -119,9 +119,9 @@ export default function EmbeddedFinancePage() {
                       {payouts.map((p, i) => (
                         <tr key={i} className="border-b border-surface-100 hover:bg-surface-50">
                           <td className="py-3 px-4 text-xs font-medium text-text-primary">{p.staffName}</td>
-                          <td className="py-3 px-4 text-xs font-semibold text-green-600">${p.amount?.toLocaleString()}</td>
+                          <td className="py-3 px-4 text-xs font-semibold text-success-fg">${p.amount?.toLocaleString()}</td>
                           <td className="py-3 px-4">
-                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${p.status === "Completed" ? "text-green-600 bg-green-50" : p.status === "Pending" ? "text-amber-600 bg-amber-50" : "text-gray-500 bg-gray-50"}`}>{p.status}</span>
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${p.status === "Completed" ? "text-green-600 bg-green-50" : p.status === "Pending" ? "text-amber-600 bg-amber-50" : "text-foreground-secondary bg-muted"}`}>{p.status}</span>
                           </td>
                           <td className="py-3 px-4 text-xs text-text-tertiary">{new Date(p.scheduledDate).toLocaleDateString()}</td>
                         </tr>
@@ -138,9 +138,9 @@ export default function EmbeddedFinancePage() {
             <Card>
               <CardHeader><CardTitle>Revenue Advance</CardTitle><CardDescription>Access working capital based on your future revenue</CardDescription></CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-xl bg-ai-50 border border-ai-200">
+                <div className="p-4 rounded-xl bg-ai-subtle border border-ai/25">
                   <p className="text-sm font-medium text-ai-800">Based on your revenue history, you may qualify for an advance</p>
-                  <p className="text-xs text-ai-600 mt-1">Contact our finance team or use the API endpoint to apply: <code className="bg-white px-1 py-0.5 rounded text-xs">POST /api/v1/embedded-finance/advance/apply</code></p>
+                  <p className="text-xs text-ai mt-1">Contact our finance team or use the API endpoint to apply: <code className="bg-card px-1 py-0.5 rounded text-xs">POST /api/v1/embedded-finance/advance/apply</code></p>
                 </div>
                 <Button variant="primary" leftIcon={<TrendingUp size={14} />}
                   onClick={async () => {

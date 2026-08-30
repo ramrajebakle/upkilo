@@ -62,7 +62,7 @@ export default function GlobalPaymentsPage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Global Payments <Globe className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Global Payments <Globe className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Accept payments with region-optimized methods and compliance checks.</p>
       </header>
 
@@ -72,7 +72,7 @@ export default function GlobalPaymentsPage() {
           <div className="flex flex-wrap gap-2">
             {COUNTRIES.map((c) => (
               <button key={c.code} onClick={() => handleCountryChange(c.code)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${countryCode === c.code ? "bg-ai-500 text-white border-ai-500" : "border-surface-200 text-text-secondary hover:border-ai-300 hover:text-text-primary"}`}>
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${countryCode === c.code ? "bg-ai-500 text-white border-ai-500" : "border-surface-200 text-text-secondary hover:border-ai/25 hover:text-text-primary"}`}>
                 {c.name}
               </button>
             ))}
@@ -90,13 +90,13 @@ export default function GlobalPaymentsPage() {
                   <Card key={m.id} className={m.available ? "" : "opacity-50"}>
                     <CardContent className="pt-3 pb-3 flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-surface-100 flex items-center justify-center flex-shrink-0">
-                        <CreditCard className="h-4 w-4 text-ai-500" />
+                        <CreditCard className="h-4 w-4 text-ai" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-text-primary">{m.name}</p>
                         <p className="text-xs text-text-tertiary">{m.type} · {(m.currencies ?? []).join(", ")}</p>
                       </div>
-                      {m.available ? <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" /> : null}
+                      {m.available ? <CheckCircle2 className="h-4 w-4 text-success-fg flex-shrink-0" /> : null}
                     </CardContent>
                   </Card>
                 ))}
@@ -110,7 +110,7 @@ export default function GlobalPaymentsPage() {
               <CardContent className="space-y-2">
                 {(compliance.requirements ?? []).map((req, i) => (
                   <div key={i} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-success-fg mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-text-secondary">{req}</p>
                   </div>
                 ))}

@@ -14,8 +14,8 @@ export default function MarketplacePage() {
                         { label: 'Marketplace', active: true }
                     ]} 
                 />
-                <h1 className="text-3xl font-black text-gray-900 mt-4 tracking-tight">Marketplace & Monetization</h1>
-                <p className="text-gray-500 mt-1 max-w-2xl font-medium">
+                <h1 className="text-3xl font-black text-foreground mt-4 tracking-tight">Marketplace & Monetization</h1>
+                <p className="text-foreground-secondary mt-1 max-w-2xl font-medium">
                     Boost your business visibility and manage your presence in the Upkilo consumer marketplace.
                 </p>
             </div>

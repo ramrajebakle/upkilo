@@ -52,7 +52,7 @@ export default function FranchisePage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Franchise Management <Building2 className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Franchise Management <Building2 className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">Monitor all franchise locations and push updates from head office.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -69,9 +69,9 @@ export default function FranchisePage() {
           <div className="grid grid-cols-4 gap-4">
             {[
               { label: "Locations", value: data.totalLocations, icon: <Building2 size={16} className="text-blue-500" /> },
-              { label: "Total Revenue", value: fmt(data.totalRevenue), icon: <TrendingUp size={16} className="text-green-500" /> },
-              { label: "Total Bookings", value: data.totalBookings.toLocaleString(), icon: <CheckCircle2 size={16} className="text-ai-500" /> },
-              { label: "Avg Occupancy", value: `${(data.avgOccupancy ?? 0).toFixed(1)}%`, icon: <Share2 size={16} className="text-primary-500" /> },
+              { label: "Total Revenue", value: fmt(data.totalRevenue), icon: <TrendingUp size={16} className="text-success-fg" /> },
+              { label: "Total Bookings", value: data.totalBookings.toLocaleString(), icon: <CheckCircle2 size={16} className="text-ai" /> },
+              { label: "Avg Occupancy", value: `${(data.avgOccupancy ?? 0).toFixed(1)}%`, icon: <Share2 size={16} className="text-primary" /> },
             ].map((m) => (
               <Card key={m.label}><CardContent className="pt-4 pb-4">
                 <div className="flex items-center gap-2 mb-1">{m.icon}<p className="text-xs text-text-tertiary font-medium">{m.label}</p></div>
@@ -83,7 +83,7 @@ export default function FranchisePage() {
           <div className="flex gap-1 p-1 bg-surface-100 rounded-xl max-w-xs">
             {[{ k: "overview" as const, l: "Locations" }, { k: "push" as const, l: "Push Services" }].map((t) => (
               <button key={t.k} onClick={() => setTab(t.k)}
-                className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
+                className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
             ))}
           </div>
 
@@ -101,7 +101,7 @@ export default function FranchisePage() {
                     {(data.locations ?? []).map((loc) => (
                       <tr key={loc.id} className="border-b border-surface-100 hover:bg-surface-50">
                         <td className="py-3 px-4 text-sm font-medium text-text-primary">{loc.name}
-                          {loc.name === data.topPerformer && <span className="ml-2 text-xs text-green-600 font-semibold">★ Top</span>}
+                          {loc.name === data.topPerformer && <span className="ml-2 text-xs text-success-fg font-semibold">★ Top</span>}
                         </td>
                         <td className="py-3 px-4 text-xs text-text-secondary">{loc.city ?? "—"}</td>
                         <td className="py-3 px-4 text-sm font-semibold text-text-primary">{fmt(loc.revenue)}</td>

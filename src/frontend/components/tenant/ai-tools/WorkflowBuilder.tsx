@@ -39,9 +39,9 @@ const AIActionNode = ({ data }: NodeProps) => {
   return (
     <div className="bg-surface-0 border-2 border-ai-400 rounded-xl shadow-lg min-w-[200px] overflow-hidden">
       <Handle type="target" position={Position.Top} className="w-3 h-3 bg-ai-500" />
-      <div className="bg-ai-50 px-4 py-2 flex items-center gap-2 border-b border-ai-100">
+      <div className="bg-ai-subtle px-4 py-2 flex items-center gap-2 border-b border-ai-100">
         <SparklesIcon />
-        <span className="text-xs font-bold text-ai-700 uppercase tracking-wider">AI Action</span>
+        <span className="text-xs font-bold text-ai uppercase tracking-wider">AI Action</span>
       </div>
       <div className="p-4">
         <div className="font-semibold text-text-primary text-sm">{data.label}</div>
@@ -68,7 +68,7 @@ const OutputNode = ({ data }: NodeProps) => {
 };
 
 const SparklesIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-ai-600">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-ai">
     <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
     <path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>
   </svg>

@@ -42,10 +42,10 @@ export const StatsGrid = memo(function StatsGrid({ stats, loading = false, colum
                     <div key={i} className="card-elevated p-5">
                         <div className="flex items-start justify-between mb-3">
                             <div className="space-y-2 flex-1">
-                                <div className="h-3 w-20 bg-slate-200 rounded animate-pulse" />
-                                <div className="h-7 w-24 bg-slate-200 rounded animate-pulse" />
+                                <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+                                <div className="h-7 w-24 bg-muted rounded animate-pulse" />
                             </div>
-                            <div className="h-11 w-11 bg-slate-200 rounded-xl animate-pulse" />
+                            <div className="h-11 w-11 bg-muted rounded-xl animate-pulse" />
                         </div>
                     </div>
                 ))}

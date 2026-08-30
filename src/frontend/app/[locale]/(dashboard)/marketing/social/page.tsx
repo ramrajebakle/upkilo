@@ -27,7 +27,7 @@ const PLATFORM_ICON: Record<string, React.ComponentType<{ className?: string }>>
 };
 
 const STATUS_CFG: Record<string, { color: string; bg: string }> = {
-  Draft: { color: "text-gray-600", bg: "bg-gray-50" },
+  Draft: { color: "text-foreground-secondary", bg: "bg-muted" },
   Scheduled: { color: "text-blue-600", bg: "bg-blue-50" },
   Published: { color: "text-green-600", bg: "bg-green-50" },
   Failed: { color: "text-red-600", bg: "bg-red-50" },
@@ -86,9 +86,9 @@ export default function SocialPostsPage() {
 
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Published", value: stats.published, color: "text-green-500" },
+          { label: "Published", value: stats.published, color: "text-success-fg" },
           { label: "Scheduled", value: stats.scheduled, color: "text-blue-500" },
-          { label: "Draft", value: stats.draft, color: "text-gray-500" },
+          { label: "Draft", value: stats.draft, color: "text-foreground-secondary" },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="pt-5">

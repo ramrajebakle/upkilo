@@ -291,8 +291,8 @@ export default function EditClientPage() {
     if (!client) {
         return (
             <div className="text-center py-20">
-                <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-slate-900">Client Not Found</h2>
+                <AlertTriangle className="h-12 w-12 text-warning-fg mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-foreground">Client Not Found</h2>
                 <Link href="/clients" className="btn btn-primary mt-6">Back to Clients</Link>
             </div>
         );
@@ -303,8 +303,8 @@ export default function EditClientPage() {
             {/* Header */}
             <div className="flex items-center justify-between gap-4 mb-8 animate-fade-in-up">
                 <div className="flex items-center gap-4">
-                    <Link href="/clients" className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                        <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <Link href="/clients" className="p-2 hover:bg-accent rounded-xl transition-colors">
+                        <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                     </Link>
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-600 flex items-center justify-center text-white font-bold text-xl">
@@ -312,27 +312,27 @@ export default function EditClientPage() {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                                     {client.firstName} {client.lastName}
                                 </h1>
                                 <span className={cn(
                                     "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
                                     client.loyaltyTier === 'Platinum' ? 'bg-slate-800 text-white border border-slate-700' :
                                         client.loyaltyTier === 'Gold' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
-                                            client.loyaltyTier === 'Silver' ? 'bg-slate-100 text-slate-600 border border-slate-200' :
+                                            client.loyaltyTier === 'Silver' ? 'bg-muted text-foreground-secondary border border-border' :
                                                 'bg-orange-50 text-orange-700 border border-orange-100'
                                 )}>
                                     {client.loyaltyTier || 'Bronze'}
                                 </span>
                             </div>
-                            <p className="text-slate-500">Client since {formatDate(client.memberSince)} • {client.loyaltyPoints || 0} Points</p>
+                            <p className="text-foreground-secondary">Client since {formatDate(client.memberSince)} • {client.loyaltyPoints || 0} Points</p>
                         </div>
                     </div>
                 </div>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="btn btn-secondary text-red-600 hover:bg-red-50"
+                        className="btn btn-secondary text-danger-fg hover:bg-red-50"
                     >
                         <Trash2 className="h-4 w-4" />
                         Delete
@@ -344,7 +344,7 @@ export default function EditClientPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-4 border-b border-slate-200 mb-6 overflow-x-auto">
+            <div className="flex gap-4 border-b border-border mb-6 overflow-x-auto">
                 {['overview', 'notes', 'communications', 'loyalty', 'activity'].map((tab) => (
                     <button
                         key={tab}
@@ -352,8 +352,8 @@ export default function EditClientPage() {
                         className={cn(
                             'px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap',
                             activeTab === tab
-                                ? 'border-primary-500 text-primary-600'
-                                : 'border-transparent text-slate-600 hover:text-slate-900'
+                                ? 'border-primary-500 text-primary'
+                                : 'border-transparent text-foreground-secondary hover:text-foreground'
                         )}
                     >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -371,12 +371,12 @@ export default function EditClientPage() {
                                 <div className="p-2 bg-blue-100 rounded-lg">
                                     <User className="h-5 w-5 text-blue-600" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Basic Information</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Basic Information</h2>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">First Name</label>
                                     <input
                                         type="text"
                                         value={formData.firstName}
@@ -385,7 +385,7 @@ export default function EditClientPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Last Name</label>
                                     <input
                                         type="text"
                                         value={formData.lastName}
@@ -394,9 +394,9 @@ export default function EditClientPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Email</label>
                                     <div className="relative">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             type="email"
                                             value={formData.email}
@@ -406,9 +406,9 @@ export default function EditClientPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Phone</label>
                                     <div className="relative">
-                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             type="tel"
                                             value={formData.phone}
@@ -424,9 +424,9 @@ export default function EditClientPage() {
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="p-2 bg-emerald-100 rounded-lg">
-                                    <MapPin className="h-5 w-5 text-emerald-600" />
+                                    <MapPin className="h-5 w-5 text-success-fg" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Address</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Address</h2>
                             </div>
 
                             <div className="space-y-4">
@@ -466,10 +466,10 @@ export default function EditClientPage() {
                         {/* Tags */}
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-primary-100 rounded-lg">
-                                    <Tag className="h-5 w-5 text-primary-600" />
+                                <div className="p-2 bg-brand-subtle rounded-lg">
+                                    <Tag className="h-5 w-5 text-primary" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Tags</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Tags</h2>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {availableTags.map((tag) => (
@@ -480,7 +480,7 @@ export default function EditClientPage() {
                                             'px-4 py-2 rounded-lg text-sm font-medium transition-all',
                                             formData.tags.includes(tag)
                                                 ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
-                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                : 'bg-muted text-foreground-secondary hover:bg-slate-200'
                                         )}
                                     >
                                         {tag}
@@ -492,13 +492,13 @@ export default function EditClientPage() {
                         {/* Notes (Deprecated in Overview, kept for compat or moved to Tab) */}
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-4">
-                                <MessageSquare className="h-5 w-5 text-slate-400" />
-                                <h2 className="text-lg font-semibold text-slate-900">General Notes</h2>
+                                <MessageSquare className="h-5 w-5 text-foreground-muted" />
+                                <h2 className="text-lg font-semibold text-foreground">General Notes</h2>
                             </div>
                             <textarea
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"
+                                className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"
                                 rows={4}
                                 placeholder="Add general notes about this client..."
                             />
@@ -508,44 +508,44 @@ export default function EditClientPage() {
                     {/* Sidebar - Stats */}
                     <div className="space-y-6">
                         <div className="card-elevated p-6">
-                            <h3 className="font-semibold text-slate-900 mb-4">Client Stats</h3>
+                            <h3 className="font-semibold text-foreground mb-4">Client Stats</h3>
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div className="flex items-center justify-between p-3 bg-muted rounded-xl">
                                     <div className="flex items-center gap-3">
                                         <Calendar className="h-5 w-5 text-blue-500" />
-                                        <span className="text-slate-600">Total Bookings</span>
+                                        <span className="text-foreground-secondary">Total Bookings</span>
                                     </div>
-                                    <span className="font-bold text-slate-900">{client.totalBookings}</span>
+                                    <span className="font-bold text-foreground">{client.totalBookings}</span>
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div className="flex items-center justify-between p-3 bg-muted rounded-xl">
                                     <div className="flex items-center gap-3">
-                                        <DollarSign className="h-5 w-5 text-emerald-500" />
-                                        <span className="text-slate-600">Total Spent</span>
+                                        <DollarSign className="h-5 w-5 text-success-fg" />
+                                        <span className="text-foreground-secondary">Total Spent</span>
                                     </div>
-                                    <span className="font-bold text-emerald-600">{formatCurrency(client.totalSpent)}</span>
+                                    <span className="font-bold text-success-fg">{formatCurrency(client.totalSpent)}</span>
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div className="flex items-center justify-between p-3 bg-muted rounded-xl">
                                     <div className="flex items-center gap-3">
-                                        <Clock className="h-5 w-5 text-amber-500" />
-                                        <span className="text-slate-600">Last Visit</span>
+                                        <Clock className="h-5 w-5 text-warning-fg" />
+                                        <span className="text-foreground-secondary">Last Visit</span>
                                     </div>
-                                    <span className="font-medium text-slate-900">{client.lastVisit ? formatDate(client.lastVisit) : 'Never'}</span>
+                                    <span className="font-medium text-foreground">{client.lastVisit ? formatDate(client.lastVisit) : 'Never'}</span>
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div className="flex items-center justify-between p-3 bg-muted rounded-xl">
                                     <div className="flex items-center gap-3">
                                         <Star className="h-5 w-5 text-amber-400" />
-                                        <span className="text-slate-600">Rating</span>
+                                        <span className="text-foreground-secondary">Rating</span>
                                     </div>
-                                    <span className="font-bold text-slate-900">{client.rating}</span>
+                                    <span className="font-bold text-foreground">{client.rating}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="card-elevated p-6">
-                            <h3 className="font-semibold text-slate-900 mb-4">Communication</h3>
+                            <h3 className="font-semibold text-foreground mb-4">Communication</h3>
                             <div className="space-y-3">
-                                <label className="flex items-center justify-between p-3 bg-slate-50 rounded-xl cursor-pointer">
-                                    <span className="text-slate-600">Marketing Emails</span>
+                                <label className="flex items-center justify-between p-3 bg-muted rounded-xl cursor-pointer">
+                                    <span className="text-foreground-secondary">Marketing Emails</span>
                                     <button
                                         type="button"
                                         onClick={() => setFormData({ ...formData, marketingConsent: !formData.marketingConsent })}
@@ -555,13 +555,13 @@ export default function EditClientPage() {
                                         )}
                                     >
                                         <span className={cn(
-                                            'absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all',
+                                            'absolute top-0.5 w-4 h-4 bg-card rounded-full shadow transition-all',
                                             formData.marketingConsent ? 'left-5' : 'left-0.5'
                                         )} />
                                     </button>
                                 </label>
-                                <label className="flex items-center justify-between p-3 bg-slate-50 rounded-xl cursor-pointer">
-                                    <span className="text-slate-600">SMS Notifications</span>
+                                <label className="flex items-center justify-between p-3 bg-muted rounded-xl cursor-pointer">
+                                    <span className="text-foreground-secondary">SMS Notifications</span>
                                     <button
                                         type="button"
                                         onClick={() => setFormData({ ...formData, smsConsent: !formData.smsConsent })}
@@ -571,7 +571,7 @@ export default function EditClientPage() {
                                         )}
                                     >
                                         <span className={cn(
-                                            'absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all',
+                                            'absolute top-0.5 w-4 h-4 bg-card rounded-full shadow transition-all',
                                             formData.smsConsent ? 'left-5' : 'left-0.5'
                                         )} />
                                     </button>
@@ -586,12 +586,12 @@ export default function EditClientPage() {
                 <div className="animate-fade-in space-y-6">
                     {/* Add Note */}
                     <div className="card-elevated p-6">
-                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Add Note</h2>
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Add Note</h2>
                         <div className="space-y-4">
                             <textarea
                                 value={newNote}
                                 onChange={(e) => setNewNote(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                                className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                                 rows={3}
                                 placeholder="Type your note here..."
                             />
@@ -601,9 +601,9 @@ export default function EditClientPage() {
                                         type="checkbox"
                                         checked={isPrivateNote}
                                         onChange={(e) => setIsPrivateNote(e.target.checked)}
-                                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                                        className="rounded border-border-strong text-primary focus:ring-primary-500"
                                     />
-                                    <span className="text-sm text-slate-600">Private Note</span>
+                                    <span className="text-sm text-foreground-secondary">Private Note</span>
                                 </label>
                                 <button
                                     onClick={handleAddNote}
@@ -620,22 +620,22 @@ export default function EditClientPage() {
                     {/* Notes List */}
                     <div className="space-y-4">
                         {loadingNotes ? (
-                            <div className="text-center py-10 text-slate-500">Loading notes...</div>
+                            <div className="text-center py-10 text-foreground-secondary">Loading notes...</div>
                         ) : notes.length === 0 ? (
-                            <div className="text-center py-10 text-slate-500 card-elevated">No notes found.</div>
+                            <div className="text-center py-10 text-foreground-secondary card-elevated">No notes found.</div>
                         ) : (
                             notes.map((note) => (
                                 <div key={note.id} className="card-elevated p-6">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="font-medium text-slate-900">{note.createdBy}</span>
+                                            <span className="font-medium text-foreground">{note.createdBy}</span>
                                             {note.isPrivate && (
                                                 <span className="px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-700 rounded-full">Private</span>
                                             )}
                                         </div>
-                                        <span className="text-sm text-slate-500">{formatDate(note.createdAt)}</span>
+                                        <span className="text-sm text-foreground-secondary">{formatDate(note.createdAt)}</span>
                                     </div>
-                                    <p className="text-slate-600 whitespace-pre-wrap">{note.content}</p>
+                                    <p className="text-foreground-secondary whitespace-pre-wrap">{note.content}</p>
                                 </div>
                             ))
                         )}
@@ -646,9 +646,9 @@ export default function EditClientPage() {
             {activeTab === 'communications' && (
                 <div className="animate-fade-in space-y-6">
                     <div className="card-elevated p-6 flex flex-col h-[600px]">
-                        <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-4">
-                            <h2 className="text-lg font-semibold text-slate-900">SMS & Chat</h2>
-                            <div className="flex items-center gap-2 text-sm text-slate-500">
+                        <div className="flex items-center justify-between mb-4 border-b border-border-subtle pb-4">
+                            <h2 className="text-lg font-semibold text-foreground">SMS & Chat</h2>
+                            <div className="flex items-center gap-2 text-sm text-foreground-secondary">
                                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                                 Live capable
                             </div>
@@ -657,9 +657,9 @@ export default function EditClientPage() {
                         {/* Chat Window */}
                         <div className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4">
                             {loadingComm ? (
-                                <div className="text-center py-10 text-slate-500">Loading history...</div>
+                                <div className="text-center py-10 text-foreground-secondary">Loading history...</div>
                             ) : communications.length === 0 ? (
-                                <div className="text-center py-10 text-slate-500">No communication history found. Start a conversation!</div>
+                                <div className="text-center py-10 text-foreground-secondary">No communication history found. Start a conversation!</div>
                             ) : (
                                 communications.map((log) => {
                                     const isInbound = log.direction === 'Inbound' || log.direction === 0;
@@ -672,13 +672,13 @@ export default function EditClientPage() {
                                             <div className={cn(
                                                 "max-w-[70%] p-3 rounded-2xl text-sm relative group",
                                                 isInbound
-                                                    ? "bg-slate-100 text-slate-800 rounded-bl-sm"
+                                                    ? "bg-muted text-foreground rounded-bl-sm"
                                                     : "bg-primary-500 text-white rounded-br-sm"
                                             )}>
                                                 <p>{messageText}</p>
                                                 <div className={cn(
                                                     "text-[10px] mt-1 opacity-70 flex items-center gap-1",
-                                                    isInbound ? "text-slate-500" : "text-primary-100"
+                                                    isInbound ? "text-foreground-secondary" : "text-primary-100"
                                                 )}>
                                                     {formatDate(log.createdAt || log.sentAt)}
                                                     {!isInbound && (
@@ -693,7 +693,7 @@ export default function EditClientPage() {
                         </div>
 
                         {/* Input Area */}
-                        <div className="pt-4 border-t border-slate-100 flex gap-3">
+                        <div className="pt-4 border-t border-border-subtle flex gap-3">
                             <input
                                 type="text"
                                 value={newMessage}
@@ -724,62 +724,62 @@ export default function EditClientPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="card-elevated p-6 flex flex-col items-center justify-center text-center">
                             <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-                                <Star className="h-6 w-6 text-amber-600" />
+                                <Star className="h-6 w-6 text-warning-fg" />
                             </div>
-                            <h3 className="text-3xl font-bold text-slate-900 mb-1">{client.loyaltyPoints || 0}</h3>
-                            <p className="text-slate-500 text-sm">Available Points</p>
+                            <h3 className="text-3xl font-bold text-foreground mb-1">{client.loyaltyPoints || 0}</h3>
+                            <p className="text-foreground-secondary text-sm">Available Points</p>
                         </div>
                         <div className="card-elevated p-6 flex flex-col items-center justify-center text-center">
                             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                                 <TrendingUp className="h-6 w-6 text-blue-600" />
                             </div>
-                            <h3 className="text-3xl font-bold text-slate-900 mb-1">{client.loyaltyTier || 'Bronze'}</h3>
-                            <p className="text-slate-500 text-sm">Current Tier</p>
+                            <h3 className="text-3xl font-bold text-foreground mb-1">{client.loyaltyTier || 'Bronze'}</h3>
+                            <p className="text-foreground-secondary text-sm">Current Tier</p>
                         </div>
                         <div className="card-elevated p-6 flex flex-col items-center justify-center text-center">
                             <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                                <DollarSign className="h-6 w-6 text-emerald-600" />
+                                <DollarSign className="h-6 w-6 text-success-fg" />
                             </div>
-                            <h3 className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(client.totalSpent || 0)}</h3>
-                            <p className="text-slate-500 text-sm">Lifetime Value</p>
+                            <h3 className="text-3xl font-bold text-foreground mb-1">{formatCurrency(client.totalSpent || 0)}</h3>
+                            <p className="text-foreground-secondary text-sm">Lifetime Value</p>
                         </div>
                     </div>
 
                     <div className="card-elevated p-6">
-                        <h2 className="text-lg font-semibold text-slate-900 mb-6">Points History</h2>
+                        <h2 className="text-lg font-semibold text-foreground mb-6">Points History</h2>
                         {loadingLoyalty ? (
-                            <div className="text-center py-10 text-slate-500">Loading history...</div>
+                            <div className="text-center py-10 text-foreground-secondary">Loading history...</div>
                         ) : loyaltyHistory.length === 0 ? (
-                            <div className="text-center py-10 text-slate-500">No points history found.</div>
+                            <div className="text-center py-10 text-foreground-secondary">No points history found.</div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className="border-b border-slate-200">
-                                            <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                                            <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Description</th>
-                                            <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Type</th>
-                                            <th className="text-right py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Points</th>
+                                        <tr className="border-b border-border">
+                                            <th className="text-left py-3 px-4 text-xs font-semibold text-foreground-secondary uppercase">Date</th>
+                                            <th className="text-left py-3 px-4 text-xs font-semibold text-foreground-secondary uppercase">Description</th>
+                                            <th className="text-left py-3 px-4 text-xs font-semibold text-foreground-secondary uppercase">Type</th>
+                                            <th className="text-right py-3 px-4 text-xs font-semibold text-foreground-secondary uppercase">Points</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {loyaltyHistory.map((item, i) => (
-                                            <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
-                                                <td className="py-3 px-4 text-sm text-slate-600">{formatDate(item.date)}</td>
-                                                <td className="py-3 px-4 text-sm text-slate-900">{item.description}</td>
+                                            <tr key={i} className="border-b border-border-subtle last:border-0 hover:bg-accent">
+                                                <td className="py-3 px-4 text-sm text-foreground-secondary">{formatDate(item.date)}</td>
+                                                <td className="py-3 px-4 text-sm text-foreground">{item.description}</td>
                                                 <td className="py-3 px-4 text-sm">
                                                     <span className={cn(
                                                         "px-2 py-0.5 rounded-full text-xs font-medium",
                                                         item.type === 'Earned' ? 'bg-emerald-100 text-emerald-700' :
                                                             item.type === 'Redeemed' ? 'bg-amber-100 text-amber-700' :
-                                                                'bg-slate-100 text-slate-600'
+                                                                'bg-muted text-foreground-secondary'
                                                     )}>
                                                         {item.type}
                                                     </span>
                                                 </td>
                                                 <td className={cn(
                                                     "py-3 px-4 text-sm font-medium text-right",
-                                                    item.points > 0 ? "text-emerald-600" : "text-amber-600"
+                                                    item.points > 0 ? "text-success-fg" : "text-warning-fg"
                                                 )}>
                                                     {item.points > 0 ? '+' : ''}{item.points}
                                                 </td>
@@ -795,22 +795,22 @@ export default function EditClientPage() {
 
             {activeTab === 'activity' && (
                 <div className="card-elevated p-6 animate-fade-in">
-                    <h2 className="text-lg font-semibold text-slate-900 mb-6">Activity Feed</h2>
+                    <h2 className="text-lg font-semibold text-foreground mb-6">Activity Feed</h2>
                     {loadingActivities ? (
-                        <div className="text-center py-10 text-slate-500">Loading activity...</div>
+                        <div className="text-center py-10 text-foreground-secondary">Loading activity...</div>
                     ) : activities.length === 0 ? (
-                        <div className="text-center py-10 text-slate-500">No recent activity for this client.</div>
+                        <div className="text-center py-10 text-foreground-secondary">No recent activity for this client.</div>
                     ) : (
                         <div className="space-y-4">
                             {activities.map((a, i) => (
-                                <div key={i} className="flex items-start gap-3 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
+                                <div key={i} className="flex items-start gap-3 pb-4 border-b border-border-subtle last:border-0 last:pb-0">
                                     <div className="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">{a.type}</span>
-                                            <span className="text-xs text-slate-400">{formatDate(a.date)}</span>
+                                            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground-secondary">{a.type}</span>
+                                            <span className="text-xs text-foreground-muted">{formatDate(a.date)}</span>
                                         </div>
-                                        <p className="text-sm text-slate-900 mt-1">{a.description}</p>
+                                        <p className="text-sm text-foreground mt-1">{a.description}</p>
                                     </div>
                                 </div>
                             ))}
@@ -829,17 +829,17 @@ export default function EditClientPage() {
             {/* Delete Modal */}
             {showDeleteModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-fade-in-up">
+                    <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full p-6 animate-fade-in-up">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                                <AlertTriangle className="h-6 w-6 text-red-600" />
+                                <AlertTriangle className="h-6 w-6 text-danger-fg" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-slate-900">Delete Client</h3>
-                                <p className="text-slate-500">This action cannot be undone.</p>
+                                <h3 className="text-lg font-semibold text-foreground">Delete Client</h3>
+                                <p className="text-foreground-secondary">This action cannot be undone.</p>
                             </div>
                         </div>
-                        <p className="text-slate-600 mb-6">
+                        <p className="text-foreground-secondary mb-6">
                             Are you sure you want to delete <strong>{client.firstName} {client.lastName}</strong>? All booking history will be removed.
                         </p>
                         <div className="flex gap-3">

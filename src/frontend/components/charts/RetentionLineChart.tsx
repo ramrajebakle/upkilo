@@ -21,8 +21,8 @@ interface RetentionLineChartProps {
 function CustomTooltip({ active, payload, label }: any) {
     if (!active || !payload?.length) return null;
     return (
-        <div className="bg-slate-900 text-white rounded-xl px-4 py-3 shadow-2xl text-sm">
-            <p className="text-slate-400 mb-2 font-medium">{label}</p>
+        <div className="bg-popover text-popover-foreground border border-border shadow-[var(--shadow-popover)] rounded-xl px-4 py-3 shadow-2xl text-sm">
+            <p className="text-foreground-secondary mb-2 font-medium">{label}</p>
             {payload.map((entry: any) => (
                 <div key={entry.dataKey} className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full" style={{ background: entry.color }} />
@@ -39,7 +39,7 @@ function CustomTooltip({ active, payload, label }: any) {
 export function RetentionLineChart({ data, height = 220, targetRate = 75 }: RetentionLineChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-[220px] text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-[220px] text-foreground-muted text-sm">
                 No data available
             </div>
         );
@@ -54,17 +54,17 @@ export function RetentionLineChart({ data, height = 220, targetRate = 75 }: Rete
                         <stop offset="100%" stopColor="#06b6d4" />
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis
                     dataKey="label"
-                    tick={{ fontSize: 11, fill: '#94a3b8' }}
+                    tick={{ fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                 />
                 <YAxis
                     domain={[0, 100]}
                     tickFormatter={(v) => `${v}%`}
-                    tick={{ fontSize: 11, fill: '#94a3b8' }}
+                    tick={{ fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                 />
@@ -81,8 +81,8 @@ export function RetentionLineChart({ data, height = 220, targetRate = 75 }: Rete
                     name="Retention Rate"
                     stroke="url(#retentionLine)"
                     strokeWidth={2.5}
-                    dot={{ fill: '#8b5cf6', r: 4, strokeWidth: 2, stroke: '#fff' }}
-                    activeDot={{ r: 6, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }}
+                    dot={{ fill: '#8b5cf6', r: 4, strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#8b5cf6', strokeWidth: 2 }}
                 />
                 {data[0]?.newClients !== undefined && (
                     <Line

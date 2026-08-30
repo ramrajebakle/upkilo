@@ -77,7 +77,7 @@ export default function ProfileSettingsPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
                 <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Identity Cache...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Identity Cache...</p>
             </div>
         );
     }
@@ -108,7 +108,7 @@ export default function ProfileSettingsPage() {
                             <p className="text-xs font-black text-primary-500 uppercase tracking-[0.3em] mt-2">{user.role} Status</p>
                         </div>
                         
-                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest max-w-md leading-relaxed">
+                        <p className="text-xs font-bold text-foreground-muted uppercase tracking-widest max-w-md leading-relaxed">
                             Primary identity node for cross-organization authorization. Permissions derived from active tenant policy.
                         </p>
                         
@@ -118,7 +118,7 @@ export default function ProfileSettingsPage() {
                                     <div key={i} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-900 shadow-sm" />
                                 ))}
                             </div>
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Shared in 3 Clusters</span>
+                            <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">Shared in 3 Clusters</span>
                         </div>
                     </div>
                 </div>
@@ -137,9 +137,9 @@ export default function ProfileSettingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                     <div className="space-y-3 pt-4 border-t border-slate-50 dark:border-slate-850">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] ml-1">Identity: Given Name</label>
+                        <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.2em] ml-1">Identity: Given Name</label>
                         <div className="relative group">
-                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                             <input 
                                 type="text" 
                                 value={user.firstName} 
@@ -150,9 +150,9 @@ export default function ProfileSettingsPage() {
                     </div>
 
                     <div className="space-y-3 pt-4 border-t border-slate-50 dark:border-slate-850">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] ml-1">Identity: Surname</label>
+                        <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.2em] ml-1">Identity: Surname</label>
                         <div className="relative group">
-                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                             <input 
                                 type="text" 
                                 value={user.lastName} 
@@ -163,28 +163,28 @@ export default function ProfileSettingsPage() {
                     </div>
 
                     <div className="space-y-3 pt-4 border-t border-slate-50 dark:border-slate-850">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] ml-1">Comm: Uplink Origin</label>
+                        <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.2em] ml-1">Comm: Uplink Origin</label>
                         <div className="relative group">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700" />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                             <input 
                                 type="email" 
                                 value={user.email} 
                                 readOnly
-                                className="w-full h-14 bg-slate-100 dark:bg-slate-950/50 border border-transparent dark:border-slate-850 rounded-2xl pl-12 pr-6 text-xs font-black uppercase tracking-widest outline-none cursor-not-allowed text-slate-400 dark:text-slate-600 shadow-inner"
+                                className="w-full h-14 bg-slate-100 dark:bg-slate-950/50 border border-transparent dark:border-slate-850 rounded-2xl pl-12 pr-6 text-xs font-black uppercase tracking-widest outline-none cursor-not-allowed text-foreground-muted shadow-inner"
                             />
                             <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                <Shield className="h-4 w-4 text-slate-200 dark:text-slate-800" />
+                                <Shield className="h-4 w-4 text-slate-200" />
                             </div>
                         </div>
-                        <p className="text-[9px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-2 pl-1 flex items-center gap-1.5">
+                        <p className="text-[9px] font-bold text-foreground-muted uppercase tracking-widest mt-2 pl-1 flex items-center gap-1.5">
                             <Shield className="h-3 w-3" /> Core domain root locked by admin
                         </p>
                     </div>
 
                     <div className="space-y-3 pt-4 border-t border-slate-50 dark:border-slate-850">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] ml-1">Comm: Mobile Telemetry</label>
+                        <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.2em] ml-1">Comm: Mobile Telemetry</label>
                         <div className="relative group">
-                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                             <input 
                                 type="tel" 
                                 value={user.phone} 
@@ -199,13 +199,13 @@ export default function ProfileSettingsPage() {
                     {/* Auto-save status indicator */}
                     <div aria-live="polite" className="text-xs font-medium flex items-center gap-1.5">
                         {autoSaveStatus === 'saving' && (
-                            <><Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" aria-hidden="true" /><span className="text-slate-400">Saving…</span></>
+                            <><Loader2 className="h-3.5 w-3.5 animate-spin text-foreground-muted" aria-hidden="true" /><span className="text-foreground-muted">Saving…</span></>
                         )}
                         {autoSaveStatus === 'saved' && (
-                            <><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" /><span className="text-emerald-600">Saved automatically</span></>
+                            <><CheckCircle2 className="h-3.5 w-3.5 text-success-fg" aria-hidden="true" /><span className="text-success-fg">Saved automatically</span></>
                         )}
                         {autoSaveStatus === 'error' && (
-                            <><AlertCircle className="h-3.5 w-3.5 text-red-500" aria-hidden="true" /><span className="text-red-600">Auto-save failed</span></>
+                            <><AlertCircle className="h-3.5 w-3.5 text-danger-fg" aria-hidden="true" /><span className="text-danger-fg">Auto-save failed</span></>
                         )}
                     </div>
                     <Button
@@ -235,7 +235,7 @@ export default function ProfileSettingsPage() {
                 </div>
                 <div>
                     <h3 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Auth Protocol Verification</h3>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2 leading-loose">
+                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-[0.2em] mt-2 leading-loose">
                         Synchronized with global identity root. Last heartbeat audit: <span className="text-primary-400 font-black">Just Now</span>. All biometric and semantic credentials secured.
                     </p>
                 </div>

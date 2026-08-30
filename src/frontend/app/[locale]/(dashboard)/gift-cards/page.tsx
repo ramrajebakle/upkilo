@@ -110,10 +110,10 @@ export default function GiftCardsPage() {
                 <div>
                     {/* Solid colour — see the note in coupons/page.tsx. This one faded slate-900
                         to slate-600, so the heading literally got fainter as it read on. */}
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h1 className="text-2xl font-bold text-foreground dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>
                         {t('giftCards')}
                     </h1>
-                    <p className="text-sm text-slate-500">Manage digital and physical gift cards</p>
+                    <p className="text-sm text-foreground-secondary">Manage digital and physical gift cards</p>
                 </div>
                 <button 
                     className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all shadow-sm hover:shadow-md active:scale-95"
@@ -124,14 +124,14 @@ export default function GiftCardsPage() {
                 </button>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex gap-4 bg-slate-50/30">
+            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+                <div className="p-4 border-b border-border-subtle flex gap-4 bg-muted/30">
                     <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                         <input
                             type="text"
                             placeholder="Search by code or buyer name..."
-                            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                            className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -140,7 +140,7 @@ export default function GiftCardsPage() {
                 
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50/50 text-slate-500 font-semibold uppercase tracking-wider text-[11px] border-b border-slate-100">
+                        <thead className="bg-muted/50 text-foreground-secondary font-semibold uppercase tracking-wider text-[11px] border-b border-border-subtle">
                             <tr>
                                 <th className="px-6 py-4">{t('code')}</th>
                                 <th className="px-6 py-4">{t('value')}</th>
@@ -150,12 +150,12 @@ export default function GiftCardsPage() {
                                 <th className="px-6 py-4 w-10"></th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-border-subtle">
                             {loading && giftCards.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-foreground-muted italic">
                                         <div className="flex flex-col items-center gap-2">
-                                            <div className="h-5 w-5 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin"></div>
+                                            <div className="h-5 w-5 border-2 border-border-strong border-t-slate-900 rounded-full animate-spin"></div>
                                             <span>{common('loading')}</span>
                                         </div>
                                     </td>
@@ -163,24 +163,24 @@ export default function GiftCardsPage() {
                             ) : giftCards.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="px-6 py-16 text-center">
-                                        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                                        <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border-subtle">
                                             <Gift className="h-8 w-8 text-slate-300" />
                                         </div>
-                                        <h3 className="text-base font-semibold text-slate-900 mb-1">No gift cards found</h3>
-                                        <p className="text-sm text-slate-500 max-w-[200px] mx-auto">Create your first gift card to reward your customers.</p>
+                                        <h3 className="text-base font-semibold text-foreground mb-1">No gift cards found</h3>
+                                        <p className="text-sm text-foreground-secondary max-w-[200px] mx-auto">Create your first gift card to reward your customers.</p>
                                     </td>
                                 </tr>
                             ) : (
                                 giftCards.map((card) => (
-                                    <tr key={card.id || card.code} className="group hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4 font-mono font-medium text-slate-900 tracking-wider">
+                                    <tr key={card.id || card.code} className="group hover:bg-muted/50 transition-colors">
+                                        <td className="px-6 py-4 font-mono font-medium text-foreground tracking-wider">
                                             {card.code}
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600 font-medium">
+                                        <td className="px-6 py-4 text-foreground-secondary font-medium">
                                             {formatCurrency(card.initialAmount || card.initialValue || 0)}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="font-semibold text-slate-900">
+                                            <span className="font-semibold text-foreground">
                                                 {formatCurrency(card.remainingAmount || card.balance || 0)}
                                             </span>
                                         </td>
@@ -188,12 +188,12 @@ export default function GiftCardsPage() {
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                                                 card.status?.toLowerCase() === 'active' 
                                                     ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-                                                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+                                                    : 'bg-muted text-foreground-secondary border border-border'
                                             }`}>
                                                 {card.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-500">
+                                        <td className="px-6 py-4 text-foreground-secondary">
                                             {card.expiryDate || card.expiresAt 
                                                 ? new Date(card.expiryDate || card.expiresAt).toLocaleDateString() 
                                                 : <span className="text-slate-300 italic">Never</span>}
@@ -203,25 +203,25 @@ export default function GiftCardsPage() {
                                                 <button
                                                     disabled={actionLoading === (card.id || card.code)}
                                                     onClick={() => setActionMenuId(actionMenuId === (card.id || card.code) ? null : (card.id || card.code))}
-                                                    className="p-2 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-white border border-transparent hover:border-slate-200 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-50"
+                                                    className="p-2 text-foreground-muted hover:text-foreground rounded-lg hover:bg-card border border-transparent hover:border-border transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-50"
                                                 >
                                                     {actionLoading === (card.id || card.code)
-                                                        ? <div className="h-4 w-4 border-2 border-slate-300 border-t-slate-700 rounded-full animate-spin" />
+                                                        ? <div className="h-4 w-4 border-2 border-border-strong border-t-slate-700 rounded-full animate-spin" />
                                                         : <MoreVertical className="h-4 w-4" />}
                                                 </button>
                                                 {actionMenuId === (card.id || card.code) && (
-                                                    <div className="absolute right-0 top-full mt-1 z-20 bg-white border border-slate-200 rounded-xl shadow-lg py-1 w-36"
+                                                    <div className="absolute right-0 top-full mt-1 z-20 bg-card border border-border rounded-xl shadow-lg py-1 w-36"
                                                          onBlur={() => setActionMenuId(null)}>
                                                         <button
                                                             onClick={() => { setReloadModal({ cardId: card.id || card.code }); setActionMenuId(null); }}
-                                                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                                                            className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent transition-colors"
                                                         >
                                                             Reload Balance
                                                         </button>
                                                         {card.status?.toLowerCase() === 'active' && (
                                                             <button
                                                                 onClick={() => handleVoid(card.id || card.code)}
-                                                                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                                className="w-full text-left px-4 py-2 text-sm text-danger-fg hover:bg-red-50 transition-colors"
                                                             >
                                                                 Void Card
                                                             </button>
@@ -241,17 +241,17 @@ export default function GiftCardsPage() {
             {reloadModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] animate-in fade-in duration-200"
                      onClick={() => setReloadModal(null)}>
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200"
+                    <div className="bg-card rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200"
                          onClick={(e) => e.stopPropagation()}>
-                        <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50">
-                            <h2 className="text-lg font-bold text-slate-900">Reload Gift Card</h2>
-                            <button onClick={() => setReloadModal(null)} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all">
+                        <div className="flex justify-between items-center p-6 border-b border-border-subtle bg-muted/50">
+                            <h2 className="text-lg font-bold text-foreground">Reload Gift Card</h2>
+                            <button onClick={() => setReloadModal(null)} className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:text-foreground-secondary transition-all">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                                <label className="text-xs font-bold text-foreground-secondary uppercase tracking-wider mb-2 block">
                                     Reload Amount ($)
                                 </label>
                                 <input
@@ -259,7 +259,7 @@ export default function GiftCardsPage() {
                                     min="1"
                                     step="0.01"
                                     autoFocus
-                                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all font-semibold"
+                                    className="w-full px-4 py-2.5 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all font-semibold"
                                     value={reloadAmount}
                                     onChange={(e) => setReloadAmount(e.target.value)}
                                     placeholder="50.00"
@@ -269,7 +269,7 @@ export default function GiftCardsPage() {
                             <div className="flex gap-3 pt-2">
                                 <button
                                     onClick={() => setReloadModal(null)}
-                                    className="flex-1 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all active:scale-95"
+                                    className="flex-1 px-4 py-2.5 text-sm font-semibold text-foreground bg-muted rounded-xl hover:bg-slate-200 transition-all active:scale-95"
                                 >
                                     Cancel
                                 </button>
@@ -288,15 +288,15 @@ export default function GiftCardsPage() {
 
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] animate-in fade-in duration-200">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50">
+                    <div className="bg-card rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex justify-between items-center p-6 border-b border-border-subtle bg-muted/50">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
                                     <Gift className="h-5 w-5 text-white" />
                                 </div>
-                                <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>{t('issueGiftCard')}</h2>
+                                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>{t('issueGiftCard')}</h2>
                             </div>
-                            <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition-all">
+                            <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:text-foreground-secondary hover:bg-card transition-all">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
@@ -304,7 +304,7 @@ export default function GiftCardsPage() {
                         <form onSubmit={handleSubmit} className="p-6 space-y-5">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-1">
-                                    <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                    <label className="flex items-center gap-2 text-xs font-bold text-foreground-secondary uppercase tracking-wider mb-2">
                                         {t('amount')} ($)
                                     </label>
                                     <input
@@ -312,20 +312,20 @@ export default function GiftCardsPage() {
                                         min="1"
                                         step="0.01"
                                         required
-                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all font-semibold"
+                                        className="w-full px-4 py-2.5 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all font-semibold"
                                         value={formData.amount}
                                         onChange={(e) => setFormData({...formData, amount: e.target.value})}
                                         placeholder="50.00"
                                     />
                                 </div>
                                 <div className="col-span-1">
-                                    <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                    <label className="flex items-center gap-2 text-xs font-bold text-foreground-secondary uppercase tracking-wider mb-2">
                                         <Calendar className="h-3 w-3" />
                                         {t('expiryDate')}
                                     </label>
                                     <input
                                         type="date"
-                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                                        className="w-full px-4 py-2.5 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
                                         value={formData.expiryDate}
                                         onChange={(e) => setFormData({...formData, expiryDate: e.target.value})}
                                     />
@@ -334,26 +334,26 @@ export default function GiftCardsPage() {
                             
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-1">
-                                    <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                    <label className="flex items-center gap-2 text-xs font-bold text-foreground-secondary uppercase tracking-wider mb-2">
                                         <Mail className="h-3 w-3" />
                                         {t('recipientEmail')}
                                     </label>
                                     <input
                                         type="email"
-                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                                        className="w-full px-4 py-2.5 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
                                         value={formData.recipientEmail}
                                         onChange={(e) => setFormData({...formData, recipientEmail: e.target.value})}
                                         placeholder="customer@example.com"
                                     />
                                 </div>
                                 <div className="col-span-1">
-                                    <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                    <label className="flex items-center gap-2 text-xs font-bold text-foreground-secondary uppercase tracking-wider mb-2">
                                         <User className="h-3 w-3" />
                                         {t('senderName')}
                                     </label>
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                                        className="w-full px-4 py-2.5 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
                                         value={formData.senderName}
                                         onChange={(e) => setFormData({...formData, senderName: e.target.value})}
                                         placeholder="Your Name"
@@ -362,12 +362,12 @@ export default function GiftCardsPage() {
                             </div>
                             
                             <div>
-                                <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                <label className="flex items-center gap-2 text-xs font-bold text-foreground-secondary uppercase tracking-wider mb-2">
                                     <MessageSquare className="h-3 w-3" />
                                     {t('message')}
                                 </label>
                                 <textarea
-                                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all resize-none"
+                                    className="w-full px-4 py-2.5 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all resize-none"
                                     rows={3}
                                     value={formData.message}
                                     onChange={(e) => setFormData({...formData, message: e.target.value})}
@@ -379,7 +379,7 @@ export default function GiftCardsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="flex-1 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all active:scale-95"
+                                    className="flex-1 px-4 py-2.5 text-sm font-semibold text-foreground bg-muted rounded-xl hover:bg-slate-200 transition-all active:scale-95"
                                 >
                                     {common('cancel')}
                                 </button>

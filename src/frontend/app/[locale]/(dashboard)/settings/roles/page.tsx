@@ -318,11 +318,11 @@ export default function CustomRolesPage() {
                     <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div className={cn(
                         "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
-                        role.isSystem ? "bg-surface-100" : "bg-ai-50"
+                        role.isSystem ? "bg-surface-100" : "bg-ai-subtle"
                       )}>
                         {role.isSystem
                           ? <Lock className="h-4 w-4 text-text-tertiary" />
-                          : <Shield className="h-4 w-4 text-ai-500" />}
+                          : <Shield className="h-4 w-4 text-ai" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -369,7 +369,7 @@ export default function CustomRolesPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-red-500 border-red-200 hover:bg-red-50"
+                          className="text-danger-fg border-red-200 hover:bg-red-50"
                           leftIcon={deletingId === role.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
                           onClick={() => handleDelete(role.id)}
                           disabled={deletingId === role.id}

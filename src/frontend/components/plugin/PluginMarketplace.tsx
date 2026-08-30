@@ -74,7 +74,7 @@ export function PluginMarketplace({ tenantId }: PluginMarketplaceProps) {
             key={cat}
             onClick={() => setFilter(cat)}
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              filter === cat ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              filter === cat ? 'bg-blue-600 text-white' : 'bg-muted text-foreground hover:bg-gray-200'
             }`}
           >
             {cat}
@@ -84,23 +84,23 @@ export function PluginMarketplace({ tenantId }: PluginMarketplaceProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map(plugin => (
-          <div key={plugin.id} className="border rounded-xl p-5 bg-white shadow-sm">
+          <div key={plugin.id} className="border rounded-xl p-5 bg-card shadow-sm">
             <div className="flex justify-between items-start mb-3">
               <div>
-                <h3 className="font-semibold text-gray-900">{plugin.name}</h3>
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{plugin.category}</span>
+                <h3 className="font-semibold text-foreground">{plugin.name}</h3>
+                <span className="text-xs text-foreground-secondary bg-muted px-2 py-0.5 rounded">{plugin.category}</span>
               </div>
               {plugin.isVerified && (
                 <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">✓ Verified</span>
               )}
             </div>
-            <p className="text-sm text-gray-600 mb-4 line-clamp-2">{plugin.description}</p>
+            <p className="text-sm text-foreground-secondary mb-4 line-clamp-2">{plugin.description}</p>
             <div className="flex justify-between items-center">
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-foreground-secondary">
                 ⭐ {plugin.rating.toFixed(1)} · {plugin.installCount.toLocaleString()} installs
               </div>
               {installed.has(plugin.id) ? (
-                <span className="text-sm text-green-600 font-medium">✓ Installed</span>
+                <span className="text-sm text-success-fg font-medium">✓ Installed</span>
               ) : (
                 <button
                   onClick={() => handleInstall(plugin.id)}

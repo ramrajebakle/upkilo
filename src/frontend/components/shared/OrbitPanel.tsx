@@ -63,7 +63,7 @@ export const OrbitPanel = () => {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 ${
                 isActive
-                  ? "bg-neutral-100 text-primary-600 font-medium relative"
+                  ? "bg-neutral-100 text-primary font-medium relative"
                   : "text-text-secondary hover:bg-neutral-50 hover:text-text-primary"
               } ${orbitCollapsed ? "justify-center" : "justify-start"}`}
               title={orbitCollapsed ? item.label : undefined}
@@ -71,7 +71,7 @@ export const OrbitPanel = () => {
               {isActive && !orbitCollapsed && (
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-3/5 bg-primary-500 rounded-r-sm" />
               )}
-              <Icon size={18} className={isActive ? "text-primary-500" : ""} />
+              <Icon size={18} className={isActive ? "text-primary" : ""} />
               {!orbitCollapsed && <span>{item.label}</span>}
             </Link>
           );

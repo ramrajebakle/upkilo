@@ -187,9 +187,9 @@ export default function LandingPagesPage() {
             <div className="grid grid-cols-4 gap-4">
                 {[
                     { label: 'Total Pages', value: stats.total, icon: <FileText className="h-5 w-5 text-primary-500" /> },
-                    { label: 'Published', value: stats.published, icon: <Globe className="h-5 w-5 text-emerald-500" /> },
+                    { label: 'Published', value: stats.published, icon: <Globe className="h-5 w-5 text-success-fg" /> },
                     { label: 'Total Views', value: stats.totalViews.toLocaleString(), icon: <Eye className="h-5 w-5 text-blue-500" /> },
-                    { label: 'Avg Conv Rate', value: `${stats.avgConversion}%`, icon: <BarChart2 className="h-5 w-5 text-amber-500" /> },
+                    { label: 'Avg Conv Rate', value: `${stats.avgConversion}%`, icon: <BarChart2 className="h-5 w-5 text-warning-fg" /> },
                 ].map(s => (
                     <div key={s.label} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center gap-3 shadow-sm">
                         <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">{s.icon}</div>
@@ -203,7 +203,7 @@ export default function LandingPagesPage() {
 
             {/* Search */}
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search pages..." className="pl-9" />
             </div>
 
@@ -214,7 +214,7 @@ export default function LandingPagesPage() {
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-                    <Globe className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+                    <Globe className="h-12 w-12 text-slate-300 mx-auto mb-3" />
                     <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">No landing pages yet</h3>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-4">Create your first page to capture leads</p>
                     <Button onClick={handleCreate}><Plus className="h-4 w-4 mr-2" /> New Page</Button>
@@ -233,14 +233,14 @@ export default function LandingPagesPage() {
                                 </div>
                                 {page.isPublished && (
                                     <div className="absolute top-2 right-2">
-                                        <CheckCircle className="h-4 w-4 text-emerald-500" />
+                                        <CheckCircle className="h-4 w-4 text-success-fg" />
                                     </div>
                                 )}
                             </div>
 
                             <div className="p-4">
                                 <h3 className="font-semibold text-slate-900 dark:text-white mb-0.5">{page.name}</h3>
-                                <p className="text-xs text-slate-400 dark:text-slate-500 mb-3 flex items-center gap-1">
+                                <p className="text-xs text-foreground-muted mb-3 flex items-center gap-1">
                                     <Globe className="h-3 w-3" /> /{page.slug}
                                 </p>
 
@@ -265,28 +265,28 @@ export default function LandingPagesPage() {
                                     </button>
                                     <button
                                         onClick={() => openSeoModal(page)}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
+                                        className="p-1.5 text-foreground-muted hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
                                         title="SEO Settings"
                                     >
                                         <Settings className="h-3.5 w-3.5" />
                                     </button>
                                     <button
                                         onClick={() => openAnalytics(page)}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                        className="p-1.5 text-foreground-muted hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                                         title="Analytics"
                                     >
                                         <BarChart2 className="h-3.5 w-3.5" />
                                     </button>
                                     <button
                                         onClick={() => handleDuplicate(page)}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                                        className="p-1.5 text-foreground-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                         title="Duplicate"
                                     >
                                         <Copy className="h-3.5 w-3.5" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(page.id)}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                        className="p-1.5 text-foreground-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                                         title="Delete"
                                     >
                                         <Trash2 className="h-3.5 w-3.5" />
@@ -305,26 +305,26 @@ export default function LandingPagesPage() {
                     <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
                             <h2 className="font-semibold text-slate-900 dark:text-white">SEO Settings</h2>
-                            <button onClick={() => setShowSeoModal(null)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">✕</button>
+                            <button onClick={() => setShowSeoModal(null)} className="text-foreground-muted hover:text-slate-600 dark:hover:text-slate-300">✕</button>
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">SEO Title <span className="text-slate-400 dark:text-slate-500 font-normal">(60 chars max)</span></label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">SEO Title <span className="text-slate-400 font-normal">(60 chars max)</span></label>
                                 <Input value={seoForm.title} onChange={e => setSeoForm(p => ({ ...p, title: e.target.value.slice(0, 60) }))} placeholder="Page title for search engines" />
-                                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{seoForm.title.length}/60</p>
+                                <p className="text-xs text-foreground-muted mt-0.5">{seoForm.title.length}/60</p>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Meta Description <span className="text-slate-400 dark:text-slate-500 font-normal">(160 chars max)</span></label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Meta Description <span className="text-slate-400 font-normal">(160 chars max)</span></label>
                                 <textarea
                                     value={seoForm.metaDescription}
                                     onChange={e => setSeoForm(p => ({ ...p, metaDescription: e.target.value.slice(0, 160) }))}
                                     className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm h-20 resize-none focus:ring-2 focus:ring-primary-500"
                                     placeholder="Brief description for search results..."
                                 />
-                                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{seoForm.metaDescription.length}/160</p>
+                                <p className="text-xs text-foreground-muted mt-0.5">{seoForm.metaDescription.length}/160</p>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Keywords <span className="text-slate-400 dark:text-slate-500 font-normal">(comma-separated)</span></label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Keywords <span className="text-foreground-muted font-normal">(comma-separated)</span></label>
                                 <Input value={seoForm.keywords} onChange={e => setSeoForm(p => ({ ...p, keywords: e.target.value }))} placeholder="booking, salon, spa, ..." />
                             </div>
                             <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
@@ -358,7 +358,7 @@ export default function LandingPagesPage() {
                     <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
                             <h2 className="font-semibold text-slate-900 dark:text-white">Page Analytics</h2>
-                            <button onClick={() => setShowAnalytics(null)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">✕</button>
+                            <button onClick={() => setShowAnalytics(null)} className="text-foreground-muted hover:text-slate-600 dark:hover:text-slate-300">✕</button>
                         </div>
                         <div className="p-6">
                             {!analytics ? (
@@ -366,7 +366,7 @@ export default function LandingPagesPage() {
                                     <RefreshCw className="h-6 w-6 animate-spin text-primary-500" />
                                 </div>
                             ) : analytics.error ? (
-                                <p className="text-center text-slate-500 py-8">No analytics data available</p>
+                                <p className="text-center text-foreground-secondary py-8">No analytics data available</p>
                             ) : (
                                 <div className="space-y-4">
                                     {[

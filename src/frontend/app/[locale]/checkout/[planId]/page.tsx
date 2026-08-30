@@ -46,12 +46,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ planId: str
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-muted py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
           <Link href="/pricing" className="text-sm text-primary hover:underline font-medium mb-4 inline-block">&larr; Back to Pricing</Link>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Complete your subscription</h1>
-          <p className="mt-2 text-gray-600">You're upgrading to the {planName} plan.</p>
+          <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Complete your subscription</h1>
+          <p className="mt-2 text-foreground-secondary">You're upgrading to the {planName} plan.</p>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-8 items-start">
@@ -64,13 +64,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ planId: str
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Stripe-hosted payment — redirect flow */}
-                <div className="bg-gradient-to-r from-primary-50 to-primary-100 p-4 rounded-md border border-primary-100 text-center text-sm text-primary-600 font-medium">
-                  <ShieldCheck className="w-5 h-5 mx-auto mb-1 text-primary-500" />
+                <div className="bg-gradient-to-r from-primary-50 to-primary-100 p-4 rounded-md border border-primary/25 text-center text-sm text-primary font-medium">
+                  <ShieldCheck className="w-5 h-5 mx-auto mb-1 text-primary" />
                   Secure payment via Stripe — you'll be redirected to complete payment
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name on card</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Name on card</label>
                   <Input placeholder="Jane Doe" value={nameOnCard} onChange={e => setNameOnCard(e.target.value)} />
                 </div>
                 
@@ -116,7 +116,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ planId: str
                   <span className="font-medium">{planName} Plan (Annual)</span>
                   <span className="font-medium">${price}.00</span>
                 </div>
-                <div className="flex justify-between py-2 text-sm text-gray-600">
+                <div className="flex justify-between py-2 text-sm text-foreground-secondary">
                   <span>Taxes</span>
                   <span>Calculated at next step</span>
                 </div>
@@ -125,20 +125,20 @@ export default function CheckoutPage({ params }: { params: Promise<{ planId: str
                   <span>${price}.00</span>
                 </div>
                 
-                <div className="mt-6 flex items-start gap-3 text-sm text-gray-600">
-                  <ShieldCheck className="w-5 h-5 text-green-600 shrink-0" />
+                <div className="mt-6 flex items-start gap-3 text-sm text-foreground-secondary">
+                  <ShieldCheck className="w-5 h-5 text-success-fg shrink-0" />
                   <p>Guaranteed safe & secure checkout powered by Stripe. 14-day money-back guarantee.</p>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="bg-white p-6 rounded-xl border border-gray-200 flex gap-4 items-center">
-              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
+            <div className="bg-card p-6 rounded-xl border border-border flex gap-4 items-center">
+              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <h4 className="font-semibold text-sm">Instant Access</h4>
-                <p className="text-xs text-gray-500 mt-1">Your account will be upgraded immediately upon successful payment.</p>
+                <p className="text-xs text-foreground-secondary mt-1">Your account will be upgraded immediately upon successful payment.</p>
               </div>
             </div>
           </div>

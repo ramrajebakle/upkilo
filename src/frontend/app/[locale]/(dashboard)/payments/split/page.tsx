@@ -110,9 +110,9 @@ export default function SplitPaymentPage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/payments"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -120,13 +120,13 @@ export default function SplitPaymentPage() {
                             <Users className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Split Payment
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Split total amount between multiple methods or people</p>
+                    <p className="text-foreground-secondary ml-12">Split total amount between multiple methods or people</p>
                 </div>
             </div>
 
@@ -135,13 +135,13 @@ export default function SplitPaymentPage() {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                                <Receipt className="h-5 w-5 text-primary-500" />
+                            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                                <Receipt className="h-5 w-5 text-primary" />
                                 Payment Splits
                             </h2>
                             <button
                                 onClick={distributeEvenly}
-                                className="text-xs font-semibold text-primary-600 hover:text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg transition-colors"
+                                className="text-xs font-semibold text-primary hover:text-primary bg-brand-subtle px-3 py-1.5 rounded-lg transition-colors"
                             >
                                 Distribute Evenly
                             </button>
@@ -151,24 +151,24 @@ export default function SplitPaymentPage() {
                             {splits.map((split, index) => (
                                 <div 
                                     key={split.id}
-                                    className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col md:flex-row gap-4 items-center group animate-fade-in-up"
+                                    className="p-4 bg-muted border border-border-subtle rounded-2xl flex flex-col md:flex-row gap-4 items-center group animate-fade-in-up"
                                     style={{ animationDelay: `${index * 50}ms` }}
                                 >
                                     <div className="flex-1 w-full">
-                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Label</label>
+                                        <label className="block text-[10px] font-bold text-foreground-muted uppercase tracking-widest mb-1 ml-1">Label</label>
                                         <input
                                             type="text"
                                             value={split.label}
                                             onChange={(e) => updateSplit(split.id, { label: e.target.value })}
-                                            className="w-full bg-white border-transparent focus:border-primary-500 rounded-xl px-4 py-2 text-sm shadow-sm"
+                                            className="w-full bg-card border-transparent focus:border-primary-500 rounded-xl px-4 py-2 text-sm shadow-sm"
                                         />
                                     </div>
                                     <div className="w-full md:w-32">
-                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Method</label>
+                                        <label className="block text-[10px] font-bold text-foreground-muted uppercase tracking-widest mb-1 ml-1">Method</label>
                                         <select
                                             value={split.method}
                                             onChange={(e) => updateSplit(split.id, { method: e.target.value as any })}
-                                            className="w-full bg-white border-transparent focus:border-primary-500 rounded-xl px-3 py-2 text-sm shadow-sm appearance-none"
+                                            className="w-full bg-card border-transparent focus:border-primary-500 rounded-xl px-3 py-2 text-sm shadow-sm appearance-none"
                                         >
                                             <option value="card">Card</option>
                                             <option value="cash">Cash</option>
@@ -176,15 +176,15 @@ export default function SplitPaymentPage() {
                                         </select>
                                     </div>
                                     <div className="w-full md:w-40 relative">
-                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Amount</label>
+                                        <label className="block text-[10px] font-bold text-foreground-muted uppercase tracking-widest mb-1 ml-1">Amount</label>
                                         <div className="relative">
-                                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground-muted" />
                                             <input
                                                 type="number"
                                                 step="0.01"
                                                 value={split.amount || ''}
                                                 onChange={(e) => updateSplit(split.id, { amount: parseFloat(e.target.value) || 0 })}
-                                                className="w-full bg-white border-transparent focus:border-primary-500 rounded-xl pl-9 pr-4 py-2 text-sm font-bold text-slate-900 shadow-sm"
+                                                className="w-full bg-card border-transparent focus:border-primary-500 rounded-xl pl-9 pr-4 py-2 text-sm font-bold text-foreground shadow-sm"
                                                 placeholder="0.00"
                                             />
                                         </div>
@@ -192,7 +192,7 @@ export default function SplitPaymentPage() {
                                     <button
                                         onClick={() => removeSplit(split.id)}
                                         disabled={splits.length === 1}
-                                        className="p-2.5 mt-4 md:mt-0 bg-white hover:bg-red-50 text-slate-300 hover:text-red-500 rounded-xl shadow-sm border border-slate-100 transition-all disabled:opacity-30 self-end md:self-center"
+                                        className="p-2.5 mt-4 md:mt-0 bg-card hover:bg-red-50 text-slate-300 hover:text-red-500 rounded-xl shadow-sm border border-border-subtle transition-all disabled:opacity-30 self-end md:self-center"
                                     >
                                         <Minus className="h-4 w-4" />
                                     </button>
@@ -201,7 +201,7 @@ export default function SplitPaymentPage() {
 
                             <button
                                 onClick={addSplit}
-                                className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 hover:text-primary-500 hover:border-primary-200 hover:bg-white transition-all flex items-center justify-center gap-2 group"
+                                className="w-full py-4 border-2 border-dashed border-border rounded-2xl text-foreground-muted hover:text-primary hover:border-primary/25 hover:bg-card transition-all flex items-center justify-center gap-2 group"
                             >
                                 <Plus className="h-5 w-5 group-hover:scale-110 transition-transform" />
                                 <span className="font-semibold uppercase tracking-widest text-xs">Add Payment Split</span>
@@ -211,19 +211,19 @@ export default function SplitPaymentPage() {
 
                     {!bookingId && (
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                                 <Search className="h-5 w-5 text-blue-500" />
                                 Select Transaction
                             </h2>
                             <div className="relative">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                 <input
                                     type="text"
                                     className="input pl-11"
                                     placeholder="Search by client or booking ID..."
                                 />
                             </div>
-                            <div className="mt-4 p-4 border border-dashed border-slate-200 rounded-xl text-center text-sm text-slate-400">
+                            <div className="mt-4 p-4 border border-dashed border-border rounded-xl text-center text-sm text-foreground-muted">
                                 Search for a pending booking to split its payment
                             </div>
                         </div>
@@ -260,7 +260,7 @@ export default function SplitPaymentPage() {
                                         {formatCurrency(remaining)}
                                     </p>
                                     {remaining !== 0 && (
-                                        <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">
+                                        <p className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">
                                             {remaining > 0 ? "Underpaid" : "Overpaid"}
                                         </p>
                                     )}
@@ -299,21 +299,21 @@ export default function SplitPaymentPage() {
                     </div>
 
                     <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-                        <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
-                            <Info className="h-4 w-4 text-primary-500" />
+                        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2 uppercase tracking-wider">
+                            <Info className="h-4 w-4 text-primary" />
                             Split Instructions
                         </h2>
-                        <ul className="text-xs text-slate-500 space-y-3 leading-relaxed">
+                        <ul className="text-xs text-foreground-secondary space-y-3 leading-relaxed">
                             <li className="flex gap-2">
-                                <div className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-400 flex-shrink-0">1</div>
+                                <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold text-foreground-muted flex-shrink-0">1</div>
                                 Add a new split for each person or payment method.
                             </li>
                             <li className="flex gap-2">
-                                <div className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-400 flex-shrink-0">2</div>
+                                <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold text-foreground-muted flex-shrink-0">2</div>
                                 Assign amounts to each split.
                             </li>
                             <li className="flex gap-2">
-                                <div className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-400 flex-shrink-0">3</div>
+                                <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold text-foreground-muted flex-shrink-0">3</div>
                                 Ensure the "Remaining" balance is zero.
                             </li>
                         </ul>

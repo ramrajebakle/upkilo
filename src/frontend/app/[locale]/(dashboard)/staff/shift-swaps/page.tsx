@@ -97,9 +97,9 @@ export default function ShiftSwapsPage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Pending Review", value: counts.Pending, color: "text-amber-500" },
+          { label: "Pending Review", value: counts.Pending, color: "text-warning-fg" },
           { label: "Accepted (awaiting approval)", value: counts.Accepted, color: "text-blue-500" },
-          { label: "Approved", value: counts.Approved, color: "text-green-500" },
+          { label: "Approved", value: counts.Approved, color: "text-success-fg" },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="pt-5">
@@ -133,7 +133,7 @@ export default function ShiftSwapsPage() {
               </div>
             </div>
             <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
-              <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="h-4 w-4 text-warning-fg mt-0.5 flex-shrink-0" />
               <p className="text-xs text-amber-700">Your request will be visible to other staff who can accept it. An admin must then approve the swap.</p>
             </div>
             <div className="flex justify-end gap-2">
@@ -152,7 +152,7 @@ export default function ShiftSwapsPage() {
         {["All", "Pending", "Accepted", "Approved", "Rejected"].map((f) => (
           <button key={f} onClick={() => setStatusFilter(f)}
             className={cn("flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors",
-              statusFilter === f ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
+              statusFilter === f ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
             {f}
           </button>
         ))}
@@ -203,7 +203,7 @@ export default function ShiftSwapsPage() {
                         )}
                         {(s.status === "Pending" || s.status === "Accepted") && (
                           <Button variant="outline" size="sm"
-                            leftIcon={<XCircle size={12} className="text-red-500" />}
+                            leftIcon={<XCircle size={12} className="text-danger-fg" />}
                             onClick={() => handleAction(s.id, "reject")} disabled={!!actioning}>
                             Reject
                           </Button>

@@ -89,17 +89,17 @@ const CHANNELS = [
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-card">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(CONTACT_JSON_LD) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
 
       <section className="mx-auto max-w-3xl px-4 py-20">
         <div className="mb-14">
           {/* No eyebrow pill above the heading — see the equivalent note in docs/page.tsx. */}
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
             Talk to us
           </h1>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-4 text-lg text-foreground-secondary">
             Email reaches a person. Pick whichever fits — anything unclear can go to the first
             one and we&apos;ll route it.
           </p>
@@ -109,17 +109,17 @@ export default function ContactPage() {
           {CHANNELS.map(({ icon: Icon, title, body, email }) => (
             <li
               key={email}
-              className="flex gap-4 rounded-2xl border border-slate-200 p-6"
+              className="flex gap-4 rounded-2xl border border-border p-6"
             >
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
                 <Icon className="h-5 w-5" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <h2 className="font-semibold text-slate-900">{title}</h2>
-                <p className="mt-1 text-sm text-slate-600">{body}</p>
+                <h2 className="font-semibold text-foreground">{title}</h2>
+                <p className="mt-1 text-sm text-foreground-secondary">{body}</p>
                 <a
                   href={`mailto:${email}`}
-                  className="mt-3 inline-block text-sm font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="mt-3 inline-block text-sm font-medium text-primary underline underline-offset-2 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                 >
                   {email}
                 </a>
@@ -128,9 +128,9 @@ export default function ContactPage() {
           ))}
         </ul>
 
-        <p className="mt-10 text-sm text-slate-500">
+        <p className="mt-10 text-sm text-foreground-secondary">
           Looking for setup help first? The{' '}
-          <Link href="/docs" className="text-primary-600 underline underline-offset-2 hover:text-primary-700">
+          <Link href="/docs" className="text-primary underline underline-offset-2 hover:text-primary">
             documentation
           </Link>{' '}
           covers configuration and common questions.

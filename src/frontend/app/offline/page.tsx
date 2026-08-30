@@ -136,7 +136,11 @@ export default function OfflinePage() {
           Try again
         </button>
 
-        <p style={{ marginTop: '2rem', fontSize: '0.8rem', color: '#475569' }}>
+        {/* slate-600 on this page's #1e293b gradient measured 1.7:1 — the footer was
+            effectively invisible. slate-400 clears AA on the same ground. This screen is a
+            deliberate full-bleed dark design in both themes, so the fix is a fixed lighter
+            tone rather than a theme token. */}
+        <p style={{ marginTop: '2rem', fontSize: '0.8rem', color: '#94a3b8' }}>
           Upkilo &mdash; Business Management Platform
         </p>
       </div>

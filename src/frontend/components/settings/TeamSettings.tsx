@@ -86,7 +86,7 @@ export function TeamSettings() {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-gray-500">Loading team data...</div>;
+    if (loading) return <div className="p-8 text-center text-foreground-secondary">Loading team data...</div>;
 
     return (
         <div className="space-y-10">
@@ -95,7 +95,7 @@ export function TeamSettings() {
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Security Cluster</h2>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Authorized entity directory</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Authorized entity directory</p>
                     </div>
                     <Button onClick={() => setShowInviteModal(true)} className="rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary-500/20 hover:scale-105 active:scale-95 transition-all">
                         <UserPlus className="h-4 w-4 mr-2" />
@@ -117,7 +117,7 @@ export function TeamSettings() {
                                         </p>
                                         {!member.isActive && <span className="text-[10px] font-black text-rose-500 bg-rose-50 dark:bg-rose-400/10 px-3 py-1 rounded-lg border border-rose-100 dark:border-rose-400/20 uppercase tracking-widest">Off-line</span>}
                                     </div>
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest flex items-center gap-2">
                                         <Mail className="h-3 w-3" />
                                         {member.email}
                                     </p>
@@ -134,7 +134,7 @@ export function TeamSettings() {
                                         {member.role}
                                     </span>
                                 </div>
-                                <button className="text-slate-300 dark:text-slate-600 hover:text-slate-900 dark:hover:text-white transition-colors p-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                                <button className="text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors p-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
                                     <MoreVertical className="h-5 w-5" />
                                 </button>
                             </div>
@@ -148,7 +148,7 @@ export function TeamSettings() {
                 <div className="space-y-6 pt-10 border-t border-slate-100 dark:border-slate-800/50">
                     <div>
                         <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Pending Uplinks</h2>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Awaiting acceptance confirmation</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Awaiting acceptance confirmation</p>
                     </div>
 
                     <div className="grid gap-4">
@@ -156,12 +156,12 @@ export function TeamSettings() {
                             <div key={invite.id} className="flex items-center justify-between p-6 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800 rounded-[28px] relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-2xl -mr-16 -mt-16" />
                                 <div className="flex items-center gap-5 relative">
-                                    <div className="w-14 h-14 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-300 dark:text-slate-600 rounded-2xl flex items-center justify-center shadow-sm">
+                                    <div className="w-14 h-14 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-300 rounded-2xl flex items-center justify-center shadow-sm">
                                         <Mail className="h-6 w-6" />
                                     </div>
                                     <div className="space-y-1">
                                         <p className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-sm">{invite.email}</p>
-                                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 flex items-center gap-2 uppercase tracking-widest">
+                                        <p className="text-[10px] font-bold text-foreground-muted flex items-center gap-2 uppercase tracking-widest">
                                             <Clock className="h-3 w-3" />
                                             Dispatched: {new Date(invite.createdAt).toLocaleDateString()}
                                         </p>
@@ -171,7 +171,7 @@ export function TeamSettings() {
                                     <span className="text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-[0.3em] bg-amber-50 dark:bg-amber-400/10 px-3 py-1 rounded-lg border border-amber-100 dark:border-amber-400/20">{invite.role}</span>
                                     <button
                                         onClick={() => handleCancelInvite(invite.id)}
-                                        className="text-slate-300 dark:text-slate-600 hover:text-rose-600 transform hover:scale-110 transition-all p-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700"
+                                        className="text-slate-300 hover:text-rose-600 transform hover:scale-110 transition-all p-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700"
                                         title="Cancel Invitation"
                                     >
                                         <Trash2 className="h-4 w-4" />
@@ -211,7 +211,7 @@ export function TeamSettings() {
                     />
 
                     <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">Authorization Level</label>
+                        <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Authorization Level</label>
                         <div className="grid grid-cols-3 gap-3">
                             {['Admin', 'Manager', 'Staff'].map((r) => (
                                 <button
@@ -222,7 +222,7 @@ export function TeamSettings() {
                                         "px-4 py-4 text-[10px] font-black uppercase tracking-widest rounded-2xl border transition-all duration-300",
                                         inviteRole === r
                                             ? "border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/10"
-                                            : "border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                                            : "border-slate-100 dark:border-slate-800 text-foreground-muted hover:bg-slate-50 dark:hover:bg-slate-800"
                                     )}
                                 >
                                     {r}

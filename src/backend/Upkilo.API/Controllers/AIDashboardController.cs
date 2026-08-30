@@ -160,7 +160,7 @@ public class AIDashboardController : ControllerBase
     /// Wires FinancialIntelligenceController metrics into a single human-readable narrative.
     /// </summary>
     [HttpGet("weekly-summary")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiInsights)]
     public async Task<IActionResult> GetWeeklySummary()
     {
         var tenantId = GetTenantId();
@@ -229,7 +229,7 @@ public class AIDashboardController : ControllerBase
     /// Typically called by a scheduled job (WeeklySummaryJob), but also callable manually.
     /// </summary>
     [HttpPost("weekly-summary/push")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiInsights)]
     public async Task<IActionResult> SendWeeklySummaryPush()
     {
         var tenantId = GetTenantId();

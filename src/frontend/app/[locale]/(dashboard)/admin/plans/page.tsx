@@ -91,34 +91,34 @@ export default function AdminPlansPage() {
             >
               {!plan.isActive && (
                 <div className="absolute top-4 right-4">
-                  <Badge variant="secondary" className="bg-slate-100 text-slate-500">Draft</Badge>
+                  <Badge variant="secondary" className="bg-muted text-foreground-secondary">Draft</Badge>
                 </div>
               )}
               
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2" style={{ fontFamily: 'var(--font-display)' }}>{plan.name}</h3>
-                <p className="text-slate-500 text-sm h-10 overflow-hidden">{plan.description}</p>
+                <p className="text-foreground-secondary text-sm h-10 overflow-hidden">{plan.description}</p>
               </div>
 
               <div className="mb-8">
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>${plan.monthlyPrice}</span>
-                  <span className="text-slate-500 text-sm font-medium">/month</span>
+                  <span className="text-foreground-secondary text-sm font-medium">/month</span>
                 </div>
-                <div className="text-emerald-600 text-xs font-semibold mt-1">
+                <div className="text-success-fg text-xs font-semibold mt-1">
                   ${plan.annualPrice} billed annually
                 </div>
               </div>
 
               <div className="space-y-4 mb-8">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Core Limits</div>
+                <div className="text-xs font-bold uppercase tracking-wider text-foreground-muted">Core Limits</div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-slate-50 dark:bg-white/5 rounded-2xl">
-                    <div className="text-xs text-slate-500">Staff</div>
+                    <div className="text-xs text-foreground-secondary">Staff</div>
                     <div className="font-bold text-slate-900 dark:text-white">{plan.features?.maxStaff === -1 ? '∞' : plan.features?.maxStaff}</div>
                   </div>
                   <div className="p-3 bg-slate-50 dark:bg-white/5 rounded-2xl">
-                    <div className="text-xs text-slate-500">Locations</div>
+                    <div className="text-xs text-foreground-secondary">Locations</div>
                     <div className="font-bold text-slate-900 dark:text-white">{plan.features?.maxLocations === -1 ? '∞' : plan.features?.maxLocations}</div>
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function AdminPlansPage() {
         <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
           <AlertCircle className="h-12 w-12 text-slate-300 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">No plans defined</h3>
-          <p className="text-slate-500 mb-6">Create your first subscription tier to start accepting tenants.</p>
+          <p className="text-foreground-secondary mb-6">Create your first subscription tier to start accepting tenants.</p>
           <Button variant="primary">
             <Plus className="h-4 w-4 mr-2" />
             Create Plan
@@ -164,7 +164,7 @@ function FeatureItem({ label, enabled }: { label: string; enabled: boolean }) {
         </div>
       ) : (
         <div className="h-5 w-5 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
-          <X className="h-3 w-3 text-slate-400" />
+          <X className="h-3 w-3 text-foreground-muted" />
         </div>
       )}
       <span className={enabled ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 line-through'}>{label}</span>

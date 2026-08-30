@@ -79,8 +79,8 @@ export default function EditServicePage() {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="w-12 h-12 text-primary-500 animate-spin" />
-                <p className="text-slate-500 font-medium">Fetching service details...</p>
+                <Loader2 className="w-12 h-12 text-primary animate-spin" />
+                <p className="text-foreground-secondary font-medium">Fetching service details...</p>
             </div>
         );
     }
@@ -92,9 +92,9 @@ export default function EditServicePage() {
                 <div className="flex items-center justify-between">
                     <Link 
                         href="/services" 
-                        className="flex items-center gap-2 text-slate-500 hover:text-primary-600 transition-colors w-fit group"
+                        className="flex items-center gap-2 text-foreground-secondary hover:text-primary transition-colors w-fit group"
                     >
-                        <div className="p-1.5 rounded-lg group-hover:bg-primary-50 transition-colors">
+                        <div className="p-1.5 rounded-lg group-hover:bg-brand-subtle transition-colors">
                             <ArrowLeft className="w-4 h-4" />
                         </div>
                         <span className="text-sm font-medium">Back to Services</span>
@@ -102,7 +102,7 @@ export default function EditServicePage() {
                     
                     <button 
                         onClick={handleDelete}
-                        className="btn btn-secondary border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 gap-2"
+                        className="btn btn-secondary border-red-100 text-danger-fg hover:bg-red-50 hover:border-red-200 gap-2"
                         disabled={isSaving}
                     >
                         <Trash2 className="w-4 h-4" />
@@ -110,7 +110,7 @@ export default function EditServicePage() {
                     </button>
                 </div>
 
-                <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div className="bg-card p-8 rounded-3xl border border-border shadow-sm relative overflow-hidden">
                     {/* Decorative Elements */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                     
@@ -119,10 +119,10 @@ export default function EditServicePage() {
                             <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center shadow-lg">
                                 <Save className="w-5 h-5 text-white" />
                             </div>
-                            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Edit Service</h1>
+                            <h1 className="text-3xl font-bold text-foreground tracking-tight">Edit Service</h1>
                         </div>
-                        <p className="text-slate-500 max-w-md">
-                            Updating <span className="font-semibold text-slate-900">{service?.name}</span>. 
+                        <p className="text-foreground-secondary max-w-md">
+                            Updating <span className="font-semibold text-foreground">{service?.name}</span>. 
                             Changes will take effect immediately.
                         </p>
                     </div>

@@ -83,7 +83,7 @@ export default function DataExportsPage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Data Exports <Download className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Data Exports <Download className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Export your business data in CSV, Excel, or JSON format.</p>
       </header>
 

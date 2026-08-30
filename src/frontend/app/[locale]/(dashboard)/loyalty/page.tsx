@@ -58,7 +58,7 @@ export default function LoyaltyProgramPage() {
   const getTierColor = (name: string) => {
       switch(name.toLowerCase()) {
          case "bronze": return "text-amber-700 bg-amber-50 border-amber-200";
-         case "silver": return "text-gray-600 bg-gray-50 border-gray-200";
+         case "silver": return "text-foreground-secondary bg-muted border-border";
          case "gold": return "text-yellow-600 bg-yellow-50 border-yellow-200";
          default: return "text-blue-700 bg-blue-50 border-blue-200";
       }
@@ -68,7 +68,7 @@ export default function LoyaltyProgramPage() {
       return (
           <div className="flex flex-col items-center justify-center py-20">
               <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-              <p className="text-gray-500">Loading Loyalty Data...</p>
+              <p className="text-foreground-secondary">Loading Loyalty Data...</p>
           </div>
       );
   }
@@ -91,23 +91,23 @@ export default function LoyaltyProgramPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-         <div className="p-4 rounded-xl border bg-gray-50 flex items-center justify-between">
+         <div className="p-4 rounded-xl border bg-muted flex items-center justify-between">
            <div>
-             <div className="text-sm font-bold text-gray-500 mb-1">Points Issued</div>
+             <div className="text-sm font-bold text-foreground-secondary mb-1">Points Issued</div>
              <div className="text-2xl font-bold">{analytics?.totalPointsIssued?.toLocaleString() || 0}</div>
            </div>
            <Star className="h-8 w-8 text-yellow-400 opacity-20" />
          </div>
-         <div className="p-4 rounded-xl border bg-gray-50 flex items-center justify-between">
+         <div className="p-4 rounded-xl border bg-muted flex items-center justify-between">
            <div>
-             <div className="text-sm font-bold text-gray-500 mb-1">Points Redeemed</div>
+             <div className="text-sm font-bold text-foreground-secondary mb-1">Points Redeemed</div>
              <div className="text-2xl font-bold">{analytics?.totalPointsRedeemed?.toLocaleString() || 0}</div>
            </div>
            <Gift className="h-8 w-8 text-primary opacity-20" />
          </div>
-         <div className="p-4 rounded-xl border bg-gray-50 flex items-center justify-between">
+         <div className="p-4 rounded-xl border bg-muted flex items-center justify-between">
            <div>
-             <div className="text-sm font-bold text-gray-500 mb-1">Active Members</div>
+             <div className="text-sm font-bold text-foreground-secondary mb-1">Active Members</div>
              <div className="text-2xl font-bold">{analytics?.totalMembers?.toLocaleString() || 0}</div>
            </div>
            <Users className="h-8 w-8 text-blue-400 opacity-20" />
@@ -118,7 +118,7 @@ export default function LoyaltyProgramPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
+              <TrendingUp className="h-5 w-5 text-success-fg" />
               Tier Levels
             </CardTitle>
             <CardDescription>Reward your most valuable clients with accelerated point earning.</CardDescription>
@@ -145,7 +145,7 @@ export default function LoyaltyProgramPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Gift className="h-5 w-5 text-primary-500" />
+              <Gift className="h-5 w-5 text-primary" />
               Redemption Catalog
             </CardTitle>
             <CardDescription>What clients can spend their points on.</CardDescription>
@@ -153,12 +153,12 @@ export default function LoyaltyProgramPage() {
           <CardContent className="space-y-4">
              <div className="space-y-3">
                {rewards.length === 0 ? (
-                 <div className="text-center p-4 bg-gray-50 border border-dashed rounded-lg text-sm text-gray-500">
+                 <div className="text-center p-4 bg-muted border border-dashed rounded-lg text-sm text-foreground-secondary">
                    No rewards configured yet.
                  </div>
                ) : (
                  rewards.map((reward: any) => (
-                   <div key={reward.id} className="flex justify-between items-center p-3 border rounded-lg hover:border-primary transition-colors cursor-pointer bg-white">
+                   <div key={reward.id} className="flex justify-between items-center p-3 border rounded-lg hover:border-primary transition-colors cursor-pointer bg-card">
                      <span className="font-medium text-sm">{reward.name}</span>
                      <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">
                        {reward.pointsCost.toLocaleString()} pts

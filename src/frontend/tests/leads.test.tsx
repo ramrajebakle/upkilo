@@ -25,8 +25,12 @@ vi.mock('@/lib/api', () => ({
 import { useLeads, useUpdateLeadStatus } from '@/lib/query/leads';
 
 function makeWrapper(client: QueryClient) {
-  return ({ children }: { children: React.ReactNode }) =>
+  // Named rather than an anonymous arrow: react/display-name fires on a component returned
+  // from a factory, and this was the repo's only blocking ESLint error.
+  const QueryWrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client }, children);
+  QueryWrapper.displayName = 'QueryWrapper';
+  return QueryWrapper;
 }
 
 const newClient = () =>

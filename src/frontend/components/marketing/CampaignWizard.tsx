@@ -17,14 +17,14 @@ export function CampaignWizard() {
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Progress Bar */}
       <div className="flex items-center justify-between mb-8 relative">
-        <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 -translate-y-1/2 z-0 rounded-full" />
+        <div className="absolute top-1/2 left-0 w-full h-1 bg-muted -translate-y-1/2 z-0 rounded-full" />
         <div 
           className="absolute top-1/2 left-0 h-1 bg-primary -translate-y-1/2 z-0 rounded-full transition-all duration-300"
           style={{ width: `${((step - 1) / 3) * 100}%` }}
         />
         
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm transition-colors ${step >= i ? 'bg-primary text-primary-foreground' : 'bg-white text-gray-400 border-2 border-gray-200'}`}>
+          <div key={i} className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm transition-colors ${step >= i ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground-muted border-2 border-border'}`}>
             {step > i ? <CheckCircle className="w-5 h-5" /> : i}
           </div>
         ))}
@@ -40,19 +40,19 @@ export function CampaignWizard() {
               <div className="grid grid-cols-2 gap-4">
                 <button 
                   onClick={() => setType("email")}
-                  className={`flex flex-col items-center justify-center p-8 rounded-xl border-2 transition-all ${type === 'email' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'}`}
+                  className={`flex flex-col items-center justify-center p-8 rounded-xl border-2 transition-all ${type === 'email' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
                 >
-                  <Mail className={`w-12 h-12 mb-4 ${type === 'email' ? 'text-primary' : 'text-gray-400'}`} />
+                  <Mail className={`w-12 h-12 mb-4 ${type === 'email' ? 'text-primary' : 'text-foreground-muted'}`} />
                   <h3 className="font-semibold text-lg">Email Broadcast</h3>
-                  <p className="text-sm text-gray-500 text-center mt-2">Send beautifully formatted newsletters and promos.</p>
+                  <p className="text-sm text-foreground-secondary text-center mt-2">Send beautifully formatted newsletters and promos.</p>
                 </button>
                 <button 
                   onClick={() => setType("sms")}
-                  className={`flex flex-col items-center justify-center p-8 rounded-xl border-2 transition-all ${type === 'sms' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'}`}
+                  className={`flex flex-col items-center justify-center p-8 rounded-xl border-2 transition-all ${type === 'sms' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
                 >
-                  <Smartphone className={`w-12 h-12 mb-4 ${type === 'sms' ? 'text-primary' : 'text-gray-400'}`} />
+                  <Smartphone className={`w-12 h-12 mb-4 ${type === 'sms' ? 'text-primary' : 'text-foreground-muted'}`} />
                   <h3 className="font-semibold text-lg">SMS Text Message</h3>
-                  <p className="text-sm text-gray-500 text-center mt-2">High open-rate text messages for quick alerts.</p>
+                  <p className="text-sm text-foreground-secondary text-center mt-2">High open-rate text messages for quick alerts.</p>
                 </button>
               </div>
             </CardContent>
@@ -69,7 +69,7 @@ export function CampaignWizard() {
                 <label className="text-sm font-medium">Select target segment</label>
                 <div className="grid gap-3">
                   {['All Active Clients (2,450)', 'VIP Members (312)', 'Lapsed Customers (845)'].map((segment, i) => (
-                    <label key={i} className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <label key={i} className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-accent">
                       <input type="radio" name="audience" className="w-4 h-4 text-primary" defaultChecked={i === 0} />
                       <div className="font-medium">{segment}</div>
                     </label>
@@ -102,7 +102,7 @@ export function CampaignWizard() {
                   className="w-full min-h-[150px] p-3 rounded-md border border-input bg-background text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   placeholder="Type your message here..."
                 />
-                <p className="text-xs text-gray-500 mt-2">Available variables: {'{{client.first_name}}'}, {'{{client.last_visit}}'}</p>
+                <p className="text-xs text-foreground-secondary mt-2">Available variables: {'{{client.first_name}}'}, {'{{client.last_visit}}'}</p>
               </div>
             </CardContent>
           </>
@@ -114,25 +114,25 @@ export function CampaignWizard() {
               <CardTitle className="text-xl">Review & Send</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 space-y-6">
-              <div className="bg-gray-50 p-6 rounded-lg space-y-4">
+              <div className="bg-muted p-6 rounded-lg space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-sm text-gray-500 block">Type</span>
+                    <span className="text-sm text-foreground-secondary block">Type</span>
                     <span className="font-semibold capitalize">{type}</span>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500 block">Target Audience</span>
+                    <span className="text-sm text-foreground-secondary block">Target Audience</span>
                     <span className="font-semibold">All Active Clients (2,450)</span>
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-center text-gray-500">You are about to launch this campaign to 2,450 recipients. This action cannot be undone.</p>
+              <p className="text-sm text-center text-foreground-secondary">You are about to launch this campaign to 2,450 recipients. This action cannot be undone.</p>
             </CardContent>
           </>
         )}
 
         {/* Wizard Footer Navigation */}
-        <div className="p-6 border-t mt-auto flex items-center justify-between bg-gray-50/50 rounded-b-xl">
+        <div className="p-6 border-t mt-auto flex items-center justify-between bg-muted/50 rounded-b-xl">
           <Button variant="outline" onClick={prevStep} disabled={step === 1}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
@@ -144,7 +144,7 @@ export function CampaignWizard() {
             Continue <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           {step === 4 && (
-            <Button className="bg-green-600 hover:bg-green-700">
+            <Button className="bg-green-600 hover:bg-green-700 text-white">
               <Send className="w-4 h-4 mr-2" /> Launch Campaign
             </Button>
           )}

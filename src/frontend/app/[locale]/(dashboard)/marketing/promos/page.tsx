@@ -87,7 +87,7 @@ export default function PromosPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Promo Codes <Tag className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Promo Codes <Tag className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">Create discount codes for clients. Share via campaigns or the booking page.</p>
         </div>
         <div className="flex gap-2">
@@ -161,10 +161,10 @@ export default function PromosPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <code className="text-sm font-bold text-text-primary font-mono">{p.code}</code>
-                          <button onClick={() => copyCode(p.code)} className="text-text-tertiary hover:text-ai-500">
-                            {copied === p.code ? <CheckCircle2 size={12} className="text-green-500" /> : <Copy size={12} />}
+                          <button onClick={() => copyCode(p.code)} className="text-text-tertiary hover:text-ai">
+                            {copied === p.code ? <CheckCircle2 size={12} className="text-success-fg" /> : <Copy size={12} />}
                           </button>
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${p.isActive ? "text-green-700 bg-green-50" : "text-gray-500 bg-gray-100"}`}>{p.isActive ? "Active" : "Inactive"}</span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${p.isActive ? "text-green-700 bg-green-50" : "text-foreground-secondary bg-muted"}`}>{p.isActive ? "Active" : "Inactive"}</span>
                         </div>
                         <div className="flex items-center gap-3 mt-0.5">
                           <span className="text-xs text-text-secondary">{p.discountType === "percentage" ? `${p.discountValue}% off` : `${money(p.discountValue, currency)} off`}</span>
@@ -173,7 +173,7 @@ export default function PromosPage() {
                         </div>
                       </div>
                       <Button variant="outline" size="sm"
-                        leftIcon={deleting === p.id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} className="text-red-500" />}
+                        leftIcon={deleting === p.id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} className="text-danger-fg" />}
                         onClick={() => remove(p.id)} disabled={!!deleting} />
                     </CardContent>
                   </Card>

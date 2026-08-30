@@ -35,7 +35,7 @@ const plans = [
 
 export default function UAEPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-card">
       {/* Hero */}
       <section className="bg-gradient-to-br from-green-800 to-red-900 text-white py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
@@ -68,34 +68,34 @@ export default function UAEPage() {
 
       {/* Features */}
       <section className="py-16 px-4 max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
+        <h2 className="text-3xl font-bold text-center mb-4 text-foreground">
           مصمم للسوق الإماراتي
         </h2>
-        <p className="text-center text-gray-600 mb-12">Built specifically for UAE market requirements</p>
+        <p className="text-center text-foreground-secondary mb-12">Built specifically for UAE market requirements</p>
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((f) => (
-            <div key={f.title} className="border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition">
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">{f.title}</h3>
-              <p className="text-gray-600 text-sm">{f.desc}</p>
+            <div key={f.title} className="border border-border-subtle rounded-xl p-6 shadow-sm hover:shadow-md transition">
+              <h3 className="text-lg font-semibold mb-2 text-foreground">{f.title}</h3>
+              <p className="text-foreground-secondary text-sm">{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Pricing — RTL-friendly labels */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-muted">
         <div className="max-w-5xl mx-auto">
           {/* Heading read "أسعار بالدرهم الإماراتي" (prices in UAE Dirhams) and claimed
               VAT-inclusive pricing, directly above USD plan cards. Upkilo bills exclusively in
               USD, exclusive of tax. */}
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">أسعار بسيطة وشفافة</h2>
-          <p className="text-center text-gray-600 mb-12">الأسعار بالدولار الأمريكي، غير شاملة ضريبة القيمة المضافة. إلغاء في أي وقت.</p>
+          <h2 className="text-3xl font-bold text-center mb-4 text-foreground">أسعار بسيطة وشفافة</h2>
+          <p className="text-center text-foreground-secondary mb-12">الأسعار بالدولار الأمريكي، غير شاملة ضريبة القيمة المضافة. إلغاء في أي وقت.</p>
           <div className="grid md:grid-cols-3 gap-8">
             {plans.map((p) => (
-              <div key={p.name} className={`rounded-2xl p-8 ${p.highlight ? 'bg-green-800 text-white shadow-xl scale-105' : 'bg-white border border-gray-200'}`}>
+              <div key={p.name} className={`rounded-2xl p-8 ${p.highlight ? 'bg-green-800 text-white shadow-xl scale-105' : 'bg-card border border-border'}`}>
                 <div className="text-sm font-semibold mb-2 opacity-75">{p.name}</div>
                 <div className="text-3xl font-bold mb-1">{p.price}</div>
-                <div className={`text-sm mb-6 ${p.highlight ? 'opacity-75' : 'text-gray-500'}`}>{p.period}</div>
+                <div className={`text-sm mb-6 ${p.highlight ? 'opacity-75' : 'text-foreground-secondary'}`}>{p.period}</div>
                 <ul className="space-y-2 mb-8">
                   {p.features.map((feat) => (
                     <li key={feat} className="flex items-center gap-2 text-sm">
@@ -119,8 +119,8 @@ export default function UAEPage() {
           {/* Replaced a fabricated testimonial attributed to "ليلى الحمدان، صالون بيوتي لاونج، دبي"
               claiming "90% من عملائنا يحجزون أونلاين" (90% of our clients book online). No such
               customer and no such measurement exist. See the equivalent note in app/au/page.tsx. */}
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">ما الذي تحصل عليه من اليوم الأول</h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-bold mb-6 text-foreground">ما الذي تحصل عليه من اليوم الأول</h2>
+          <p className="text-lg text-foreground max-w-2xl mx-auto">
             حجوزات أونلاين، سجلات عملاء، وتذكيرات تلقائية عبر واتساب — مع فواتير متوافقة مع
             ضريبة القيمة المضافة الإماراتية بنسبة 5% وواجهة عربية بالكامل.
           </p>

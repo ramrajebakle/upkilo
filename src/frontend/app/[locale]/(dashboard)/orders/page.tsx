@@ -37,7 +37,7 @@ interface OrderStats {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ComponentType<{ className?: string }> }> = {
-  Draft:     { label: "Draft",     color: "text-gray-500",   bg: "bg-gray-50",   icon: Clock },
+  Draft:     { label: "Draft",     color: "text-foreground-secondary",   bg: "bg-muted",   icon: Clock },
   Paid:      { label: "Paid",      color: "text-green-600",  bg: "bg-green-50",  icon: CheckCircle2 },
   Pending:   { label: "Pending",   color: "text-amber-600",  bg: "bg-amber-50",  icon: Clock },
   Cancelled: { label: "Cancelled", color: "text-red-600",    bg: "bg-red-50",    icon: XCircle },
@@ -125,8 +125,8 @@ export default function OrdersPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Total orders", value: stats.totalOrders, icon: ShoppingBag, color: "text-blue-500" },
-          { label: "Revenue (paid)", value: `$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, color: "text-green-500" },
-          { label: "Pending", value: stats.pendingOrders, icon: Clock, color: "text-amber-500" },
+          { label: "Revenue (paid)", value: `$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, color: "text-success-fg" },
+          { label: "Pending", value: stats.pendingOrders, icon: Clock, color: "text-warning-fg" },
           { label: "Avg order value", value: `$${stats.avgOrderValue.toFixed(2)}`, icon: Package, color: "text-primary-500" },
         ].map((s) => (
           <Card key={s.label}>

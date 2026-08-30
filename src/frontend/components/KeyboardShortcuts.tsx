@@ -96,14 +96,14 @@ export function KeyboardShortcutsOverlay({ onClose }: { onClose?: () => void } =
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
       <div className="fixed inset-0" onClick={close} />
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-h-[80vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-card rounded-2xl shadow-2xl border border-border overflow-hidden max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border-subtle bg-muted">
           <div className="flex items-center gap-2">
-            <Command className="h-5 w-5 text-primary-500" />
-            <h2 className="font-semibold text-slate-900">Keyboard Shortcuts</h2>
+            <Command className="h-5 w-5 text-primary" />
+            <h2 className="font-semibold text-foreground">Keyboard Shortcuts</h2>
           </div>
-          <button onClick={close} className="text-slate-400 hover:text-slate-600 p-1 rounded">
+          <button onClick={close} className="text-foreground-muted hover:text-foreground-secondary p-1 rounded">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -112,14 +112,14 @@ export function KeyboardShortcutsOverlay({ onClose }: { onClose?: () => void } =
         <div className="overflow-y-auto p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
           {categories.map(category => (
             <div key={category}>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{category}</h3>
+              <h3 className="text-xs font-bold text-foreground-muted uppercase tracking-wider mb-3">{category}</h3>
               <div className="space-y-2">
                 {shortcuts.filter(s => s.category === category).map((shortcut, idx) => (
                   <div key={idx} className="flex items-center justify-between py-1.5">
-                    <span className="text-sm text-slate-700">{shortcut.description}</span>
+                    <span className="text-sm text-foreground">{shortcut.description}</span>
                     <div className="flex items-center gap-1">
                       {shortcut.keys.map((key, ki) => (
-                        <span key={ki} className="inline-flex items-center justify-center min-w-[28px] h-6 px-1.5 bg-slate-100 border border-slate-300 rounded text-xs font-bold text-slate-600 font-mono shadow-sm">
+                        <span key={ki} className="inline-flex items-center justify-center min-w-[28px] h-6 px-1.5 bg-muted border border-border-strong rounded text-xs font-bold text-foreground-secondary font-mono shadow-sm">
                           {key}
                         </span>
                       ))}
@@ -132,9 +132,9 @@ export function KeyboardShortcutsOverlay({ onClose }: { onClose?: () => void } =
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 text-center text-xs text-slate-500">
-          Press <kbd className="bg-white border border-slate-300 rounded px-1 font-mono">?</kbd> to toggle this overlay &nbsp;·&nbsp;
-          Press <kbd className="bg-white border border-slate-300 rounded px-1 font-mono">Esc</kbd> to close
+        <div className="px-5 py-3 bg-muted border-t border-border-subtle text-center text-xs text-foreground-secondary">
+          Press <kbd className="bg-card border border-border-strong rounded px-1 font-mono">?</kbd> to toggle this overlay &nbsp;·&nbsp;
+          Press <kbd className="bg-card border border-border-strong rounded px-1 font-mono">Esc</kbd> to close
         </div>
       </div>
     </div>

@@ -72,9 +72,9 @@ export default function NewClientPage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/clients"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -82,13 +82,13 @@ export default function NewClientPage() {
                             <UserPlus className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Add New Client
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Create a new client profile</p>
+                    <p className="text-foreground-secondary ml-12">Create a new client profile</p>
                 </div>
             </div>
 
@@ -110,13 +110,13 @@ export default function NewClientPage() {
                                 'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all z-10',
                                 step >= s.num
                                     ? 'bg-gradient-to-br from-primary-500 to-cyan-500 text-white shadow-lg'
-                                    : 'bg-slate-100 text-slate-400'
+                                    : 'bg-muted text-foreground-muted'
                             )}>
                                 {s.num}
                             </div>
                             <span className={cn(
                                 'text-sm mt-2 font-medium',
-                                step >= s.num ? 'text-slate-900' : 'text-slate-400'
+                                step >= s.num ? 'text-foreground' : 'text-foreground-muted'
                             )}>
                                 {s.label}
                             </span>
@@ -134,16 +134,16 @@ export default function NewClientPage() {
                             <div className="p-2 bg-blue-100 rounded-lg">
                                 <User className="h-5 w-5 text-blue-600" />
                             </div>
-                            <h2 className="text-lg font-semibold text-slate-900">Basic Information</h2>
+                            <h2 className="text-lg font-semibold text-foreground">Basic Information</h2>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    First Name <span className="text-red-500">*</span>
+                                <label className="block text-sm font-medium text-foreground mb-2">
+                                    First Name <span className="text-danger-fg">*</span>
                                 </label>
                                 <div className="relative">
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <input
                                         type="text"
                                         value={formData.firstName}
@@ -155,8 +155,8 @@ export default function NewClientPage() {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Last Name <span className="text-red-500">*</span>
+                                <label className="block text-sm font-medium text-foreground mb-2">
+                                    Last Name <span className="text-danger-fg">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -168,11 +168,11 @@ export default function NewClientPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Email Address
                                 </label>
                                 <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <input
                                         type="email"
                                         value={formData.email}
@@ -183,11 +183,11 @@ export default function NewClientPage() {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Phone Number
                                 </label>
                                 <div className="relative">
-                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <input
                                         type="tel"
                                         value={formData.phone}
@@ -200,8 +200,8 @@ export default function NewClientPage() {
                         </div>
 
                         {/* Client Tags */}
-                        <div className="mt-6 pt-6 border-t border-slate-100">
-                            <label className="block text-sm font-medium text-slate-700 mb-3">
+                        <div className="mt-6 pt-6 border-t border-border-subtle">
+                            <label className="block text-sm font-medium text-foreground mb-3">
                                 Client Tags
                             </label>
                             <div className="flex flex-wrap gap-2">
@@ -214,7 +214,7 @@ export default function NewClientPage() {
                                             'px-4 py-2 rounded-lg text-sm font-medium transition-all',
                                             formData.tags.includes(tag)
                                                 ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
-                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                : 'bg-muted text-foreground-secondary hover:bg-slate-200'
                                         )}
                                     >
                                         {tag}
@@ -230,18 +230,18 @@ export default function NewClientPage() {
                     <div className="card-elevated p-6 animate-fade-in-up">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-emerald-100 rounded-lg">
-                                <MapPin className="h-5 w-5 text-emerald-600" />
+                                <MapPin className="h-5 w-5 text-success-fg" />
                             </div>
-                            <h2 className="text-lg font-semibold text-slate-900">Address Details</h2>
+                            <h2 className="text-lg font-semibold text-foreground">Address Details</h2>
                         </div>
 
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Street Address
                                 </label>
                                 <div className="relative">
-                                    <Home className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                    <Home className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <input
                                         type="text"
                                         value={formData.address}
@@ -253,7 +253,7 @@ export default function NewClientPage() {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">City</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">City</label>
                                     <input
                                         type="text"
                                         value={formData.city}
@@ -263,7 +263,7 @@ export default function NewClientPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">State</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">State</label>
                                     <input
                                         type="text"
                                         value={formData.state}
@@ -273,7 +273,7 @@ export default function NewClientPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Postal Code</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Postal Code</label>
                                     <input
                                         type="text"
                                         value={formData.postalCode}
@@ -292,18 +292,18 @@ export default function NewClientPage() {
                     <div className="space-y-6 animate-fade-in-up">
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-primary-100 rounded-lg">
-                                    <FileText className="h-5 w-5 text-primary-600" />
+                                <div className="p-2 bg-brand-subtle rounded-lg">
+                                    <FileText className="h-5 w-5 text-primary" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Notes & Preferences</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Notes & Preferences</h2>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Client Notes
                                 </label>
                                 <textarea
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
+                                    className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
                                     rows={4}
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -315,18 +315,18 @@ export default function NewClientPage() {
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="p-2 bg-amber-100 rounded-lg">
-                                    <Bell className="h-5 w-5 text-amber-600" />
+                                    <Bell className="h-5 w-5 text-warning-fg" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Communication Preferences</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Communication Preferences</h2>
                             </div>
 
                             <div className="space-y-4">
-                                <label className="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                                <label className="flex items-center justify-between p-4 bg-muted rounded-xl cursor-pointer hover:bg-accent transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <Mail className="h-5 w-5 text-slate-400" />
+                                        <Mail className="h-5 w-5 text-foreground-muted" />
                                         <div>
-                                            <p className="font-medium text-slate-900">Marketing Emails</p>
-                                            <p className="text-sm text-slate-500">Receive promotional offers and updates</p>
+                                            <p className="font-medium text-foreground">Marketing Emails</p>
+                                            <p className="text-sm text-foreground-secondary">Receive promotional offers and updates</p>
                                         </div>
                                     </div>
                                     <button
@@ -338,18 +338,18 @@ export default function NewClientPage() {
                                         )}
                                     >
                                         <span className={cn(
-                                            'absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all',
+                                            'absolute top-1 w-4 h-4 bg-control-thumb rounded-full shadow transition-all',
                                             formData.marketingConsent ? 'left-7' : 'left-1'
                                         )} />
                                     </button>
                                 </label>
 
-                                <label className="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                                <label className="flex items-center justify-between p-4 bg-muted rounded-xl cursor-pointer hover:bg-accent transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <MessageSquare className="h-5 w-5 text-slate-400" />
+                                        <MessageSquare className="h-5 w-5 text-foreground-muted" />
                                         <div>
-                                            <p className="font-medium text-slate-900">SMS Notifications</p>
-                                            <p className="text-sm text-slate-500">Get appointment reminders via text</p>
+                                            <p className="font-medium text-foreground">SMS Notifications</p>
+                                            <p className="text-sm text-foreground-secondary">Get appointment reminders via text</p>
                                         </div>
                                     </div>
                                     <button
@@ -361,7 +361,7 @@ export default function NewClientPage() {
                                         )}
                                     >
                                         <span className={cn(
-                                            'absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all',
+                                            'absolute top-1 w-4 h-4 bg-control-thumb rounded-full shadow transition-all',
                                             formData.smsConsent ? 'left-7' : 'left-1'
                                         )} />
                                     </button>

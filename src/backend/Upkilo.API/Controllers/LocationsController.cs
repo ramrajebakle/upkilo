@@ -13,15 +13,18 @@ public class LocationsController : ControllerBase
 {
     private readonly ILocationService _locationService;
     private readonly ITenantProvider _tenantProvider;
+    private readonly IEntitlementService _entitlements;
     private readonly ILogger<LocationsController> _logger;
 
     public LocationsController(
         ILocationService locationService,
         ITenantProvider tenantProvider,
+        IEntitlementService entitlements,
         ILogger<LocationsController> logger)
     {
         _locationService = locationService;
         _tenantProvider = tenantProvider;
+        _entitlements = entitlements;
         _logger = logger;
     }
 
@@ -58,6 +61,14 @@ public class LocationsController : ControllerBase
     {
         var tenantId = GetTenantId();
         if (tenantId == Guid.Empty) return Unauthorized();
+
+        // Same reasoning as the staff seat guard: max_locations was published, billed against
+        // ($49/location) and displayed, but never actually refused a create.
+        var limitResult = await Upkilo.API.Helpers.SeatLimitGuard.CheckAsync(
+            _entitlements, tenantId, FeatureKeys.MaxLocations,
+            async () => (await _locationService.GetAllAsync(tenantId)).Count(l => l.IsActive),
+            "Location", HttpContext.RequestAborted, _logger);
+        if (limitResult != null) return limitResult;
 
         var location = new Location
         {

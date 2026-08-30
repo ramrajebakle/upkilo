@@ -68,7 +68,7 @@ export default function MigrationPage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Data Migration Wizard <Database className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Data Migration Wizard <Database className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Import clients, bookings, and history from your previous scheduling software.</p>
       </header>
 
@@ -96,10 +96,10 @@ export default function MigrationPage() {
                 {PLATFORMS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
               </select>
             </div>
-            <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-10 cursor-pointer transition-colors ${uploading ? "border-ai-300 bg-ai-50" : "border-surface-200 hover:border-ai-300 hover:bg-surface-50"}`}>
+            <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-10 cursor-pointer transition-colors ${uploading ? "border-ai/25 bg-ai-subtle" : "border-surface-200 hover:border-ai/25 hover:bg-surface-50"}`}>
               <input type="file" accept=".csv,.xlsx,.xls" onChange={upload} disabled={uploading} className="hidden" />
               {uploading ? (
-                <><Loader2 className="h-8 w-8 animate-spin text-ai-500 mb-3" /><p className="text-sm text-ai-600 font-medium">Uploading & analyzing…</p></>
+                <><Loader2 className="h-8 w-8 animate-spin text-ai mb-3" /><p className="text-sm text-ai font-medium">Uploading & analyzing…</p></>
               ) : (
                 <><Upload className="h-8 w-8 text-text-tertiary mb-3" /><p className="text-sm font-medium text-text-primary">Click to upload CSV or Excel</p><p className="text-xs text-text-tertiary mt-1">Max 50 MB</p></>
               )}
@@ -176,7 +176,7 @@ export default function MigrationPage() {
       {step === "done" && (
         <Card>
           <CardContent className="text-center py-16">
-            <CheckCircle2 className="h-16 w-16 mx-auto mb-4 text-green-500" />
+            <CheckCircle2 className="h-16 w-16 mx-auto mb-4 text-success-fg" />
             <h2 className="text-xl font-bold text-text-primary">Migration Complete!</h2>
             <p className="text-text-secondary mt-2">All records have been imported. Check your Clients, Bookings, and Staff pages.</p>
             <Button variant="primary" onClick={reset} className="mt-6">Start Another Migration</Button>

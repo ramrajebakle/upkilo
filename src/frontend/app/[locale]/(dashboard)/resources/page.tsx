@@ -122,13 +122,13 @@ export default function ResourcesPage() {
 
             {/* Search */}
             <div className="relative max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                 <input
                     type="text"
                     placeholder="Search resources..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-300 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-300 transition-all"
                 />
             </div>
 
@@ -158,17 +158,17 @@ export default function ResourcesPage() {
                         return (
                             <div
                                 key={resource.id}
-                                className="bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-xl hover:border-primary-200 transition-all group animate-fade-in-up"
+                                className="bg-card rounded-2xl border border-border-subtle p-6 hover:shadow-xl hover:border-primary/25 transition-all group animate-fade-in-up"
                                 style={{ animationDelay: `${i * 80}ms` }}
                             >
                                 <div className="flex items-start justify-between mb-4">
                                     <div>
-                                        <h3 className="text-lg font-semibold text-slate-900">{resource.name}</h3>
-                                        <p className="text-sm text-slate-400 capitalize">{resource.type}</p>
+                                        <h3 className="text-lg font-semibold text-foreground">{resource.name}</h3>
+                                        <p className="text-sm text-foreground-muted capitalize">{resource.type}</p>
                                     </div>
                                     <span className={cn(
                                         'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border capitalize',
-                                        statusColors[resource.status] || 'bg-slate-100 text-slate-500 border-slate-200'
+                                        statusColors[resource.status] || 'bg-muted text-foreground-secondary border-border'
                                     )}>
                                         <StatusIcon className="h-3 w-3" />
                                         {resource.status}
@@ -176,30 +176,30 @@ export default function ResourcesPage() {
                                 </div>
 
                                 {resource.description && (
-                                    <p className="text-sm text-slate-500 mb-4 line-clamp-2">{resource.description}</p>
+                                    <p className="text-sm text-foreground-secondary mb-4 line-clamp-2">{resource.description}</p>
                                 )}
 
-                                <div className="space-y-2 text-sm text-slate-600">
+                                <div className="space-y-2 text-sm text-foreground-secondary">
                                     {resource.location && (
                                         <div className="flex items-center gap-2">
-                                            <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                                            <MapPin className="h-3.5 w-3.5 text-foreground-muted" />
                                             <span>{resource.location}</span>
                                         </div>
                                     )}
                                     <div className="flex items-center gap-2">
-                                        <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                                        <Calendar className="h-3.5 w-3.5 text-foreground-muted" />
                                         <span>Capacity: {resource.capacity}</span>
                                     </div>
                                 </div>
 
-                                <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
-                                    <span className="text-xs text-slate-400">
+                                <div className="mt-4 pt-4 border-t border-border-subtle flex justify-between items-center">
+                                    <span className="text-xs text-foreground-muted">
                                         {resource.nextAvailable ? `Next available: ${new Date(resource.nextAvailable).toLocaleDateString()}` : 'Available now'}
                                     </span>
                                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <Link 
                                             href={`/resources/${resource.id}`}
-                                            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-primary-600"
+                                            className="p-1.5 hover:bg-accent rounded-lg transition-colors text-foreground-muted hover:text-primary"
                                             title="Edit"
                                         >
                                             <Edit2 className="h-4 w-4" />
@@ -210,8 +210,8 @@ export default function ResourcesPage() {
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </button>
-                                        <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
-                                            <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                                        <button className="p-1.5 hover:bg-accent rounded-lg transition-colors">
+                                            <MoreHorizontal className="h-4 w-4 text-foreground-muted" />
                                         </button>
                                     </div>
                                 </div>

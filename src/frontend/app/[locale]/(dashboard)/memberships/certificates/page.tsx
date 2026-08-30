@@ -11,7 +11,7 @@ interface Certificate { id: string; code: string; value: number; recipientName?:
 
 const STATUS_CFG: Record<string, string> = {
   Active: "text-green-600 bg-green-50",
-  Redeemed: "text-gray-500 bg-gray-50",
+  Redeemed: "text-foreground-secondary bg-muted",
   Expired: "text-red-500 bg-red-50",
 };
 
@@ -55,7 +55,7 @@ export default function GiftCertificatesPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Gift Certificates <Award className="text-yellow-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Gift Certificates <Award className="text-warning-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">Issue and manage monetary gift certificates (distinct from Gift Cards).</p>
         </div>
         <div className="flex gap-2">
@@ -67,8 +67,8 @@ export default function GiftCertificatesPage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Total Issued", value: certs.length, color: "text-text-primary" },
-          { label: "Active", value: certs.filter((c) => c.status === "Active").length, color: "text-green-600" },
-          { label: "Outstanding Value", value: `$${totalValue.toLocaleString()}`, color: "text-ai-600" },
+          { label: "Active", value: certs.filter((c) => c.status === "Active").length, color: "text-success-fg" },
+          { label: "Outstanding Value", value: `$${totalValue.toLocaleString()}`, color: "text-ai" },
         ].map((s) => (
           <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>
         ))}
@@ -145,7 +145,7 @@ export default function GiftCertificatesPage() {
                         {c.recipientEmail && <p className="text-xs text-text-tertiary">{c.recipientEmail}</p>}
                       </td>
                       <td className="py-3 px-4 text-xs font-semibold text-text-primary">${c.value}</td>
-                      <td className="py-3 px-4 text-xs font-semibold text-green-600">${c.balance}</td>
+                      <td className="py-3 px-4 text-xs font-semibold text-success-fg">${c.balance}</td>
                       <td className="py-3 px-4">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_CFG[c.status] ?? STATUS_CFG.Active}`}>{c.status}</span>
                       </td>

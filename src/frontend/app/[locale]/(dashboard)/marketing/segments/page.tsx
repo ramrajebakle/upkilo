@@ -129,7 +129,7 @@ export default function ClientSegmentsPage() {
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Lifetime Spend</label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <input
                                         type="number"
                                         placeholder="Min. Amount"
@@ -154,7 +154,7 @@ export default function ClientSegmentsPage() {
                                     </select>
                                 </div>
                                 <div className="relative">
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <select
                                         className="input pl-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                                         value={filters.daysSinceVisit}
@@ -174,7 +174,7 @@ export default function ClientSegmentsPage() {
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Loyalty Tier</label>
                                 <div className="relative">
-                                    <Star className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                                    <Star className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <select
                                         className="input pl-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                                         value={filters.loyaltyTier}
@@ -193,7 +193,7 @@ export default function ClientSegmentsPage() {
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Has Tag</label>
                                 <div className="relative">
-                                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                     <input
                                         type="text"
                                         placeholder="Enter tag..."
@@ -220,7 +220,7 @@ export default function ClientSegmentsPage() {
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <Users className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+                                <Users className="h-5 w-5 text-foreground-muted" />
                                 <h3 className="font-semibold text-slate-900 dark:text-white">
                                     {clients.length > 0 ? `${clients.length} Matches Found` : 'Results'}
                                 </h3>
@@ -232,7 +232,7 @@ export default function ClientSegmentsPage() {
 
                         {clients.length === 0 ? (
                             <div className="p-12 text-center">
-                                <Search className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
+                                <Search className="h-12 w-12 text-slate-300 mx-auto mb-4" />
                                 <h3 className="text-lg font-medium text-slate-900 dark:text-white">No segments run yet</h3>
                                 <p className="text-slate-500 dark:text-slate-400 mt-1">Adjust filters on the left and click Run to see clients.</p>
                             </div>

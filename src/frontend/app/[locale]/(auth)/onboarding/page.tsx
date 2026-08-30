@@ -118,14 +118,14 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 flex flex-col">
       {/* Header */}
-      <header className="px-6 py-5 flex items-center justify-between border-b border-white/60 bg-white/70 backdrop-blur-sm">
+      <header className="px-6 py-5 flex items-center justify-between border-b border-border bg-background/70 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/30">
             <span className="text-white font-bold text-lg leading-none">U</span>
           </div>
-          <span className="font-semibold text-gray-900 text-lg">Upkilo</span>
+          <span className="font-semibold text-foreground text-lg">Upkilo</span>
         </div>
-        <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+        <Link href="/dashboard" className="text-sm text-foreground-secondary hover:text-foreground transition-colors">
           Skip for now →
         </Link>
       </header>
@@ -133,14 +133,14 @@ export default function OnboardingPage() {
       <main className="flex-1 flex flex-col items-center justify-start px-4 py-12 max-w-2xl mx-auto w-full">
         {/* Hero text */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 bg-brand-subtle text-primary text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
             <Sparkles size={14} />
             Welcome to Upkilo
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground leading-tight mb-3">
             Let's get you set up
           </h1>
-          <p className="text-gray-500 text-lg">
+          <p className="text-foreground-secondary text-lg">
             Complete these steps to start accepting bookings.
           </p>
         </div>
@@ -149,10 +149,10 @@ export default function OnboardingPage() {
         {!loading && (
           <div className="w-full mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-foreground">
                 {completedCount} of {total} complete
               </span>
-              <span className="text-sm font-bold text-primary-600">{pct}%</span>
+              <span className="text-sm font-bold text-primary">{pct}%</span>
             </div>
             <div
               role="progressbar"
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
               aria-valuemax={100}
               aria-valuenow={pct}
               aria-label={`Onboarding progress: ${pct}%`}
-              className="h-2 bg-gray-100 rounded-full overflow-hidden"
+              className="h-2 bg-muted rounded-full overflow-hidden"
             >
               <div
                 className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500"
@@ -174,7 +174,7 @@ export default function OnboardingPage() {
         <div className="w-full space-y-3">
           {loading
             ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-20 rounded-2xl bg-gray-100 animate-pulse" />
+                <div key={i} className="h-20 rounded-2xl bg-muted animate-pulse" />
               ))
             : steps.map((step, idx) => {
                 const Icon = step.icon;
@@ -189,10 +189,10 @@ export default function OnboardingPage() {
                     className={cn(
                       'flex items-center gap-4 p-5 rounded-2xl border transition-all duration-200 group',
                       step.completed
-                        ? 'bg-white border-green-200 cursor-default'
+                        ? 'bg-card border-green-200 cursor-default'
                         : isLocked
-                        ? 'bg-gray-50 border-gray-100 cursor-not-allowed opacity-60'
-                        : 'bg-white border-gray-200 hover:border-primary-300 hover:shadow-md hover:shadow-primary-500/10'
+                        ? 'bg-muted border-border-subtle cursor-not-allowed opacity-60'
+                        : 'bg-card border-border hover:border-primary-300 hover:shadow-md hover:shadow-primary-500/10'
                     )}
                     onClick={isLocked ? (e) => e.preventDefault() : undefined}
                   >
@@ -203,8 +203,8 @@ export default function OnboardingPage() {
                         step.completed
                           ? 'bg-green-100 text-green-600'
                           : isLocked
-                          ? 'bg-gray-100 text-gray-400'
-                          : 'bg-primary-100 text-primary-600 group-hover:bg-primary-200'
+                          ? 'bg-muted text-foreground-muted'
+                          : 'bg-brand-subtle text-primary group-hover:bg-primary-200'
                       )}
                     >
                       {step.completed ? (
@@ -221,13 +221,13 @@ export default function OnboardingPage() {
                       <p
                         className={cn(
                           'font-semibold text-sm leading-tight',
-                          step.completed ? 'text-gray-400 line-through' : isLocked ? 'text-gray-400' : 'text-gray-900'
+                          step.completed ? 'text-foreground-muted line-through' : isLocked ? 'text-foreground-muted' : 'text-foreground'
                         )}
                       >
                         {step.label}
                       </p>
                       {!step.completed && (
-                        <p className="text-xs mt-0.5 leading-relaxed truncate text-gray-500">
+                        <p className="text-xs mt-0.5 leading-relaxed truncate text-foreground-secondary">
                           {isLocked ? `Complete "${steps[idx - 1].label}" first` : step.description}
                         </p>
                       )}
@@ -237,7 +237,7 @@ export default function OnboardingPage() {
                     {!step.completed && !isLocked && (
                       <ChevronRight
                         size={18}
-                        className="text-gray-400 flex-shrink-0 group-hover:text-primary-500 transition-colors"
+                        className="text-foreground-muted flex-shrink-0 group-hover:text-primary transition-colors"
                       />
                     )}
                   </Link>
@@ -254,7 +254,7 @@ export default function OnboardingPage() {
             Go to dashboard
             <ArrowRight size={16} />
           </Link>
-          <p className="text-xs text-gray-400 mt-3">
+          <p className="text-xs text-foreground-muted mt-3">
             You can complete these steps any time from the dashboard.
           </p>
         </div>

@@ -56,7 +56,7 @@ export default function CookiePolicyPage() {
                                         <span className="font-semibold text-slate-900 dark:text-white">Essential</span>
                                         <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-slate-300 dark:bg-slate-600 text-slate-700 dark:text-slate-200">Always Active</span>
                                     </div>
-                                    <span className="text-xs text-slate-500">Legal basis: Strictly necessary (no consent required)</span>
+                                    <span className="text-xs text-foreground-secondary">Legal basis: Strictly necessary (no consent required)</span>
                                 </div>
                                 <p className="px-4 py-3 text-sm">Required for the platform to operate. Without these cookies, services such as authentication and booking management cannot function. Consent is not required under ePrivacy Directive strictly-necessary exemption and DPDP Act 2023.</p>
                             </div>
@@ -67,7 +67,7 @@ export default function CookiePolicyPage() {
                                         <span className="font-semibold text-slate-900 dark:text-white">Functional</span>
                                         <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-primary-200 dark:bg-primary-700 text-primary-800 dark:text-primary-200">Consent Required</span>
                                     </div>
-                                    <span className="text-xs text-slate-500">Legal basis: DPDP Act S.6 consent / GDPR Art. 6(1)(a)</span>
+                                    <span className="text-xs text-foreground-secondary">Legal basis: DPDP Act S.6 consent / GDPR Art. 6(1)(a)</span>
                                 </div>
                                 <p className="px-4 py-3 text-sm">Remember your preferences (dark/light mode, language, UI layout) across sessions to personalise your experience.</p>
                             </div>
@@ -78,7 +78,7 @@ export default function CookiePolicyPage() {
                                         <span className="font-semibold text-slate-900 dark:text-white">Analytics</span>
                                         <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200">Consent Required</span>
                                     </div>
-                                    <span className="text-xs text-slate-500">Legal basis: DPDP Act S.6 consent / GDPR Art. 6(1)(a)</span>
+                                    <span className="text-xs text-foreground-secondary">Legal basis: DPDP Act S.6 consent / GDPR Art. 6(1)(a)</span>
                                 </div>
                                 <p className="px-4 py-3 text-sm">Help us understand how users interact with the platform. Data is aggregated and anonymised. No personally identifiable information leaves our systems.</p>
                             </div>
@@ -89,7 +89,7 @@ export default function CookiePolicyPage() {
                                         <span className="font-semibold text-slate-900 dark:text-white">Marketing</span>
                                         <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-rose-200 dark:bg-rose-700 text-rose-800 dark:text-rose-200">Consent Required</span>
                                     </div>
-                                    <span className="text-xs text-slate-500">Legal basis: DPDP Act S.6 consent / GDPR Art. 6(1)(a)</span>
+                                    <span className="text-xs text-foreground-secondary">Legal basis: DPDP Act S.6 consent / GDPR Art. 6(1)(a)</span>
                                 </div>
                                 <p className="px-4 py-3 text-sm">Track the source and effectiveness of marketing campaigns (UTM parameters, referral attribution). No data is shared with advertising networks.</p>
                             </div>

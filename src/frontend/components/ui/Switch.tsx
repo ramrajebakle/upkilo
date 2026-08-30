@@ -40,7 +40,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out",
+            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-control-thumb shadow-sm ring-0 transition duration-200 ease-in-out",
             checked ? "translate-x-5" : "translate-x-0"
           )}
         />

@@ -133,20 +133,20 @@ export default function KioskPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                     {t('title')}
                 </h1>
-                <p className="text-sm text-slate-500">{t('description')}</p>
+                <p className="text-sm text-foreground-secondary">{t('description')}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Launch Kiosk Card */}
                 <div className="card-elevated p-6 flex flex-col items-center justify-center text-center">
-                    <div className="h-16 w-16 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-600 mb-4">
+                    <div className="h-16 w-16 bg-brand-subtle rounded-2xl flex items-center justify-center text-primary mb-4">
                         <Monitor className="h-8 w-8" />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{t('selfServiceTitle')}</h3>
-                    <p className="text-sm text-slate-500 mb-6">{t('selfServiceDesc')}</p>
+                    <h3 className="text-lg font-bold text-foreground mb-2">{t('selfServiceTitle')}</h3>
+                    <p className="text-sm text-foreground-secondary mb-6">{t('selfServiceDesc')}</p>
                     <button onClick={handleOpenKiosk} className="btn btn-primary w-full shadow-lg shadow-primary-500/25">
                         <Play className="h-4 w-4 mr-2" />
                         {t('launchBtn')}
@@ -158,9 +158,9 @@ export default function KioskPage() {
                     <div className="h-16 w-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-4">
                         <QrCode className="h-8 w-8" />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{t('qrTitle')}</h3>
-                    <p className="text-sm text-slate-500 mb-6">{t('qrDesc')}</p>
-                    <button className="btn bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 w-full">
+                    <h3 className="text-lg font-bold text-foreground mb-2">{t('qrTitle')}</h3>
+                    <p className="text-sm text-foreground-secondary mb-6">{t('qrDesc')}</p>
+                    <button className="btn bg-card border border-border text-foreground hover:bg-accent w-full">
                         {t('downloadQrBtn')}
                     </button>
                 </div>
@@ -170,9 +170,9 @@ export default function KioskPage() {
                     <div className="h-16 w-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-4">
                         <ClipboardList className="h-8 w-8" />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{t('waiversTitle')}</h3>
-                    <p className="text-sm text-slate-500 mb-6">{t('waiversDesc')}</p>
-                    <button className="btn bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 w-full">
+                    <h3 className="text-lg font-bold text-foreground mb-2">{t('waiversTitle')}</h3>
+                    <p className="text-sm text-foreground-secondary mb-6">{t('waiversDesc')}</p>
+                    <button className="btn bg-card border border-border text-foreground hover:bg-accent w-full">
                         <Settings className="h-4 w-4 mr-2" />
                         {t('configureWaiversBtn')}
                     </button>
@@ -189,17 +189,17 @@ export default function KioskPage() {
                         </button>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto bg-slate-50 flex items-center justify-center p-6">
-                        <div className="bg-white rounded-3xl shadow-xl w-full max-w-3xl overflow-hidden min-h-[600px] flex flex-col">
-                            <div className="flex border-b border-slate-100">
+                    <div className="flex-1 overflow-y-auto bg-muted flex items-center justify-center p-6">
+                        <div className="bg-card rounded-3xl shadow-xl w-full max-w-3xl overflow-hidden min-h-[600px] flex flex-col">
+                            <div className="flex border-b border-border-subtle">
                                 <button 
-                                    className={`flex-1 py-5 text-center font-bold text-lg transition-colors ${kioskTab === 'checkin' ? 'bg-primary-50 text-primary-700 border-b-2 border-primary-600' : 'text-slate-500 hover:bg-slate-50'}`}
+                                    className={`flex-1 py-5 text-center font-bold text-lg transition-colors ${kioskTab === 'checkin' ? 'bg-brand-subtle text-primary border-b-2 border-primary-600' : 'text-foreground-secondary hover:bg-accent'}`}
                                     onClick={() => setKioskTab('checkin')}
                                 >
                                     {t('tabCheckIn')}
                                 </button>
                                 <button 
-                                    className={`flex-1 py-5 text-center font-bold text-lg transition-colors ${kioskTab === 'walkin' ? 'bg-primary-50 text-primary-700 border-b-2 border-primary-600' : 'text-slate-500 hover:bg-slate-50'}`}
+                                    className={`flex-1 py-5 text-center font-bold text-lg transition-colors ${kioskTab === 'walkin' ? 'bg-brand-subtle text-primary border-b-2 border-primary-600' : 'text-foreground-secondary hover:bg-accent'}`}
                                     onClick={() => setKioskTab('walkin')}
                                 >
                                     {t('tabWalkIn')}
@@ -210,16 +210,16 @@ export default function KioskPage() {
                                 {kioskTab === 'checkin' ? (
                                     <div className="max-w-xl mx-auto w-full flex-1 flex flex-col">
                                         <div className="text-center mb-8">
-                                            <h3 className="text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'var(--font-display)' }}>{t('checkInHeader')}</h3>
-                                            <p className="text-slate-500 text-lg">{t('checkInDesc')}</p>
+                                            <h3 className="text-3xl font-bold text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>{t('checkInHeader')}</h3>
+                                            <p className="text-foreground-secondary text-lg">{t('checkInDesc')}</p>
                                         </div>
                                         
                                         <form onSubmit={handleSearch} className="relative mb-8">
-                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400" />
+                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-foreground-muted" />
                                             <input 
                                                 type="text" 
                                                 placeholder={t('searchPlaceholder')} 
-                                                className="w-full pl-14 pr-6 py-4 text-xl bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                                className="w-full pl-14 pr-6 py-4 text-xl bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
                                             />
@@ -231,10 +231,10 @@ export default function KioskPage() {
                                         <div className="flex-1 space-y-4 overflow-y-auto">
                                             {searchResults.length > 0 ? (
                                                 searchResults.map(b => (
-                                                    <div key={b.id} className="border border-slate-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white hover:border-primary-300 transition-colors">
+                                                    <div key={b.id} className="border border-border rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-card hover:border-primary-300 transition-colors">
                                                         <div>
-                                                            <h4 className="font-bold text-xl text-slate-900">{b.client?.firstName} {b.client?.lastName}</h4>
-                                                            <p className="text-slate-500">{b.service?.name} at {new Date(b.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                                                            <h4 className="font-bold text-xl text-foreground">{b.client?.firstName} {b.client?.lastName}</h4>
+                                                            <p className="text-foreground-secondary">{b.service?.name} at {new Date(b.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                                                         </div>
                                                         <button 
                                                             onClick={() => handleCheckIn(b.id)}
@@ -246,10 +246,10 @@ export default function KioskPage() {
                                                 ))
                                             ) : (
                                                 searchQuery && !searching && (
-                                                    <div className="text-center py-12 text-slate-500 flex flex-col items-center">
+                                                    <div className="text-center py-12 text-foreground-secondary flex flex-col items-center">
                                                         <User className="h-12 w-12 text-slate-300 mb-4" />
                                                         <p className="text-lg">{t('noAppointments')}</p>
-                                                        <button onClick={() => setKioskTab('walkin')} className="text-primary-600 font-medium mt-2 hover:underline">
+                                                        <button onClick={() => setKioskTab('walkin')} className="text-primary font-medium mt-2 hover:underline">
                                                             {t('registerWalkInLink')}
                                                         </button>
                                                     </div>
@@ -260,16 +260,16 @@ export default function KioskPage() {
                                 ) : (
                                     <div className="max-w-2xl mx-auto w-full">
                                         <div className="text-center mb-8">
-                                            <h3 className="text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: 'var(--font-display)' }}>{t('walkInHeader')}</h3>
-                                            <p className="text-slate-500 text-lg">{t('walkInDesc')}</p>
+                                            <h3 className="text-3xl font-bold text-foreground mb-3" style={{ fontFamily: 'var(--font-display)' }}>{t('walkInHeader')}</h3>
+                                            <p className="text-foreground-secondary text-lg">{t('walkInDesc')}</p>
                                         </div>
 
-                                        <form onSubmit={handleWalkIn} className="space-y-6 bg-white border border-slate-100 p-8 rounded-3xl shadow-sm">
+                                        <form onSubmit={handleWalkIn} className="space-y-6 bg-card border border-border-subtle p-8 rounded-3xl shadow-sm">
                                             <div>
-                                                <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">{t('formService')}</label>
+                                                <label className="block text-sm font-bold text-foreground mb-2 uppercase tracking-wide">{t('formService')}</label>
                                                 <select 
                                                     required 
-                                                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                                    className="w-full p-4 bg-muted border border-border rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                                                     value={walkInForm.serviceId}
                                                     onChange={e => setWalkInForm(prev => ({...prev, serviceId: e.target.value}))}
                                                 >
@@ -282,19 +282,19 @@ export default function KioskPage() {
 
                                             <div className="grid grid-cols-2 gap-6">
                                                 <div>
-                                                    <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">{t('formFirstName')}</label>
+                                                    <label className="block text-sm font-bold text-foreground mb-2 uppercase tracking-wide">{t('formFirstName')}</label>
                                                     <input 
                                                         type="text" required 
-                                                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-lg"
+                                                        className="w-full p-4 bg-muted border border-border rounded-xl text-lg"
                                                         value={walkInForm.firstName}
                                                         onChange={e => setWalkInForm(prev => ({...prev, firstName: e.target.value}))}
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">{t('formLastName')}</label>
+                                                    <label className="block text-sm font-bold text-foreground mb-2 uppercase tracking-wide">{t('formLastName')}</label>
                                                     <input 
                                                         type="text" 
-                                                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-lg"
+                                                        className="w-full p-4 bg-muted border border-border rounded-xl text-lg"
                                                         value={walkInForm.lastName}
                                                         onChange={e => setWalkInForm(prev => ({...prev, lastName: e.target.value}))}
                                                     />
@@ -303,19 +303,19 @@ export default function KioskPage() {
 
                                             <div className="grid grid-cols-2 gap-6">
                                                 <div>
-                                                    <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">{t('formPhone')}</label>
+                                                    <label className="block text-sm font-bold text-foreground mb-2 uppercase tracking-wide">{t('formPhone')}</label>
                                                     <input 
                                                         type="tel" required 
-                                                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-lg"
+                                                        className="w-full p-4 bg-muted border border-border rounded-xl text-lg"
                                                         value={walkInForm.phone}
                                                         onChange={e => setWalkInForm(prev => ({...prev, phone: e.target.value}))}
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">{t('formEmail')}</label>
+                                                    <label className="block text-sm font-bold text-foreground mb-2 uppercase tracking-wide">{t('formEmail')}</label>
                                                     <input 
                                                         type="email" 
-                                                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-lg"
+                                                        className="w-full p-4 bg-muted border border-border rounded-xl text-lg"
                                                         value={walkInForm.email}
                                                         onChange={e => setWalkInForm(prev => ({...prev, email: e.target.value}))}
                                                     />

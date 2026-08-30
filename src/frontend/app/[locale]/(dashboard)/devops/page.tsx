@@ -53,7 +53,7 @@ export default function DevOpsDashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-primary-500" />
+              <GitBranch className="h-5 w-5 text-primary" />
               Canary Traffic Routing (Task 1411)
             </CardTitle>
             <CardDescription>Split live production traffic between Stable and Canary (v1.25.0-beta) versions.</CardDescription>
@@ -64,7 +64,7 @@ export default function DevOpsDashboardPage() {
                 <span>Stable (v1.24.5)</span>
                 <span>Canary (v1.25.0)</span>
               </div>
-              <div className="h-6 w-full bg-gray-100 rounded-full overflow-hidden flex">
+              <div className="h-6 w-full bg-muted rounded-full overflow-hidden flex">
                 <div 
                   className="bg-primary-500 h-full transition-all duration-500 flex items-center justify-center text-[10px] text-white font-bold"
                   style={{ width: `${100 - canaryWeight}%` }}
@@ -93,17 +93,17 @@ export default function DevOpsDashboardPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl border bg-gray-50 space-y-2">
-                <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Stable Errors</div>
+              <div className="p-4 rounded-xl border bg-muted space-y-2">
+                <div className="text-xs font-bold text-foreground-secondary uppercase tracking-wider">Stable Errors</div>
                 <div className="text-2xl font-bold">0.02%</div>
-                <div className="text-[10px] text-green-600 font-medium flex items-center">
+                <div className="text-[10px] text-success-fg font-medium flex items-center">
                    <Activity className="h-3 w-3 mr-1" /> Healthy
                 </div>
               </div>
-              <div className="p-4 rounded-xl border bg-gray-50 space-y-2">
-                <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Canary Errors</div>
+              <div className="p-4 rounded-xl border bg-muted space-y-2">
+                <div className="text-xs font-bold text-foreground-secondary uppercase tracking-wider">Canary Errors</div>
                 <div className="text-2xl font-bold">0.05%</div>
-                <div className="text-[10px] text-amber-600 font-medium flex items-center">
+                <div className="text-[10px] text-warning-fg font-medium flex items-center">
                    <ShieldAlert className="h-3 w-3 mr-1" /> Monitoring
                 </div>
               </div>
@@ -115,28 +115,28 @@ export default function DevOpsDashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <History className="h-5 w-5 text-gray-500" />
+              <History className="h-5 w-5 text-foreground-secondary" />
               Deployment Logs
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               {[
-                { version: "v1.25.0", status: "Canary", time: "2 hr ago", color: "bg-primary-100 text-primary-700" },
+                { version: "v1.25.0", status: "Canary", time: "2 hr ago", color: "bg-brand-subtle text-primary" },
                 { version: "v1.24.5", status: "Stable", time: "2 days ago", color: "bg-green-100 text-green-700" },
                 { version: "v1.24.4", status: "Rolled Back", time: "3 days ago", color: "bg-red-100 text-red-700" },
               ].map((log, i) => (
                 <div key={i} className="flex justify-between items-start text-sm">
                   <div>
                     <div className="font-bold">{log.version}</div>
-                    <div className="text-[10px] text-gray-500">{log.time}</div>
+                    <div className="text-[10px] text-foreground-secondary">{log.time}</div>
                   </div>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${log.color}`}>
                     {log.status}
                   </span>
                 </div>
               ))}
-              <Button variant="ghost" className="w-full text-xs text-gray-400">
+              <Button variant="ghost" className="w-full text-xs text-foreground-muted">
                 View Full CI/CD History
               </Button>
             </div>

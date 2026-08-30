@@ -53,7 +53,7 @@ public class AIController : ControllerBase
     /// Generate text using AI
     /// </summary>
     [HttpPost("generate")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     [ChecksUsage(UsageType.AiCredits)]
     public async Task<IActionResult> GenerateText([FromBody] AIGenerateRequest request)
     {
@@ -88,7 +88,7 @@ public class AIController : ControllerBase
     /// Generate image using AI
     /// </summary>
     [HttpPost("generate-image")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     [ChecksUsage(UsageType.AiCredits)]
     public async Task<IActionResult> GenerateImage([FromBody] AIImageRequest request)
     {
@@ -169,7 +169,7 @@ public class AIController : ControllerBase
     /// Generate marketing copy
     /// </summary>
     [HttpPost("copywriting")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     [ChecksUsage(UsageType.AiCredits)]
     public async Task<IActionResult> GenerateCopy([FromBody] CopywritingRequest request)
     {
@@ -194,7 +194,7 @@ public class AIController : ControllerBase
     /// Analyze sentiment of a text
     /// </summary>
     [HttpPost("analyze-sentiment")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     [ChecksUsage(UsageType.AiCredits)]
     public async Task<IActionResult> AnalyzeSentiment([FromBody] SentimentAnalysisRequest request)
     {
@@ -214,7 +214,7 @@ public class AIController : ControllerBase
     /// Stream AI response using Server-Sent Events (SSE)
     /// </summary>
     [HttpPost("generate/stream")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     [ChecksUsage(UsageType.AiCredits)]
     public async Task StreamGenerateText([FromBody] AIGenerateRequest request)
     {
@@ -340,7 +340,7 @@ public class AIController : ControllerBase
     /// Generate text with confidence scoring — auto-queues low-confidence results
     /// </summary>
     [HttpPost("generate/scored")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     [ChecksUsage(UsageType.AiCredits)]
     public async Task<IActionResult> GenerateWithScoring([FromBody] AIGenerateRequest request, [FromQuery] double threshold = 70.0)
     {
@@ -392,7 +392,7 @@ public class AIController : ControllerBase
     /// Instructs the AI to return valid JSON, then validates it matches the declared schema.
     /// </summary>
     [HttpPost("generate/structured")]
-    [RequiresFeature("AiFeatures")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
     [ChecksUsage(UsageType.AiCredits)]
     public async Task<IActionResult> GenerateStructured([FromBody] StructuredAIRequest request)
     {

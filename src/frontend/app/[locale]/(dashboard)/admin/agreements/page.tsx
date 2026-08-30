@@ -74,7 +74,7 @@ function AgreementsView({ enabled }: { enabled: boolean }) {
                     role="status"
                     className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10"
                 >
-                    <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" aria-hidden="true" />
+                    <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-warning-fg" aria-hidden="true" />
                     <div className="text-sm">
                         <p className="font-semibold text-amber-900 dark:text-amber-200">
                             {missingBaa} {missingBaa === 1 ? 'tenant has' : 'tenants have'} no signed BAA

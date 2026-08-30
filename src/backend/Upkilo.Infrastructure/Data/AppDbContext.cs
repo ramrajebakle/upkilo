@@ -321,6 +321,7 @@ public class AppDbContext : DbContext
     public DbSet<PricingFeature> PricingFeatures => Set<PricingFeature>();
     public DbSet<PlanFeatureMapping> PlanFeatureMappings => Set<PlanFeatureMapping>();
     public DbSet<PricingAddOn> PricingAddOns => Set<PricingAddOn>();
+    public DbSet<TenantFeatureOverride> TenantFeatureOverrides => Set<TenantFeatureOverride>();
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
     public DbSet<ServiceVehiclePrice> ServiceVehiclePrices => Set<ServiceVehiclePrice>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
@@ -1065,6 +1066,23 @@ public class AppDbContext : DbContext
             entity.Property(e => e.BillingUnit).HasMaxLength(64);
             entity.Property(e => e.CurrencyCode).HasMaxLength(3).IsRequired();
             entity.HasIndex(e => e.Key).IsUnique().HasDatabaseName("IX_PricingAddOns_Key");
+        });
+
+        // Per-tenant entitlement overrides. Read on the entitlement hot path, so the composite
+        // index matches the resolver's exact predicate (tenant, then key).
+        //
+        // The unique index is the integrity rule that keeps resolution deterministic: two live
+        // rows for the same (tenant, feature) would make "is this granted?" depend on row
+        // order. It is filtered on IsDeleted so a revoked-then-regranted feature can be written
+        // again without colliding with the soft-deleted row it replaces.
+        modelBuilder.Entity<TenantFeatureOverride>(entity =>
+        {
+            entity.Property(e => e.FeatureKey).HasMaxLength(64).IsRequired();
+            entity.Property(e => e.Reason).HasMaxLength(512);
+            entity.HasIndex(e => new { e.TenantId, e.FeatureKey })
+                  .IsUnique()
+                  .HasFilter("\"IsDeleted\" = false")
+                  .HasDatabaseName("IX_TenantFeatureOverrides_Tenant_Feature");
         });
 
         // P2: AI usage log queries by tenant + date (quota enforcement + dashboard)
