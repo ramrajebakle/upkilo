@@ -132,7 +132,7 @@ function NavGroupSection({ group, pathname, defaultOpen = true, isLocked }: {
                                 className={cn(
                                     'group flex items-center gap-3 px-4 py-2.5 min-h-11 sm:min-h-0 rounded-xl transition-all duration-200 relative',
                                     locked
-                                        ? 'text-slate-400 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-white/5'
+                                        ? 'text-foreground-muted hover:bg-slate-50 dark:hover:bg-white/5'
                                         : isActive
                                             ? 'bg-primary-50 text-primary-600 dark:bg-slate-800 dark:text-primary-400 shadow-sm'
                                             : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
@@ -144,11 +144,11 @@ function NavGroupSection({ group, pathname, defaultOpen = true, isLocked }: {
                                 <item.icon className={cn(
                                     'h-4 w-4 flex-shrink-0 transition-colors',
                                     locked
-                                        ? 'text-slate-300 dark:text-slate-700'
+                                        ? 'text-foreground-muted'
                                         : isActive ? 'text-primary-400' : 'text-foreground-muted group-hover:text-slate-600 dark:group-hover:text-slate-300'
                                 )} />
                                 <span className="font-medium text-sm truncate">{item.name}</span>
-                                {locked && <Lock className="h-3 w-3 ms-auto flex-shrink-0 text-slate-300 dark:text-slate-700" aria-label="Requires upgrade" />}
+                                {locked && <Lock className="h-3 w-3 ms-auto flex-shrink-0 text-foreground-muted" aria-label="Requires upgrade" />}
                                 {!locked && item.badge === 'escalation' && <EscalationBadge />}
                                 {!locked && isActive && <ChevronRight className="h-3.5 w-3.5 ms-auto text-primary-400 flex-shrink-0" />}
                             </Link>

@@ -329,7 +329,7 @@ export default function AdminEntitlementsPage() {
         <div className="lg:col-span-2">
           {!selectedTenantId && (
             <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-12 text-center">
-              <ShieldCheck className="h-10 w-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+              <ShieldCheck className="h-10 w-10 mx-auto text-foreground-muted mb-3" />
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Select a customer to inspect their effective entitlements.
               </p>
