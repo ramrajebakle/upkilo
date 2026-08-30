@@ -11,6 +11,15 @@ namespace Upkilo.API.Controllers;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Authorize]
+// The AI approval queue is part of AI automation, so it is gated on the same entitlement as
+// the workflow builder that produces the escalations.
+//
+// The settings/ai-approval page has always declared itself subscription-controlled with a
+// FeatureGate, but the API behind it was open — the gate simply never matched a real feature
+// key, so it denied everyone and the disagreement was invisible. With the key corrected the UI
+// would have started gating something the API still served to anyone who called it directly.
+// Enforcing it here is what makes the backend, not the UI, the authority.
+[Upkilo.API.Middleware.RequiresFeature(FeatureKeys.AiWorkflows)]
 public class EscalationsController : ControllerBase
 {
     private readonly AppDbContext _context;

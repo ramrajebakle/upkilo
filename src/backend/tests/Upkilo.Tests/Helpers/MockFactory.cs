@@ -127,6 +127,30 @@ public static class MockFactory
         return mock;
     }
 
+    /// <summary>
+    /// A REAL IDistributedCache backed by memory, for tests that exercise caching rather than
+    /// bypassing it. A Mock&lt;IDistributedCache&gt; returns null from every read, so anything
+    /// under test appears to have a permanently empty cache — which hides exactly the bugs
+    /// entitlement caching can produce: a stale grant surviving an invalidation, or an
+    /// override outliving its expiry inside the TTL window.
+    /// </summary>
+    public static IDistributedCache CreateMemoryCache() =>
+        new Microsoft.Extensions.Caching.Distributed.MemoryDistributedCache(
+            Microsoft.Extensions.Options.Options.Create(
+                new Microsoft.Extensions.Caching.Memory.MemoryDistributedCacheOptions()));
+
+    /// <summary>
+    /// A real EntitlementService over the supplied context — the resolver most subscription
+    /// tests actually want, since mocking it would mean asserting against a stub of the very
+    /// logic under test.
+    /// </summary>
+    public static Upkilo.Infrastructure.Services.EntitlementService CreateEntitlementService(
+        Upkilo.Infrastructure.Data.AppDbContext context,
+        IDistributedCache? cache = null) =>
+        new(context,
+            cache ?? CreateMemoryCache(),
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<Upkilo.Infrastructure.Services.EntitlementService>.Instance);
+
     // ── Business Metrics ──────────────────────────────────────────────
 
     public static Mock<IBusinessMetrics> CreateBusinessMetrics()

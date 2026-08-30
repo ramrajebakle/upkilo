@@ -35,11 +35,20 @@ public class SubscriptionDowngradeHandler
         var changes = new List<string>();
 
         // 1. Staff limit enforcement
+        //
+        // Ordered OLDEST FIRST so that Skip(limit) retains the longest-standing records and
+        // deactivates the most recently added — the ones that took the tenant over the limit.
+        //
+        // This was OrderByDescending, which did the exact opposite: downgrading a salon from 25
+        // seats to 10 kept its ten newest hires and deactivated the fifteen longest-serving
+        // staff, the owner among them. The same inversion applied to locations and services, so
+        // a downgrade retired the original branch and kept the newest. The existing test only
+        // asserted how MANY records survived, never which, so nothing caught it.
         if (newMaxStaff > 0)
         {
             var activeStaff = await _context.StaffMembers
                 .Where(s => s.TenantId == tenantId && s.IsActive)
-                .OrderByDescending(s => s.CreatedAt)
+                .OrderBy(s => s.CreatedAt)
                 .ToListAsync();
 
             if (activeStaff.Count > newMaxStaff)
@@ -55,7 +64,7 @@ public class SubscriptionDowngradeHandler
         {
             var locations = await _context.Locations
                 .Where(l => l.TenantId == tenantId && l.IsActive)
-                .OrderByDescending(l => l.CreatedAt)
+                .OrderBy(l => l.CreatedAt)   // oldest retained — see staff block above
                 .ToListAsync();
 
             if (locations.Count > newMaxLocations)
@@ -71,7 +80,7 @@ public class SubscriptionDowngradeHandler
         {
             var services = await _context.Services
                 .Where(s => s.TenantId == tenantId && s.IsActive)
-                .OrderByDescending(s => s.CreatedAt)
+                .OrderBy(s => s.CreatedAt)   // oldest retained — see staff block above
                 .ToListAsync();
 
             if (services.Count > newMaxServices)

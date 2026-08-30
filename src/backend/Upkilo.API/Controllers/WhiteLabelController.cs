@@ -21,6 +21,7 @@ public class WhiteLabelController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly ITenantProvider _tenantProvider;
+    private readonly IEntitlementService _entitlements;
     private readonly ILogger<WhiteLabelController> _logger;
 
     // WL-05: reserved slugs that must not be assigned to sub-accounts
@@ -30,10 +31,15 @@ public class WhiteLabelController : ControllerBase
     // WL-05: valid slug pattern — 3-63 chars, lowercase alphanumeric + hyphens, no leading/trailing hyphen
     private static readonly Regex SlugPattern = new(@"^[a-z0-9][a-z0-9\-]{1,61}[a-z0-9]$", RegexOptions.Compiled);
 
-    public WhiteLabelController(AppDbContext context, ITenantProvider tenantProvider, ILogger<WhiteLabelController> logger)
+    public WhiteLabelController(
+        AppDbContext context,
+        ITenantProvider tenantProvider,
+        IEntitlementService entitlements,
+        ILogger<WhiteLabelController> logger)
     {
         _context = context;
         _tenantProvider = tenantProvider;
+        _entitlements = entitlements;
         _logger = logger;
     }
 
@@ -237,10 +243,49 @@ public class WhiteLabelController : ControllerBase
         var parentId = _tenantProvider.GetTenantId();
         if (parentId == null) return Unauthorized();
 
-        // WL-10: case-insensitive tier check using SubscriptionTier enum
         var parent = await _context.Tenants.FirstOrDefaultAsync(t => t.Id == parentId);
-        if (parent == null || parent.SubscriptionTier != SubscriptionTier.Agency)
-            return BadRequest(new { error = "Only Agency-tier accounts can create sub-accounts." });
+        if (parent == null) return Unauthorized();
+
+        // Resolved through the entitlement engine rather than Tenant.SubscriptionTier.
+        //
+        // The old check required SubscriptionTier.Agency, which the enum itself documents as
+        // legacy and no longer sold — so after the tier consolidation NO customer could create
+        // a sub-account, including the Enterprise accounts the catalogue actually grants
+        // agency_management to. It also read a second, independently-maintained copy of the
+        // tenant's plan that can drift from the subscription, and it ignored the sub-tenant
+        // ceiling the catalogue carries entirely.
+        if (!await _entitlements.HasFeatureAsync(parentId.Value, FeatureKeys.AgencyManagement))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                error = "Feature not available",
+                message = "Sub-account management is not included in your current plan.",
+                upgradeUrl = "/settings/billing",
+            });
+        }
+
+        // Server-side limit enforcement. The catalogue stores the sub-tenant ceiling as
+        // agency_management's NumericLimit, and nothing was checking it, so an entitled tenant
+        // could provision without bound.
+        var subAccountLimit = await _entitlements.GetLimitAsync(parentId.Value, FeatureKeys.AgencyManagement);
+        if (subAccountLimit != EntitlementLimits.Unlimited)
+        {
+            var currentCount = await _context.Tenants
+                .IgnoreQueryFilters()
+                .CountAsync(t => t.ParentTenantId == parentId.Value && !t.IsDeleted);
+
+            if (currentCount >= subAccountLimit)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "Sub-account limit reached",
+                    message = $"Your plan allows {subAccountLimit} sub-accounts and you have {currentCount}.",
+                    used = currentCount,
+                    limit = subAccountLimit,
+                    upgradeUrl = "/settings/billing",
+                });
+            }
+        }
 
         // WL-05: slug format + reserved name check
         if (!SlugPattern.IsMatch(request.Slug))

@@ -28,11 +28,12 @@ interface WhiteLabelConfig {
 }
 
 import { FeatureGate } from '@/components/ui/FeatureGate';
+import { FEATURES } from '@/lib/featureKeys';
 
 export default function BrandingPage() {
     return (
         <FeatureGate 
-            featureName="CustomBranding" 
+            featureName={FEATURES.WHITE_LABEL} 
             title="Custom Branding"
             description="Upgrade your plan to unlock advanced white-label features, custom CSS, and visual identity."
         >

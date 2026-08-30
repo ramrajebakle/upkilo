@@ -12,6 +12,8 @@ import {
     DollarSign, RotateCcw, Database, Phone, ShieldAlert, ShoppingBag, Target,
     Share2, Coins, Home, UserCheck, Truck, Heart, Percent, Camera, ArrowLeftRight, ArrowUpRight, Wrench, LifeBuoy,
     CheckCircle2, Link2, Fingerprint, BookOpen, Download,
+    Lock,
+    ShieldCheck,
 } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '@/store/authStore';
@@ -28,6 +30,8 @@ import DemoModeBanner from '@/components/DemoModeBanner';
 import { apiClient } from '@/lib/api';
 import { AICopilotRail } from '@/components/tenant/ai-tools/AICopilotRail';
 import { ManageCookiesButton } from '@/components/ManageCookiesButton';
+import { FEATURES, type FeatureKey } from '@/lib/featureKeys';
+import { useSubscription } from '@/hooks/useSubscription';
 
 type NavItem = {
     name: string;
@@ -44,6 +48,15 @@ type NavItem = {
      * because Admins genuinely use them.
      */
     ownerOnly?: boolean;
+    /**
+     * Entitlement this entry depends on. When the tenant's plan does not include it the entry
+     * is marked with a lock and routed to billing rather than hidden — see buildNavGroups.
+     *
+     * Only set where the backend genuinely gates the feature with [RequiresFeature]. Guessing
+     * here would reintroduce the original defect from the other side: a nav entry locked for a
+     * customer the API would happily serve.
+     */
+    requiresFeature?: FeatureKey;
 };
 
 type NavGroup = {
@@ -78,10 +91,12 @@ function EscalationBadge() {
     );
 }
 
-function NavGroupSection({ group, pathname, defaultOpen = true }: {
+function NavGroupSection({ group, pathname, defaultOpen = true, isLocked }: {
     group: NavGroup;
     pathname: string | null;
     defaultOpen?: boolean;
+    /** True when the entry's feature is not in the tenant's effective entitlements. */
+    isLocked: (item: NavItem) => boolean;
 }) {
     const hasActive = group.items.some(item => pathname === item.href || pathname?.startsWith(item.href + '/'));
     const [open, setOpen] = useState(defaultOpen || hasActive);
@@ -100,28 +115,42 @@ function NavGroupSection({ group, pathname, defaultOpen = true }: {
                 <div className="mt-0.5 space-y-0.5">
                     {group.items.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href + '/'));
+                        const locked = isLocked(item);
+
+                        // Locked entries stay VISIBLE and route to billing rather than being
+                        // removed. Hiding them would make a paid capability undiscoverable,
+                        // which is the opposite of what the Free tier is for — PricingSeeder
+                        // deliberately ships lite AI on Free to advertise the upgrade. Leaving
+                        // them to 403 instead reads as a broken product, since a failed fetch
+                        // renders as an empty state rather than a permission error.
                         return (
                             <Link
                                 key={item.name}
-                                href={item.href}
-                                aria-current={isActive ? 'page' : undefined}
+                                href={locked ? '/settings/billing' : item.href}
+                                aria-current={isActive && !locked ? 'page' : undefined}
+                                title={locked ? `${item.name} requires a plan upgrade` : undefined}
                                 className={cn(
                                     'group flex items-center gap-3 px-4 py-2.5 min-h-11 sm:min-h-0 rounded-xl transition-all duration-200 relative',
-                                    isActive
-                                        ? 'bg-primary-50 text-primary-600 dark:bg-slate-800 dark:text-primary-400 shadow-sm'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
+                                    locked
+                                        ? 'text-slate-400 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-white/5'
+                                        : isActive
+                                            ? 'bg-primary-50 text-primary-600 dark:bg-slate-800 dark:text-primary-400 shadow-sm'
+                                            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
                                 )}
                             >
-                                {isActive && (
+                                {isActive && !locked && (
                                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-7 bg-primary-500 rounded-r-full shadow-lg shadow-primary-500/50" />
                                 )}
                                 <item.icon className={cn(
                                     'h-4 w-4 flex-shrink-0 transition-colors',
-                                    isActive ? 'text-primary-400' : 'text-foreground-muted group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                                    locked
+                                        ? 'text-slate-300 dark:text-slate-700'
+                                        : isActive ? 'text-primary-400' : 'text-foreground-muted group-hover:text-slate-600 dark:group-hover:text-slate-300'
                                 )} />
                                 <span className="font-medium text-sm truncate">{item.name}</span>
-                                {item.badge === 'escalation' && <EscalationBadge />}
-                                {isActive && <ChevronRight className="h-3.5 w-3.5 ms-auto text-primary-400 flex-shrink-0" />}
+                                {locked && <Lock className="h-3 w-3 ms-auto flex-shrink-0 text-slate-300 dark:text-slate-700" aria-label="Requires upgrade" />}
+                                {!locked && item.badge === 'escalation' && <EscalationBadge />}
+                                {!locked && isActive && <ChevronRight className="h-3.5 w-3.5 ms-auto text-primary-400 flex-shrink-0" />}
                             </Link>
                         );
                     })}
@@ -138,6 +167,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [copilotOpen, setCopilotOpen] = useState(false);
     const { user, logout, checkAuth, isInitialized } = useAuthStore();
     const { data: session } = useSession();
+    // Drives the padlocks in the sidebar. useSubscription fetches once and caches in the
+    // store, so mounting it here does not add a request per navigation.
+    const { hasFeature, hasLoaded: entitlementsLoaded } = useSubscription();
 
     // Two role vocabularies reach this component and only one is ever populated
     // at a time:
@@ -285,7 +317,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { name: 'Tax Rates', href: '/settings/tax-rates', icon: Percent },
                 { name: 'Booking Policies', href: '/settings/booking-policies', icon: Settings },
                 { name: 'Zapier', href: '/settings/zapier', icon: Zap },
-                { name: 'Branding', href: '/settings/branding', icon: Crown },
+                { name: 'Branding', href: '/settings/branding', icon: Crown, requiresFeature: FEATURES.WHITE_LABEL },
                 { name: 'Agency', href: '/settings/agency', icon: UserCog },
                 { name: 'Integrations', href: '/integrations', icon: Layers },
                 { name: 'Data Import', href: '/settings/data-import', icon: Upload },
@@ -311,9 +343,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { name: 'Push Notifications', href: '/settings/push-notifications', icon: Bell },
                 { name: 'Voice Calls', href: '/settings/twilio-voice', icon: Phone },
                 { name: 'Support', href: '/support', icon: LifeBuoy },
-                { name: 'Developers', href: '/developers', icon: FileText },
+                { name: 'Developers', href: '/developers', icon: FileText, requiresFeature: FEATURES.API_ACCESS },
                 { name: 'Sandbox', href: '/developers/sandbox', icon: FlaskConical },
-                { name: 'System Escalations', href: '/settings/ai-approval', icon: AlertTriangle, badge: 'escalation' },
+                { name: 'System Escalations', href: '/settings/ai-approval', icon: AlertTriangle, badge: 'escalation', requiresFeature: FEATURES.AI_WORKFLOWS },
             ],
         },
     ];
@@ -330,6 +362,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }))
         .filter(group => group.items.length > 0);
 
+    // Entitlement gating is presentational only — the API enforces the same rules server-side,
+    // so a tampered client gains nothing by unlocking an entry here.
+    //
+    // While entitlements are still loading nothing is locked. Defaulting to locked would flash
+    // a wall of padlocks on every page load and, for anyone whose usage fetch fails, would
+    // permanently hide features they are paying for. Showing an entry the API then refuses is
+    // the cheaper of the two errors.
+    const isNavItemLocked = (item: NavItem): boolean => {
+        if (!item.requiresFeature) return false;
+        if (!entitlementsLoaded) return false;
+        return !hasFeature(item.requiresFeature);
+    };
+
 
     const adminNavigation: NavItem[] = [
         { name: 'Platform Admin', href: '/admin', icon: Shield },
@@ -337,6 +382,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: 'Enterprise Leads', href: '/admin/leads', icon: Briefcase },
         { name: 'Agreements', href: '/admin/agreements', icon: CheckCircle2 },
         { name: 'Subscriptions', href: '/admin/plans', icon: CreditCard },
+        { name: 'Customer Entitlements', href: '/admin/entitlements', icon: ShieldCheck },
         { name: 'System Health', href: '/admin/health', icon: Activity },
         { name: 'AI Oversight', href: '/admin/ai-oversight', icon: Bot },
         { name: 'Security', href: '/admin/security', icon: ShieldAlert },
@@ -468,6 +514,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                             group={group}
                                             pathname={pathname}
                                             defaultOpen={idx < 2}
+                                            isLocked={isNavItemLocked}
                                         />
                                     ))}
                                 </div>

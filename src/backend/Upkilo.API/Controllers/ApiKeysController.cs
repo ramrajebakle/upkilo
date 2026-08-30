@@ -15,7 +15,7 @@ namespace Upkilo.API.Controllers;
 [ApiController]
 [Route("api/api-keys")]
 [Authorize]
-[RequiresFeature("ApiAccess")]
+[RequiresFeature(FeatureKeys.ApiAccess)]
 public class ApiKeysController : ControllerBase
 {
     private readonly ILogger<ApiKeysController> _logger;

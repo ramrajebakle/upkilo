@@ -492,6 +492,10 @@ builder.Services.AddHttpClient(Upkilo.Infrastructure.Services.SsrfGuard.PinnedCl
         c => c.Timeout = TimeSpan.FromSeconds(30))
     .ConfigurePrimaryHttpMessageHandler(() => Upkilo.Infrastructure.Services.SsrfGuard.CreatePinnedHandler());
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ITwoFactorService, Upkilo.Infrastructure.Services.TwoFactorService>();
+// The single entitlement authority. Registered before ISubscriptionService because
+// SubscriptionService now delegates its feature and limit questions here rather than reading
+// plan mappings itself — there must be exactly one implementation of "what may this tenant do".
+builder.Services.AddScoped<Upkilo.Core.Interfaces.IEntitlementService, Upkilo.Infrastructure.Services.EntitlementService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ISubscriptionService, Upkilo.Infrastructure.Services.SubscriptionService>();
 builder.Services.AddScoped<Upkilo.Infrastructure.Services.SubscriptionDowngradeHandler>();
 builder.Services.AddScoped<Upkilo.Infrastructure.Services.SubscriptionPlanVersioningService>();

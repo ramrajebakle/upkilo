@@ -39,11 +39,12 @@ const MODULE_ICONS = {
 };
 
 import { FeatureGate } from '@/components/ui/FeatureGate';
+import { FEATURES } from '@/lib/featureKeys';
 
 export default function SystemEscalationsPage() {
     return (
         <FeatureGate 
-            featureName="AiFeatures" 
+            featureName={FEATURES.AI_WORKFLOWS} 
             title="AI Features"
             description="Upgrade your plan to unlock AI features, system escalations, and automated decision making."
         >

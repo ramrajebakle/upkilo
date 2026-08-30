@@ -24,8 +24,9 @@ public class StaffController : ControllerBase
 
     private readonly IEventService _eventService;
     private readonly IMemoryCache _cache;
+    private readonly IEntitlementService _entitlements;
 
-    public StaffController(ILogger<StaffController> logger, AppDbContext context, ISchedulingService schedulingService, ITenantProvider tenantProvider, IMemoryCache cache, IEventService eventService)
+    public StaffController(ILogger<StaffController> logger, AppDbContext context, ISchedulingService schedulingService, ITenantProvider tenantProvider, IMemoryCache cache, IEventService eventService, IEntitlementService entitlements)
     {
         _logger = logger;
         _context = context;
@@ -33,6 +34,7 @@ public class StaffController : ControllerBase
         _tenantProvider = tenantProvider;
         _cache = cache;
         _eventService = eventService;
+        _entitlements = entitlements;
     }
 
     /// <summary>
@@ -133,6 +135,15 @@ public class StaffController : ControllerBase
     {
         var tenantId = _tenantProvider.GetTenantId();
         if (tenantId == null) return Unauthorized();
+
+        // The seat limit is only meaningful if something refuses the seat that exceeds it.
+        // Counts ACTIVE staff, matching how SubscriptionDowngradeHandler measures the same
+        // limit — otherwise deactivating a member would not free the seat it released.
+        var limitResult = await Upkilo.API.Helpers.SeatLimitGuard.CheckAsync(
+            _entitlements, tenantId.Value, FeatureKeys.MaxStaff,
+            () => _context.StaffMembers.CountAsync(x => x.TenantId == tenantId.Value && x.IsActive && !x.IsDeleted),
+            "Staff", HttpContext.RequestAborted, _logger);
+        if (limitResult != null) return limitResult;
 
         var staff = new StaffMember
         {

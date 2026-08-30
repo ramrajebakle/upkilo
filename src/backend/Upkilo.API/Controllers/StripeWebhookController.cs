@@ -29,6 +29,7 @@ public class StripeWebhookController : ControllerBase
     private readonly SubscriptionDowngradeHandler _downgradeHandler;
     private readonly IEmailService _emailService;
     private readonly IDistributedCache _cache;
+    private readonly IEntitlementService _entitlements;
     private readonly TenantCurrencySyncService _currencySync;
 
     public StripeWebhookController(
@@ -39,6 +40,7 @@ public class StripeWebhookController : ControllerBase
         SubscriptionDowngradeHandler downgradeHandler,
         IEmailService emailService,
         IDistributedCache cache,
+        IEntitlementService entitlements,
         TenantCurrencySyncService currencySync)
     {
         _logger = logger;
@@ -48,6 +50,7 @@ public class StripeWebhookController : ControllerBase
         _downgradeHandler = downgradeHandler;
         _emailService = emailService;
         _cache = cache;
+        _entitlements = entitlements;
         _currencySync = currencySync;
     }
 
@@ -379,15 +382,41 @@ public class StripeWebhookController : ControllerBase
                 {
                     localSub.PricingPlanId = newPlanId;
 
+                    // Keep the denormalised copy on Tenant in step. This handler wrote only the
+                    // subscription, so after a Stripe-driven plan change the tenant row still
+                    // named the OLD plan — and AiModelResolver, JobQuotaService and the churn
+                    // jobs all read that copy. An upgraded customer kept the cheaper AI model
+                    // and lower job quota until some later sync happened to correct it.
+                    var tenantRow = await _context.Tenants.FindAsync(localSub.TenantId);
+                    if (tenantRow != null)
+                    {
+                        tenantRow.SubscriptionTier = SubscriptionTierMap.FromPlanName(newPricingPlan.Name);
+                        tenantRow.PricingPlanId = newPlanId;
+                    }
+
                     // Enforce resource limits when the plan changes (handles both upgrades and downgrades).
                     // HandleDowngradeAsync is a no-op for upgrades since existing counts stay within new limits.
                     if (oldPlan != null)
                     {
-                        int newMaxStaff = GetPlanLimit(newPricingPlan, "max_staff", 1);
-                        int newMaxLocations = GetPlanLimit(newPricingPlan, "max_locations", 1);
-                        int newMaxServices = GetPlanLimit(newPricingPlan, "max_services", 10);
-                        bool newWebhooks = GetPlanFeatureEnabled(newPricingPlan, "webhooks");
-                        bool newApiAccess = GetPlanFeatureEnabled(newPricingPlan, "api_access");
+                        int newMaxStaff = GetPlanLimit(newPricingPlan, FeatureKeys.MaxStaff);
+                        int newMaxLocations = GetPlanLimit(newPricingPlan, FeatureKeys.MaxLocations);
+
+                        // Upkilo's feature catalogue has no service-count entitlement. This
+                        // asked for "max_services", which has never existed as a key, so the
+                        // lookup missed and fell back to a hardcoded default of 10 — meaning
+                        // ANY plan change, upgrades included, silently deactivated every
+                        // service a tenant had beyond the newest ten. Unlimited makes
+                        // HandleDowngradeAsync skip the step entirely, which is correct:
+                        // nothing in the catalogue constrains how many services a tenant may
+                        // have.
+                        int newMaxServices = EntitlementLimits.Unlimited;
+
+                        // Webhooks are part of api_access ("API & Webhooks" in the catalogue)
+                        // and have no key of their own. The old lookup for "webhooks" always
+                        // missed and returned false, so every plan change deactivated all of a
+                        // tenant's webhooks — again including upgrades.
+                        bool newApiAccess = GetPlanFeatureEnabled(newPricingPlan, FeatureKeys.ApiAccess);
+                        bool newWebhooks = newApiAccess;
 
                         await _downgradeHandler.HandleDowngradeAsync(
                             localSub.TenantId, oldPlan.Name, newPricingPlan.Name,
@@ -397,22 +426,53 @@ public class StripeWebhookController : ControllerBase
             }
 
             await _context.SaveChangesAsync();
-            await _cache.RemoveAsync($"tenant_tier:{localSub.TenantId}");
+            await InvalidateEntitlementCachesAsync(localSub.TenantId);
             _logger.LogInformation("Subscription {SubId} updated to {Status}, tier cache busted", stripeSub.Id, localSub.Status);
         }
     }
 
-    private static int GetPlanLimit(Upkilo.Core.Entities.PricingPlan plan, string featureKey, int defaultValue)
+    /// <summary>
+    /// Drops every cached answer that depends on this tenant's subscription.
+    ///
+    /// These handlers used to drop only tenant_tier:. The entitlement path reads a different
+    /// entry, so a cancellation, pause or downgrade arriving from Stripe left the tenant's
+    /// features fully enabled for the remainder of that entry's five-minute lifetime — the
+    /// cache serving paid access to a subscription the billing provider had already ended.
+    /// </summary>
+    private async Task InvalidateEntitlementCachesAsync(Guid tenantId)
+    {
+        await _cache.RemoveAsync($"tenant_tier:{tenantId}");
+        await _cache.RemoveAsync($"sub:{tenantId}");
+        await _entitlements.InvalidateAsync(tenantId);
+    }
+
+    /// <summary>
+    /// The new plan's ceiling for a numeric feature, as consumed by the downgrade handler.
+    ///
+    /// Returns <see cref="EntitlementLimits.Unlimited"/> — which makes the handler skip
+    /// enforcement — for both "unlimited" and "no rule found". That bias is deliberate: the
+    /// only thing downstream does with this number is DEACTIVATE a customer's staff, locations
+    /// or services, so a missing or malformed mapping must never be read as a small limit.
+    ///
+    /// It used to take a caller-supplied default and return <c>mapping?.NumericLimit ?? default</c>,
+    /// which conflated three different situations into one small number. An enabled mapping
+    /// with NumericLimit null means UNLIMITED — that is exactly how PricingSeeder encodes
+    /// Enterprise's staff and locations — but it returned the default of 1, so a tenant
+    /// upgrading TO Enterprise had every staff member and location but one deactivated.
+    /// </summary>
+    private static int GetPlanLimit(Upkilo.Core.Entities.PricingPlan plan, string featureKey)
     {
         var mapping = plan.FeatureMappings.FirstOrDefault(m =>
-            string.Equals(m.PricingFeature?.Key, featureKey, StringComparison.OrdinalIgnoreCase));
-        return mapping?.NumericLimit ?? defaultValue;
+            string.Equals(m.PricingFeature?.Key, featureKey, StringComparison.Ordinal));
+
+        if (mapping is null || !mapping.IsEnabled) return EntitlementLimits.Unlimited;
+        return mapping.NumericLimit ?? EntitlementLimits.Unlimited;
     }
 
     private static bool GetPlanFeatureEnabled(Upkilo.Core.Entities.PricingPlan plan, string featureKey)
     {
         var mapping = plan.FeatureMappings.FirstOrDefault(m =>
-            string.Equals(m.PricingFeature?.Key, featureKey, StringComparison.OrdinalIgnoreCase));
+            string.Equals(m.PricingFeature?.Key, featureKey, StringComparison.Ordinal));
         return mapping?.IsEnabled ?? false;
     }
 
@@ -426,7 +486,7 @@ public class StripeWebhookController : ControllerBase
             localSub.Status = SubscriptionStatus.Cancelled;
             localSub.CancelledAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
-            await _cache.RemoveAsync($"tenant_tier:{localSub.TenantId}");
+            await InvalidateEntitlementCachesAsync(localSub.TenantId);
             _logger.LogInformation("Subscription {SubId} cancelled via webhook, tier cache busted", stripeSub.Id);
         }
     }
@@ -441,7 +501,7 @@ public class StripeWebhookController : ControllerBase
             localSub.Status = SubscriptionStatus.Paused;
             localSub.PausedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
-            await _cache.RemoveAsync($"tenant_tier:{localSub.TenantId}");
+            await InvalidateEntitlementCachesAsync(localSub.TenantId);
             _logger.LogInformation("Subscription {SubId} paused via webhook, tier cache busted", stripeSub.Id);
         }
     }
