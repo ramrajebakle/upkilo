@@ -655,6 +655,13 @@ export const api = {
       apiClient.get('/api/v1/billing/invoices', { params }),
     downloadInvoice: (id: string) => 
       apiClient.get(`/api/v1/billing/invoices/${id}/pdf`, { responseType: 'blob' }),
+    /**
+     * Usage COUNTERS (used vs limit). BillingController carries a class-level
+     * [Authorize(Roles = "Owner")], so this 403s for Admin/Manager/Staff. Call it only from
+     * surfaces that genuinely need consumption figures — never from shared layout code.
+     * For feature gating use api.entitlements.mine() instead, which any authenticated user
+     * may call.
+     */
     getUsage: () => apiClient.get('/api/v1/billing/usage'),
     applyPromoCode: (code: string) => apiClient.post('/api/v1/billing/promo-code', { code }),
     cancelSubscription: (reason?: string) => apiClient.post('/api/v1/billing/cancel', { reason }),
@@ -762,6 +769,15 @@ export const api = {
     aiOverview: (days?: number) => apiClient.get('/api/v1/super-admin/ai/overview', { params: { days } }),
     aiTenantUsage: (id: string, days?: number) => apiClient.get(`/api/v1/super-admin/ai/tenants/${id}`, { params: { days } }),
     securityOverview: (days?: number) => apiClient.get('/api/v1/super-admin/security/overview', { params: { days } }),
+  },
+
+  /**
+   * The calling tenant's effective entitlements. SubscriptionsController is [Authorize] only,
+   * so every authenticated role can read this — which is what makes it safe to call from the
+   * dashboard layout, unlike the Owner-gated billing usage endpoint.
+   */
+  entitlements: {
+    mine: () => apiClient.get('/api/v1/subscriptions/entitlements'),
   },
 
   /**

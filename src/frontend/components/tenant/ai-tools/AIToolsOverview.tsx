@@ -5,10 +5,13 @@ import { Sparkles, Zap, Shield, Mail, FileText, ArrowRight, CheckCircle2 } from 
 import { Card, CardContent } from "@/components/ui/Card";
 import { Switch } from "@/components/ui/Switch";
 import { Button } from "@/components/ui/Button";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useSubscription, useUsage } from "@/hooks/useSubscription";
 
 export function AIToolsOverview() {
-  const { usage, isLoading } = useSubscription();
+  // Entitlements drive the renewal date (readable by every role); the credit counters come
+  // from the Owner-gated usage endpoint and are simply absent for other roles.
+  const { periodEnd, isLoading } = useSubscription();
+  const { usage } = useUsage();
 
   const [workflows, setWorkflows] = useState({
     autoDraft: true,
@@ -29,8 +32,8 @@ export function AIToolsOverview() {
     : Math.min(100, (creditsUsed / creditsLimit) * 100);
   const nearLimit = !unlimited && creditsLimit > 0 && pctUsed >= 80;
 
-  const renewsOn = usage?.periodEnd
-    ? new Date(usage.periodEnd).toLocaleDateString("en-US", {
+  const renewsOn = periodEnd
+    ? new Date(periodEnd).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
