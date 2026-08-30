@@ -872,46 +872,46 @@ public class SubscriptionService : ISubscriptionService
         switch (usageType)
         {
             case UsageType.Bookings:
-            {
-                var limit = entitlements.IsServiceEntitled ? -1 : 0;
-                // 0 = not entitled to service at all; refuse without touching the row.
-                if (limit == 0) return false;
-                rows = limit == -1
-                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount))
-                    : await subscriptions.Where(sub => sub.BookingsUsed + amount <= limit)
-                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount));
-                break;
-            }
+                {
+                    var limit = entitlements.IsServiceEntitled ? -1 : 0;
+                    // 0 = not entitled to service at all; refuse without touching the row.
+                    if (limit == 0) return false;
+                    rows = limit == -1
+                        ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount))
+                        : await subscriptions.Where(sub => sub.BookingsUsed + amount <= limit)
+                            .ExecuteUpdateAsync(s => s.SetProperty(b => b.BookingsUsed, b => b.BookingsUsed + amount));
+                    break;
+                }
             case UsageType.Sms:
-            {
-                var limit = entitlements.Has(FeatureKeys.SmsReminders) ? -1 : 0;
-                if (limit == 0) return false;
-                rows = limit == -1
-                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount))
-                    : await subscriptions.Where(sub => sub.SmsUsed + amount <= limit)
-                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount));
-                break;
-            }
+                {
+                    var limit = entitlements.Has(FeatureKeys.SmsReminders) ? -1 : 0;
+                    if (limit == 0) return false;
+                    rows = limit == -1
+                        ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount))
+                        : await subscriptions.Where(sub => sub.SmsUsed + amount <= limit)
+                            .ExecuteUpdateAsync(s => s.SetProperty(b => b.SmsUsed, b => b.SmsUsed + amount));
+                    break;
+                }
             case UsageType.AiCredits:
-            {
-                var limit = entitlements.LimitOf(FeatureKeys.AiActions);
-                if (limit == 0) return false;
-                rows = limit == -1
-                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount))
-                    : await subscriptions.Where(sub => sub.AiCreditsUsed + amount <= limit)
-                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount));
-                break;
-            }
+                {
+                    var limit = entitlements.LimitOf(FeatureKeys.AiActions);
+                    if (limit == 0) return false;
+                    rows = limit == -1
+                        ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount))
+                        : await subscriptions.Where(sub => sub.AiCreditsUsed + amount <= limit)
+                            .ExecuteUpdateAsync(s => s.SetProperty(b => b.AiCreditsUsed, b => b.AiCreditsUsed + amount));
+                    break;
+                }
             case UsageType.Storage:
-            {
-                var limit = StorageLimitBytes;
-                if (limit == 0) return false;
-                rows = limit == -1
-                    ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount))
-                    : await subscriptions.Where(sub => sub.StorageUsedBytes + amount <= limit)
-                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount));
-                break;
-            }
+                {
+                    var limit = StorageLimitBytes;
+                    if (limit == 0) return false;
+                    rows = limit == -1
+                        ? await subscriptions.ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount))
+                        : await subscriptions.Where(sub => sub.StorageUsedBytes + amount <= limit)
+                            .ExecuteUpdateAsync(s => s.SetProperty(b => b.StorageUsedBytes, b => b.StorageUsedBytes + amount));
+                    break;
+                }
             default:
                 return true;
         }

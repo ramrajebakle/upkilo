@@ -30,7 +30,12 @@ permissions:
 
 env:
   DOTNET_VERSION: '8.0.x'
-  NODE_VERSION: '20.x'
+  # 22.x, not 20.x: jsdom pulls undici, which declares engines >=22.19.0 from v8. On Node 20
+  # every vitest worker dies at startup with
+  #   TypeError: webidl.util.markAsUncloneable is not a function
+  # and the run reports "no tests" with a non-zero exit — a green-looking suite that executed
+  # nothing. Next 16 requires >=20.9.0, so 22.x satisfies both.
+  NODE_VERSION: '22.x'
   # Consumed by the `database` job's shell steps. The backend job's `services:` block
   # repeats the literal `postgres:16` because GitHub does not expose the `env` context in
   # `services.<id>.image` — keep the two in step with docker-compose.yml by hand.
