@@ -27,7 +27,7 @@ export function FeatureGate({
   title = "Premium Feature",
   description = "Upgrade your plan to unlock this feature and take your business to the next level."
 }: FeatureGateProps) {
-  const { hasFeature, isLoading } = useSubscription();
+  const { hasFeature, isLoading, hasLoaded, error } = useSubscription();
 
   if (isLoading) {
     return (
@@ -35,6 +35,16 @@ export function FeatureGate({
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
       </div>
     );
+  }
+
+  // "We could not determine your entitlements" is NOT "you need to pay". When the fetch fails
+  // the honest thing is to render the feature and let the API — which is the actual authority —
+  // refuse if it must. Telling a paying customer to upgrade because a request errored is the
+  // same misattribution that had every gated page showing an upgrade wall to Enterprise
+  // accounts, and it is the more damaging of the two possible mistakes: the backend still
+  // enforces, so a permissive render leaks nothing.
+  if (error || !hasLoaded) {
+    return <>{children}</>;
   }
 
   if (hasFeature(featureName)) {
