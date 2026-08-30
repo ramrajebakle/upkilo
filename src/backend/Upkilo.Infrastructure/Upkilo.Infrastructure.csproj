@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.AI.ContentSafety" Version="1.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
-    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.19.24" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.19.25" />
     <PackageReference Include="Google.Apis.Auth" Version="1.76.0" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.75.0.4206" />
     <PackageReference Include="MediatR" Version="12.5.0" />
@@ -44,12 +44,12 @@
     <PackageReference Include="StackExchange.Redis" Version="2.13.17" />
     <PackageReference Include="SendGrid" Version="9.29.3" />
     <PackageReference Include="Stripe.net" Version="50.4.1" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.3" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.4" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.4" />
     <PackageReference Include="Twilio" Version="7.14.9" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.29.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.29.2" />
     <PackageReference Include="Azure.AI.OpenAI" Version="2.1.0" />
-    <PackageReference Include="Hangfire.Core" Version="1.8.24" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.25" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.21.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Azure.Identity" Version="1.21.0" />
