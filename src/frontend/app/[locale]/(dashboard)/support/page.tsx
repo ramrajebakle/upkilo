@@ -22,11 +22,11 @@ const STATUS_CFG: Record<string, { color: string; bg: string; icon: React.ReactN
   Open: { color: "text-blue-600", bg: "bg-blue-50", icon: <Clock className="h-3 w-3" /> },
   InProgress: { color: "text-amber-600", bg: "bg-amber-50", icon: <Loader2 className="h-3 w-3" /> },
   Resolved: { color: "text-green-600", bg: "bg-green-50", icon: <CheckCircle2 className="h-3 w-3" /> },
-  Closed: { color: "text-gray-500", bg: "bg-gray-50", icon: <CheckCircle2 className="h-3 w-3" /> },
+  Closed: { color: "text-foreground-secondary", bg: "bg-muted", icon: <CheckCircle2 className="h-3 w-3" /> },
 };
 
 const PRIORITY_CFG: Record<string, string> = {
-  Low: "text-gray-500 bg-gray-50",
+  Low: "text-foreground-secondary bg-muted",
   Medium: "text-blue-500 bg-blue-50",
   High: "text-amber-600 bg-amber-50",
   Critical: "text-red-600 bg-red-50",
@@ -79,7 +79,7 @@ export default function SupportTicketsPage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Open", value: stats.open, color: "text-blue-500" },
-          { label: "In Progress", value: stats.inProgress, color: "text-amber-500" },
+          { label: "In Progress", value: stats.inProgress, color: "text-warning-fg" },
           { label: "Total", value: tickets.length, color: "text-text-primary" },
         ].map((s) => (
           <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>
@@ -120,7 +120,7 @@ export default function SupportTicketsPage() {
         {["All", "Open", "InProgress", "Resolved", "Closed"].map((f) => (
           <button key={f} onClick={() => setStatusFilter(f)}
             className={cn("flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors",
-              statusFilter === f ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
+              statusFilter === f ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary")}>
             {f === "InProgress" ? "In Progress" : f}
           </button>
         ))}

@@ -67,7 +67,7 @@ const STATUS_COLOR: Record<string, string> = {
     sent:      'bg-green-100 text-green-700',
     sending:   'bg-blue-100 text-blue-700',
     scheduled: 'bg-yellow-100 text-yellow-700',
-    draft:     'bg-slate-100 text-slate-600',
+    draft:     'bg-muted text-foreground-secondary',
     cancelled: 'bg-red-100 text-red-600',
 };
 
@@ -82,7 +82,7 @@ function StatCard({ icon, label, value, sub, color = 'indigo' }: {
         <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl border border-surface-200 p-5 flex gap-4 items-start shadow-sm"
+            className="bg-card rounded-2xl border border-surface-200 p-5 flex gap-4 items-start shadow-sm"
         >
             <div className={`p-2.5 rounded-xl bg-${color}-50`}>{icon}</div>
             <div>
@@ -130,7 +130,7 @@ export default function MarketingDashboardPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
-                        <BarChart3 className="text-primary-500" size={28} />
+                        <BarChart3 className="text-primary" size={28} />
                         Marketing Dashboard
                     </h1>
                     <p className="text-text-secondary mt-1">Your complete marketing health at a glance.</p>
@@ -155,7 +155,7 @@ export default function MarketingDashboardPage() {
                 >
                     <div className="flex items-center gap-3">
                         <div className="p-2.5 bg-amber-100 rounded-xl">
-                            <UserX className="text-amber-600" size={20} />
+                            <UserX className="text-warning-fg" size={20} />
                         </div>
                         <div>
                             <p className="font-semibold text-amber-900">Win-Back Opportunity</p>
@@ -175,10 +175,10 @@ export default function MarketingDashboardPage() {
             <section>
                 <h2 className="text-sm font-semibold text-text-tertiary uppercase tracking-wide mb-4">Campaign Performance</h2>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard icon={<Send className="text-primary-500" size={20} />}   label="Total Sent"      value={s?.totalSent?.toLocaleString() ?? '—'} sub={`${s?.deliveryRate ?? 0}% delivery rate`} color="indigo" />
+                    <StatCard icon={<Send className="text-primary" size={20} />}   label="Total Sent"      value={s?.totalSent?.toLocaleString() ?? '—'} sub={`${s?.deliveryRate ?? 0}% delivery rate`} color="indigo" />
                     <StatCard icon={<Eye className="text-blue-500" size={20} />}      label="Emails Opened"  value={s?.totalOpened?.toLocaleString() ?? '—'} sub={`${s?.openRate ?? 0}% open rate`} color="blue" />
-                    <StatCard icon={<MousePointerClick className="text-primary-500" size={20} />} label="Clicks" value={s?.totalClicked?.toLocaleString() ?? '—'} sub={`${s?.clickRate ?? 0}% click rate`} color="purple" />
-                    <StatCard icon={<DollarSign className="text-green-500" size={20} />} label="Revenue Attributed" value={`$${(s?.totalRevenue ?? 0).toLocaleString()}`} sub="From tracked campaigns" color="green" />
+                    <StatCard icon={<MousePointerClick className="text-primary" size={20} />} label="Clicks" value={s?.totalClicked?.toLocaleString() ?? '—'} sub={`${s?.clickRate ?? 0}% click rate`} color="purple" />
+                    <StatCard icon={<DollarSign className="text-success-fg" size={20} />} label="Revenue Attributed" value={`$${(s?.totalRevenue ?? 0).toLocaleString()}`} sub="From tracked campaigns" color="green" />
                 </div>
             </section>
 
@@ -186,7 +186,7 @@ export default function MarketingDashboardPage() {
             <section>
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-sm font-semibold text-text-tertiary uppercase tracking-wide">Smart Audience Segments</h2>
-                    <Link href="/campaigns/broadcast" className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+                    <Link href="/campaigns/broadcast" className="text-sm text-primary hover:text-primary font-medium flex items-center gap-1">
                         Create Campaign <ArrowRight size={13} />
                     </Link>
                 </div>
@@ -195,16 +195,16 @@ export default function MarketingDashboardPage() {
                         <Link
                             key={seg.id}
                             href={`/campaigns/broadcast?segment=${seg.id}`}
-                            className="group bg-white border border-surface-200 rounded-2xl p-4 hover:border-primary-300 hover:shadow-md transition-all"
+                            className="group bg-card border border-surface-200 rounded-2xl p-4 hover:border-primary-300 hover:shadow-md transition-all"
                         >
                             <div className="flex items-start justify-between">
                                 <div>
                                     <p className="font-semibold text-text-primary text-sm">{seg.name}</p>
                                     <p className="text-xs text-text-tertiary mt-1 leading-relaxed">{seg.description}</p>
                                 </div>
-                                <span className="shrink-0 ml-3 text-lg font-bold text-primary-600">{seg.count.toLocaleString()}</span>
+                                <span className="shrink-0 ml-3 text-lg font-bold text-primary">{seg.count.toLocaleString()}</span>
                             </div>
-                            <div className="mt-3 flex items-center gap-1 text-xs text-primary-600 opacity-0 group-hover:opacity-100 transition-opacity font-medium">
+                            <div className="mt-3 flex items-center gap-1 text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity font-medium">
                                 Target this segment <ArrowRight size={11} />
                             </div>
                         </Link>
@@ -216,11 +216,11 @@ export default function MarketingDashboardPage() {
             <section>
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-sm font-semibold text-text-tertiary uppercase tracking-wide">Recent Campaigns</h2>
-                    <Link href="/campaigns/broadcast" className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+                    <Link href="/campaigns/broadcast" className="text-sm text-primary hover:text-primary font-medium flex items-center gap-1">
                         View all <ArrowRight size={13} />
                     </Link>
                 </div>
-                <div className="bg-white border border-surface-200 rounded-2xl overflow-hidden">
+                <div className="bg-card border border-surface-200 rounded-2xl overflow-hidden">
                     {recent.length === 0 ? (
                         <div className="p-10 text-center text-text-tertiary">
                             <Send size={32} className="mx-auto mb-3 opacity-30" />
@@ -253,7 +253,7 @@ export default function MarketingDashboardPage() {
                                         <td className="px-5 py-3.5 text-right text-text-secondary">{c.sentCount.toLocaleString()}</td>
                                         <td className="px-5 py-3.5 text-right text-text-secondary">{c.opened.toLocaleString()}</td>
                                         <td className="px-5 py-3.5 text-right text-text-secondary">{c.clicked.toLocaleString()}</td>
-                                        <td className="px-5 py-3.5 text-right font-semibold text-green-600">${c.revenue.toFixed(0)}</td>
+                                        <td className="px-5 py-3.5 text-right font-semibold text-success-fg">${c.revenue.toFixed(0)}</td>
                                         <td className="px-5 py-3.5">
                                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_COLOR[c.status] ?? STATUS_COLOR.draft}`}>
                                                 {c.status}
@@ -280,7 +280,7 @@ export default function MarketingDashboardPage() {
                         <Link
                             key={a.href}
                             href={a.href}
-                            className={`group bg-white border border-surface-200 rounded-2xl p-4 hover:border-${a.color}-300 hover:shadow-md transition-all`}
+                            className={`group bg-card border border-surface-200 rounded-2xl p-4 hover:border-${a.color}-300 hover:shadow-md transition-all`}
                         >
                             <div className={`p-2 rounded-xl bg-${a.color}-50 w-fit mb-3`}>
                                 <span className={`text-${a.color}-500`}>{a.icon}</span>

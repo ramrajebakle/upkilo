@@ -44,7 +44,7 @@ export default function BioLinkPage() {
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Social Bio Link <Share2 className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Social Bio Link <Share2 className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Create a link-in-bio page that directs social media followers to book with you.</p>
       </header>
 
@@ -54,8 +54,8 @@ export default function BioLinkPage() {
             <div className="grid grid-cols-3 gap-4">
               {[
                 { label: "Views", value: link.views ?? 0, color: "text-text-primary" },
-                { label: "Clicks", value: link.clicks ?? 0, color: "text-ai-600" },
-                { label: "Click Rate", value: `${link.views ? ((link.clicks / link.views) * 100).toFixed(1) : "0"}%`, color: "text-green-600" },
+                { label: "Clicks", value: link.clicks ?? 0, color: "text-ai" },
+                { label: "Click Rate", value: `${link.views ? ((link.clicks / link.views) * 100).toFixed(1) : "0"}%`, color: "text-success-fg" },
               ].map((s) => (
                 <Card key={s.label}><CardContent className="pt-5"><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p></CardContent></Card>
               ))}
@@ -65,7 +65,7 @@ export default function BioLinkPage() {
           {link && (
             <Card className="border-green-200 bg-green-50/30">
               <CardContent className="pt-4 pb-4 flex items-center gap-3">
-                <Link2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <Link2 className="h-4 w-4 text-success-fg flex-shrink-0" />
                 <span className="text-sm font-medium text-green-800 flex-1 truncate">{publicUrl}</span>
                 <Button variant="outline" size="sm" leftIcon={<Copy size={12} />} onClick={() => { navigator.clipboard.writeText(publicUrl); toastSuccess("Link copied"); }}>Copy</Button>
                 <Button variant="outline" size="sm" leftIcon={<ExternalLink size={12} />} onClick={() => window.open(publicUrl, "_blank")}>Open</Button>

@@ -32,7 +32,7 @@ export default async function ConsumerMarketplacePage() {
   const initialListings = await fetchFeaturedListings();
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB]">
+    <div className="min-h-screen bg-background">
       {/* Hero */}
       <div className="relative pt-20 pb-24 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none" aria-hidden="true">
@@ -41,13 +41,13 @@ export default async function ConsumerMarketplacePage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-primary-100 rounded-full text-primary-700 text-xs font-black uppercase tracking-widest mb-6 shadow-sm">
-            <Sparkles className="h-3 w-3 fill-primary-500 text-primary-500" aria-hidden="true" /> Book Local Services
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-card/80 backdrop-blur-sm border border-primary/25 rounded-full text-primary text-xs font-black uppercase tracking-widest mb-6 shadow-sm">
+            <Sparkles className="h-3 w-3 fill-primary-500 text-primary" aria-hidden="true" /> Book Local Services
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tight leading-none mb-6">
-            Upkilo <span className="text-primary-600 italic">Marketplace</span>
+          <h1 className="text-5xl md:text-7xl font-black text-foreground tracking-tight leading-none mb-6">
+            Upkilo <span className="text-primary italic">Marketplace</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-medium mb-10">
+          <p className="text-lg md:text-xl text-foreground-secondary max-w-2xl mx-auto font-medium mb-10">
             Find and book local salons, spas, studios and clinics. Real-time availability,
             instant confirmation.
           </p>
@@ -72,7 +72,7 @@ export default async function ConsumerMarketplacePage() {
             <h2 className="text-4xl font-black mb-6 leading-tight">
               Book directly with the business.
             </h2>
-            <p className="text-gray-400 text-lg">
+            <p className="text-slate-400 text-lg">
               Every listing here is a business running its own bookings on Upkilo — so the
               availability you see is their real calendar, and confirmation is immediate. No
               request forms, no waiting for a callback, no double bookings.

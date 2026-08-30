@@ -209,7 +209,7 @@ export default function InventoryPage() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between px-1">
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1 w-full">
                     <div className="relative flex-1 max-w-md w-full group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-primary-500 transition-colors" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted group-focus-within:text-primary-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search products or SKU..."
@@ -231,7 +231,7 @@ export default function InventoryPage() {
                                     'px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all',
                                     filterStatus === f.key
                                         ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-white shadow-md'
-                                        : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
+                                        : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                                 )}
                             >
                                 {f.label}
@@ -262,7 +262,7 @@ export default function InventoryPage() {
                                 </p>
                             </div>
                             <button onClick={() => setIsBulkAdjustOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
-                                <X className="h-5 w-5 text-slate-400" />
+                                <X className="h-5 w-5 text-foreground-muted" />
                             </button>
                         </div>
                         <div className="space-y-6">
@@ -275,7 +275,7 @@ export default function InventoryPage() {
                                     className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-bold dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all shadow-inner"
                                     placeholder="e.g. +10 or -5"
                                 />
-                                <p className="text-[10px] font-medium text-slate-400 dark:text-slate-500 ml-1">Use positive for stock in, negative for stock out</p>
+                                <p className="text-[10px] font-medium text-foreground-muted ml-1">Use positive for stock in, negative for stock out</p>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">Notes</label>
@@ -324,13 +324,13 @@ export default function InventoryPage() {
                                             className="rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-primary-600 focus:ring-primary-500/20 transition-all pointer-events-auto cursor-pointer"
                                         />
                                     </th>
-                                    <th className="text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">Product Details</th>
-                                    <th className="text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">SKU Code</th>
-                                    <th className="text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">Current Stock</th>
-                                    <th className="text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">Unit Cost</th>
-                                    <th className="text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">Retail Price</th>
-                                    <th className="text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">Risk Status</th>
-                                    <th className="text-right text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-6 py-4">Action</th>
+                                    <th className="text-left text-[10px] font-bold text-foreground-muted uppercase tracking-widest px-6 py-4">Product Details</th>
+                                    <th className="text-left text-[10px] font-bold text-foreground-muted uppercase tracking-widest px-6 py-4">SKU Code</th>
+                                    <th className="text-left text-[10px] font-bold text-foreground-muted uppercase tracking-widest px-6 py-4">Current Stock</th>
+                                    <th className="text-left text-[10px] font-bold text-foreground-muted uppercase tracking-widest px-6 py-4">Unit Cost</th>
+                                    <th className="text-left text-[10px] font-bold text-foreground-muted uppercase tracking-widest px-6 py-4">Retail Price</th>
+                                    <th className="text-left text-[10px] font-bold text-foreground-muted uppercase tracking-widest px-6 py-4">Risk Status</th>
+                                    <th className="text-right text-[10px] font-bold text-foreground-muted uppercase tracking-widest px-6 py-4">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -366,10 +366,10 @@ export default function InventoryPage() {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{item.name}</div>
-                                                    <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">{item.category}</div>
+                                                    <div className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-0.5">{item.category}</div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className="text-xs font-bold text-slate-500 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-700 font-mono tracking-tight">{item.sku || 'N/A'}</span>
+                                                    <span className="text-xs font-bold text-foreground-secondary bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-700 font-mono tracking-tight">{item.sku || 'N/A'}</span>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-baseline gap-1.5">
@@ -379,7 +379,7 @@ export default function InventoryPage() {
                                                         )}>
                                                             {item.quantityOnHand}
                                                         </span>
-                                                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600">/ {item.reorderLevel} min</span>
+                                                        <span className="text-[10px] font-bold text-foreground-muted">/ {item.reorderLevel} min</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -402,13 +402,13 @@ export default function InventoryPage() {
                                                     <div className="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                                                         <Link
                                                             href={`/inventory/${item.id}`}
-                                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 active:scale-90 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all text-foreground-muted hover:text-primary-600 dark:hover:text-primary-400 active:scale-90 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                                                         >
                                                             <Edit2 className="h-4 w-4" />
                                                         </Link>
                                                         <button
                                                             onClick={() => confirmDelete(item)}
-                                                            className="p-2 hover:bg-rose-50 dark:hover:bg-rose-900/40 text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl transition-all active:scale-90 border border-transparent hover:border-rose-100 dark:hover:border-rose-900/50"
+                                                            className="p-2 hover:bg-rose-50 dark:hover:bg-rose-900/40 text-foreground-muted hover:text-rose-600 dark:hover:text-rose-400 rounded-xl transition-all active:scale-90 border border-transparent hover:border-rose-100 dark:hover:border-rose-900/50"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                         </button>

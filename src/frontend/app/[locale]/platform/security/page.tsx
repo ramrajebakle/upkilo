@@ -26,7 +26,7 @@ const SEV_CFG: Record<string, { color: string; bg: string }> = {
   High: { color: "text-orange-600", bg: "bg-orange-50" },
   Medium: { color: "text-amber-600", bg: "bg-amber-50" },
   Low: { color: "text-blue-600", bg: "bg-blue-50" },
-  Info: { color: "text-gray-600", bg: "bg-gray-50" },
+  Info: { color: "text-foreground-secondary", bg: "bg-muted" },
 };
 
 export default function PlatformSecurityPage() {
@@ -51,7 +51,7 @@ export default function PlatformSecurityPage() {
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
           <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
-            Platform Security <ShieldCheck className="text-green-500" size={22} />
+            Platform Security <ShieldCheck className="text-success-fg" size={22} />
           </h1>
           <p className="text-text-secondary mt-1">Real-time security events and threat monitoring across all tenants.</p>
         </div>
@@ -71,9 +71,9 @@ export default function PlatformSecurityPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { label: "Total Events", value: stats!.totalEvents, icon: Activity, color: "text-blue-500" },
-              { label: "Unresolved", value: stats!.unresolvedCount, icon: AlertTriangle, color: "text-amber-500" },
-              { label: "Critical", value: stats!.criticalCount, icon: ShieldAlert, color: "text-red-500" },
-              { label: "Login Failure Rate", value: `${stats!.loginFailureRate}%`, icon: Lock, color: stats!.loginFailureRate > 10 ? "text-red-500" : "text-green-500" },
+              { label: "Unresolved", value: stats!.unresolvedCount, icon: AlertTriangle, color: "text-warning-fg" },
+              { label: "Critical", value: stats!.criticalCount, icon: ShieldAlert, color: "text-danger-fg" },
+              { label: "Login Failure Rate", value: `${stats!.loginFailureRate}%`, icon: Lock, color: stats!.loginFailureRate > 10 ? "text-danger-fg" : "text-success-fg" },
             ].map((s) => (
               <Card key={s.label}>
                 <CardContent className="pt-5 flex items-start gap-3">
@@ -122,12 +122,12 @@ export default function PlatformSecurityPage() {
           </div>
 
           <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><ShieldAlert className="h-4 w-4 text-red-500" /> Unresolved Critical / High Events</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="flex items-center gap-2"><ShieldAlert className="h-4 w-4 text-danger-fg" /> Unresolved Critical / High Events</CardTitle></CardHeader>
             <CardContent>
               {data.unresolvedCritical.length === 0 ? (
                 <div className="text-center py-8 text-text-tertiary">
-                  <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <p className="font-medium text-green-600">No unresolved critical or high events</p>
+                  <CheckCircle2 className="h-8 w-8 text-success-fg mx-auto mb-2" />
+                  <p className="font-medium text-success-fg">No unresolved critical or high events</p>
                 </div>
               ) : (
                 <table className="w-full text-sm">

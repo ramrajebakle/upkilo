@@ -83,22 +83,22 @@ export const FormBuilder = () => {
       <div className="flex gap-6 overflow-hidden">
         <div className="flex-1 overflow-y-auto space-y-4 pr-2">
           {fields.map((field) => (
-            <Card key={field.id} className="relative group border-gray-200 shadow-sm hover:border-primary/50">
+            <Card key={field.id} className="relative group border-border shadow-sm hover:border-primary/50">
               <CardContent className="p-4 flex gap-4 items-start">
-                <div className="pt-2 cursor-grab text-gray-400">
+                <div className="pt-2 cursor-grab text-foreground-muted">
                   <GripVertical className="w-5 h-5" />
                 </div>
                 <div className="flex-1 space-y-3">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-medium text-gray-500 mb-1 block">Field Label</label>
+                      <label className="text-xs font-medium text-foreground-secondary mb-1 block">Field Label</label>
                       <Input 
                         value={field.label} 
                         onChange={(e) => updateField(field.id, { label: e.target.value })}
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-gray-500 mb-1 block">Input Type</label>
+                      <label className="text-xs font-medium text-foreground-secondary mb-1 block">Input Type</label>
                       <select 
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         value={field.type}
@@ -119,15 +119,15 @@ export const FormBuilder = () => {
                       id={`req-${field.id}`} 
                       checked={field.required}
                       onChange={(e) => updateField(field.id, { required: e.target.checked })}
-                      className="rounded border-gray-300 text-primary"
+                      className="rounded border-border-strong text-primary"
                     />
-                    <label htmlFor={`req-${field.id}`} className="text-sm text-gray-600">Required field</label>
+                    <label htmlFor={`req-${field.id}`} className="text-sm text-foreground-secondary">Required field</label>
                   </div>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="text-gray-400 hover:text-red-500"
+                  className="text-foreground-muted hover:text-red-500"
                   onClick={() => removeField(field.id)}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -148,7 +148,7 @@ export const FormBuilder = () => {
         <div className="w-80 border-l pl-6 space-y-6 hidden lg:block overflow-y-auto">
           <div>
             <h3 className="font-semibold text-lg mb-2">Form Settings</h3>
-            <p className="text-sm text-gray-500 mb-4">Configure form behavior after submission.</p>
+            <p className="text-sm text-foreground-secondary mb-4">Configure form behavior after submission.</p>
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-1 block">Success Message</label>

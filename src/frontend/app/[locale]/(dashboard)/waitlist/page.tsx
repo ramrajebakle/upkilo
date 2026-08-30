@@ -107,10 +107,10 @@ export default function WaitlistPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                         {t('title')}
                     </h1>
-                    <p className="text-sm text-slate-500">{t('manageDescription')}</p>
+                    <p className="text-sm text-foreground-secondary">{t('manageDescription')}</p>
                 </div>
                 <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
                     <Plus className="h-4 w-4" />
@@ -120,27 +120,27 @@ export default function WaitlistPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="card-elevated p-4">
-                    <p className="text-sm text-slate-500 mb-1">{t('totalEntries')}</p>
+                    <p className="text-sm text-foreground-secondary mb-1">{t('totalEntries')}</p>
                     <p className="text-2xl font-bold">{stats.total || 0}</p>
                 </div>
                 <div className="card-elevated p-4">
-                    <p className="text-sm text-slate-500 mb-1">{t('currentlyWaiting')}</p>
+                    <p className="text-sm text-foreground-secondary mb-1">{t('currentlyWaiting')}</p>
                     <p className="text-2xl font-bold text-blue-600">{stats.waiting || 0}</p>
                 </div>
                 <div className="card-elevated p-4">
-                    <p className="text-sm text-slate-500 mb-1">{t('notified')}</p>
-                    <p className="text-2xl font-bold text-amber-600">{stats.notified || 0}</p>
+                    <p className="text-sm text-foreground-secondary mb-1">{t('notified')}</p>
+                    <p className="text-2xl font-bold text-warning-fg">{stats.notified || 0}</p>
                 </div>
                 <div className="card-elevated p-4">
-                    <p className="text-sm text-slate-500 mb-1">{t('converted')}</p>
-                    <p className="text-2xl font-bold text-emerald-600">{stats.converted || 0}</p>
+                    <p className="text-sm text-foreground-secondary mb-1">{t('converted')}</p>
+                    <p className="text-2xl font-bold text-success-fg">{stats.converted || 0}</p>
                 </div>
             </div>
 
             <div className="card-elevated">
-                <div className="p-4 border-b border-slate-100 flex gap-4">
+                <div className="p-4 border-b border-border-subtle flex gap-4">
                     <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                         <input
                             type="text"
                             placeholder={t('searchPlaceholder')}
@@ -151,7 +151,7 @@ export default function WaitlistPage() {
                 
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 text-slate-500 font-medium border-b border-slate-100">
+                        <thead className="bg-muted text-foreground-secondary font-medium border-b border-border-subtle">
                             <tr>
                                 <th className="px-6 py-4">{t('client')}</th>
                                 <th className="px-6 py-4">{t('requestedService')}</th>
@@ -161,35 +161,35 @@ export default function WaitlistPage() {
                                 <th className="px-6 py-4"></th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-border-subtle">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                                    <td colSpan={6} className="px-6 py-8 text-center text-foreground-secondary">
                                         {common('loading')}
                                     </td>
                                 </tr>
                             ) : waitlist.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="px-6 py-12 text-center">
-                                        <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                                            <Clock className="h-6 w-6 text-slate-400" />
+                                        <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center mx-auto mb-3">
+                                            <Clock className="h-6 w-6 text-foreground-muted" />
                                         </div>
-                                        <h3 className="text-sm font-medium text-slate-900 mb-1">{t('emptyHeader')}</h3>
-                                        <p className="text-sm text-slate-500">{t('emptyDesc')}</p>
+                                        <h3 className="text-sm font-medium text-foreground mb-1">{t('emptyHeader')}</h3>
+                                        <p className="text-sm text-foreground-secondary">{t('emptyDesc')}</p>
                                     </td>
                                 </tr>
                             ) : (
                                 waitlist.map((entry) => (
-                                    <tr key={entry.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-slate-900">
+                                    <tr key={entry.id} className="hover:bg-muted/50 transition-colors">
+                                        <td className="px-6 py-4 font-medium text-foreground">
                                             {entry.firstName} {entry.lastName}
-                                            <div className="text-xs text-slate-500 font-normal">{entry.email}</div>
+                                            <div className="text-xs text-foreground-secondary font-normal">{entry.email}</div>
                                         </td>
                                         <td className="px-6 py-4">
                                             {services.find(s => s.id === entry.serviceId)?.name || 'Service'}
                                         </td>
-                                        <td className="px-6 py-4 text-slate-500">{entry.preferredTimeRange} on {new Date(entry.preferredDate).toLocaleDateString()}</td>
-                                        <td className="px-6 py-4 text-slate-500">
+                                        <td className="px-6 py-4 text-foreground-secondary">{entry.preferredTimeRange} on {new Date(entry.preferredDate).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4 text-foreground-secondary">
                                             {new Date(entry.createdAt).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4">
@@ -208,14 +208,14 @@ export default function WaitlistPage() {
                                                 {entry.status === 'Notified' && !entry.isConverted && (
                                                     <button 
                                                         onClick={() => handleConvert(entry.id)}
-                                                        className="text-emerald-600 hover:text-emerald-700 font-medium text-sm"
+                                                        className="text-success-fg hover:text-emerald-700 font-medium text-sm"
                                                     >
                                                         {t('convert')}
                                                     </button>
                                                 )}
                                                 <button 
                                                     onClick={() => handleNotify(entry.id)}
-                                                    className="text-primary-600 hover:text-primary-700 font-medium text-sm"
+                                                    className="text-primary hover:text-primary font-medium text-sm"
                                                 >
                                                     {t('notify')}
                                                 </button>
@@ -231,10 +231,10 @@ export default function WaitlistPage() {
 
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex justify-between items-center p-6 border-b border-slate-100 shrink-0">
-                            <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>{t('addToWaitlist')}</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                    <div className="bg-card rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex justify-between items-center p-6 border-b border-border-subtle shrink-0">
+                            <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>{t('addToWaitlist')}</h2>
+                            <button onClick={() => setIsModalOpen(false)} className="text-foreground-muted hover:text-foreground-secondary transition-colors">
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
@@ -242,7 +242,7 @@ export default function WaitlistPage() {
                         <div className="flex-1 overflow-y-auto p-6">
                             <form id="waitlistForm" onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">{t('service')} *</label>
+                                    <label className="block text-sm font-medium text-foreground mb-1">{t('service')} *</label>
                                     <select
                                         required
                                         className="input-field w-full"
@@ -258,7 +258,7 @@ export default function WaitlistPage() {
                                 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('firstName')} *</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">{t('firstName')} *</label>
                                         <input
                                             type="text"
                                             required
@@ -268,7 +268,7 @@ export default function WaitlistPage() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('lastName')} *</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">{t('lastName')} *</label>
                                         <input
                                             type="text"
                                             required
@@ -281,7 +281,7 @@ export default function WaitlistPage() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('email')} *</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">{t('email')} *</label>
                                         <input
                                             type="email"
                                             required
@@ -291,7 +291,7 @@ export default function WaitlistPage() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('phone')}</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">{t('phone')}</label>
                                         <input
                                             type="tel"
                                             className="input-field w-full"
@@ -303,7 +303,7 @@ export default function WaitlistPage() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('preferredDate')} *</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">{t('preferredDate')} *</label>
                                         <input
                                             type="date"
                                             required
@@ -313,7 +313,7 @@ export default function WaitlistPage() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('preferredTimeDay')} *</label>
+                                        <label className="block text-sm font-medium text-foreground mb-1">{t('preferredTimeDay')} *</label>
                                         <select
                                             required
                                             className="input-field w-full"
@@ -329,7 +329,7 @@ export default function WaitlistPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">{t('notes')}</label>
+                                    <label className="block text-sm font-medium text-foreground mb-1">{t('notes')}</label>
                                     <textarea
                                         className="input-field w-full resize-none"
                                         rows={3}
@@ -340,11 +340,11 @@ export default function WaitlistPage() {
                             </form>
                         </div>
                         
-                        <div className="p-6 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                        <div className="p-6 border-t border-border-subtle flex justify-end gap-3 shrink-0">
                             <button
                                 type="button"
                                 onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
+                                className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground transition-colors"
                             >
                                 {common('cancel')}
                             </button>

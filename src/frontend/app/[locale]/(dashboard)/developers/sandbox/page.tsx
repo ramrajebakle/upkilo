@@ -60,7 +60,7 @@ export default function SandboxPage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Developer Sandboxes <FlaskConical className="text-primary-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Developer Sandboxes <FlaskConical className="text-primary" size={22} /></h1>
         <p className="text-text-secondary mt-1">Isolated test environments for building and testing integrations without affecting live data.</p>
       </header>
 
@@ -92,14 +92,14 @@ export default function SandboxPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-sm font-semibold text-text-primary">{s.name}</h3>
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.status === "active" ? "text-green-700 bg-green-50" : "text-gray-500 bg-gray-50"}`}>{s.status}</span>
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.status === "active" ? "text-green-700 bg-green-50" : "text-foreground-secondary bg-muted"}`}>{s.status}</span>
                         <span className="text-xs text-text-tertiary">Created {new Date(s.createdAt).toLocaleDateString()}</span>
                       </div>
                       {s.baseUrl && (
                         <div className="flex items-center gap-2 mt-2">
                           <code className="text-xs bg-surface-100 text-text-secondary px-2 py-1 rounded font-mono">{s.baseUrl}</code>
                           <button onClick={() => copy(s.baseUrl!, `url-${s.id}`)} className="text-text-tertiary hover:text-text-primary">
-                            {copied === `url-${s.id}` ? <CheckCircle2 size={12} className="text-green-500" /> : <Copy size={12} />}
+                            {copied === `url-${s.id}` ? <CheckCircle2 size={12} className="text-success-fg" /> : <Copy size={12} />}
                           </button>
                         </div>
                       )}
@@ -107,7 +107,7 @@ export default function SandboxPage() {
                         <div className="flex items-center gap-2 mt-1">
                           <code className="text-xs bg-surface-100 text-text-secondary px-2 py-1 rounded font-mono">{s.apiKey.slice(0, 12)}…</code>
                           <button onClick={() => copy(s.apiKey!, `key-${s.id}`)} className="text-text-tertiary hover:text-text-primary">
-                            {copied === `key-${s.id}` ? <CheckCircle2 size={12} className="text-green-500" /> : <Copy size={12} />}
+                            {copied === `key-${s.id}` ? <CheckCircle2 size={12} className="text-success-fg" /> : <Copy size={12} />}
                           </button>
                         </div>
                       )}
@@ -117,7 +117,7 @@ export default function SandboxPage() {
                         leftIcon={resetting === s.id ? <Loader2 size={11} className="animate-spin" /> : <RotateCcw size={11} />}
                         onClick={() => reset(s.id)} disabled={!!resetting || !!deleting}>Reset</Button>
                       <Button variant="outline" size="sm"
-                        leftIcon={deleting === s.id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} className="text-red-500" />}
+                        leftIcon={deleting === s.id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} className="text-danger-fg" />}
                         onClick={() => remove(s.id)} disabled={!!resetting || !!deleting} />
                     </div>
                   </div>

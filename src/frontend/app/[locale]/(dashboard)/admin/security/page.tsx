@@ -129,7 +129,7 @@ export default function SecurityOverviewPage() {
                             <option value={14}>Last 14 days</option>
                             <option value={30}>Last 30 days</option>
                         </select>
-                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted pointer-events-none" />
                     </div>
                     <Button onClick={load} variant="outline" size="sm">
                         <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
@@ -148,17 +148,17 @@ export default function SecurityOverviewPage() {
             {/* Summary stats row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                    { icon: <AlertCircle className="text-rose-500" size={18} />, label: 'Unresolved', value: s?.unresolvedCount ?? 0, sub: 'Need attention' },
+                    { icon: <AlertCircle className="text-danger-fg" size={18} />, label: 'Unresolved', value: s?.unresolvedCount ?? 0, sub: 'Need attention' },
                     { icon: <LogIn className="text-blue-500" size={18} />, label: 'Login Successes', value: s?.loginSuccesses ?? 0, sub: 'This period' },
                     { icon: <Lock className="text-orange-500" size={18} />, label: 'Login Failures', value: s?.loginFailures ?? 0, sub: `${s?.loginFailureRate ?? 0}% failure rate` },
-                    { icon: <Info className="text-slate-500" size={18} />, label: 'Total Events', value: s?.totalEvents ?? 0, sub: `Last ${period}d` },
+                    { icon: <Info className="text-foreground-secondary" size={18} />, label: 'Total Events', value: s?.totalEvents ?? 0, sub: `Last ${period}d` },
                 ].map((c) => (
                     <div key={c.label} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 flex gap-3 items-start shadow-sm">
                         <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800">{c.icon}</div>
                         <div>
-                            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{c.label}</p>
+                            <p className="text-xs text-foreground-secondary uppercase tracking-wide font-medium">{c.label}</p>
                             <p className="text-xl font-bold text-slate-900 dark:text-white">{loading ? '…' : c.value.toLocaleString()}</p>
-                            <p className="text-xs text-slate-400 mt-0.5">{c.sub}</p>
+                            <p className="text-xs text-foreground-muted mt-0.5">{c.sub}</p>
                         </div>
                     </div>
                 ))}
@@ -168,11 +168,11 @@ export default function SecurityOverviewPage() {
                 {/* Unresolved Critical / High events */}
                 <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm">
                     <div className="px-6 py-4 border-b border-slate-200 dark:border-white/5 flex items-center gap-2">
-                        <AlertCircle className="text-rose-500" size={16} />
+                        <AlertCircle className="text-danger-fg" size={16} />
                         <h2 className="text-base font-bold text-slate-900 dark:text-white">Unresolved Critical & High Events</h2>
                     </div>
                     {!data?.unresolvedCritical || data.unresolvedCritical.length === 0 ? (
-                        <div className="p-10 text-center text-slate-400">
+                        <div className="p-10 text-center text-foreground-muted">
                             <CheckCircle size={32} className="mx-auto mb-3 text-emerald-400" />
                             <p className="font-medium text-emerald-600 dark:text-emerald-400">No unresolved critical events</p>
                             <p className="text-sm mt-1">Platform is operating normally.</p>
@@ -192,8 +192,8 @@ export default function SecurityOverviewPage() {
                                                 <span className="font-semibold text-sm text-slate-900 dark:text-white">{formatEventType(evt.eventType)}</span>
                                                 <span className={`px-1.5 py-0.5 rounded text-xs font-semibold ${cfg.bg} ${cfg.text}`}>{evt.severity}</span>
                                             </div>
-                                            {evt.description && <p className="text-xs text-slate-500 mt-0.5 truncate">{evt.description}</p>}
-                                            <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                                            {evt.description && <p className="text-xs text-foreground-secondary mt-0.5 truncate">{evt.description}</p>}
+                                            <div className="flex items-center gap-3 mt-1 text-xs text-foreground-muted">
                                                 {evt.ipAddress && <span>IP: {evt.ipAddress}</span>}
                                                 <span>{new Date(evt.occurredAt).toLocaleString()}</span>
                                             </div>
@@ -212,7 +212,7 @@ export default function SecurityOverviewPage() {
                         <h2 className="text-base font-bold text-slate-900 dark:text-white">Most Targeted Tenants</h2>
                     </div>
                     {!data?.targetedTenants || data.targetedTenants.length === 0 ? (
-                        <div className="p-8 text-center text-slate-400">
+                        <div className="p-8 text-center text-foreground-muted">
                             <p className="text-sm">No login attack patterns detected.</p>
                         </div>
                     ) : (
@@ -220,7 +220,7 @@ export default function SecurityOverviewPage() {
                             {data.targetedTenants.map((t, i) => (
                                 <div key={t.tenantId} className="px-5 py-3.5 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-xs font-bold text-slate-400 w-4">#{i + 1}</span>
+                                        <span className="text-xs font-bold text-foreground-muted w-4">#{i + 1}</span>
                                         <span className="font-medium text-sm text-slate-900 dark:text-white">{t.tenantName}</span>
                                     </div>
                                     <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400">

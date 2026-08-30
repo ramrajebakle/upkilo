@@ -81,21 +81,21 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
     };
 
     return (
-        <div className="w-96 border-l border-gray-200 bg-white h-full shadow-2xl fixed right-0 top-0 bottom-0 z-50 flex flex-col animate-in slide-in-from-right duration-300">
+        <div className="w-96 border-l border-border bg-card h-full shadow-2xl fixed right-0 top-0 bottom-0 z-50 flex flex-col animate-in slide-in-from-right duration-300">
             {/* Header */}
-            <div className={`p-6 border-b border-gray-100 flex justify-between items-center ${isTrigger ? 'bg-amber-50/50' : isAction ? 'bg-blue-50/50' : 'bg-primary-50/50'}`}>
+            <div className={`p-6 border-b border-border-subtle flex justify-between items-center ${isTrigger ? 'bg-amber-50/50' : isAction ? 'bg-blue-50/50' : 'bg-primary-50/50'}`}>
                 <div className="flex items-center">
-                    <div className={`p-2 rounded-lg mr-3 ${isTrigger ? 'bg-amber-100 text-amber-600' : isAction ? 'bg-blue-100 text-blue-600' : 'bg-primary-100 text-primary-600'}`}>
+                    <div className={`p-2 rounded-lg mr-3 ${isTrigger ? 'bg-amber-100 text-amber-600' : isAction ? 'bg-blue-100 text-blue-600' : 'bg-brand-subtle text-primary'}`}>
                         <Settings size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900 leading-tight">Node Settings</h3>
-                        <p className="text-[10px] text-gray-400 font-mono tracking-tighter">{selectedNode.id}</p>
+                        <h3 className="font-bold text-foreground leading-tight">Node Settings</h3>
+                        <p className="text-[10px] text-foreground-muted font-mono tracking-tighter">{selectedNode.id}</p>
                     </div>
                 </div>
                 <button 
                   onClick={onClose} 
-                  className="p-2 hover:bg-white rounded-full text-gray-400 hover:text-gray-600 transition-colors shadow-sm border border-transparent hover:border-gray-100"
+                  className="p-2 hover:bg-card rounded-full text-foreground-muted hover:text-foreground-secondary transition-colors shadow-sm border border-transparent hover:border-border-subtle"
                 >
                     <X size={18} />
                 </button>
@@ -106,21 +106,21 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
                 {/* Basic Info */}
                 <section className="space-y-4">
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Display Name</label>
+                        <label className="block text-xs font-bold text-foreground-secondary uppercase tracking-widest mb-1">Display Name</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className="w-full px-4 py-2 bg-muted border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                             value={data.label || ''}
                             onChange={(e) => handleChange('label', e.target.value)}
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+                        <label className="block text-xs font-bold text-foreground-secondary uppercase tracking-widest mb-1">
                             {isTrigger ? 'Trigger Type' : 'Type'}
                         </label>
                         <select
-                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer"
+                            className="w-full px-4 py-2 bg-muted border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer"
                             value={data.type || ''}
                             onChange={(e) => {
                                 const option = [...triggerOptions, ...actionOptions].find(o => o.value === e.target.value);
@@ -143,7 +143,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
                 </section>
 
                 {/* Dynamic Configuration */}
-                <section className="pt-6 border-t border-gray-100">
+                <section className="pt-6 border-t border-border-subtle">
                     <div className="flex items-center mb-4 text-primary">
                         <Info size={14} className="mr-2" />
                         <h4 className="text-xs font-bold uppercase tracking-widest">Execution Parameters</h4>
@@ -154,24 +154,24 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
                         {(data.type === 'SendEmail' || data.type === 'SendSms') && (
                             <>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-600 mb-1">Subject / Header</label>
+                                    <label className="block text-xs font-medium text-foreground-secondary mb-1">Subject / Header</label>
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none"
+                                        className="w-full px-4 py-2 border border-border rounded-lg text-sm outline-none"
                                         value={data.config?.subject || ''}
                                         onChange={(e) => handleConfigChange('subject', e.target.value)}
                                         placeholder="Hello {{client_name}}!"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-600 mb-1">Message Body</label>
+                                    <label className="block text-xs font-medium text-foreground-secondary mb-1">Message Body</label>
                                     <textarea
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none h-32 resize-none"
+                                        className="w-full px-4 py-2 border border-border rounded-lg text-sm outline-none h-32 resize-none"
                                         value={data.config?.body || ''}
                                         onChange={(e) => handleConfigChange('body', e.target.value)}
                                         placeholder="Write your automated message here..."
                                     />
-                                    <p className="text-[10px] text-gray-400 mt-1 italic">Use {"{{variable}}"} for dynamic fields</p>
+                                    <p className="text-[10px] text-foreground-muted mt-1 italic">Use {"{{variable}}"} for dynamic fields</p>
                                 </div>
                             </>
                         )}
@@ -180,18 +180,18 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
                         {data.type === 'Delay' && (
                             <div className="flex space-x-4">
                                 <div className="flex-1">
-                                    <label className="block text-xs font-medium text-gray-600 mb-1">Value</label>
+                                    <label className="block text-xs font-medium text-foreground-secondary mb-1">Value</label>
                                     <input
                                         type="number"
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none"
+                                        className="w-full px-4 py-2 border border-border rounded-lg text-sm outline-none"
                                         value={data.config?.delayValue || 0}
                                         onChange={(e) => handleConfigChange('delayValue', parseInt(e.target.value))}
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-xs font-medium text-gray-600 mb-1">Unit</label>
+                                    <label className="block text-xs font-medium text-foreground-secondary mb-1">Unit</label>
                                     <select
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none"
+                                        className="w-full px-4 py-2 border border-border rounded-lg text-sm outline-none"
                                         value={data.config?.delayUnit || 'minutes'}
                                         onChange={(e) => handleConfigChange('delayUnit', e.target.value)}
                                     >
@@ -207,19 +207,19 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
                         {data.type === 'CallWebhook' && (
                             <>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-600 mb-1">Endpoint URL</label>
+                                    <label className="block text-xs font-medium text-foreground-secondary mb-1">Endpoint URL</label>
                                     <input
                                         type="url"
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none"
+                                        className="w-full px-4 py-2 border border-border rounded-lg text-sm outline-none"
                                         value={data.config?.webhookUrl || ''}
                                         onChange={(e) => handleConfigChange('webhookUrl', e.target.value)}
                                         placeholder="https://zapier.com/hooks/..."
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-600 mb-1">Method</label>
+                                    <label className="block text-xs font-medium text-foreground-secondary mb-1">Method</label>
                                     <select
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none"
+                                        className="w-full px-4 py-2 border border-border rounded-lg text-sm outline-none"
                                         value={data.config?.method || 'POST'}
                                         onChange={(e) => handleConfigChange('method', e.target.value)}
                                     >
@@ -233,10 +233,10 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
 
                         {/* Default fallback */}
                         {!['SendEmail', 'SendSms', 'Delay', 'CallWebhook'].includes(data.type) && (
-                            <div className="bg-gray-50 border border-dashed border-gray-200 rounded-xl p-6 text-center">
+                            <div className="bg-muted border border-dashed border-border rounded-xl p-6 text-center">
                                 <Settings className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                                <p className="text-sm text-gray-500 font-medium">Standard Execution</p>
-                                <p className="text-xs text-gray-400">This node uses default platform parameters for {data.label}.</p>
+                                <p className="text-sm text-foreground-secondary font-medium">Standard Execution</p>
+                                <p className="text-xs text-foreground-muted">This node uses default platform parameters for {data.label}.</p>
                             </div>
                         )}
                     </div>
@@ -244,10 +244,10 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ selectedNode, 
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+            <div className="p-6 border-t border-border-subtle bg-muted/50">
                 <button
                     onClick={onClose}
-                    className="w-full py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl text-sm hover:shadow-md transition-all"
+                    className="w-full py-3 bg-card border border-border text-foreground font-bold rounded-xl text-sm hover:shadow-md transition-all"
                 >
                     Update & Close
                 </button>

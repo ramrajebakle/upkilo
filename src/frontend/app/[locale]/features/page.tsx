@@ -114,19 +114,19 @@ export default async function FeaturesPage({
   const { locale } = await params;
 
   return (
-    <main className="bg-white">
+    <main className="bg-card">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(FEATURES_JSON_LD) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
       {/* ───────────────────────── HERO ───────────────────────── */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-primary-50 to-white py-20">
+      <section className="border-b border-border bg-gradient-to-b from-primary-50 to-white py-20">
         <div className="mx-auto max-w-4xl px-4 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-subtle px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
             Features
           </span>
-          <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
+          <h1 className="mt-5 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
             Everything you need to run and grow your business
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-foreground-secondary">
             Bookings, clients, payments, marketing and AI automation in one platform —
             so you can stop paying for five tools that don&apos;t talk to each other.
           </p>
@@ -139,12 +139,12 @@ export default async function FeaturesPage({
             </Link>
             <Link
               href={`/${locale}/pricing`}
-              className="rounded-2xl border border-slate-300 px-7 py-3.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              className="rounded-2xl border border-border-strong px-7 py-3.5 font-semibold text-foreground transition-colors hover:bg-accent"
             >
               See pricing
             </Link>
           </div>
-          <p className="mt-4 text-sm text-slate-500">14-day free trial · No credit card required</p>
+          <p className="mt-4 text-sm text-foreground-secondary">14-day free trial · No credit card required</p>
         </div>
       </section>
 
@@ -152,10 +152,10 @@ export default async function FeaturesPage({
       <section className="py-24">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
               Built for service businesses
             </h2>
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-lg text-foreground-secondary">
               Six core systems that cover the whole customer journey, from first enquiry to repeat booking.
             </p>
           </div>
@@ -164,17 +164,17 @@ export default async function FeaturesPage({
             {CORE.map((feature) => (
               <div
                 key={feature.title}
-                className="group h-full rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5"
+                className="group h-full rounded-2xl border border-border bg-card p-7 transition-all hover:-translate-y-1 hover:border-primary/25 hover:shadow-xl hover:shadow-primary-500/5"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25 transition-transform group-hover:scale-110">
                   <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-slate-900">{feature.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{feature.description}</p>
+                <h3 className="mt-5 text-lg font-semibold text-foreground">{feature.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground-secondary">{feature.description}</p>
                 <ul className="mt-4 space-y-2">
                   {feature.points.map((point) => (
-                    <li key={point} className="flex items-start gap-2 text-sm text-slate-600">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" aria-hidden="true" />
+                    <li key={point} className="flex items-start gap-2 text-sm text-foreground-secondary">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                       <span>{point}</span>
                     </li>
                   ))}
@@ -186,23 +186,23 @@ export default async function FeaturesPage({
       </section>
 
       {/* ───────────────────────── PLATFORM ───────────────────────── */}
-      <section className="border-y border-slate-200 bg-slate-50 py-24">
+      <section className="border-y border-border bg-muted py-24">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
               The platform underneath
             </h2>
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-lg text-foreground-secondary">
               The parts you shouldn&apos;t have to think about — because they simply work.
             </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PLATFORM.map((item) => (
-              <div key={item.title} className="rounded-2xl border border-slate-200 bg-white p-6">
-                <item.icon className="h-6 w-6 text-primary-600" aria-hidden="true" />
-                <h3 className="mt-4 font-semibold text-slate-900">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
+              <div key={item.title} className="rounded-2xl border border-border bg-card p-6">
+                <item.icon className="h-6 w-6 text-primary" aria-hidden="true" />
+                <h3 className="mt-4 font-semibold text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground-secondary">{item.description}</p>
               </div>
             ))}
           </div>
@@ -212,10 +212,10 @@ export default async function FeaturesPage({
       {/* ───────────────────────── CTA ───────────────────────── */}
       <section className="py-24">
         <div className="mx-auto max-w-3xl px-4 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             Ready to see it in action?
           </h2>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-4 text-lg text-foreground-secondary">
             Start a 14-day free trial. No credit card, no setup fees, no contracts.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -227,7 +227,7 @@ export default async function FeaturesPage({
             </Link>
             <Link
               href={`/${locale}/pricing`}
-              className="rounded-2xl border border-slate-300 px-7 py-3.5 font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              className="rounded-2xl border border-border-strong px-7 py-3.5 font-semibold text-foreground transition-colors hover:bg-accent"
             >
               Compare plans
             </Link>

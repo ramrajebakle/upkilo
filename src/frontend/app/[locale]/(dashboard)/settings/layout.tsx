@@ -80,7 +80,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                         <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
                             {t('settings')}
                         </h1>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Configuring Operative Infrastructure</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Configuring Operative Infrastructure</p>
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                         <nav aria-label="Settings navigation">
                             {navGroups.map((group) => (
                                 <div key={group.label} className="mb-4">
-                                    <p className="px-3 mb-1 text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em]">
+                                    <p className="px-3 mb-1 text-[9px] font-black text-foreground-muted uppercase tracking-[0.2em]">
                                         {group.label}
                                     </p>
                                     <div className="space-y-0.5">
@@ -112,7 +112,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                                                             : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                                                     )}
                                                 >
-                                                    <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive ? "text-white" : "text-slate-400 dark:text-slate-600")} aria-hidden="true" />
+                                                    <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive ? "text-white" : "text-foreground-muted")} aria-hidden="true" />
                                                     {tab.label}
                                                     {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white/80" aria-hidden="true" />}
                                                 </Link>
@@ -131,7 +131,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                             <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                 <div className="bg-primary-500 h-full w-[85%] rounded-full shadow-glow" />
                             </div>
-                            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-3">Identity Integrity: 85%</p>
+                            <p className="text-[8px] font-bold text-foreground-muted uppercase tracking-widest mt-3">Identity Integrity: 85%</p>
                         </div>
                     </div>
                 </div>

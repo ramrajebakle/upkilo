@@ -73,7 +73,7 @@ export function MarketplaceSettings() {
         return (
             <div className="flex flex-col items-center justify-center py-24 gap-6">
                 <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Commerce Nexus...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Commerce Nexus...</p>
             </div>
         );
     }
@@ -102,7 +102,7 @@ export function MarketplaceSettings() {
                         </p>
                         <div className="mt-8 flex gap-3">
                             <Button 
-                                className="bg-white text-primary-700 hover:bg-slate-50 border-none h-11 px-6 rounded-xl font-black uppercase tracking-widest text-[9px] shadow-xl shadow-black/10 active:scale-95 transition-all"
+                                className="bg-white text-primary-700 hover:bg-slate-100 border-none h-11 px-6 rounded-xl font-black uppercase tracking-widest text-[9px] shadow-xl shadow-black/10 active:scale-95 transition-all"
                                 onClick={handlePurchaseBadge}
                                 loading={actionLoading === 'badge'}
                             >
@@ -129,7 +129,7 @@ export function MarketplaceSettings() {
                                 </div>
                                 <div>
                                     <h3 className="font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">Acquisition Fees</h3>
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Pay-per-performance</p>
+                                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-0.5">Pay-per-performance</p>
                                 </div>
                             </div>
                             <div className="px-3 py-1.5 bg-amber-50 dark:bg-amber-400/10 text-amber-700 dark:text-amber-400 text-[9px] font-black rounded-lg border border-amber-100 dark:border-amber-400/20 uppercase tracking-widest">
@@ -138,14 +138,14 @@ export function MarketplaceSettings() {
                         </div>
                         <div className="flex items-baseline gap-3">
                             <span className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{formatCurrency(leadFees?.totalOwed || 0)}</span>
-                            <span className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">Aggregate Owed</span>
+                            <span className="text-foreground-muted text-[10px] font-black uppercase tracking-widest">Aggregate Owed</span>
                         </div>
                         <p className="mt-4 text-slate-500 dark:text-slate-400 text-[11px] font-medium leading-relaxed">
                             Structured rate of <span className="text-amber-600 dark:text-amber-400 font-bold">${leadFees?.feePerLead || 2.50}</span> per confirmed reservation originating from the global discovery matrix.
                         </p>
                     </div>
                     <div className="mt-8 pt-6 border-t border-slate-50 dark:border-slate-850 flex justify-between items-center">
-                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Next Settlement: April 1, 2026</span>
+                        <span className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">Next Settlement: April 1, 2026</span>
                         <button className="h-9 px-4 rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-[10px] font-black uppercase tracking-widest hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-all flex items-center">
                             Ledger <ExternalLink className="h-3 w-3 ml-2" />
                         </button>
@@ -158,13 +158,13 @@ export function MarketplaceSettings() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div>
                         <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Ecosystem Presence</h3>
-                        <p className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Directory Visibility Control</p>
+                        <p className="text-[11px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Directory Visibility Control</p>
                     </div>
                     <div className={cn(
                         "flex items-center gap-3 px-5 py-2.5 rounded-2xl text-[10px] font-black border uppercase tracking-widest shadow-sm",
                         listing?.isActive 
                             ? "bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-400/20" 
-                            : "bg-slate-50 dark:bg-slate-950 text-slate-400 dark:text-slate-600 border-slate-100 dark:border-slate-800"
+                            : "bg-slate-50 dark:bg-slate-950 text-foreground-muted border-slate-100 dark:border-slate-800"
                     )}>
                         <div className={cn("w-2 h-2 rounded-full animate-pulse", listing?.isActive ? "bg-emerald-500" : "bg-slate-400")} />
                         {listing?.isActive ? "Broadcast: ACTIVE" : "Broadcast: OFFLINE"}
@@ -175,7 +175,7 @@ export function MarketplaceSettings() {
                     <div className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 group hover:border-primary-500/30 transition-all">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
-                                <Globe className="h-4 w-4 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                                <Globe className="h-4 w-4 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                             </div>
                             <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Index Protocol</span>
                         </div>
@@ -188,7 +188,7 @@ export function MarketplaceSettings() {
                     <div className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 group hover:border-primary-500/30 transition-all">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
-                                <Search className="h-4 w-4 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                                <Search className="h-4 w-4 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                             </div>
                             <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Semantics</span>
                         </div>
@@ -203,12 +203,12 @@ export function MarketplaceSettings() {
                     <div className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 group hover:border-primary-500/30 transition-all">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
-                                <BarChart3 className="h-4 w-4 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                                <BarChart3 className="h-4 w-4 text-foreground-muted group-hover:text-primary-500 transition-colors" />
                             </div>
                             <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">CTR Telemetry</span>
                         </div>
                         <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">4.8% Click Velocity</p>
-                        <div className="mt-4 text-[9px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-600">
+                        <div className="mt-4 text-[9px] font-black uppercase tracking-[0.15em] text-foreground-muted">
                             1.2k impressions / 30 day cycle
                         </div>
                     </div>
@@ -225,7 +225,7 @@ export function MarketplaceSettings() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Extension Matrix</h3>
-                        <p className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Connect third-party operative systems</p>
+                        <p className="text-[11px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Connect third-party operative systems</p>
                     </div>
                     <Button variant="outline" className="h-10 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] dark:border-slate-800 dark:text-slate-400">Library</Button>
                 </div>
@@ -233,12 +233,12 @@ export function MarketplaceSettings() {
                 <div className="grid md:grid-cols-2 gap-6">
                     {apps.map((app: any) => (
                         <div key={app.id} className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-xl shadow-slate-200/40 dark:shadow-none flex items-center gap-6 hover:border-primary-500/50 transition-all cursor-pointer group active:scale-[0.98]">
-                            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-950 rounded-2xl flex items-center justify-center border border-slate-100 dark:border-slate-850 text-slate-400 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 group-hover:border-primary-100 dark:group-hover:border-primary-500/20 group-hover:text-primary-500 transition-all shadow-inner">
+                            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-950 rounded-2xl flex items-center justify-center border border-slate-100 dark:border-slate-850 text-foreground-muted group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 group-hover:border-primary-100 dark:group-hover:border-primary-500/20 group-hover:text-primary-500 transition-all shadow-inner">
                                 <ShoppingBag className="h-8 w-8" />
                             </div>
                             <div className="flex-1">
                                 <h4 className="font-black text-slate-900 dark:text-white text-sm uppercase tracking-tight group-hover:text-primary-600 transition-colors">{app.name}</h4>
-                                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1 leading-relaxed">{app.description}</p>
+                                <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1 leading-relaxed">{app.description}</p>
                             </div>
                             <Button variant="outline" className="h-10 px-6 rounded-xl font-black shadow-sm uppercase tracking-widest text-[9px] dark:border-slate-800 dark:group-hover:border-primary-500/50 transition-all">INITIALIZE</Button>
                         </div>
@@ -265,7 +265,7 @@ export function MarketplaceSettings() {
                             <span className="text-4xl font-black text-white tracking-tighter">$149</span>
                             <span className="text-white/70 text-sm font-black uppercase tracking-widest ml-1">/mo</span>
                         </div>
-                        <Button className="bg-white text-amber-600 hover:bg-slate-50 border-none h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-black/10 active:scale-95 transition-all">
+                        <Button className="bg-white text-amber-700 hover:bg-slate-50 border-none h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-black/10 active:scale-95 transition-all">
                             Enable Featured Uplink
                         </Button>
                     </div>

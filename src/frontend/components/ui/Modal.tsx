@@ -92,7 +92,7 @@ export function Modal({
                 Opacity only: it is one of the two properties that skip layout and paint. */}
             <div
                 className={cn(
-                    'absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200 ease-out motion-reduce:transition-none',
+                    'absolute inset-0 bg-overlay backdrop-blur-sm transition-opacity duration-200 ease-out motion-reduce:transition-none',
                     closing ? 'opacity-0' : 'opacity-100 motion-safe:animate-fade-in'
                 )}
                 onClick={onClose}
@@ -102,7 +102,7 @@ export function Modal({
             <div className="flex items-center justify-center min-h-full p-4">
                 <div
                     className={cn(
-                        'relative bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full border border-gray-100 dark:border-slate-800',
+                        'relative bg-popover text-popover-foreground rounded-xl shadow-[var(--shadow-popover)] w-full border border-border',
                         'transition-all duration-200 ease-out motion-reduce:transition-none',
                         // Exits back along the path it entered — down to 0.97 and out, rather
                         // than disappearing. Not scale-0: nothing in the real world shrinks to
@@ -115,21 +115,21 @@ export function Modal({
                 >
                     {/* Header */}
                     {(title || showCloseButton) && (
-                        <div className="flex items-start justify-between p-6 border-b border-gray-100 dark:border-slate-800">
+                        <div className="flex items-start justify-between p-6 border-b border-border-subtle">
                             <div>
                                 {title && (
-                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
+                                    <h2 className="text-lg font-semibold text-foreground">{title}</h2>
                                 )}
                                 {description && (
-                                    <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{description}</p>
+                                    <p className="text-sm text-foreground-secondary mt-1">{description}</p>
                                 )}
                             </div>
                             {showCloseButton && (
                                 <button
                                     onClick={onClose}
-                                    className="p-1 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                                    className="p-1 hover:bg-accent rounded-lg transition-colors"
                                 >
-                                    <X className="h-5 w-5 text-gray-400 dark:text-slate-500" />
+                                    <X className="h-5 w-5 text-foreground-muted" />
                                 </button>
                             )}
                         </div>

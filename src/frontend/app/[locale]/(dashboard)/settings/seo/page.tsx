@@ -20,9 +20,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
 /* ─── helpers ─────────────────────────────────────────────── */
 const charColor = (len: number, max: number) =>
-    len === 0 ? 'text-slate-400 dark:text-slate-600'
-    : len > max ? 'text-red-500'
-    : len > max * 0.9 ? 'text-amber-500'
+    len === 0 ? 'text-foreground-muted'
+    : len > max ? 'text-danger-fg'
+    : len > max * 0.9 ? 'text-warning-fg'
     : 'text-primary-500';
 
 function Tip({ text }: { text: string }) {
@@ -37,7 +37,7 @@ function Tip({ text }: { text: string }) {
 function FieldLabel({ label, hint }: { label: string; hint?: string }) {
     return (
         <div className="mb-4">
-            <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] ml-1">{label}</label>
+            <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.2em] ml-1">{label}</label>
             {hint && <p className="text-[9px] font-bold text-slate-500 dark:text-slate-400 mt-2 uppercase tracking-widest leading-relaxed">{hint}</p>}
         </div>
     );
@@ -170,7 +170,7 @@ export default function SeoSettingsPage() {
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
             <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Visibility Matrix...</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Visibility Matrix...</p>
         </div>
     );
 
@@ -186,7 +186,7 @@ export default function SeoSettingsPage() {
                         </div>
                         <div>
                             <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Visibility Matrix</h1>
-                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Global SEO and Discoverability Stance</p>
+                            <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Global SEO and Discoverability Stance</p>
                         </div>
                     </div>
                 </div>
@@ -194,8 +194,8 @@ export default function SeoSettingsPage() {
                 <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-2xl shadow-slate-200/40 dark:shadow-none relative overflow-hidden group">
                     <div className="relative z-10">
                         <div className="flex items-center justify-between mb-4">
-                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">Visibility Integrity</span>
-                            <span className={cn('text-xl font-black tabular-nums transition-colors', score >= 80 ? 'text-emerald-500' : score >= 50 ? 'text-amber-500' : 'text-red-500')}>
+                            <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">Visibility Integrity</span>
+                            <span className={cn('text-xl font-black tabular-nums transition-colors', score >= 80 ? 'text-success-fg' : score >= 50 ? 'text-warning-fg' : 'text-danger-fg')}>
                                 {score}%
                             </span>
                         </div>
@@ -208,7 +208,7 @@ export default function SeoSettingsPage() {
                             />
                         </div>
                     </div>
-                    <Target className="absolute -bottom-4 -right-4 h-24 w-24 text-slate-100 dark:text-slate-850/30 -rotate-12 group-hover:rotate-0 transition-transform duration-1000" />
+                    <Target className="absolute -bottom-4 -right-4 h-24 w-24 text-slate-100/30 -rotate-12 group-hover:rotate-0 transition-transform duration-1000" />
                 </div>
             </div>
 
@@ -229,7 +229,7 @@ export default function SeoSettingsPage() {
                         />
                         <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-950 border border-transparent dark:border-slate-850 rounded-[24px] p-2 pr-6 shadow-inner focus-within:ring-4 focus-within:ring-primary-500/10 transition-all">
                             <div className="px-5 py-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
-                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">
+                                <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">
                                     UPKILO.ROOT/
                                 </span>
                             </div>
@@ -245,7 +245,7 @@ export default function SeoSettingsPage() {
                         {bookingUrl && (
                             <div className="pt-6 border-t border-slate-50 dark:border-slate-850 flex items-center gap-4">
                                 <div className="flex-1 p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-transparent dark:border-slate-850 truncate">
-                                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest leading-none">{bookingUrl}</span>
+                                    <span className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest leading-none">{bookingUrl}</span>
                                 </div>
                                 <Button
                                     onClick={() => copy(bookingUrl, 'url')}
@@ -264,7 +264,7 @@ export default function SeoSettingsPage() {
                         <div className="space-y-4">
                             <FieldLabel label="Primary Entity Title" />
                             <div className="relative group">
-                                <Building2 className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                <Building2 className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                 <input
                                     type="text"
                                     placeholder="e.g. ACME QUANTUM SOLUTIONS"
@@ -297,7 +297,7 @@ export default function SeoSettingsPage() {
                         <div className="space-y-4">
                             <FieldLabel label="Tactical Tag Matrix" />
                             <div className="relative group">
-                                <Target className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                <Target className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                 <input
                                     type="text"
                                     placeholder="comma, separated, key, values"
@@ -315,9 +315,9 @@ export default function SeoSettingsPage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
                             <div className="space-y-3">
-                                <label className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Tactical Voice</label>
+                                <label className="text-[9px] font-black text-foreground-muted uppercase tracking-widest ml-1">Tactical Voice</label>
                                 <div className="relative group">
-                                    <Phone className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                    <Phone className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                     <input
                                         type="tel"
                                         placeholder="+00 0000 0000"
@@ -328,9 +328,9 @@ export default function SeoSettingsPage() {
                                 </div>
                             </div>
                             <div className="space-y-3">
-                                <label className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Comm Route</label>
+                                <label className="text-[9px] font-black text-foreground-muted uppercase tracking-widest ml-1">Comm Route</label>
                                 <div className="relative group">
-                                    <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                    <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                     <input
                                         type="email"
                                         placeholder="SUPPORT@ENTITY.ROOT"
@@ -341,9 +341,9 @@ export default function SeoSettingsPage() {
                                 </div>
                             </div>
                             <div className="md:col-span-2 space-y-3">
-                                <label className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Master Namespace URL</label>
+                                <label className="text-[9px] font-black text-foreground-muted uppercase tracking-widest ml-1">Master Namespace URL</label>
                                 <div className="relative group">
-                                    <Globe className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                    <Globe className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                     <input
                                         type="url"
                                         placeholder="HTTPS://ENTITY.ROOT"
@@ -362,7 +362,7 @@ export default function SeoSettingsPage() {
                         
                         <div className="space-y-6 pt-4">
                             <div className="relative group">
-                                <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                 <input
                                     type="text"
                                     placeholder="INFRASTRUCTURE POINT (LINE 1)"
@@ -410,7 +410,7 @@ export default function SeoSettingsPage() {
                         <FieldLabel label="Media Asset" hint="Logo used in high-fidelity social anchors and search cards." />
                         
                         <div className="relative group pt-4">
-                            <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                            <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                             <input
                                 type="url"
                                 placeholder="HTTPS://ENTITY.ROOT/ASSETS/LOGO.SVG"
@@ -440,7 +440,7 @@ export default function SeoSettingsPage() {
                                     'flex-1 py-4 text-[10px] font-black uppercase tracking-[0.2em] rounded-[28px] transition-all duration-500',
                                     tab === t
                                         ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-xl'
-                                        : 'text-slate-500 dark:text-slate-600 hover:text-slate-900 dark:hover:text-slate-300'
+                                        : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                                 )}
                             >
                                 {t === 'google' ? 'Search Index' : 'Social Broadcast'}
@@ -459,7 +459,7 @@ export default function SeoSettingsPage() {
                                     className="space-y-8"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Search Engine Simulation</p>
+                                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Search Engine Simulation</p>
                                         <div className="flex gap-1.5">
                                             {[1,2,3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800" />)}
                                         </div>
@@ -473,19 +473,19 @@ export default function SeoSettingsPage() {
                                                     <span className="text-white text-[9px] font-black">{form.name?.[0] || 'U'}</span>
                                                   </div>
                                             }
-                                            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 tracking-tight lowercase">{displayUrl}</span>
+                                            <span className="text-[10px] font-bold text-foreground-muted tracking-tight lowercase">{displayUrl}</span>
                                         </div>
                                         
                                         <p className="text-blue-600 dark:text-primary-400 text-xl font-black uppercase tracking-tight leading-tight group-hover:underline">
                                             {pageTitle}
                                         </p>
                                         
-                                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-500 leading-relaxed uppercase tracking-wider">
+                                        <p className="text-[11px] font-bold text-foreground-secondary leading-relaxed uppercase tracking-wider">
                                             {metaDesc.slice(0, 155)}{metaDesc.length > 155 ? '...' : ''}
                                         </p>
                                         
                                         {(form.address.city || form.phone) && (
-                                            <div className="pt-6 mt-6 flex flex-wrap gap-4 text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] border-t border-slate-100 dark:border-slate-800">
+                                            <div className="pt-6 mt-6 flex flex-wrap gap-4 text-[9px] font-black text-foreground-muted uppercase tracking-[0.2em] border-t border-slate-100 dark:border-slate-800">
                                                 {form.address.city && (
                                                     <span className="flex items-center gap-2">
                                                         <MapPin className="h-3 w-3 text-primary-500" />
@@ -498,8 +498,8 @@ export default function SeoSettingsPage() {
                                                         {form.phone}
                                                     </span>
                                                 )}
-                                                <span className="flex items-center gap-2 text-emerald-500">
-                                                    <Star className="h-3 w-3 fill-current animate-pulse text-emerald-500" /> Book Online
+                                                <span className="flex items-center gap-2 text-success-fg">
+                                                    <Star className="h-3 w-3 fill-current animate-pulse text-success-fg" /> Book Online
                                                 </span>
                                             </div>
                                         )}
@@ -507,7 +507,7 @@ export default function SeoSettingsPage() {
                                     
                                     <div className="flex items-center gap-3 px-2">
                                         <Sparkles className="h-4 w-4 text-primary-500 animate-spin-slow" />
-                                        <span className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">Updates automatically every time you save</span>
+                                        <span className="text-[9px] font-black text-foreground-muted uppercase tracking-widest">Updates automatically every time you save</span>
                                     </div>
                                 </motion.div>
                             ) : (
@@ -518,7 +518,7 @@ export default function SeoSettingsPage() {
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     className="space-y-8"
                                 >
-                                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Protocol Exchange Simulation</p>
+                                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Protocol Exchange Simulation</p>
                                     
                                     <div className="border border-slate-100 dark:border-slate-850 rounded-[40px] overflow-hidden shadow-2xl group">
                                         <div className="w-full h-48 bg-slate-50 dark:bg-slate-950 flex items-center justify-center relative overflow-hidden">
@@ -527,9 +527,9 @@ export default function SeoSettingsPage() {
                                             ) : (
                                                 <div className="text-center space-y-4 opacity-50">
                                                     <div className="p-6 bg-white dark:bg-slate-900 rounded-full inline-block shadow-inner">
-                                                        <ImageIcon className="h-8 w-8 text-slate-300 dark:text-slate-700 mx-auto" />
+                                                        <ImageIcon className="h-8 w-8 text-slate-300 mx-auto" />
                                                     </div>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Awaiting Media Asset</p>
+                                                    <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest">Awaiting Media Asset</p>
                                                 </div>
                                             )}
                                             <div className="absolute bottom-4 left-4">
@@ -560,13 +560,13 @@ export default function SeoSettingsPage() {
                         
                         <div className="space-y-6">
                             {[
-                                { icon: CheckCircle, color: 'text-emerald-500', text: 'Booking parameters synchronized instantly' },
+                                { icon: CheckCircle, color: 'text-success-fg', text: 'Booking parameters synchronized instantly' },
                                 { icon: Globe, color: 'text-blue-400', text: 'Regional spatial data re-validation' },
                                 { icon: Target, color: 'text-red-400', text: 'Global sitemap re-indexing triggered' },
                                 { icon: Share2, color: 'text-primary-400', text: 'Social anchors and OG headers updated' },
                                 { icon: RefreshCw, color: 'text-amber-400', text: 'Broadcast picked up within 1–3 days' },
                             ].map((item, i) => (
-                                <div key={i} className="flex items-start gap-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-loose">
+                                <div key={i} className="flex items-start gap-4 text-[9px] font-bold text-foreground-muted uppercase tracking-widest leading-loose">
                                     <item.icon className={cn("h-4 w-4 shrink-0 mt-0.5", item.color)} />
                                     {item.text}
                                 </div>
@@ -590,7 +590,7 @@ export default function SeoSettingsPage() {
                                 ].map((step, i) => (
                                     <button key={i} className="w-full flex items-center justify-between p-6 bg-slate-50 dark:bg-slate-900 rounded-[24px] border border-transparent hover:border-primary-500/20 hover:bg-white dark:hover:bg-slate-850 transition-all group overflow-hidden relative">
                                         <div className="text-left relative z-10">
-                                            <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">{step.label}</p>
+                                            <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest">{step.label}</p>
                                             <p className="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-widest mt-1">{step.desc}</p>
                                         </div>
                                         <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary-500 group-hover:translate-x-1 transition-all relative z-10" />
@@ -620,7 +620,7 @@ export default function SeoSettingsPage() {
                 {/* Tab Nav */}
                 <div className="flex gap-2 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 w-fit">
                     {([['audit','SEO Audit'],['keywords','Keyword Ideas'],['citations','Directory Listings']] as const).map(([k,label]) => (
-                        <button key={k} onClick={() => setAuditTab(k)} className={cn('px-4 py-2 rounded-lg text-sm font-semibold transition-all', auditTab === k ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200')}>
+                        <button key={k} onClick={() => setAuditTab(k)} className={cn('px-4 py-2 rounded-lg text-sm font-semibold transition-all', auditTab === k ? 'bg-card text-foreground shadow' : 'text-foreground-secondary hover:text-foreground')}>
                             {label}
                         </button>
                     ))}
@@ -630,7 +630,7 @@ export default function SeoSettingsPage() {
                 {auditTab === 'audit' && (
                     <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm space-y-5">
                         {!audit ? (
-                            <p className="text-sm text-slate-400 text-center py-6">Save your settings first to see your live SEO audit score.</p>
+                            <p className="text-sm text-foreground-muted text-center py-6">Save your settings first to see your live SEO audit score.</p>
                         ) : (
                             <>
                                 {/* Score */}
@@ -666,15 +666,15 @@ export default function SeoSettingsPage() {
                                         <div key={c.id} className={cn('flex items-start gap-3 p-3 rounded-xl', c.passed ? 'bg-emerald-50 dark:bg-emerald-900/20' : c.priority === 'critical' ? 'bg-red-50 dark:bg-red-900/20' : c.priority === 'high' ? 'bg-amber-50 dark:bg-amber-900/20' : 'bg-slate-50 dark:bg-slate-800/50')}>
                                             <div className="mt-0.5">
                                                 {c.passed
-                                                    ? <CheckCircle className="w-4 h-4 text-emerald-500" />
-                                                    : <AlertCircle className={cn('w-4 h-4', c.priority === 'critical' ? 'text-red-500' : c.priority === 'high' ? 'text-amber-500' : 'text-slate-400')} />}
+                                                    ? <CheckCircle className="w-4 h-4 text-success-fg" />
+                                                    : <AlertCircle className={cn('w-4 h-4', c.priority === 'critical' ? 'text-danger-fg' : c.priority === 'high' ? 'text-warning-fg' : 'text-foreground-muted')} />}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2">
                                                     <span className={cn('text-sm font-semibold', c.passed ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-900 dark:text-white')}>{c.label}</span>
                                                     {!c.passed && c.priority === 'critical' && <span className="text-xs px-1.5 py-0.5 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded font-medium">Critical</span>}
                                                     {!c.passed && c.priority === 'high' && <span className="text-xs px-1.5 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded font-medium">High</span>}
-                                                    {c.weight > 0 && <span className="text-xs text-slate-400">+{c.weight} pts</span>}
+                                                    {c.weight > 0 && <span className="text-xs text-foreground-muted">+{c.weight} pts</span>}
                                                 </div>
                                                 {!c.passed && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{c.tip}</p>}
                                             </div>
@@ -690,7 +690,7 @@ export default function SeoSettingsPage() {
                 {auditTab === 'keywords' && (
                     <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
                         {!keywords?.suggestions?.length ? (
-                            <p className="text-sm text-slate-400 text-center py-6">Add at least 3 services to get keyword suggestions tailored to your business and location.</p>
+                            <p className="text-sm text-foreground-muted text-center py-6">Add at least 3 services to get keyword suggestions tailored to your business and location.</p>
                         ) : (
                             <>
                                 <div className="flex items-center gap-2 mb-2">
@@ -705,12 +705,12 @@ export default function SeoSettingsPage() {
                                         <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
                                             <div>
                                                 <span className="text-sm font-medium text-slate-900 dark:text-white">{s.keyword}</span>
-                                                <span className="ml-3 text-xs text-slate-400">{s.intent}</span>
+                                                <span className="ml-3 text-xs text-foreground-muted">{s.intent}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className={cn('text-xs font-semibold px-2 py-0.5 rounded-full', s.volume === 'High' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300')}>{s.volume}</span>
-                                                <button onClick={() => copy(s.keyword, `kw-${i}`)} className="p-1.5 text-slate-400 hover:text-primary-500 transition-colors rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700">
-                                                    {copied === `kw-${i}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                                <button onClick={() => copy(s.keyword, `kw-${i}`)} className="p-1.5 text-foreground-muted hover:text-primary-500 transition-colors rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700">
+                                                    {copied === `kw-${i}` ? <Check className="w-3.5 h-3.5 text-success-fg" /> : <Copy className="w-3.5 h-3.5" />}
                                                 </button>
                                             </div>
                                         </div>
@@ -767,11 +767,11 @@ export default function SeoSettingsPage() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-8 pt-10 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-6">
                     <div className="p-4 bg-emerald-50 dark:bg-emerald-950 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
-                        <Zap className="h-6 w-6 text-emerald-500 animate-pulse" />
+                        <Zap className="h-6 w-6 text-success-fg animate-pulse" />
                     </div>
                     <div>
                         <p className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest">Global Synchronization</p>
-                        <p className="text-[9px] font-bold text-slate-500 dark:text-slate-600 uppercase tracking-widest mt-1">Updates propagate across all availability zones in 1-3 cycles</p>
+                        <p className="text-[9px] font-bold text-foreground-secondary uppercase tracking-widest mt-1">Updates propagate across all availability zones in 1-3 cycles</p>
                     </div>
                 </div>
                 

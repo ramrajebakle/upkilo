@@ -97,8 +97,8 @@ function ResetPasswordContent() {
                     <div className="p-4 bg-emerald-50 rounded-full text-emerald-600">
                         <CheckCircle2 className="h-16 w-16" />
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-900">Password Reset Complete</h1>
-                    <p className="text-slate-600">
+                    <h1 className="text-2xl font-bold text-foreground">Password Reset Complete</h1>
+                    <p className="text-foreground-secondary">
                         Your password has been updated. You can now log in with your new credentials.
                     </p>
                 </div>
@@ -111,15 +111,15 @@ function ResetPasswordContent() {
 
     if (!token) {
         return (
-            <Card className="w-full max-w-md p-8 space-y-8 shadow-2xl border-slate-200/60 animate-in fade-in zoom-in duration-300">
+            <Card className="w-full max-w-md p-8 space-y-8 shadow-2xl border-border animate-in fade-in zoom-in duration-300">
                 <div className="text-center space-y-2">
                     <div className="flex justify-center mb-4">
-                        <div className="p-4 bg-primary-50 rounded-full">
-                            <Lock className="h-10 w-10 text-primary-600" />
+                        <div className="p-4 bg-brand-subtle rounded-full">
+                            <Lock className="h-10 w-10 text-primary" />
                         </div>
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-900">Forgot Password?</h1>
-                    <p className="text-slate-500">Enter your email and we'll send you a link to reset your password.</p>
+                    <h1 className="text-2xl font-bold text-foreground">Forgot Password?</h1>
+                    <p className="text-foreground-secondary">Enter your email and we'll send you a link to reset your password.</p>
                 </div>
 
                 {requestSent ? (
@@ -168,7 +168,7 @@ function ResetPasswordContent() {
                             <button
                                 type="button"
                                 onClick={() => router.push('/login')}
-                                className="text-sm text-slate-500 hover:text-primary font-medium transition-colors"
+                                className="text-sm text-foreground-secondary hover:text-primary font-medium transition-colors"
                             >
                                 Back to Login
                             </button>
@@ -180,15 +180,15 @@ function ResetPasswordContent() {
     }
 
     return (
-        <Card className="w-full max-w-md p-8 space-y-8 shadow-2xl border-slate-200/60 animate-in fade-in zoom-in duration-300">
+        <Card className="w-full max-w-md p-8 space-y-8 shadow-2xl border-border animate-in fade-in zoom-in duration-300">
             <div className="text-center space-y-2">
                 <div className="flex justify-center mb-4">
-                    <div className="p-4 bg-primary-50 rounded-full">
-                        <ShieldCheck className="h-10 w-10 text-primary-600" />
+                    <div className="p-4 bg-brand-subtle rounded-full">
+                        <ShieldCheck className="h-10 w-10 text-primary" />
                     </div>
                 </div>
-                <h1 className="text-2xl font-bold text-slate-900">Reset Password</h1>
-                <p className="text-slate-500">Secure your account with a new password</p>
+                <h1 className="text-2xl font-bold text-foreground">Reset Password</h1>
+                <p className="text-foreground-secondary">Secure your account with a new password</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -196,7 +196,7 @@ function ResetPasswordContent() {
                     <div className="space-y-2">
                         <Label htmlFor="password">New Password</Label>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                            <Lock className="absolute left-3 top-3 h-4 w-4 text-foreground-muted" />
                             <Input
                                 id="password"
                                 type="password"
@@ -211,7 +211,7 @@ function ResetPasswordContent() {
                     <div className="space-y-2">
                         <Label htmlFor="confirm-password">Confirm New Password</Label>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                            <Lock className="absolute left-3 top-3 h-4 w-4 text-foreground-muted" />
                             <Input
                                 id="confirm-password"
                                 type="password"
@@ -235,8 +235,8 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50/50 p-4">
-            <Suspense fallback={<Loader2 className="h-12 w-12 text-primary-500 animate-spin" />}>
+        <div className="min-h-screen flex items-center justify-center bg-muted/50 p-4">
+            <Suspense fallback={<Loader2 className="h-12 w-12 text-primary animate-spin" />}>
                 <ResetPasswordContent />
             </Suspense>
         </div>

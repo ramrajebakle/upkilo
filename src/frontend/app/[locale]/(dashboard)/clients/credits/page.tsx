@@ -62,7 +62,7 @@ export default function ClientCreditsPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Client Credits <Coins className="text-amber-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Client Credits <Coins className="text-warning-fg" size={22} /></h1>
         <p className="text-text-secondary mt-1">View and adjust account credit balances.</p>
       </header>
 
@@ -99,7 +99,7 @@ export default function ClientCreditsPage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className={`text-xl font-bold ${c.balance > 0 ? "text-green-600" : "text-text-tertiary"}`}>${c.balance.toFixed(2)}</p>
+                        <p className={`text-xl font-bold ${c.balance > 0 ? "text-success-fg" : "text-text-tertiary"}`}>${c.balance.toFixed(2)}</p>
                         <p className="text-xs text-text-tertiary">balance</p>
                       </div>
                       {adjustClientId === c.clientId ? (

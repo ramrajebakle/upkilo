@@ -52,24 +52,24 @@ export function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 min-h-11 sm:min-h-0 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 shadow-sm"
+        className="flex items-center gap-2 px-3 py-1.5 min-h-11 sm:min-h-0 rounded-lg border border-border bg-card hover:bg-accent transition-colors text-sm font-medium text-foreground shadow-sm"
       >
-        <Globe className="h-4 w-4 text-gray-500" />
+        <Globe className="h-4 w-4 text-foreground-secondary" />
         <span className="hidden sm:inline">{currentLocale.name}</span>
         <span className="sm:hidden">{currentLocale.flag}</span>
-        <ChevronDown className={cn("h-3 w-3 text-gray-400 transition-transform", isOpen && "rotate-180")} />
+        <ChevronDown className={cn("h-3 w-3 text-foreground-muted transition-transform", isOpen && "rotate-180")} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 bottom-full mb-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="absolute right-0 bottom-full mb-2 w-48 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
           <div className="py-1">
             {locales.map((l) => (
               <button
                 key={l.code}
                 onClick={() => handleLocaleChange(l.code)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-2 text-sm text-left hover:bg-gray-50 transition-colors",
-                  locale === l.code ? "bg-primary-50 text-primary-700 font-bold" : "text-gray-700 font-medium"
+                  "w-full flex items-center justify-between px-4 py-2 text-sm text-left hover:bg-accent transition-colors",
+                  locale === l.code ? "bg-brand-subtle text-primary font-bold" : "text-foreground font-medium"
                 )}
               >
                 <div className="flex items-center gap-3">

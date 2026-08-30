@@ -161,7 +161,7 @@ export default function RegisterPage() {
 
               <div>
                 <label className="block text-sm font-medium text-muted-foreground mb-1">
-                  Password <span className="text-red-500" aria-hidden="true">*</span>
+                  Password <span className="text-danger-fg" aria-hidden="true">*</span>
                 </label>
                 <Input
                   id="password"
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                         ))}
                       </div>
                       {strength.label && (
-                        <p className={`text-xs font-medium ${strength.score >= 3 ? 'text-emerald-600' : strength.score === 2 ? 'text-blue-600' : 'text-amber-600'}`}>
+                        <p className={`text-xs font-medium ${strength.score >= 3 ? 'text-success-fg' : strength.score === 2 ? 'text-blue-600' : 'text-warning-fg'}`}>
                           <ShieldCheck className="inline w-3 h-3 mr-1" aria-hidden="true" />
                           {strength.label}
                         </p>

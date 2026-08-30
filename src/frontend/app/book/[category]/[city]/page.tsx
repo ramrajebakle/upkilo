@@ -142,7 +142,7 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-muted">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdItemList) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdBreadcrumb) }} />
       {/* Hero */}
@@ -162,10 +162,10 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
         {!data || data.listings.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🔍</div>
-            <h2 className="text-xl font-semibold text-gray-700 mb-2">No businesses found yet</h2>
-            <p className="text-gray-500">
+            <h2 className="text-xl font-semibold text-foreground mb-2">No businesses found yet</h2>
+            <p className="text-foreground-secondary">
               Are you a {humanCategory.toLowerCase()} business in {humanCity}?{' '}
-              <a href="/register" className="text-primary-600 hover:underline font-medium">List your business for free →</a>
+              <a href="/register" className="text-primary hover:underline font-medium">List your business for free →</a>
             </p>
           </div>
         ) : (
@@ -174,20 +174,20 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
               {data.listings.map(listing => (
                 <article
                   key={listing.id}
-                  className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-card rounded-2xl border border-border p-6 shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <h2 className="text-lg font-bold text-gray-900 mb-1">{listing.name}</h2>
+                  <h2 className="text-lg font-bold text-foreground mb-1">{listing.name}</h2>
                   {listing.tagline && (
-                    <p className="text-sm text-gray-500 mb-3">{listing.tagline}</p>
+                    <p className="text-sm text-foreground-secondary mb-3">{listing.tagline}</p>
                   )}
                   {listing.reviewCount > 0 && (
                     <div className="flex items-center gap-1 mb-3">
                       <span className="text-yellow-400 text-sm">{'★'.repeat(Math.round(listing.averageRating))}</span>
-                      <span className="text-sm text-gray-600">{listing.averageRating.toFixed(1)} ({listing.reviewCount} reviews)</span>
+                      <span className="text-sm text-foreground-secondary">{listing.averageRating.toFixed(1)} ({listing.reviewCount} reviews)</span>
                     </div>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium">{listing.city}</span>
+                    <span className="text-xs bg-brand-subtle text-primary px-2 py-0.5 rounded-full font-medium">{listing.city}</span>
                     <a
                       href={`/book/${listing.id}`}
                       className="bg-primary-600 text-white text-sm px-4 py-1.5 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
@@ -204,7 +204,7 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
               {page > 1 && (
                 <a
                   href={`/book/${category}/${city}?page=${page - 1}`}
-                  className="px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  className="px-4 py-2 border border-border-strong rounded-xl text-sm font-medium text-foreground hover:bg-accent"
                 >
                   ← Previous
                 </a>
@@ -222,9 +222,9 @@ export default async function DiscoveryPage({ params, searchParams }: Props) {
         )}
 
         {/* CTA for businesses */}
-        <div className="mt-12 bg-primary-50 border border-primary-100 rounded-2xl p-8 text-center">
+        <div className="mt-12 bg-brand-subtle border border-primary/25 rounded-2xl p-8 text-center">
           <h3 className="text-lg font-bold text-primary-900 mb-2">Own a {humanCategory} business in {humanCity}?</h3>
-          <p className="text-primary-700 text-sm mb-4">Join Upkilo to accept online bookings, automate reminders, and grow your client base.</p>
+          <p className="text-primary text-sm mb-4">Join Upkilo to accept online bookings, automate reminders, and grow your client base.</p>
           <a href="/register" className="inline-block bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700">
             List Your Business Free →
           </a>

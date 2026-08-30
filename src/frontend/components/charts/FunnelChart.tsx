@@ -15,15 +15,15 @@ interface FunnelChartProps {
 const STEP_COLORS = [
     { bg: 'bg-cyan-500', text: 'text-cyan-600', bar: '#06b6d4' },
     { bg: 'bg-violet-500', text: 'text-violet-600', bar: '#8b5cf6' },
-    { bg: 'bg-emerald-500', text: 'text-emerald-600', bar: '#10b981' },
-    { bg: 'bg-amber-500', text: 'text-amber-600', bar: '#f59e0b' },
-    { bg: 'bg-rose-500', text: 'text-rose-600', bar: '#f43f5e' },
+    { bg: 'bg-emerald-500', text: 'text-success-fg', bar: '#10b981' },
+    { bg: 'bg-amber-500', text: 'text-warning-fg', bar: '#f59e0b' },
+    { bg: 'bg-rose-500', text: 'text-danger-fg', bar: '#f43f5e' },
 ];
 
 export function FunnelChart({ steps }: FunnelChartProps) {
     if (!steps || steps.length === 0) {
         return (
-            <div className="flex items-center justify-center h-[200px] text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-[200px] text-foreground-muted text-sm">
                 No data available
             </div>
         );
@@ -48,16 +48,16 @@ export function FunnelChart({ steps }: FunnelChartProps) {
                                 >
                                     {i + 1}
                                 </span>
-                                <span className="font-medium text-slate-700">{step.name}</span>
+                                <span className="font-medium text-foreground">{step.name}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 {convPct && (
-                                    <span className="text-slate-400 text-[10px]">↓{convPct}%</span>
+                                    <span className="text-foreground-secondary text-[10px]">↓{convPct}%</span>
                                 )}
                                 <span className={cn('font-bold', color.text)}>{step.value.toLocaleString()}</span>
                             </div>
                         </div>
-                        <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-2.5 bg-muted rounded-full overflow-hidden">
                             <div
                                 className="h-full rounded-full transition-all duration-700"
                                 style={{ width: `${pct}%`, background: color.bar }}

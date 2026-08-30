@@ -111,10 +111,10 @@ export default function EditLoyaltyRewardPage() {
     if (fetching) {
         return (
             <div className="max-w-4xl mx-auto animate-pulse space-y-8">
-                <div className="h-20 bg-slate-100 rounded-2xl w-full" />
+                <div className="h-20 bg-muted rounded-2xl w-full" />
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 h-96 bg-slate-50 rounded-2xl" />
-                    <div className="h-96 bg-slate-50 rounded-2xl" />
+                    <div className="lg:col-span-2 h-96 bg-muted rounded-2xl" />
+                    <div className="h-96 bg-muted rounded-2xl" />
                 </div>
             </div>
         );
@@ -126,9 +126,9 @@ export default function EditLoyaltyRewardPage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/loyalty"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -136,13 +136,13 @@ export default function EditLoyaltyRewardPage() {
                             <Gift className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Edit Reward
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Update reward definition and requirements</p>
+                    <p className="text-foreground-secondary ml-12">Update reward definition and requirements</p>
                 </div>
                 <button 
                     onClick={() => setIsDeleteModalOpen(true)}
@@ -158,14 +158,14 @@ export default function EditLoyaltyRewardPage() {
                     {/* Main Info */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <Tag className="h-5 w-5 text-primary-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <Tag className="h-5 w-5 text-primary" />
                                 Reward Details
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Reward Name <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Reward Name <span className="text-danger-fg">*</span>
                                     </label>
                                     <input
                                         {...register('name')}
@@ -173,10 +173,10 @@ export default function EditLoyaltyRewardPage() {
                                         className={cn("input", errors.name && "border-red-500")}
                                         placeholder="e.g. $10 Off Any Service"
                                     />
-                                    {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+                                    {errors.name && <p className="text-xs text-danger-fg mt-1">{errors.name.message}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Description
                                     </label>
                                     <textarea
@@ -187,8 +187,8 @@ export default function EditLoyaltyRewardPage() {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Reward Type <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Reward Type <span className="text-danger-fg">*</span>
                                         </label>
                                         <select
                                             {...register('rewardType')}
@@ -199,14 +199,14 @@ export default function EditLoyaltyRewardPage() {
                                             <option value="service">Free Service</option>
                                             <option value="product">Free Product</option>
                                         </select>
-                                        {errors.rewardType && <p className="text-xs text-red-500 mt-1">{errors.rewardType.message}</p>}
+                                        {errors.rewardType && <p className="text-xs text-danger-fg mt-1">{errors.rewardType.message}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Value <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Value <span className="text-danger-fg">*</span>
                                         </label>
                                         <div className="relative">
-                                            <BadgeDollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <BadgeDollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <input
                                                 {...register('rewardValue', { valueAsNumber: true })}
                                                 type="number"
@@ -215,34 +215,34 @@ export default function EditLoyaltyRewardPage() {
                                                 placeholder="0.00"
                                             />
                                         </div>
-                                        {errors.rewardValue && <p className="text-xs text-red-500 mt-1">{errors.rewardValue.message}</p>}
+                                        {errors.rewardValue && <p className="text-xs text-danger-fg mt-1">{errors.rewardValue.message}</p>}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <CheckCircle2 className="h-5 w-5 text-success-fg" />
                                 Requirements
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Points Required <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Points Required <span className="text-danger-fg">*</span>
                                     </label>
                                     <div className="relative">
-                                        <Star className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-amber-500" />
+                                        <Star className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-warning-fg" />
                                         <input
                                             {...register('pointsRequired', { valueAsNumber: true })}
                                             type="number"
-                                            className={cn("input pl-11 font-bold text-slate-900", errors.pointsRequired && "border-red-500")}
+                                            className={cn("input pl-11 font-bold text-foreground", errors.pointsRequired && "border-red-500")}
                                         />
                                     </div>
-                                    {errors.pointsRequired && <p className="text-xs text-red-500 mt-1">{errors.pointsRequired.message}</p>}
+                                    {errors.pointsRequired && <p className="text-xs text-danger-fg mt-1">{errors.pointsRequired.message}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Expiry (Days)
                                     </label>
                                     <input
@@ -250,7 +250,7 @@ export default function EditLoyaltyRewardPage() {
                                         type="number"
                                         className={cn("input", errors.expiryDays && "border-red-500")}
                                     />
-                                    {errors.expiryDays && <p className="text-xs text-red-500 mt-1">{errors.expiryDays.message}</p>}
+                                    {errors.expiryDays && <p className="text-xs text-danger-fg mt-1">{errors.expiryDays.message}</p>}
                                 </div>
                             </div>
                         </div>
@@ -259,20 +259,20 @@ export default function EditLoyaltyRewardPage() {
                     {/* Sidebar Info */}
                     <div className="space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                                 <Info className="h-5 w-5 text-blue-500" />
                                 Options
                             </h2>
                             <div className="space-y-4">
-                                <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
+                                <label className="flex items-center gap-3 p-3 rounded-xl border border-border-subtle hover:bg-accent transition-colors cursor-pointer">
                                     <input
                                         {...register('isActive')}
                                         type="checkbox"
-                                        className="w-5 h-5 rounded border-slate-300 text-primary-500 focus:ring-primary-500"
+                                        className="w-5 h-5 rounded border-border-strong text-primary focus:ring-primary-500"
                                     />
                                     <div>
-                                        <span className="block font-medium text-slate-900">Active</span>
-                                        <span className="block text-xs text-slate-500">Available for redemption</span>
+                                        <span className="block font-medium text-foreground">Active</span>
+                                        <span className="block text-xs text-foreground-secondary">Available for redemption</span>
                                     </div>
                                 </label>
                             </div>

@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import '../globals.css';
+import { RootHtml } from '@/components/layout/RootHtml';
 import { safeJsonLd } from '@/lib/jsonLd';
 import { breadcrumbJsonLd, SITE_URL } from '@/lib/seo';
+import { themedViewport } from '../viewport';
+
+export const viewport = themedViewport;
 
 // Metadata lives in the layout rather than the page because app/enterprise/page.tsx is a
 // genuine Client Component — it holds the enterprise lead form's useState — and a Client
@@ -54,12 +58,16 @@ const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
 
 export default function EnterpriseLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="en">
-            <body>
-                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(ENTERPRISE_JSON_LD) }} />
-                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
-                {children}
-            </body>
-        </html>
+        <RootHtml
+            lang="en"
+            headChildren={
+                <>
+                    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(ENTERPRISE_JSON_LD) }} />
+                    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
+                </>
+            }
+        >
+            {children}
+        </RootHtml>
     );
 }

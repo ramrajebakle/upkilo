@@ -39,9 +39,9 @@ export function KnowledgeEngine() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Quick Connect Cards */}
-        <Card className="border-surface-200 shadow-sm hover:border-ai-300 transition-colors cursor-pointer group">
+        <Card className="border-surface-200 shadow-sm hover:border-ai/25 transition-colors cursor-pointer group">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-surface-100 flex items-center justify-center group-hover:bg-ai-50 transition-colors">
+            <div className="h-12 w-12 rounded-xl bg-surface-100 flex items-center justify-center group-hover:bg-ai-subtle transition-colors">
               <Image src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion" width={24} height={24} className="opacity-80" />
             </div>
             <div>
@@ -51,9 +51,9 @@ export function KnowledgeEngine() {
           </CardContent>
         </Card>
 
-        <Card className="border-surface-200 shadow-sm hover:border-ai-300 transition-colors cursor-pointer group">
+        <Card className="border-surface-200 shadow-sm hover:border-ai/25 transition-colors cursor-pointer group">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-surface-100 flex items-center justify-center group-hover:bg-ai-50 transition-colors">
+            <div className="h-12 w-12 rounded-xl bg-surface-100 flex items-center justify-center group-hover:bg-ai-subtle transition-colors">
               <Image src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Google_Drive_icon_%282020%29.svg" alt="Google Drive" width={24} height={24} className="opacity-80" />
             </div>
             <div>
@@ -63,9 +63,9 @@ export function KnowledgeEngine() {
           </CardContent>
         </Card>
 
-        <Card className="border-surface-200 shadow-sm hover:border-ai-300 transition-colors cursor-pointer group">
+        <Card className="border-surface-200 shadow-sm hover:border-ai/25 transition-colors cursor-pointer group">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-surface-100 flex items-center justify-center group-hover:bg-ai-50 transition-colors">
+            <div className="h-12 w-12 rounded-xl bg-surface-100 flex items-center justify-center group-hover:bg-ai-subtle transition-colors">
               <Database size={24} className="text-text-tertiary" />
             </div>
             <div>
@@ -107,7 +107,7 @@ export function KnowledgeEngine() {
               {mockSources.map((source) => (
                 <tr key={source.id} className="hover:bg-surface-50/50 transition-colors">
                   <td className="px-6 py-4 font-medium text-text-primary flex items-center gap-3">
-                    {source.type === 'file' ? <FileText size={16} className="text-ai-500" /> : <LinkIcon size={16} className="text-primary-500" />}
+                    {source.type === 'file' ? <FileText size={16} className="text-ai" /> : <LinkIcon size={16} className="text-primary" />}
                     {source.name}
                   </td>
                   <td className="px-6 py-4 text-text-secondary capitalize">{source.type}</td>

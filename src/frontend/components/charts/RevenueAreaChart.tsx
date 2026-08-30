@@ -21,8 +21,8 @@ interface RevenueAreaChartProps {
 function CustomTooltip({ active, payload, label }: any) {
     if (!active || !payload?.length) return null;
     return (
-        <div className="bg-slate-900 text-white rounded-xl px-4 py-3 shadow-2xl text-sm">
-            <p className="text-slate-400 mb-2 font-medium">{label}</p>
+        <div className="bg-popover text-popover-foreground border border-border shadow-[var(--shadow-popover)] rounded-xl px-4 py-3 shadow-2xl text-sm">
+            <p className="text-foreground-secondary mb-2 font-medium">{label}</p>
             {payload.map((entry: any) => (
                 <div key={entry.dataKey} className="flex items-center gap-2">
                     <span
@@ -40,7 +40,7 @@ function CustomTooltip({ active, payload, label }: any) {
 export function RevenueAreaChart({ data, height = 280, showExpenses = false }: RevenueAreaChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-[280px] text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-[280px] text-foreground-muted text-sm">
                 No data available
             </div>
         );
@@ -58,16 +58,16 @@ export function RevenueAreaChart({ data, height = 280, showExpenses = false }: R
                         <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis
                     dataKey="label"
-                    tick={{ fontSize: 12, fill: '#94a3b8' }}
+                    tick={{ fontSize: 12 }}
                     axisLine={false}
                     tickLine={false}
                 />
                 <YAxis
                     tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
-                    tick={{ fontSize: 12, fill: '#94a3b8' }}
+                    tick={{ fontSize: 12 }}
                     axisLine={false}
                     tickLine={false}
                 />
@@ -92,7 +92,7 @@ export function RevenueAreaChart({ data, height = 280, showExpenses = false }: R
                     strokeWidth={2.5}
                     fill="url(#revenueGrad)"
                     dot={false}
-                    activeDot={{ r: 6, fill: '#06b6d4', stroke: '#fff', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#06b6d4', strokeWidth: 2 }}
                 />
             </AreaChart>
         </ResponsiveContainer>

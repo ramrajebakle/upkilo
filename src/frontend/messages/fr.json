@@ -57,5 +57,38 @@
       "cancelled": "Annulée",
       "completed": "Terminée"
     }
+  },
+  "Theme": {
+    "accentColour": "Couleur d'accent",
+    "accentHelp": "La couleur de votre marque, utilisée sur votre page de réservation publique et le portail client. Elle est partagée avec <link>Identité visuelle</link>, où vous pouvez aussi définir un logo et un domaine personnalisé.",
+    "accentPreview": "Réserver",
+    "accentSaveFailed": "Échec de l'enregistrement de la couleur d'accent",
+    "accentSaved": "Couleur d'accent enregistrée",
+    "appearance": "Apparence",
+    "appearanceSubtitle": "Choisissez l'apparence d'Upkilo sur cet appareil.",
+    "colourAmber": "Ambre",
+    "colourCyan": "Cyan",
+    "colourEmerald": "Émeraude",
+    "colourIndigo": "Indigo",
+    "colourRose": "Rose",
+    "colourTheme": "Thème de couleur",
+    "colourViolet": "Violet",
+    "contrastWarning": "Sur cette couleur, les libellés des boutons n'atteignent que {ratio}:1 de contraste, sous le minimum d'accessibilité de 4,5:1. Une teinte un peu plus foncée sera plus lisible pour tous.",
+    "dark": "Sombre",
+    "darkHint": "Toujours le thème sombre",
+    "darkModeActive": "Mode sombre activé",
+    "light": "Clair",
+    "lightHint": "Toujours le thème clair",
+    "lightModeActive": "Mode clair activé",
+    "resolvedNow": "{mode} actuellement",
+    "saveAccent": "Enregistrer la couleur d'accent",
+    "saved": "Enregistré",
+    "saving": "Enregistrement…",
+    "switchToDark": "Passer au mode sombre",
+    "switchToLight": "Passer au mode clair",
+    "system": "Système",
+    "systemHint": "Suivre cet appareil",
+    "themeHint": "S'applique immédiatement et est mémorisé sur cet appareil.",
+    "themeSection": "Thème"
   }
 }

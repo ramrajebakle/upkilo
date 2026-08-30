@@ -57,5 +57,38 @@
       "cancelled": "Cancelada",
       "completed": "Completada"
     }
+  },
+  "Theme": {
+    "accentColour": "Color de acento",
+    "accentHelp": "El color de tu marca, usado en tu página de reservas pública y el portal de clientes. Se comparte con <link>Marca</link>, donde también puedes definir un logotipo y un dominio propio.",
+    "accentPreview": "Reservar ahora",
+    "accentSaveFailed": "No se pudo guardar el color de acento",
+    "accentSaved": "Color de acento guardado",
+    "appearance": "Apariencia",
+    "appearanceSubtitle": "Elige cómo se ve Upkilo en este dispositivo.",
+    "colourAmber": "Ámbar",
+    "colourCyan": "Cian",
+    "colourEmerald": "Esmeralda",
+    "colourIndigo": "Índigo",
+    "colourRose": "Rosa",
+    "colourTheme": "Tema de color",
+    "colourViolet": "Violeta",
+    "contrastWarning": "Las etiquetas de los botones sobre este color alcanzan solo {ratio}:1 de contraste, por debajo del mínimo de accesibilidad de 4,5:1. Un tono algo más oscuro se leerá mejor para todos.",
+    "dark": "Oscuro",
+    "darkHint": "Siempre el tema oscuro",
+    "darkModeActive": "Modo oscuro activado",
+    "light": "Claro",
+    "lightHint": "Siempre el tema claro",
+    "lightModeActive": "Modo claro activado",
+    "resolvedNow": "{mode} ahora mismo",
+    "saveAccent": "Guardar color de acento",
+    "saved": "Guardado",
+    "saving": "Guardando…",
+    "switchToDark": "Cambiar al modo oscuro",
+    "switchToLight": "Cambiar al modo claro",
+    "system": "Sistema",
+    "systemHint": "Seguir este dispositivo",
+    "themeHint": "Se aplica al instante y se recuerda en este dispositivo.",
+    "themeSection": "Tema"
   }
 }

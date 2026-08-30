@@ -37,11 +37,11 @@ export function LiveBookingFeed() {
 
     const getIcon = (status: string) => {
         switch (status.toLowerCase()) {
-            case 'confirmed': return <CheckCircle className="h-4 w-4 text-emerald-500" />;
-            case 'cancelled': return <XCircle className="h-4 w-4 text-red-500" />;
-            case 'completed': return <Award className="h-4 w-4 text-primary-500" />;
+            case 'confirmed': return <CheckCircle className="h-4 w-4 text-success-fg" />;
+            case 'cancelled': return <XCircle className="h-4 w-4 text-danger-fg" />;
+            case 'completed': return <Award className="h-4 w-4 text-primary" />;
             case 'inprogress': return <Clock className="h-4 w-4 text-blue-500" />;
-            default: return <Info className="h-4 w-4 text-slate-400" />;
+            default: return <Info className="h-4 w-4 text-foreground-muted" />;
         }
     };
 
@@ -49,24 +49,24 @@ export function LiveBookingFeed() {
         switch (status.toLowerCase()) {
             case 'confirmed': return 'bg-emerald-50 border-emerald-100';
             case 'cancelled': return 'bg-red-50 border-red-100';
-            case 'completed': return 'bg-primary-50 border-primary-100';
+            case 'completed': return 'bg-brand-subtle border-primary/25';
             case 'inprogress': return 'bg-blue-50 border-blue-100';
-            default: return 'bg-slate-50 border-slate-100';
+            default: return 'bg-muted border-border-subtle';
         }
     };
 
     return (
         <div className="card-elevated overflow-hidden animate-fade-in-up" style={{ animationDelay: '450ms' }}>
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 border-b border-border-subtle flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-emerald-50 rounded-lg">
-                        <Clock className="h-5 w-5 text-emerald-500" />
+                        <Clock className="h-5 w-5 text-success-fg" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                        <h2 className="text-lg font-semibold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                             Live Activity
                         </h2>
-                        <p className="text-sm text-slate-500 font-medium flex items-center gap-1.5">
+                        <p className="text-sm text-foreground-secondary font-medium flex items-center gap-1.5">
                             <span className="relative flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -77,19 +77,19 @@ export function LiveBookingFeed() {
                 </div>
             </div>
 
-            <div className="max-h-[400px] overflow-y-auto divide-y divide-slate-100 scrollbar-hide">
+            <div className="max-h-[400px] overflow-y-auto divide-y divide-border-subtle scrollbar-hide">
                 {feed.length === 0 ? (
                     <div className="p-12 text-center">
-                        <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
                             <Activity className="h-6 w-6 text-slate-300" />
                         </div>
-                        <p className="text-slate-400 text-sm">No live activity yet.</p>
+                        <p className="text-foreground-muted text-sm">No live activity yet.</p>
                     </div>
                 ) : (
                     feed.map((item, idx) => (
                         <div 
                             key={item.bookingId + idx} 
-                            className="p-4 hover:bg-slate-50 transition-all duration-300 animate-in slide-in-from-top-2 fade-in"
+                            className="p-4 hover:bg-accent transition-all duration-300 animate-in slide-in-from-top-2 fade-in"
                         >
                             <div className="flex items-start gap-4">
                                 <div className={cn("p-2 rounded-lg border", getBgColor(item.status))}>
@@ -97,22 +97,22 @@ export function LiveBookingFeed() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between mb-0.5">
-                                        <p className="font-semibold text-slate-900 text-sm truncate">
+                                        <p className="font-semibold text-foreground text-sm truncate">
                                             {item.clientName}
                                         </p>
-                                        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                                        <span className="text-[10px] font-medium text-foreground-muted uppercase tracking-wider">
                                             {item.status}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-slate-600 mb-1">
+                                    <p className="text-xs text-foreground-secondary mb-1">
                                         {item.message} - <span className="font-medium">{item.serviceName}</span>
                                     </p>
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                                        <div className="flex items-center gap-1.5 text-[10px] text-foreground-muted">
                                             <Calendar className="h-3 w-3" />
                                             {item.startTime ? formatRelativeTime(item.startTime) : ''}
                                         </div>
-                                        <div className="flex items-center gap-1 text-[10px] text-primary-500 font-semibold">
+                                        <div className="flex items-center gap-1 text-[10px] text-primary font-semibold">
                                             {item.staffName && <span>with {item.staffName.split(' ')[0]}</span>}
                                         </div>
                                     </div>
@@ -123,8 +123,8 @@ export function LiveBookingFeed() {
                 )}
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
-                <button className="text-xs font-semibold text-slate-500 hover:text-primary-600 transition-colors flex items-center gap-1 justify-center mx-auto">
+            <div className="p-4 bg-muted border-t border-border-subtle text-center">
+                <button className="text-xs font-semibold text-foreground-secondary hover:text-primary transition-colors flex items-center gap-1 justify-center mx-auto">
                     View Activity Log
                     <ChevronRight className="h-3 w-3" />
                 </button>

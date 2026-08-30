@@ -65,7 +65,7 @@ export default function LegalRequestsPage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Government & Legal Requests <Shield className="text-red-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Government & Legal Requests <Shield className="text-danger-fg" size={22} /></h1>
         <p className="text-text-secondary mt-1">Track law enforcement requests, court orders, and government data disclosures.</p>
       </header>
 
@@ -77,7 +77,7 @@ export default function LegalRequestsPage() {
       <div className="flex gap-1 p-1 bg-surface-100 rounded-xl">
         {TABS.map((t) => (
           <button key={t.k} onClick={() => setTab(t.k)}
-            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
+            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
         ))}
       </div>
 
@@ -106,7 +106,7 @@ export default function LegalRequestsPage() {
                             {r.description && <p className="text-xs text-text-secondary mt-0.5">{r.description}</p>}
                             <div className="flex items-center gap-3 mt-1">
                               <span className="text-xs text-text-tertiary">Received {new Date(r.receivedAt).toLocaleDateString()}</span>
-                              {r.dueBy && <span className="text-xs text-red-600 font-medium">Due {new Date(r.dueBy).toLocaleDateString()}</span>}
+                              {r.dueBy && <span className="text-xs text-danger-fg font-medium">Due {new Date(r.dueBy).toLocaleDateString()}</span>}
                             </div>
                           </div>
                           {r.status === "pending" && (
@@ -129,9 +129,9 @@ export default function LegalRequestsPage() {
               <div className="grid grid-cols-4 gap-3">
                 {[
                   { label: "Total", value: report.totalRequests },
-                  { label: "Complied", value: report.complied, cls: "text-green-600" },
-                  { label: "Challenged", value: report.challenged, cls: "text-primary-600" },
-                  { label: "Rejected", value: report.rejected, cls: "text-red-600" },
+                  { label: "Complied", value: report.complied, cls: "text-success-fg" },
+                  { label: "Challenged", value: report.challenged, cls: "text-primary" },
+                  { label: "Rejected", value: report.rejected, cls: "text-danger-fg" },
                 ].map((m) => (
                   <Card key={m.label}><CardContent className="pt-3 pb-3 text-center">
                     <p className={`text-2xl font-bold ${m.cls ?? "text-text-primary"}`}>{m.value}</p>

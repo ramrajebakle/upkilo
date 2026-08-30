@@ -30,7 +30,35 @@ export default function GlobalError({
     }, [error]);
 
     return (
+        // global-error replaces the root layout entirely, so it cannot reach ThemeProvider,
+        // globals.css or any token — by the time it renders, the tree that provides them has
+        // already failed. That is why it is styled inline and why it carries its own copy of
+        // the theme rather than importing one: a crash screen must not depend on the thing
+        // that crashed.
+        //
+        // It was a fixed slate-900 panel, so a light-mode user's first sight of a fatal error
+        // was a full-screen dark flash. The <style> block below is the smallest thing that
+        // respects both themes without a single import: CSS custom properties keyed off
+        // prefers-color-scheme, plus a .dark/.light class so an explicit in-app choice still
+        // wins. The inline script that sets that class is the same three lines ThemeScript
+        // runs, duplicated deliberately for the same isolation reason.
         <html lang="en">
+            <head>
+                <style
+                    dangerouslySetInnerHTML={{
+                        __html: `
+:root{--ge-bg:#f8f8fa;--ge-panel:#ffffff;--ge-border:#e4e4eb;--ge-fg:#111120;--ge-muted:#66667a;--ge-danger:#b91c1c;--ge-code:#f0f0f4;--ge-shadow:0 25px 50px -12px rgb(0 0 0 / .15)}
+@media (prefers-color-scheme:dark){:root:not(.light){--ge-bg:#0b1120;--ge-panel:#0f172a;--ge-border:#1e293b;--ge-fg:#f1f5f9;--ge-muted:#94a3b8;--ge-danger:#fca5a5;--ge-code:#070c16;--ge-shadow:0 25px 50px -12px rgb(0 0 0 / .5)}}
+:root.dark{--ge-bg:#0b1120;--ge-panel:#0f172a;--ge-border:#1e293b;--ge-fg:#f1f5f9;--ge-muted:#94a3b8;--ge-danger:#fca5a5;--ge-code:#070c16;--ge-shadow:0 25px 50px -12px rgb(0 0 0 / .5)}
+html,body{margin:0;background:var(--ge-bg);color:var(--ge-fg)}`,
+                    }}
+                />
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.add(t);document.documentElement.style.colorScheme=t;}catch(e){}})();`,
+                    }}
+                />
+            </head>
             <body>
                 <div
                     style={{
@@ -41,8 +69,8 @@ export default function GlobalError({
                         minHeight: '100vh',
                         padding: '2rem',
                         fontFamily: 'system-ui, -apple-system, sans-serif',
-                        background: '#0f172a',
-                        color: '#f8fafc',
+                        background: 'var(--ge-bg)',
+                        color: 'var(--ge-fg)',
                     }}
                 >
                     <div
@@ -51,16 +79,16 @@ export default function GlobalError({
                             textAlign: 'center',
                             padding: '2.5rem',
                             borderRadius: '16px',
-                            background: '#1e293b',
-                            border: '1px solid #334155',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                            background: 'var(--ge-panel)',
+                            border: '1px solid var(--ge-border)',
+                            boxShadow: 'var(--ge-shadow)',
                         }}
                     >
                         <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚨</div>
                         <h1 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>
                             Critical System Error
                         </h1>
-                        <p style={{ color: '#94a3b8', marginBottom: '1.5rem', lineHeight: '1.6' }}>
+                        <p style={{ color: 'var(--ge-muted)', marginBottom: '1.5rem', lineHeight: '1.6' }}>
                             A critical error occurred while rendering the application root.
                         </p>
                         
@@ -71,8 +99,8 @@ export default function GlobalError({
                                     padding: '0.75rem 1.5rem',
                                     borderRadius: '8px',
                                     border: 'none',
-                                    background: '#3b82f6',
-                                    color: 'white',
+                                    background: '#4535d4',
+                                    color: '#ffffff',
                                     fontWeight: '600',
                                     cursor: 'pointer',
                                 }}
@@ -84,9 +112,9 @@ export default function GlobalError({
                                 style={{
                                     padding: '0.75rem 1.5rem',
                                     borderRadius: '8px',
-                                    border: '1px solid #475569',
+                                    border: '1px solid var(--ge-border)',
                                     background: 'transparent',
-                                    color: '#cbd5e1',
+                                    color: 'var(--ge-fg)',
                                     fontWeight: '600',
                                     cursor: 'pointer',
                                 }}
@@ -97,16 +125,16 @@ export default function GlobalError({
 
                         {process.env.NODE_ENV === 'development' && (
                             <div style={{ marginTop: '2rem', textAlign: 'left' }}>
-                                <p style={{ color: '#f87171', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                                <p style={{ color: 'var(--ge-danger)', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
                                     Developer Details
                                 </p>
                                 <pre
                                     style={{
-                                        background: '#0f172a',
+                                        background: 'var(--ge-code)',
                                         padding: '1rem',
                                         borderRadius: '8px',
                                         fontSize: '0.75rem',
-                                        color: '#fca5a5',
+                                        color: 'var(--ge-danger)',
                                         overflow: 'auto',
                                         maxHeight: '200px',
                                     }}

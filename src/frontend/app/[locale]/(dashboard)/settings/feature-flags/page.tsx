@@ -112,11 +112,11 @@ export default function FeatureFlagsPage() {
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Feature Flags</h1>
-                    <p className="text-slate-500 mt-1">Control feature rollouts, kill switches, and gradual deployments</p>
+                    <h1 className="text-2xl font-bold text-foreground">Feature Flags</h1>
+                    <p className="text-foreground-secondary mt-1">Control feature rollouts, kill switches, and gradual deployments</p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={fetchFlags} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                    <button onClick={fetchFlags} className="p-2 rounded-lg hover:bg-accent text-foreground-secondary">
                         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                     <Button onClick={() => setShowCreateForm(true)} className="flex items-center gap-2">
@@ -128,15 +128,15 @@ export default function FeatureFlagsPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Total Flags', value: flags.length, icon: <Flag className="h-5 w-5 text-primary-500" /> },
-                    { label: 'Enabled for Tenant', value: activeCount, icon: <Zap className="h-5 w-5 text-emerald-500" /> },
-                    { label: 'Disabled', value: flags.length - activeCount, icon: <Shield className="h-5 w-5 text-slate-400" /> },
+                    { label: 'Total Flags', value: flags.length, icon: <Flag className="h-5 w-5 text-primary" /> },
+                    { label: 'Enabled for Tenant', value: activeCount, icon: <Zap className="h-5 w-5 text-success-fg" /> },
+                    { label: 'Disabled', value: flags.length - activeCount, icon: <Shield className="h-5 w-5 text-foreground-muted" /> },
                 ].map(s => (
-                    <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-                        <div className="p-2 bg-slate-50 rounded-lg">{s.icon}</div>
+                    <div key={s.label} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                        <div className="p-2 bg-muted rounded-lg">{s.icon}</div>
                         <div>
-                            <div className="text-xl font-bold text-slate-900">{s.value}</div>
-                            <div className="text-xs text-slate-500">{s.label}</div>
+                            <div className="text-xl font-bold text-foreground">{s.value}</div>
+                            <div className="text-xs text-foreground-secondary">{s.label}</div>
                         </div>
                     </div>
                 ))}
@@ -144,32 +144,32 @@ export default function FeatureFlagsPage() {
 
             {/* Create Form */}
             {showCreateForm && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+                <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-semibold text-slate-900">New Feature Flag</h2>
-                        <button onClick={() => setShowCreateForm(false)} className="text-slate-400 hover:text-slate-600">
+                        <h2 className="font-semibold text-foreground">New Feature Flag</h2>
+                        <button onClick={() => setShowCreateForm(false)} className="text-foreground-muted hover:text-foreground-secondary">
                             <X className="h-4 w-4" />
                         </button>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Flag Name (snake_case)</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Flag Name (snake_case)</label>
                             <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="my_new_feature" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Rollout %</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Rollout %</label>
                             <input
                                 type="number"
                                 min={0}
                                 max={100}
                                 value={form.rolloutPercentage}
                                 onChange={e => setForm(p => ({ ...p, rolloutPercentage: parseInt(e.target.value) || 0 }))}
-                                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+                                className="w-full border border-border rounded-lg px-3 py-2 text-sm"
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Description</label>
                         <Input value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="What does this flag control?" />
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -179,9 +179,9 @@ export default function FeatureFlagsPage() {
                             onChange={e => setForm(p => ({ ...p, defaultEnabled: e.target.checked }))}
                             className="rounded"
                         />
-                        <span className="text-sm text-slate-700">Enabled by default</span>
+                        <span className="text-sm text-foreground">Enabled by default</span>
                     </label>
-                    <div className="flex gap-3 pt-2 border-t border-slate-100">
+                    <div className="flex gap-3 pt-2 border-t border-border-subtle">
                         <Button onClick={handleCreate} disabled={saving}>
                             {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                             Create Flag
@@ -194,30 +194,30 @@ export default function FeatureFlagsPage() {
             {/* Flags List */}
             {loading ? (
                 <div className="space-y-3">
-                    {[...Array(5)].map((_, i) => <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse h-20" />)}
+                    {[...Array(5)].map((_, i) => <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse h-20" />)}
                 </div>
             ) : (
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-                    <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 grid grid-cols-12 gap-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <div className="px-5 py-3 bg-muted border-b border-border-subtle grid grid-cols-12 gap-4 text-xs font-semibold text-foreground-secondary uppercase tracking-wider">
                         <div className="col-span-4">Flag</div>
                         <div className="col-span-4">Description</div>
                         <div className="col-span-2 text-center">Rollout</div>
                         <div className="col-span-2 text-center">Tenant Override</div>
                     </div>
                     {flags.length === 0 ? (
-                        <div className="text-center py-12 text-slate-400">
+                        <div className="text-center py-12 text-foreground-muted">
                             <Flag className="h-8 w-8 mx-auto mb-2 opacity-30" />
                             <p className="text-sm">No feature flags configured</p>
                         </div>
                     ) : flags.map((flag, idx) => (
-                        <div key={flag.name} className={`grid grid-cols-12 gap-4 px-5 py-3 items-center ${idx < flags.length - 1 ? 'border-b border-slate-50' : ''} hover:bg-slate-50`}>
+                        <div key={flag.name} className={`grid grid-cols-12 gap-4 px-5 py-3 items-center ${idx < flags.length - 1 ? 'border-b border-slate-50' : ''} hover:bg-accent`}>
                             <div className="col-span-4">
                                 <div className="flex items-center gap-2">
                                     <div className={`w-2 h-2 rounded-full ${flag.enabledForTenant ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                                    <span className="font-mono text-sm font-medium text-slate-900">{flag.name}</span>
+                                    <span className="font-mono text-sm font-medium text-foreground">{flag.name}</span>
                                 </div>
                             </div>
-                            <div className="col-span-4 text-sm text-slate-500 truncate">
+                            <div className="col-span-4 text-sm text-foreground-secondary truncate">
                                 {FLAG_DESCRIPTIONS[flag.name] || flag.description || '—'}
                             </div>
                             <div className="col-span-2 text-center">
@@ -229,19 +229,19 @@ export default function FeatureFlagsPage() {
                                             max={100}
                                             value={rolloutValue}
                                             onChange={e => setRolloutValue(parseInt(e.target.value) || 0)}
-                                            className="w-16 border border-slate-200 rounded px-1.5 py-0.5 text-xs text-center"
+                                            className="w-16 border border-border rounded px-1.5 py-0.5 text-xs text-center"
                                         />
-                                        <button onClick={() => handleSetRollout(flag.name)} className="text-emerald-600 hover:text-emerald-700">
+                                        <button onClick={() => handleSetRollout(flag.name)} className="text-success-fg hover:text-emerald-700">
                                             <Save className="h-3 w-3" />
                                         </button>
-                                        <button onClick={() => setEditingRollout(null)} className="text-slate-400">
+                                        <button onClick={() => setEditingRollout(null)} className="text-foreground-muted">
                                             <X className="h-3 w-3" />
                                         </button>
                                     </div>
                                 ) : (
                                     <button
                                         onClick={() => { setEditingRollout(flag.name); setRolloutValue(flag.rolloutPercentage); }}
-                                        className="flex items-center gap-1 mx-auto text-sm text-slate-600 hover:text-primary-600"
+                                        className="flex items-center gap-1 mx-auto text-sm text-foreground-secondary hover:text-primary"
                                     >
                                         <Percent className="h-3 w-3" />
                                         {flag.rolloutPercentage}%
@@ -256,9 +256,9 @@ export default function FeatureFlagsPage() {
                                     title={flag.enabledForTenant ? 'Disable for this tenant' : 'Enable for this tenant'}
                                 >
                                     {togglingFlag === flag.name
-                                        ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                                        ? <Loader2 className="h-5 w-5 animate-spin text-foreground-muted" />
                                         : flag.enabledForTenant
-                                            ? <ToggleRight className="h-6 w-6 text-emerald-500" />
+                                            ? <ToggleRight className="h-6 w-6 text-success-fg" />
                                             : <ToggleLeft className="h-6 w-6 text-slate-300" />}
                                 </button>
                             </div>

@@ -11,12 +11,12 @@ export default function PrivacyPortalPage() {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-muted py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-8">
         <div className="text-center">
           <ShieldAlert className="mx-auto h-12 w-12 text-primary" />
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Privacy & Data Requests</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">Privacy & Data Requests</h2>
+          <p className="mt-2 text-sm text-foreground-secondary">
             Submit a request to access, export, or delete your personal data in accordance with GDPR and CCPA regulations.
           </p>
         </div>
@@ -30,7 +30,7 @@ export default function PrivacyPortalPage() {
             {!submitted ? (
               <>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground">Email Address</label>
                   <div className="mt-1">
                     <Input 
                       id="email" 
@@ -52,7 +52,7 @@ export default function PrivacyPortalPage() {
                     <Download className="w-5 h-5" />
                     <div className="text-center">
                       <div className="font-semibold text-sm">Export Data</div>
-                      <div className="text-xs text-gray-500 font-normal">Request a copy of your data</div>
+                      <div className="text-xs text-foreground-secondary font-normal">Request a copy of your data</div>
                     </div>
                   </Button>
 
@@ -72,10 +72,10 @@ export default function PrivacyPortalPage() {
             ) : (
               <div className="text-center py-6">
                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                  <ShieldAlert className="h-6 w-6 text-green-600" />
+                  <ShieldAlert className="h-6 w-6 text-success-fg" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">Request Received</h3>
-                <p className="mt-2 text-sm text-gray-500">
+                <h3 className="text-lg font-medium text-foreground">Request Received</h3>
+                <p className="mt-2 text-sm text-foreground-secondary">
                   We've sent a confirmation email to <span className="font-semibold">{email}</span>. 
                   Please click the link in that email to verify your identity and proceed with the request.
                 </p>
@@ -87,7 +87,7 @@ export default function PrivacyPortalPage() {
           </CardContent>
         </Card>
 
-        <div className="text-center text-xs text-gray-500">
+        <div className="text-center text-xs text-foreground-secondary">
           <p>Protected by reCAPTCHA and subject to the Privacy Policy and Terms of Service.</p>
         </div>
       </div>

@@ -50,7 +50,7 @@ export default function DemoModePage() {
   return (
     <div className="max-w-xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Demo Mode <FlaskConical className="text-amber-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Demo Mode <FlaskConical className="text-warning-fg" size={22} /></h1>
         <p className="text-text-secondary mt-1">Enable demo mode to showcase the platform with realistic sample data.</p>
       </header>
 
@@ -58,13 +58,13 @@ export default function DemoModePage() {
         : status && (
           <>
             <div className={`flex items-center gap-3 p-4 rounded-xl border ${status.isEnabled ? "bg-amber-50 border-amber-200" : "bg-surface-50 border-surface-200"}`}>
-              {status.isEnabled ? <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0" /> : <CheckCircle2 className="h-5 w-5 text-text-tertiary flex-shrink-0" />}
+              {status.isEnabled ? <AlertTriangle className="h-5 w-5 text-warning-fg flex-shrink-0" /> : <CheckCircle2 className="h-5 w-5 text-text-tertiary flex-shrink-0" />}
               <div>
                 <p className={`text-sm font-semibold ${status.isEnabled ? "text-amber-800" : "text-text-primary"}`}>
                   Demo mode is {status.isEnabled ? "ENABLED" : "disabled"}
                 </p>
                 {status.isEnabled
-                  ? <p className="text-xs text-amber-600 mt-0.5">Live data is hidden. Clients see demo content.</p>
+                  ? <p className="text-xs text-warning-fg mt-0.5">Live data is hidden. Clients see demo content.</p>
                   : <p className="text-xs text-text-tertiary mt-0.5">Platform operates normally with your real data.</p>
                 }
               </div>

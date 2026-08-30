@@ -62,5 +62,38 @@
       "cancelled": "रद्द",
       "completed": "पूर्ण"
     }
+  },
+  "Theme": {
+    "accentColour": "एक्सेंट रंग",
+    "accentHelp": "आपका ब्रांड रंग, जो आपके सार्वजनिक बुकिंग पेज और क्लाइंट पोर्टल पर उपयोग होता है। यह <link>ब्रांडिंग</link> के साथ साझा है, जहाँ आप लोगो और कस्टम डोमेन भी सेट कर सकते हैं।",
+    "accentPreview": "अभी बुक करें",
+    "accentSaveFailed": "एक्सेंट रंग सहेजने में विफल",
+    "accentSaved": "एक्सेंट रंग सहेजा गया",
+    "appearance": "दिखावट",
+    "appearanceSubtitle": "चुनें कि इस डिवाइस पर Upkilo कैसा दिखे।",
+    "colourAmber": "अंबर",
+    "colourCyan": "सियान",
+    "colourEmerald": "पन्ना",
+    "colourIndigo": "नील",
+    "colourRose": "गुलाबी",
+    "colourTheme": "रंग थीम",
+    "colourViolet": "बैंगनी",
+    "contrastWarning": "इस रंग पर बटन के लेबल केवल {ratio}:1 कंट्रास्ट देते हैं, जो 4.5:1 की सुलभता सीमा से कम है। थोड़ा गहरा शेड सभी के लिए बेहतर पढ़ा जाएगा।",
+    "dark": "डार्क",
+    "darkHint": "हमेशा डार्क थीम",
+    "darkModeActive": "डार्क मोड सक्रिय",
+    "light": "लाइट",
+    "lightHint": "हमेशा लाइट थीम",
+    "lightModeActive": "लाइट मोड सक्रिय",
+    "resolvedNow": "अभी {mode}",
+    "saveAccent": "एक्सेंट रंग सहेजें",
+    "saved": "सहेजा गया",
+    "saving": "सहेजा जा रहा है…",
+    "switchToDark": "डार्क मोड पर जाएँ",
+    "switchToLight": "लाइट मोड पर जाएँ",
+    "system": "सिस्टम",
+    "systemHint": "इस डिवाइस के अनुसार",
+    "themeHint": "तुरंत लागू होता है और इस डिवाइस पर याद रखा जाता है।",
+    "themeSection": "थीम"
   }
 }

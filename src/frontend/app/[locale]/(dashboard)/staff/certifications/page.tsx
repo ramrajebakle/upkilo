@@ -36,7 +36,7 @@ function CertForm({ staff, onSave, onCancel, saving }: {
         <div className="sm:col-span-2">
           <label className="block text-xs font-medium text-text-secondary mb-1">Staff Member *</label>
           <select value={form.staffId} onChange={(e) => set("staffId", e.target.value)}
-            className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500">
+            className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500">
             <option value="">Select staff member…</option>
             {staff.map((s) => <option key={s.id} value={s.id}>{s.firstName} {s.lastName}</option>)}
           </select>
@@ -51,7 +51,7 @@ function CertForm({ staff, onSave, onCancel, saving }: {
           <div key={f.key}>
             <label className="block text-xs font-medium text-text-secondary mb-1">{f.label}</label>
             <input type={f.type ?? "text"} value={(form as any)[f.key]} onChange={(e) => set(f.key, e.target.value)} placeholder={f.placeholder}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
+              className="w-full px-3 py-2 text-sm rounded-lg border border-surface-200 bg-card text-text-primary focus:outline-none focus:ring-2 focus:ring-ai-500" />
           </div>
         ))}
       </div>
@@ -114,7 +114,7 @@ export default function StaffCertificationsPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Certifications <Award className="text-amber-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Certifications <Award className="text-warning-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">Track staff qualifications and licence expiry dates.</p>
         </div>
         <div className="flex gap-2">
@@ -152,11 +152,11 @@ export default function StaffCertificationsPage() {
                   <CardContent className="pt-4 pb-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3">
-                        <Award className={cn("h-5 w-5 mt-0.5 flex-shrink-0", expired ? "text-red-400" : expiring ? "text-amber-400" : "text-amber-500")} />
+                        <Award className={cn("h-5 w-5 mt-0.5 flex-shrink-0", expired ? "text-red-400" : expiring ? "text-amber-400" : "text-warning-fg")} />
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-text-primary">{c.certificationName}</p>
-                            {c.isVerified && <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />}
+                            {c.isVerified && <CheckCircle2 className="h-3.5 w-3.5 text-success-fg" />}
                             {expired && <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Expired</span>}
                             {expiring && <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-1"><AlertTriangle className="h-3 w-3" />Expiring soon</span>}
                           </div>
@@ -164,7 +164,7 @@ export default function StaffCertificationsPage() {
                           <div className="flex gap-4 mt-1.5 text-xs text-text-tertiary">
                             {c.certificateNumber && <span>#{c.certificateNumber}</span>}
                             {c.issueDate && <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />Issued {new Date(c.issueDate).toLocaleDateString([], { month: "short", year: "numeric" })}</span>}
-                            {c.expiryDate && <span className={cn("flex items-center gap-1", expired && "text-red-500", expiring && "text-amber-600")}>
+                            {c.expiryDate && <span className={cn("flex items-center gap-1", expired && "text-danger-fg", expiring && "text-warning-fg")}>
                               <Calendar className="h-3 w-3" />Expires {new Date(c.expiryDate).toLocaleDateString([], { month: "short", year: "numeric" })}
                             </span>}
                           </div>

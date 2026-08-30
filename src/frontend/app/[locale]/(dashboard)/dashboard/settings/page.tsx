@@ -54,8 +54,8 @@ export default function SettingsPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-                    <p className="text-gray-500 mt-1">Manage your business configuration</p>
+                    <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+                    <p className="text-foreground-secondary mt-1">Manage your business configuration</p>
                 </div>
                 <Button onClick={handleSave} loading={saving}>
                     <Save className="h-4 w-4 mr-2" />
@@ -74,8 +74,8 @@ export default function SettingsPage() {
                                 className={cn(
                                     'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                                     activeTab === tab.id
-                                        ? 'bg-primary-50 text-primary-600'
-                                        : 'text-gray-600 hover:bg-gray-100'
+                                        ? 'bg-brand-subtle text-primary'
+                                        : 'text-foreground-secondary hover:bg-accent'
                                 )}
                             >
                                 <tab.icon className="h-5 w-5" />
@@ -89,7 +89,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div className="flex-1 bg-card rounded-xl shadow-sm border border-border p-6">
                     {activeTab === 'business' && <BusinessSettings />}
                     {activeTab === 'booking' && <BookingSettings />}
                     {activeTab === 'notifications' && <NotificationSettings />}
@@ -109,7 +109,7 @@ function BusinessSettings() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Business Information</h2>
+                <h2 className="text-lg font-semibold text-foreground mb-4">Business Information</h2>
                 <div className="grid gap-4 max-w-lg">
                     <Input label="Business Name" defaultValue="Beauty Studio" />
                     <Input label="Subdomain" defaultValue="beautystudio" suffix=".upkilo.com" />
@@ -120,7 +120,7 @@ function BusinessSettings() {
             </div>
 
             <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Address</h2>
+                <h2 className="text-lg font-semibold text-foreground mb-4">Address</h2>
                 <div className="grid gap-4 max-w-lg">
                     <Input label="Street Address" defaultValue="123 Main Street" />
                     <div className="grid grid-cols-2 gap-4">
@@ -135,19 +135,19 @@ function BusinessSettings() {
             </div>
 
             <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Regional Settings</h2>
+                <h2 className="text-lg font-semibold text-foreground mb-4">Regional Settings</h2>
                 <div className="grid gap-4 max-w-lg">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
-                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <label className="block text-sm font-medium text-foreground mb-1">Timezone</label>
+                        <select className="w-full px-3 py-2 border border-border-strong rounded-lg">
                             <option>America/New_York (Eastern Time)</option>
                             <option>America/Chicago (Central Time)</option>
                             <option>America/Los_Angeles (Pacific Time)</option>
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <label className="block text-sm font-medium text-foreground mb-1">Currency</label>
+                        <select className="w-full px-3 py-2 border border-border-strong rounded-lg">
                             <option>USD - US Dollar</option>
                             <option>EUR - Euro</option>
                             <option>GBP - British Pound</option>
@@ -163,10 +163,10 @@ function BusinessSettings() {
 function NotificationSettings() {
     return (
         <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">Notification Preferences</h2>
+            <h2 className="text-lg font-semibold text-foreground">Notification Preferences</h2>
 
             <div>
-                <h3 className="font-medium text-gray-900 mb-3">Email Notifications</h3>
+                <h3 className="font-medium text-foreground mb-3">Email Notifications</h3>
                 <div className="space-y-3">
                     <ToggleSetting label="New Booking" defaultChecked={true} />
                     <ToggleSetting label="Booking Cancellation" defaultChecked={true} />
@@ -176,7 +176,7 @@ function NotificationSettings() {
             </div>
 
             <div className="pt-4 border-t">
-                <h3 className="font-medium text-gray-900 mb-3">SMS Notifications</h3>
+                <h3 className="font-medium text-foreground mb-3">SMS Notifications</h3>
                 <div className="space-y-3">
                     <ToggleSetting label="New Booking" defaultChecked={false} />
                     <ToggleSetting label="Booking Reminders" defaultChecked={true} />
@@ -196,19 +196,19 @@ function NotificationSettings() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">Connected Services</h2>
+            <h2 className="text-lg font-semibold text-foreground">Connected Services</h2>
 
             <div className="space-y-3">
                 {integrations.map((integration) => (
                     <div
                         key={integration.id}
-                        className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                        className="flex items-center justify-between p-4 border border-border rounded-lg"
                     >
                         <div className="flex items-center gap-3">
                             <span className="text-2xl">{integration.icon}</span>
                             <div>
-                                <p className="font-medium text-gray-900">{integration.name}</p>
-                                <p className="text-sm text-gray-500">
+                                <p className="font-medium text-foreground">{integration.name}</p>
+                                <p className="text-sm text-foreground-secondary">
                                     {integration.connected ? 'Connected' : 'Not connected'}
                                 </p>
                             </div>
@@ -217,7 +217,7 @@ function NotificationSettings() {
                             className={cn(
                                 'px-4 py-2 rounded-lg text-sm font-medium',
                                 integration.connected
-                                    ? 'text-red-600 hover:bg-red-50'
+                                    ? 'text-danger-fg hover:bg-red-50'
                                     : 'bg-primary-500 text-white hover:bg-primary-600'
                             )}
                         >
@@ -234,35 +234,35 @@ function NotificationSettings() {
 function SecuritySettings() {
     return (
         <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">Security Settings</h2>
+            <h2 className="text-lg font-semibold text-foreground">Security Settings</h2>
 
             <div className="space-y-4">
-                <div className="p-4 border border-gray-200 rounded-lg">
+                <div className="p-4 border border-border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">Two-Factor Authentication</h3>
+                        <h3 className="font-medium text-foreground">Two-Factor Authentication</h3>
                         <Button variant="outline" size="sm">Enable</Button>
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-foreground-secondary">
                         Add an extra layer of security to your account
                     </p>
                 </div>
 
-                <div className="p-4 border border-gray-200 rounded-lg">
+                <div className="p-4 border border-border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">API Keys</h3>
+                        <h3 className="font-medium text-foreground">API Keys</h3>
                         <Button variant="outline" size="sm">Manage</Button>
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-foreground-secondary">
                         1 active API key
                     </p>
                 </div>
 
-                <div className="p-4 border border-gray-200 rounded-lg">
+                <div className="p-4 border border-border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">Active Sessions</h3>
+                        <h3 className="font-medium text-foreground">Active Sessions</h3>
                         <Button variant="outline" size="sm">View All</Button>
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-foreground-secondary">
                         2 active sessions
                     </p>
                 </div>
@@ -285,8 +285,8 @@ function ToggleSetting({
     return (
         <label className="flex items-center justify-between cursor-pointer">
             <div>
-                <p className="font-medium text-gray-900">{label}</p>
-                {description && <p className="text-sm text-gray-500">{description}</p>}
+                <p className="font-medium text-foreground">{label}</p>
+                {description && <p className="text-sm text-foreground-secondary">{description}</p>}
             </div>
             <button
                 type="button"
@@ -300,7 +300,7 @@ function ToggleSetting({
             >
                 <span
                     className={cn(
-                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition',
+                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-control-thumb shadow ring-0 transition',
                         checked ? 'translate-x-5' : 'translate-x-0'
                     )}
                 />

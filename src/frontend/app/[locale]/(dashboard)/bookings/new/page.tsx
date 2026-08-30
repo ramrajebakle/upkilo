@@ -198,8 +198,8 @@ export default function NewBookingPage() {
         <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
-                <Link href="/bookings" className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                <Link href="/bookings" className="p-2 hover:bg-accent rounded-xl transition-colors">
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -207,13 +207,13 @@ export default function NewBookingPage() {
                             <CalendarDays className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             New Booking
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Schedule a new appointment</p>
+                    <p className="text-foreground-secondary ml-12">Schedule a new appointment</p>
                 </div>
             </div>
 
@@ -239,13 +239,13 @@ export default function NewBookingPage() {
                                     'w-10 h-10 rounded-full flex items-center justify-center transition-all',
                                     step >= s.num
                                         ? 'bg-gradient-to-br from-primary-500 to-cyan-500 text-white shadow-lg'
-                                        : 'bg-white border-2 border-slate-200 text-slate-400'
+                                        : 'bg-card border-2 border-border text-foreground-muted'
                                 )}>
                                     {step > s.num ? <Check className="h-5 w-5" /> : <Icon className="h-4 w-4" />}
                                 </div>
                                 <span className={cn(
                                     'text-xs mt-2 font-medium',
-                                    step >= s.num ? 'text-slate-900' : 'text-slate-400'
+                                    step >= s.num ? 'text-foreground' : 'text-foreground-muted'
                                 )}>
                                     {s.label}
                                 </span>
@@ -260,7 +260,7 @@ export default function NewBookingPage() {
                 {/* Step 1: Select Service */}
                 {step === 1 && (
                     <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Choose a Service</h2>
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Choose a Service</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {services.map((service) => (
                                 <button
@@ -269,8 +269,8 @@ export default function NewBookingPage() {
                                     className={cn(
                                         'p-5 rounded-xl text-left transition-all border-2',
                                         selectedService === service.id
-                                            ? 'border-primary-500 bg-primary-50 shadow-lg shadow-primary-500/10'
-                                            : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                                            ? 'border-primary-500 bg-brand-subtle shadow-lg shadow-primary-500/10'
+                                            : 'border-border bg-card hover:border-border-strong hover:shadow-md'
                                     )}
                                 >
                                     <div className="flex items-start gap-4">
@@ -281,10 +281,10 @@ export default function NewBookingPage() {
                                             <Sparkles className="h-6 w-6" />
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-semibold text-slate-900">{service.name}</h3>
-                                            <p className="text-sm text-slate-500 mt-0.5">{service.category}</p>
+                                            <h3 className="font-semibold text-foreground">{service.name}</h3>
+                                            <p className="text-sm text-foreground-secondary mt-0.5">{service.category}</p>
                                             <div className="flex items-center gap-4 mt-2">
-                                                <span className="flex items-center gap-1 text-sm text-slate-600">
+                                                <span className="flex items-center gap-1 text-sm text-foreground-secondary">
                                                     <Clock className="h-4 w-4" />
                                                     {service.duration} min
                                                 </span>
@@ -308,15 +308,15 @@ export default function NewBookingPage() {
                 {/* Step 2: Select Staff */}
                 {step === 2 && (
                     <div className="space-y-4 animate-fade-in-up">
-                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Choose Staff Member</h2>
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Choose Staff Member</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <button
                                 onClick={() => setSelectedStaff('any')}
                                 className={cn(
                                     'p-5 rounded-xl text-left transition-all border-2',
                                     selectedStaff === 'any'
-                                        ? 'border-primary-500 bg-primary-50 shadow-lg shadow-primary-500/10'
-                                        : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                                        ? 'border-primary-500 bg-brand-subtle shadow-lg shadow-primary-500/10'
+                                        : 'border-border bg-card hover:border-border-strong hover:shadow-md'
                                 )}
                             >
                                 <div className="flex items-center gap-4">
@@ -324,8 +324,8 @@ export default function NewBookingPage() {
                                         <User className="h-7 w-7" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="font-semibold text-slate-900">No Preference</h3>
-                                        <p className="text-sm text-slate-500">Any available staff</p>
+                                        <h3 className="font-semibold text-foreground">No Preference</h3>
+                                        <p className="text-sm text-foreground-secondary">Any available staff</p>
                                     </div>
                                     {selectedStaff === 'any' && (
                                         <div className="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center">
@@ -341,8 +341,8 @@ export default function NewBookingPage() {
                                     className={cn(
                                         'p-5 rounded-xl text-left transition-all border-2',
                                         selectedStaff === member.id
-                                            ? 'border-primary-500 bg-primary-50 shadow-lg shadow-primary-500/10'
-                                            : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                                            ? 'border-primary-500 bg-brand-subtle shadow-lg shadow-primary-500/10'
+                                            : 'border-border bg-card hover:border-border-strong hover:shadow-md'
                                     )}
                                 >
                                     <div className="flex items-center gap-4">
@@ -350,11 +350,11 @@ export default function NewBookingPage() {
                                             {member.name.split(' ').map(n => n[0]).join('')}
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-semibold text-slate-900">{member.name}</h3>
-                                            <p className="text-sm text-slate-500">{member.specialty}</p>
+                                            <h3 className="font-semibold text-foreground">{member.name}</h3>
+                                            <p className="text-sm text-foreground-secondary">{member.specialty}</p>
                                             <div className="flex items-center gap-1 mt-1">
                                                 <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                                                <span className="text-sm font-medium text-slate-700">{member.rating}</span>
+                                                <span className="text-sm font-medium text-foreground">{member.rating}</span>
                                             </div>
                                         </div>
                                         {selectedStaff === member.id && (
@@ -372,11 +372,11 @@ export default function NewBookingPage() {
                 {/* Step 3: Date & Time */}
                 {step === 3 && (
                     <div className="space-y-6 animate-fade-in-up">
-                        <h2 className="text-lg font-semibold text-slate-900">Select Date & Time</h2>
+                        <h2 className="text-lg font-semibold text-foreground">Select Date & Time</h2>
 
                         {/* Date Selection */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-3">Date</label>
+                            <label className="block text-sm font-medium text-foreground mb-3">Date</label>
                             <div className="flex gap-2 overflow-x-auto pb-2">
                                 {dates.map((date, i) => {
                                     const d = new Date(date);
@@ -389,24 +389,24 @@ export default function NewBookingPage() {
                                                 'flex flex-col items-center min-w-[70px] p-3 rounded-xl transition-all',
                                                 selectedDate === date
                                                     ? 'bg-gradient-to-br from-primary-500 to-cyan-500 text-white shadow-lg'
-                                                    : 'bg-white border border-slate-200 hover:border-primary-300'
+                                                    : 'bg-card border border-border hover:border-primary-300'
                                             )}
                                         >
                                             <span className={cn(
                                                 'text-xs font-medium',
-                                                selectedDate === date ? 'text-white/80' : 'text-slate-500'
+                                                selectedDate === date ? 'text-white/80' : 'text-foreground-secondary'
                                             )}>
                                                 {isToday ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' })}
                                             </span>
                                             <span className={cn(
                                                 'text-xl font-bold mt-1',
-                                                selectedDate === date ? 'text-white' : 'text-slate-900'
+                                                selectedDate === date ? 'text-white' : 'text-foreground'
                                             )}>
                                                 {d.getDate()}
                                             </span>
                                             <span className={cn(
                                                 'text-xs',
-                                                selectedDate === date ? 'text-white/80' : 'text-slate-500'
+                                                selectedDate === date ? 'text-white/80' : 'text-foreground-secondary'
                                             )}>
                                                 {d.toLocaleDateString('en-US', { month: 'short' })}
                                             </span>
@@ -418,7 +418,7 @@ export default function NewBookingPage() {
 
                         {/* Time Selection */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-3">Time</label>
+                            <label className="block text-sm font-medium text-foreground mb-3">Time</label>
                             <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                                 {timeSlots.map((slot) => (
                                     <button
@@ -428,10 +428,10 @@ export default function NewBookingPage() {
                                         className={cn(
                                             'py-3 px-2 rounded-lg text-sm font-medium transition-all',
                                             !slot.available
-                                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed line-through'
+                                                ? 'bg-muted text-foreground-muted cursor-not-allowed line-through'
                                                 : selectedTime === slot.time
                                                     ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
-                                                    : 'bg-white border border-slate-200 text-slate-700 hover:border-primary-300'
+                                                    : 'bg-card border border-border text-foreground hover:border-primary-300'
                                         )}
                                     >
                                         {slot.time}
@@ -441,15 +441,15 @@ export default function NewBookingPage() {
                         </div>
 
                         {/* Recurring Toggle */}
-                        <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60 shadow-sm transition-all hover:shadow-md">
+                        <div className="bg-muted rounded-2xl p-6 border border-slate-200/60 shadow-sm transition-all hover:shadow-md">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-primary-100 text-primary-600 rounded-lg">
+                                    <div className="p-2 bg-brand-subtle text-primary rounded-lg">
                                         <CalendarDays className="h-5 w-5" />
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-slate-900">Make this a recurring booking</h3>
-                                        <p className="text-sm text-slate-500">Schedule multiple appointments at once</p>
+                                        <h3 className="font-semibold text-foreground">Make this a recurring booking</h3>
+                                        <p className="text-sm text-foreground-secondary">Schedule multiple appointments at once</p>
                                     </div>
                                 </div>
                                 <button
@@ -461,17 +461,17 @@ export default function NewBookingPage() {
                                     )}
                                 >
                                     <span className={cn(
-                                        'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                                        'inline-block h-4 w-4 transform rounded-full bg-control-thumb transition-transform',
                                         isRecurring ? 'translate-x-6' : 'translate-x-1'
                                     )} />
                                 </button>
                             </div>
 
                             {isRecurring && (
-                                <div className="space-y-6 pt-4 border-t border-slate-200 animate-fade-in">
+                                <div className="space-y-6 pt-4 border-t border-border animate-fade-in">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">Frequency</label>
+                                            <label className="block text-sm font-medium text-foreground mb-2">Frequency</label>
                                             <select
                                                 value={frequency}
                                                 onChange={(e) => setFrequency(e.target.value as any)}
@@ -483,7 +483,7 @@ export default function NewBookingPage() {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">Repeat every</label>
+                                            <label className="block text-sm font-medium text-foreground mb-2">Repeat every</label>
                                             <div className="flex items-center gap-2">
                                                 <input
                                                     type="number"
@@ -492,7 +492,7 @@ export default function NewBookingPage() {
                                                     onChange={(e) => setInterval(parseInt(e.target.value) || 1)}
                                                     className="input w-20"
                                                 />
-                                                <span className="text-slate-500 text-sm">
+                                                <span className="text-foreground-secondary text-sm">
                                                     {frequency === 'Daily' ? 'day(s)' : frequency === 'Weekly' ? 'week(s)' : 'month(s)'}
                                                 </span>
                                             </div>
@@ -501,7 +501,7 @@ export default function NewBookingPage() {
 
                                     {frequency === 'Weekly' && (
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">Repeat on</label>
+                                            <label className="block text-sm font-medium text-foreground mb-2">Repeat on</label>
                                             <div className="flex gap-2 flex-wrap">
                                                 {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
                                                     <button
@@ -518,7 +518,7 @@ export default function NewBookingPage() {
                                                             'w-9 h-9 rounded-lg text-sm font-bold transition-all',
                                                             daysOfWeek.includes(i)
                                                                 ? 'bg-primary-500 text-white shadow-md'
-                                                                : 'bg-white border border-slate-200 text-slate-600 hover:border-primary-300'
+                                                                : 'bg-card border border-border text-foreground-secondary hover:border-primary-300'
                                                         )}
                                                     >
                                                         {day}
@@ -529,11 +529,11 @@ export default function NewBookingPage() {
                                     )}
 
                                     <div className="space-y-3">
-                                        <label className="block text-sm font-medium text-slate-700">Ends</label>
+                                        <label className="block text-sm font-medium text-foreground">Ends</label>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <label className={cn(
                                                 'flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer',
-                                                endType === 'occurrences' ? 'border-primary-500 bg-primary-50' : 'border-slate-100 bg-white'
+                                                endType === 'occurrences' ? 'border-primary-500 bg-brand-subtle' : 'border-border-subtle bg-card'
                                             )}>
                                                 <input
                                                     type="radio"
@@ -553,14 +553,14 @@ export default function NewBookingPage() {
                                                             className="input py-1 px-2 h-8 w-16"
                                                             onClick={(e) => e.stopPropagation()}
                                                         />
-                                                        <span className="text-xs text-slate-500">occurrences</span>
+                                                        <span className="text-xs text-foreground-secondary">occurrences</span>
                                                     </div>
                                                 </div>
                                             </label>
 
                                             <label className={cn(
                                                 'flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer',
-                                                endType === 'date' ? 'border-primary-500 bg-primary-50' : 'border-slate-100 bg-white'
+                                                endType === 'date' ? 'border-primary-500 bg-brand-subtle' : 'border-border-subtle bg-card'
                                             )}>
                                                 <input
                                                     type="radio"
@@ -590,10 +590,10 @@ export default function NewBookingPage() {
                 {/* Step 4: Select Client */}
                 {step === 4 && (
                     <div className="space-y-4 animate-fade-in-up">
-                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Select Client</h2>
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Select Client</h2>
 
                         <div className="relative mb-4">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                             <input
                                 type="text"
                                 value={clientSearch}
@@ -613,8 +613,8 @@ export default function NewBookingPage() {
                                         className={cn(
                                             'w-full p-4 rounded-xl text-left transition-all border-2',
                                             selectedClient === client.id
-                                                ? 'border-primary-500 bg-primary-50'
-                                                : 'border-slate-200 bg-white hover:border-slate-300'
+                                                ? 'border-primary-500 bg-brand-subtle'
+                                                : 'border-border bg-card hover:border-border-strong'
                                         )}
                                     >
                                         <div className="flex items-center gap-4">
@@ -622,8 +622,8 @@ export default function NewBookingPage() {
                                                 {client.name.split(' ').map(n => n[0]).join('')}
                                             </div>
                                             <div className="flex-1">
-                                                <h3 className="font-semibold text-slate-900">{client.name}</h3>
-                                                <p className="text-sm text-slate-500">{client.email}</p>
+                                                <h3 className="font-semibold text-foreground">{client.name}</h3>
+                                                <p className="text-sm text-foreground-secondary">{client.email}</p>
                                             </div>
                                             {selectedClient === client.id && (
                                                 <div className="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center">
@@ -635,7 +635,7 @@ export default function NewBookingPage() {
                                 ))}
                         </div>
 
-                        <button className="w-full p-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-primary-400 hover:text-primary-600 transition-all">
+                        <button className="w-full p-4 border-2 border-dashed border-border-strong rounded-xl text-foreground-secondary hover:border-primary-400 hover:text-primary transition-all">
                             + Add New Client
                         </button>
                     </div>
@@ -644,10 +644,10 @@ export default function NewBookingPage() {
                 {/* Step 5: Confirmation */}
                 {step === 5 && (
                     <div className="space-y-6 animate-fade-in-up">
-                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Booking Summary</h2>
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Booking Summary</h2>
 
                         <div className="card-elevated p-6 space-y-4">
-                            <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
+                            <div className="flex items-center gap-4 pb-4 border-b border-border-subtle">
                                 {selectedServiceData && (
                                     <>
                                         <div
@@ -657,8 +657,8 @@ export default function NewBookingPage() {
                                             <Sparkles className="h-7 w-7" />
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-semibold text-slate-900">{selectedServiceData.name}</h3>
-                                            <p className="text-sm text-slate-500">{selectedServiceData.duration} minutes</p>
+                                            <h3 className="font-semibold text-foreground">{selectedServiceData.name}</h3>
+                                            <p className="text-sm text-foreground-secondary">{selectedServiceData.duration} minutes</p>
                                         </div>
                                         <span className="text-xl font-bold" style={{ color: selectedServiceData.color }}>
                                             {formatCurrency(selectedServiceData.price)}
@@ -668,43 +668,43 @@ export default function NewBookingPage() {
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-slate-50 rounded-xl p-4">
-                                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+                                <div className="bg-muted rounded-xl p-4">
+                                    <div className="flex items-center gap-2 text-sm text-foreground-secondary mb-1">
                                         <User className="h-4 w-4" />
                                         Staff
                                     </div>
-                                    <p className="font-medium text-slate-900">
+                                    <p className="font-medium text-foreground">
                                         {selectedStaff === 'any' ? 'Any Available' : selectedStaffData?.name}
                                     </p>
                                 </div>
-                                <div className="bg-slate-50 rounded-xl p-4">
-                                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+                                <div className="bg-muted rounded-xl p-4">
+                                    <div className="flex items-center gap-2 text-sm text-foreground-secondary mb-1">
                                         <Calendar className="h-4 w-4" />
                                         Date & Time
                                     </div>
-                                    <p className="font-medium text-slate-900">
+                                    <p className="font-medium text-foreground">
                                         {formatDateDisplay(selectedDate)} at {selectedTime}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="bg-slate-50 rounded-xl p-4">
-                                <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+                            <div className="bg-muted rounded-xl p-4">
+                                <div className="flex items-center gap-2 text-sm text-foreground-secondary mb-1">
                                     <User className="h-4 w-4" />
                                     Client
                                 </div>
-                                <p className="font-medium text-slate-900">{selectedClientData?.name}</p>
-                                <p className="text-sm text-slate-500">{selectedClientData?.email}</p>
+                                <p className="font-medium text-foreground">{selectedClientData?.name}</p>
+                                <p className="text-sm text-foreground-secondary">{selectedClientData?.email}</p>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Booking Notes (Optional)
                                 </label>
                                 <textarea
                                     value={notes}
                                     onChange={(e) => setNotes(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"
+                                    className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"
                                     rows={3}
                                     placeholder="Add any notes for this booking..."
                                 />

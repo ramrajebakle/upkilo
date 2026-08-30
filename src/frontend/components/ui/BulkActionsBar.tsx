@@ -42,7 +42,7 @@ export function BulkActionsBar({
             <CheckSquare className="h-4 w-4" />
             <span className="text-sm font-semibold">{selectedCount}</span>
           </button>
-          <span className="text-slate-500 text-sm">of {totalCount} selected</span>
+          <span className="text-slate-300 text-sm">of {totalCount} selected</span>
         </div>
 
         <div className="h-5 w-px bg-slate-700" />

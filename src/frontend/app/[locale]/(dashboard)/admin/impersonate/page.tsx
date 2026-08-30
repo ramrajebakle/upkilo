@@ -55,15 +55,15 @@ export default function ImpersonatePage() {
   return (
     <div className="space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Tenant Impersonation <UserCog className="text-amber-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Tenant Impersonation <UserCog className="text-warning-fg" size={22} /></h1>
         <p className="text-text-secondary mt-1">Temporarily access a tenant's dashboard for support or debugging.</p>
       </header>
 
       <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200">
-        <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+        <AlertTriangle className="h-5 w-5 text-warning-fg flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-semibold text-amber-800">Use with caution</p>
-          <p className="text-xs text-amber-600 mt-0.5">Impersonation sessions are logged in the audit trail. Only use for legitimate support purposes.</p>
+          <p className="text-xs text-warning-fg mt-0.5">Impersonation sessions are logged in the audit trail. Only use for legitimate support purposes.</p>
         </div>
       </div>
 
@@ -86,13 +86,13 @@ export default function ImpersonatePage() {
                     <p className="text-sm font-semibold text-text-primary">{t.name}</p>
                     <div className="flex items-center gap-3 mt-0.5">
                       <span className="text-xs text-text-tertiary font-mono">{t.slug}</span>
-                      {t.plan && <span className="text-xs text-ai-600 bg-ai-50 px-1.5 py-0.5 rounded-full">{t.plan}</span>}
+                      {t.plan && <span className="text-xs text-ai bg-ai-subtle px-1.5 py-0.5 rounded-full">{t.plan}</span>}
                       {t.ownerEmail && <span className="text-xs text-text-tertiary">{t.ownerEmail}</span>}
-                      {t.status && <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${t.status === "Active" ? "text-green-600 bg-green-50" : "text-gray-500 bg-gray-50"}`}>{t.status}</span>}
+                      {t.status && <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${t.status === "Active" ? "text-green-600 bg-green-50" : "text-foreground-secondary bg-muted"}`}>{t.status}</span>}
                     </div>
                   </div>
                   <Button variant="outline" size="sm"
-                    leftIcon={impersonating === t.id ? <Loader2 size={12} className="animate-spin" /> : <LogIn size={12} className="text-amber-600" />}
+                    leftIcon={impersonating === t.id ? <Loader2 size={12} className="animate-spin" /> : <LogIn size={12} className="text-warning-fg" />}
                     onClick={() => impersonate(t)} disabled={!!impersonating}>
                     {impersonating === t.id ? "Logging in…" : "Impersonate"}
                   </Button>

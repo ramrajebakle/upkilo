@@ -123,7 +123,7 @@ export function WebhookSettings() {
     };
 
     if (loading) {
-        return <div className="p-8 text-center text-gray-500">Loading webhooks...</div>;
+        return <div className="p-8 text-center text-foreground-secondary">Loading webhooks...</div>;
     }
 
     return (
@@ -131,7 +131,7 @@ export function WebhookSettings() {
             <div className="flex justify-between items-center">
                 <div>
                     <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">External Uplinks</h2>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Real-time event synchronization protocol</p>
+                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Real-time event synchronization protocol</p>
                 </div>
                 <Button onClick={openCreate} className="rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary-500/20 hover:scale-105 active:scale-95 transition-all h-12 px-6">
                     <Plus className="h-4 w-4 mr-2" />
@@ -143,10 +143,10 @@ export function WebhookSettings() {
                 {endpoints.length === 0 ? (
                     <div className="p-20 text-center">
                         <div className="inline-block p-8 bg-slate-50 dark:bg-slate-800 rounded-3xl mb-6 border border-slate-100 dark:border-slate-700">
-                            <Webhook className="h-12 w-12 text-slate-200 dark:text-slate-700" />
+                            <Webhook className="h-12 w-12 text-slate-200" />
                         </div>
                         <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">No Uplinks Configured</h3>
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1 mb-8">System is operating in isolation</p>
+                        <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1 mb-8">System is operating in isolation</p>
                         <Button onClick={openCreate} variant="outline" className="rounded-xl font-black uppercase tracking-widest text-[10px] dark:border-slate-700 dark:text-slate-400">Initialize Connection</Button>
                     </div>
                 ) : (
@@ -170,7 +170,7 @@ export function WebhookSettings() {
                                                     {ep.isActive ? 'Network: Active' : 'Network: Offline'}
                                                 </span>
                                             </div>
-                                            <p className="font-mono text-xs text-slate-400 dark:text-slate-500 mt-2 truncate bg-slate-50 dark:bg-slate-950 p-2 rounded-lg border border-slate-100 dark:border-slate-850">{ep.url}</p>
+                                            <p className="font-mono text-xs text-foreground-muted mt-2 truncate bg-slate-50 dark:bg-slate-950 p-2 rounded-lg border border-slate-100 dark:border-slate-850">{ep.url}</p>
                                             <div className="mt-4 flex flex-wrap gap-2">
                                                 {ep.events?.length === 1 && ep.events[0] === '*' ? (
                                                     <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 dark:border-slate-700">Protocol: Comprehensive</span>
@@ -219,7 +219,7 @@ export function WebhookSettings() {
                                         </div>
                                         {deliveries.length === 0 ? (
                                             <div className="p-8 text-center bg-white dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest">No packet transmissions detected</p>
+                                                <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">No packet transmissions detected</p>
                                             </div>
                                         ) : (
                                             <div className="space-y-3">
@@ -228,14 +228,14 @@ export function WebhookSettings() {
                                                         <div className="flex items-center gap-4">
                                                             <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
                                                                 {log.success ? (
-                                                                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                                                    <CheckCircle2 className="h-4 w-4 text-success-fg" />
                                                                 ) : (
-                                                                    <XCircle className="h-4 w-4 text-rose-500" />
+                                                                    <XCircle className="h-4 w-4 text-danger-fg" />
                                                                 )}
                                                             </div>
                                                             <div>
                                                                 <span className="font-mono text-[10px] block text-slate-900 dark:text-white font-black uppercase tracking-tight">{log.eventType}</span>
-                                                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{new Date(log.createdAt).toLocaleString()}</span>
+                                                                <span className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">{new Date(log.createdAt).toLocaleString()}</span>
                                                             </div>
                                                         </div>
                                                         <div className="text-right">
@@ -247,7 +247,7 @@ export function WebhookSettings() {
                                                             )}>
                                                                 {log.responseStatusCode || 'ERR'}
                                                             </span>
-                                                            <p className="text-[10px] font-bold text-slate-300 dark:text-slate-600 mt-1 uppercase tracking-widest">{log.durationMs}ms latency</p>
+                                                            <p className="text-[10px] font-bold text-slate-300 mt-1 uppercase tracking-widest">{log.durationMs}ms latency</p>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -264,7 +264,7 @@ export function WebhookSettings() {
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingId ? "Modify Protocol Uplink" : "Provision Protocol Uplink"}>
                 <form onSubmit={handleSave} className="space-y-8 p-2">
                     <div className="space-y-4">
-                        <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">UPLINK DESIGNATION *</label>
+                        <label className="block text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">UPLINK DESIGNATION *</label>
                         <input
                             required
                             type="text"
@@ -275,7 +275,7 @@ export function WebhookSettings() {
                         />
                     </div>
                     <div className="space-y-4">
-                        <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">ENDPOINT MATRIX URL *</label>
+                        <label className="block text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">ENDPOINT MATRIX URL *</label>
                         <input
                             required
                             type="url"
@@ -286,7 +286,7 @@ export function WebhookSettings() {
                         />
                     </div>
                     <div className="space-y-4">
-                        <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">Event Synchronization Matrix</label>
+                        <label className="block text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Event Synchronization Matrix</label>
                         <div className="mb-4">
                             <label className="flex items-center gap-4 text-sm p-5 border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 cursor-pointer transition-all">
                                 <input
@@ -303,7 +303,7 @@ export function WebhookSettings() {
                                 />
                                 <div className="space-y-1">
                                     <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight block">Comprehensive Transmission</span>
-                                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest block">Deliver every packet trigger in the cluster</span>
+                                    <span className="text-[10px] font-bold text-foreground-secondary uppercase tracking-widest block">Deliver every packet trigger in the cluster</span>
                                 </div>
                             </label>
                         </div>

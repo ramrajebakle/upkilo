@@ -157,17 +157,17 @@ export default function DataImportPage() {
         <div className="p-6 max-w-4xl mx-auto space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">Data Import / Export</h1>
-                <p className="text-slate-500 mt-1">Bulk import clients/bookings from CSV, or export your data</p>
+                <h1 className="text-2xl font-bold text-foreground">Data Import / Export</h1>
+                <p className="text-foreground-secondary mt-1">Bulk import clients/bookings from CSV, or export your data</p>
             </div>
 
             {/* Tab switcher */}
-            <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
+            <div className="flex gap-1 bg-muted p-1 rounded-xl w-fit">
                 {(['import', 'export'] as const).map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${activeTab === tab ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${activeTab === tab ? 'bg-card text-foreground shadow-sm' : 'text-foreground-secondary hover:text-foreground'}`}
                     >
                         {tab === 'import' ? <Upload className="h-4 w-4" /> : <Download className="h-4 w-4" />}
                         {tab}
@@ -181,7 +181,7 @@ export default function DataImportPage() {
                     <button
                         key={e}
                         onClick={() => setEntityType(e)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium capitalize transition-colors ${entityType === e ? 'bg-primary-600 text-white border-primary-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium capitalize transition-colors ${entityType === e ? 'bg-primary-600 text-white border-primary-600' : 'bg-card border-border text-foreground-secondary hover:bg-accent'}`}
                     >
                         {e === 'clients' ? <Users className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
                         {e}
@@ -204,11 +204,11 @@ export default function DataImportPage() {
                     </div>
 
                     {/* File upload */}
-                    <div className="bg-white border border-slate-200 rounded-xl p-6">
-                        <h2 className="font-semibold text-slate-900 mb-4">Upload CSV File</h2>
+                    <div className="bg-card border border-border rounded-xl p-6">
+                        <h2 className="font-semibold text-foreground mb-4">Upload CSV File</h2>
                         <div
                             onClick={() => fileRef.current?.click()}
-                            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${importFile ? 'border-primary-300 bg-primary-50' : 'border-slate-200 hover:border-primary-300 hover:bg-slate-50'}`}
+                            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${importFile ? 'border-primary-300 bg-brand-subtle' : 'border-border hover:border-primary-300 hover:bg-accent'}`}
                         >
                             <input
                                 ref={fileRef}
@@ -220,16 +220,16 @@ export default function DataImportPage() {
                                     if (f) { setImportFile(f); setValidationResult(null); setImportJob(null); }
                                 }}
                             />
-                            <Upload className={`h-10 w-10 mx-auto mb-3 ${importFile ? 'text-primary-500' : 'text-slate-300'}`} />
+                            <Upload className={`h-10 w-10 mx-auto mb-3 ${importFile ? 'text-primary' : 'text-slate-300'}`} />
                             {importFile ? (
                                 <div>
-                                    <p className="font-medium text-slate-900">{importFile.name}</p>
-                                    <p className="text-xs text-slate-500 mt-0.5">{(importFile.size / 1024).toFixed(1)} KB · Click to change</p>
+                                    <p className="font-medium text-foreground">{importFile.name}</p>
+                                    <p className="text-xs text-foreground-secondary mt-0.5">{(importFile.size / 1024).toFixed(1)} KB · Click to change</p>
                                 </div>
                             ) : (
                                 <div>
-                                    <p className="font-medium text-slate-700">Drop your CSV file here</p>
-                                    <p className="text-xs text-slate-400 mt-0.5">or click to browse</p>
+                                    <p className="font-medium text-foreground">Drop your CSV file here</p>
+                                    <p className="text-xs text-foreground-muted mt-0.5">or click to browse</p>
                                 </div>
                             )}
                         </div>
@@ -250,30 +250,30 @@ export default function DataImportPage() {
 
                     {/* Validation Result */}
                     {validationResult && (
-                        <div className={`bg-white border rounded-xl p-5 ${validationResult.isValid ? 'border-emerald-200' : 'border-amber-200'}`}>
+                        <div className={`bg-card border rounded-xl p-5 ${validationResult.isValid ? 'border-emerald-200' : 'border-amber-200'}`}>
                             <div className="flex items-center gap-2 mb-3">
                                 {validationResult.isValid
-                                    ? <CheckCircle className="h-5 w-5 text-emerald-500" />
-                                    : <AlertCircle className="h-5 w-5 text-amber-500" />}
-                                <h3 className="font-semibold text-slate-900">
+                                    ? <CheckCircle className="h-5 w-5 text-success-fg" />
+                                    : <AlertCircle className="h-5 w-5 text-warning-fg" />}
+                                <h3 className="font-semibold text-foreground">
                                     {validationResult.isValid ? 'File is valid' : 'Validation warnings'}
                                 </h3>
                             </div>
                             <div className="grid grid-cols-3 gap-4 text-sm">
-                                <div><span className="text-slate-500">Total rows:</span> <strong>{validationResult.totalRows || 0}</strong></div>
-                                <div><span className="text-slate-500">Valid:</span> <strong className="text-emerald-600">{validationResult.validRows || 0}</strong></div>
-                                <div><span className="text-slate-500">Errors:</span> <strong className="text-red-600">{validationResult.errorRows || 0}</strong></div>
+                                <div><span className="text-foreground-secondary">Total rows:</span> <strong>{validationResult.totalRows || 0}</strong></div>
+                                <div><span className="text-foreground-secondary">Valid:</span> <strong className="text-success-fg">{validationResult.validRows || 0}</strong></div>
+                                <div><span className="text-foreground-secondary">Errors:</span> <strong className="text-danger-fg">{validationResult.errorRows || 0}</strong></div>
                             </div>
                             {validationResult.errors?.length > 0 && (
                                 <div className="mt-3">
-                                    <button onClick={() => setShowErrors(!showErrors)} className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700">
+                                    <button onClick={() => setShowErrors(!showErrors)} className="flex items-center gap-1 text-xs text-foreground-secondary hover:text-foreground">
                                         {showErrors ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                                         {validationResult.errors.length} error(s)
                                     </button>
                                     {showErrors && (
                                         <div className="mt-2 max-h-32 overflow-y-auto space-y-1">
                                             {validationResult.errors.slice(0, 20).map((e: string, i: number) => (
-                                                <p key={i} className="text-xs text-red-600 font-mono">{e}</p>
+                                                <p key={i} className="text-xs text-danger-fg font-mono">{e}</p>
                                             ))}
                                         </div>
                                     )}
@@ -284,20 +284,20 @@ export default function DataImportPage() {
 
                     {/* Import Job Status */}
                     {importJob && (
-                        <div className="bg-white border border-slate-200 rounded-xl p-5">
+                        <div className="bg-card border border-border rounded-xl p-5">
                             <div className="flex items-center gap-2 mb-3">
                                 {importJob.status === 'processing' && <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />}
-                                {importJob.status === 'completed' && <CheckCircle className="h-5 w-5 text-emerald-500" />}
-                                {importJob.status === 'failed' && <XCircle className="h-5 w-5 text-red-500" />}
-                                <h3 className="font-semibold text-slate-900">Import {importJob.status}</h3>
+                                {importJob.status === 'completed' && <CheckCircle className="h-5 w-5 text-success-fg" />}
+                                {importJob.status === 'failed' && <XCircle className="h-5 w-5 text-danger-fg" />}
+                                <h3 className="font-semibold text-foreground">Import {importJob.status}</h3>
                             </div>
                             {importJob.totalRows && (
                                 <div className="mb-3">
-                                    <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <div className="flex justify-between text-xs text-foreground-secondary mb-1">
                                         <span>{importJob.processedRows || 0} of {importJob.totalRows} rows</span>
                                         <span>{Math.round(((importJob.processedRows || 0) / importJob.totalRows) * 100)}%</span>
                                     </div>
-                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-muted rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-primary-500 rounded-full transition-all"
                                             style={{ width: `${Math.round(((importJob.processedRows || 0) / importJob.totalRows) * 100)}%` }}
@@ -306,7 +306,7 @@ export default function DataImportPage() {
                                 </div>
                             )}
                             {importJob.errorRows && importJob.errorRows > 0 && (
-                                <p className="text-xs text-amber-600">{importJob.errorRows} rows had errors and were skipped</p>
+                                <p className="text-xs text-warning-fg">{importJob.errorRows} rows had errors and were skipped</p>
                             )}
                         </div>
                     )}
@@ -316,9 +316,9 @@ export default function DataImportPage() {
             {/* Export tab */}
             {activeTab === 'export' && (
                 <div className="space-y-5">
-                    <div className="bg-white border border-slate-200 rounded-xl p-6">
-                        <h2 className="font-semibold text-slate-900 mb-2">Export {entityType}</h2>
-                        <p className="text-sm text-slate-500 mb-4">Download all your {entityType} data as a CSV file</p>
+                    <div className="bg-card border border-border rounded-xl p-6">
+                        <h2 className="font-semibold text-foreground mb-2">Export {entityType}</h2>
+                        <p className="text-sm text-foreground-secondary mb-4">Download all your {entityType} data as a CSV file</p>
                         <Button onClick={handleExport} disabled={exporting} className="flex items-center gap-2">
                             {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                             {exporting ? 'Preparing export...' : `Export ${entityType} to CSV`}
@@ -327,13 +327,13 @@ export default function DataImportPage() {
 
                     {/* Export Job Status */}
                     {exportJob && (
-                        <div className="bg-white border border-slate-200 rounded-xl p-5">
+                        <div className="bg-card border border-border rounded-xl p-5">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     {exportJob.status === 'processing' && <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />}
-                                    {exportJob.status === 'completed' && <CheckCircle className="h-5 w-5 text-emerald-500" />}
-                                    {exportJob.status === 'failed' && <XCircle className="h-5 w-5 text-red-500" />}
-                                    <span className="font-medium text-slate-900 capitalize">{exportJob.status}</span>
+                                    {exportJob.status === 'completed' && <CheckCircle className="h-5 w-5 text-success-fg" />}
+                                    {exportJob.status === 'failed' && <XCircle className="h-5 w-5 text-danger-fg" />}
+                                    <span className="font-medium text-foreground capitalize">{exportJob.status}</span>
                                 </div>
                                 {exportJob.status === 'completed' && (
                                     <Button onClick={handleDownload} className="flex items-center gap-2">

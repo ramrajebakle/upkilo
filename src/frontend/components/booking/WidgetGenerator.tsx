@@ -96,7 +96,7 @@ export default function WidgetGenerator() {
             <Card>
                 <CardHeader>
                     <CardTitle>Booking Widget</CardTitle>
-                    <p className="text-sm text-gray-500">Embed the booking flow directly on your website, or share a direct link.</p>
+                    <p className="text-sm text-foreground-secondary">Embed the booking flow directly on your website, or share a direct link.</p>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">
@@ -105,7 +105,7 @@ export default function WidgetGenerator() {
                             <div className="space-y-2">
                                 <Label>Service</Label>
                                 <select
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                                    className="w-full rounded-md border border-border-strong px-3 py-2 text-sm"
                                     value={selectedServiceId}
                                     onChange={e => setSelectedServiceId(e.target.value)}
                                 >
@@ -114,7 +114,7 @@ export default function WidgetGenerator() {
                                         <option key={s.id} value={s.id}>{s.name}</option>
                                     ))}
                                 </select>
-                                <p className="text-xs text-gray-400">
+                                <p className="text-xs text-foreground-muted">
                                     Pick a service to send customers straight to booking it. Leave on "All services" for the full menu.
                                 </p>
                             </div>
@@ -153,7 +153,7 @@ export default function WidgetGenerator() {
                                     id="transparent"
                                     checked={config.transparent}
                                     onChange={e => setConfig({ ...config, transparent: e.target.checked })}
-                                    className="rounded border-gray-300"
+                                    className="rounded border-border-strong"
                                 />
                                 <Label htmlFor="transparent">Transparent Background</Label>
                             </div>
@@ -162,7 +162,7 @@ export default function WidgetGenerator() {
                         {/* Preview */}
                         <div className="space-y-4">
                             {/* Direct link */}
-                            <div className="bg-gray-50 p-4 rounded-lg border">
+                            <div className="bg-muted p-4 rounded-lg border">
                                 <Label className="mb-2 block">Direct "Book Now" Link</Label>
                                 <div className="flex gap-2">
                                     <Input readOnly value={directLink} className="text-sm" />
@@ -170,11 +170,11 @@ export default function WidgetGenerator() {
                                         {linkCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                 </div>
-                                <p className="text-xs text-gray-400 mt-2">Use this for a button link, email, or social bio.</p>
+                                <p className="text-xs text-foreground-muted mt-2">Use this for a button link, email, or social bio.</p>
                             </div>
 
                             {/* Embed code */}
-                            <div className="bg-gray-50 p-4 rounded-lg border">
+                            <div className="bg-muted p-4 rounded-lg border">
                                 <Label className="mb-2 block">Embed Code (iframe)</Label>
                                 <pre className="bg-gray-900 text-gray-100 p-4 rounded-md text-sm overflow-x-auto whitespace-pre-wrap break-all h-48">
                                     {embedCode}

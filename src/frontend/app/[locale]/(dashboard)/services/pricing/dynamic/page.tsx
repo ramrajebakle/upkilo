@@ -90,8 +90,8 @@ export default function DynamicPricingRulesPage() {
 
       <div className="grid grid-cols-3 gap-4">
         <Card><CardContent className="pt-5"><p className="text-xs text-text-secondary">Total Rules</p><p className="text-2xl font-bold text-text-primary mt-1">{rules.length}</p></CardContent></Card>
-        <Card><CardContent className="pt-5"><p className="text-xs text-text-secondary">Active</p><p className="text-2xl font-bold text-green-500 mt-1">{activeCount}</p></CardContent></Card>
-        <Card><CardContent className="pt-5"><p className="text-xs text-text-secondary">Inactive</p><p className="text-2xl font-bold text-gray-400 mt-1">{rules.length - activeCount}</p></CardContent></Card>
+        <Card><CardContent className="pt-5"><p className="text-xs text-text-secondary">Active</p><p className="text-2xl font-bold text-success-fg mt-1">{activeCount}</p></CardContent></Card>
+        <Card><CardContent className="pt-5"><p className="text-xs text-text-secondary">Inactive</p><p className="text-2xl font-bold text-foreground-muted mt-1">{rules.length - activeCount}</p></CardContent></Card>
       </div>
 
       {showForm && (
@@ -172,10 +172,10 @@ export default function DynamicPricingRulesPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button onClick={() => toggleRule(r.id)} disabled={toggling === r.id} className="text-text-tertiary hover:text-ai-500 transition-colors">
-                          {toggling === r.id ? <Loader2 className="h-5 w-5 animate-spin" /> : r.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6" />}
+                        <button onClick={() => toggleRule(r.id)} disabled={toggling === r.id} className="text-text-tertiary hover:text-ai transition-colors">
+                          {toggling === r.id ? <Loader2 className="h-5 w-5 animate-spin" /> : r.isActive ? <ToggleRight className="h-6 w-6 text-success-fg" /> : <ToggleLeft className="h-6 w-6" />}
                         </button>
-                        <Button variant="outline" size="sm" leftIcon={<Trash2 size={12} className="text-red-500" />} onClick={() => deleteRule(r.id)} />
+                        <Button variant="outline" size="sm" leftIcon={<Trash2 size={12} className="text-danger-fg" />} onClick={() => deleteRule(r.id)} />
                       </div>
                     </div>
                   </CardContent>

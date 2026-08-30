@@ -78,7 +78,7 @@ export default function BookingPoliciesPage() {
         <input type="checkbox" checked={policies[field] as boolean} onChange={(e) => setBool(field, e.target.checked)} className="sr-only" />
         <div onClick={() => setBool(field, !(policies[field] as boolean))}
           className={`w-10 h-5 rounded-full transition-colors cursor-pointer ${policies[field] ? "bg-ai-500" : "bg-surface-300"} relative`}>
-          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${policies[field] ? "translate-x-5" : "translate-x-0.5"}`} />
+          <div className={`absolute top-0.5 w-4 h-4 bg-control-thumb rounded-full shadow transition-transform ${policies[field] ? "translate-x-5" : "translate-x-0.5"}`} />
         </div>
       </div>
       <div>

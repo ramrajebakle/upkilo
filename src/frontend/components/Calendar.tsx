@@ -207,7 +207,7 @@ export default function CalendarView() {
                                     'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all', 
                                     colorMode === m 
                                         ? 'bg-white dark:bg-slate-700 shadow-sm text-primary-600 dark:text-white' 
-                                        : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
+                                        : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                                 )}
                             >
                                 {m}
@@ -223,7 +223,7 @@ export default function CalendarView() {
                                     'px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all', 
                                     view === v 
                                         ? 'bg-white dark:bg-slate-700 shadow-sm text-primary-600 dark:text-white' 
-                                        : 'text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'
+                                        : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                                 )}
                             >
                                 {v}
@@ -245,7 +245,7 @@ export default function CalendarView() {
                     {legend.slice(0, 8).map(l => (
                         <div key={l.label} className="flex items-center gap-2 group cursor-default">
                             <div className="w-2.5 h-2.5 rounded-full shadow-sm ring-1 ring-black/5" style={{ backgroundColor: l.color }} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">{l.label}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-foreground-secondary group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">{l.label}</span>
                         </div>
                     ))}
                 </div>
@@ -258,7 +258,7 @@ export default function CalendarView() {
                     <div className="p-4 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50" />
                     {weekDates.map((date, i) => (
                         <div key={i} className={cn('p-3 text-center border-r border-slate-200 dark:border-slate-800 last:border-r-0 transition-colors', isToday(date) ? 'bg-primary-50/50 dark:bg-primary-900/10' : 'bg-white dark:bg-slate-900')}>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">{weekDays[date.getDay()]}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-foreground-muted mb-1">{weekDays[date.getDay()]}</p>
                             <div className="flex items-center justify-center">
                                 <span className={cn(
                                     'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all',
@@ -279,7 +279,7 @@ export default function CalendarView() {
                         {/* Time labels */}
                         <div className="border-r border-slate-200 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-950/30">
                             {hours.map(hour => (
-                                <div key={hour} className="h-[60px] border-b border-slate-100 dark:border-slate-800/50 px-3 py-2 text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-tighter text-right">
+                                <div key={hour} className="h-[60px] border-b border-border-subtle px-3 py-2 text-[10px] font-bold text-foreground-muted uppercase tracking-tighter text-right">
                                     {hour > 12 ? `${hour - 12}pm` : hour === 12 ? '12pm' : `${hour}am`}
                                 </div>
                             ))}

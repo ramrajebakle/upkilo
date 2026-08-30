@@ -18,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     <label htmlFor={inputId} className="block text-sm font-medium text-muted-foreground mb-1">
                         {label}
                         {props.required && (
-                            <span className="ms-0.5 text-red-500" aria-hidden="true">*</span>
+                            <span className="ms-0.5 text-danger-fg" aria-hidden="true">*</span>
                         )}
                     </label>
                 )}
@@ -33,7 +33,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                         aria-describedby={error ? `${inputId}-error` : undefined}
                         aria-invalid={error ? true : undefined}
                         className={cn(
-                            'w-full px-4 py-3 rounded-lg border border-input text-foreground bg-card',
+                            'w-full px-4 py-3 rounded-lg border border-input text-foreground bg-input-background',
                             'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary',
                             'placeholder:text-text-tertiary transition-all duration-200',
                             'disabled:bg-muted disabled:cursor-not-allowed disabled:text-muted-foreground',
@@ -47,18 +47,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                         {...props}
                     />
                     {suffix && (
-                        <span className="inline-flex items-center px-3 rounded-e-lg border border-s-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                        <span className="inline-flex items-center px-3 rounded-e-lg border border-s-0 border-input bg-muted text-muted-foreground text-sm">
                             {suffix}
                         </span>
                     )}
                     {rightIcon && (
-                        <div className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <div className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                             {rightIcon}
                         </div>
                     )}
                 </div>
                 {error && (
-                    <p id={inputId ? `${inputId}-error` : undefined} role="alert" className="mt-1 text-sm text-red-500">{error}</p>
+                    <p id={inputId ? `${inputId}-error` : undefined} role="alert" className="mt-1 text-sm text-danger-fg">{error}</p>
                 )}
             </div>
         );

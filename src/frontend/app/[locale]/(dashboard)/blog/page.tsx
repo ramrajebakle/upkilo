@@ -157,7 +157,7 @@ export default function BlogPage() {
                             onClick={() => { setEditingId(null); setForm({ ...EMPTY_FORM, title: idea.split(' — ')[0] }); setShowEditor(true); }}
                             className="text-left px-3 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
                         >
-                            <span className="font-medium text-xs text-slate-400 dark:text-slate-500 block mb-0.5">Idea #{i+1}</span>
+                            <span className="font-medium text-xs text-foreground-muted block mb-0.5">Idea #{i+1}</span>
                             {idea}
                         </button>
                     ))}
@@ -175,12 +175,12 @@ export default function BlogPage() {
 
             {/* Posts Grid */}
             {loading ? (
-                <div className="text-center py-16 text-slate-400">Loading posts…</div>
+                <div className="text-center py-16 text-foreground-muted">Loading posts…</div>
             ) : posts.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <BookOpen className="w-12 h-12 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
+                    <BookOpen className="w-12 h-12 text-slate-200 mx-auto mb-3" />
                     <p className="font-medium text-slate-600 dark:text-slate-300">No posts yet</p>
-                    <p className="text-sm text-slate-400 mt-1 max-w-xs mx-auto">Write your first blog post to start ranking for local keywords and attracting new clients from Google.</p>
+                    <p className="text-sm text-foreground-muted mt-1 max-w-xs mx-auto">Write your first blog post to start ranking for local keywords and attracting new clients from Google.</p>
                     <button onClick={openNew} className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium">Write First Post</button>
                 </div>
             ) : (
@@ -189,7 +189,7 @@ export default function BlogPage() {
                         <div key={p.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-3">
                             <div className="flex items-start justify-between gap-2">
                                 <span className={cn('text-xs font-semibold px-2.5 py-1 rounded-full', STATUS_BADGE[p.status] ?? STATUS_BADGE.Draft)}>{p.status}</span>
-                                <span className="text-xs text-slate-400 flex items-center gap-1"><Eye className="w-3 h-3" />{p.viewCount}</span>
+                                <span className="text-xs text-foreground-muted flex items-center gap-1"><Eye className="w-3 h-3" />{p.viewCount}</span>
                             </div>
                             <div>
                                 <h3 className="font-semibold text-slate-900 dark:text-white text-sm leading-snug">{p.title}</h3>
@@ -208,7 +208,7 @@ export default function BlogPage() {
                                 </a>
                             )}
                             {p.status === 'Draft' && (
-                                <p className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
+                                <p className="flex items-center gap-1.5 text-xs text-foreground-muted font-mono">
                                     <Link2 className="w-3 h-3 shrink-0" />
                                     …/blog/{p.slug} <span className="font-sans not-italic">(not public yet)</span>
                                 </p>
@@ -229,7 +229,7 @@ export default function BlogPage() {
                                         <Globe className="w-3.5 h-3.5" /> Publish
                                     </button>
                                 )}
-                                <button onClick={() => archive(p.id)} className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                                <button onClick={() => archive(p.id)} className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-danger-fg hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                     <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                             </div>
@@ -244,7 +244,7 @@ export default function BlogPage() {
                     <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-2xl shadow-2xl border border-slate-100 dark:border-slate-800 my-8">
                         <div className="flex items-center justify-between mb-5">
                             <h3 className="font-bold text-slate-900 dark:text-white">{editingId ? 'Edit Post' : 'New Blog Post'}</h3>
-                            <button onClick={() => setShowEditor(false)} className="p-1 text-slate-400 hover:text-slate-600 rounded-lg"><X className="w-5 h-5" /></button>
+                            <button onClick={() => setShowEditor(false)} className="p-1 text-foreground-muted hover:text-foreground-secondary rounded-lg"><X className="w-5 h-5" /></button>
                         </div>
 
                         <div className="space-y-4">
@@ -262,7 +262,7 @@ export default function BlogPage() {
                             <div>
                                 <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                                     URL Slug
-                                    <span className="ml-2 font-normal normal-case text-slate-400">— auto-generated from title, editable</span>
+                                    <span className="ml-2 font-normal normal-case text-foreground-muted">— auto-generated from title, editable</span>
                                 </label>
                                 <input
                                     value={form.slug}
@@ -288,7 +288,7 @@ export default function BlogPage() {
                                         </button>
                                     </div>
                                 )}
-                                <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
+                                <p className="mt-1.5 text-xs text-foreground-muted">
                                     This is the link your clients and Google will use to find this blog post. Keep it short and descriptive.
                                 </p>
                             </div>
@@ -296,13 +296,13 @@ export default function BlogPage() {
                             <div>
                                 <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Meta Title <span className="text-slate-400">(shown in Google results)</span></label>
                                 <input value={form.metaTitle} onChange={e => setForm(f => ({...f, metaTitle: e.target.value}))} maxLength={60} className="mt-1 w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white" placeholder="Keep under 60 characters" />
-                                <p className="text-xs text-slate-400 mt-1">{form.metaTitle.length}/60</p>
+                                <p className="text-xs text-foreground-muted mt-1">{form.metaTitle.length}/60</p>
                             </div>
 
                             <div>
                                 <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Meta Description <span className="text-slate-400">(shown in Google preview)</span></label>
                                 <textarea value={form.metaDescription} onChange={e => setForm(f => ({...f, metaDescription: e.target.value}))} maxLength={155} rows={2} className="mt-1 w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white resize-none" placeholder="Describe the post in 120-155 characters to boost click-through rate" />
-                                <p className={cn('text-xs mt-1', form.metaDescription.length > 155 ? 'text-red-500' : 'text-slate-400')}>{form.metaDescription.length}/155</p>
+                                <p className={cn('text-xs mt-1', form.metaDescription.length > 155 ? 'text-danger-fg' : 'text-foreground-muted')}>{form.metaDescription.length}/155</p>
                             </div>
 
                             <div>

@@ -96,12 +96,12 @@ export function AgencySettings() {
                             <Users className="h-6 w-6" />
                         </div>
                         <div>
-                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Total Entities</span>
+                            <span className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Total Entities</span>
                             <div className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{subAccounts.length}</div>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">
-                        <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+                        <TrendingUp className="h-3.5 w-3.5 text-success-fg" />
                         Managed sub-tenants
                     </div>
                 </div>
@@ -112,7 +112,7 @@ export function AgencySettings() {
                             <CheckCircle2 className="h-6 w-6" />
                         </div>
                         <div>
-                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Live Uplinks</span>
+                            <span className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Live Uplinks</span>
                             <div className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
                                 {billing?.subAccounts?.activeCount || 0}
                             </div>
@@ -130,7 +130,7 @@ export function AgencySettings() {
                             <CreditCard className="h-6 w-6" />
                         </div>
                         <div>
-                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Agency Overhead</span>
+                            <span className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Agency Overhead</span>
                             <div className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
                                 ${billing?.estimatedTotal?.toFixed(2) || '0.00'}
                             </div>
@@ -147,11 +147,11 @@ export function AgencySettings() {
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-950/20 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                     <div>
                         <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Entity Directory</h2>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Tenant node synchronization matrix</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Tenant node synchronization matrix</p>
                     </div>
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                         <div className="relative group min-w-[280px]">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted group-focus-within:text-primary-500 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Filter nodes..."
@@ -174,11 +174,11 @@ export function AgencySettings() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/50 dark:bg-slate-800/10">
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Business Identifier</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Sector</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Status</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Init Date</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] text-right">Ops</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Business Identifier</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Sector</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Status</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Init Date</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] text-right">Ops</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -215,15 +215,15 @@ export function AgencySettings() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-8 py-6 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                                        <td className="px-8 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-widest">
                                             {new Date(account.createdAt).toLocaleDateString()}
                                         </td>
                                         <td className="px-8 py-6 text-right">
                                             <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                <button className="p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm hover:scale-110">
+                                                <button className="p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-foreground-muted hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm hover:scale-110">
                                                     <ExternalLink className="h-4 w-4" />
                                                 </button>
-                                                <button className="p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm hover:scale-110">
+                                                <button className="p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-foreground-muted hover:text-slate-900 dark:hover:text-white transition-all shadow-sm hover:scale-110">
                                                     <MoreVertical className="h-4 w-4" />
                                                 </button>
                                             </div>
@@ -235,9 +235,9 @@ export function AgencySettings() {
                                     <td colSpan={5} className="px-8 py-24 text-center">
                                         <div className="flex flex-col items-center justify-center gap-6">
                                             <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700">
-                                                <Building2 className="h-12 w-12 text-slate-200 dark:text-slate-700" />
+                                                <Building2 className="h-12 w-12 text-slate-200" />
                                             </div>
-                                            <div className="text-[11px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Zero deployments detected matching criteria</div>
+                                            <div className="text-[11px] font-black text-foreground-muted uppercase tracking-[0.4em]">Zero deployments detected matching criteria</div>
                                         </div>
                                     </td>
                                 </tr>
@@ -255,20 +255,20 @@ export function AgencySettings() {
                     </div>
                     <div className="flex-1">
                         <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Agency Ledger</h3>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Financial overhead and telemetry metrics</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Financial overhead and telemetry metrics</p>
                         
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                             <div className="space-y-2">
-                                <div className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Base Framework</div>
+                                <div className="text-[9px] font-black text-foreground-muted uppercase tracking-[0.4em]">Base Framework</div>
                                 <div className="text-xl font-black text-slate-900 dark:text-white tracking-tight">${billing?.basePlanCost || '199.00'}</div>
                             </div>
                             <div className="space-y-2">
-                                <div className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Entity Surcharge</div>
+                                <div className="text-[9px] font-black text-foreground-muted uppercase tracking-[0.4em]">Entity Surcharge</div>
                                 <div className="text-xl font-black text-slate-900 dark:text-white tracking-tight">${billing?.subAccounts?.totalCost?.toFixed(2) || '0.00'}</div>
                                 <div className="text-[9px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-widest">${billing?.subAccounts?.costPerAccount || '29'} / unique node</div>
                             </div>
                             <div className="space-y-2">
-                                <div className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Temporal Window</div>
+                                <div className="text-[9px] font-black text-foreground-muted uppercase tracking-[0.4em]">Temporal Window</div>
                                 <div className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
                                     {billing?.currentCycle ? `${new Date(billing.currentCycle.startsAt).toLocaleDateString()} ➔ ${new Date(billing.currentCycle.endsAt).toLocaleDateString()}` : 'Monthly Protocol'}
                                 </div>
@@ -296,7 +296,7 @@ export function AgencySettings() {
                                 </div>
                                 <div>
                                     <h3 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Provision Entity</h3>
-                                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Deploying dedicated tenant node to matrix</p>
+                                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Deploying dedicated tenant node to matrix</p>
                                 </div>
                             </div>
                         </div>
@@ -304,7 +304,7 @@ export function AgencySettings() {
                         <form onSubmit={handleCreateSubAccount} className="p-12 space-y-10">
                             <div className="grid gap-8">
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em] pl-1">Business Designation *</label>
+                                    <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em] pl-1">Business Designation *</label>
                                     <input
                                         required
                                         type="text"
@@ -315,7 +315,7 @@ export function AgencySettings() {
                                     />
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em] pl-1">Protocol URL Endpoint *</label>
+                                    <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em] pl-1">Protocol URL Endpoint *</label>
                                     <div className="flex items-center group">
                                         <input
                                             required
@@ -324,13 +324,13 @@ export function AgencySettings() {
                                             value={formData.slug}
                                             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                                         />
-                                        <span className="flex items-center h-16 px-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-r-2xl border-l-0">
+                                        <span className="flex items-center h-16 px-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 text-foreground-muted text-[10px] font-black uppercase tracking-widest rounded-r-2xl border-l-0">
                                             .upkilo.com
                                         </span>
                                     </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em] pl-1">Industry Sector Matrix</label>
+                                    <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em] pl-1">Industry Sector Matrix</label>
                                     <div className="relative">
                                         <select 
                                             className="w-full h-16 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-6 text-sm font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all dark:text-white appearance-none cursor-pointer"
@@ -343,7 +343,7 @@ export function AgencySettings() {
                                             <option>Beauty</option>
                                             <option>Other</option>
                                         </select>
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-foreground-muted">
                                             <TrendingUp className="h-5 w-5" />
                                         </div>
                                     </div>

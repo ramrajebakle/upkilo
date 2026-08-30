@@ -41,7 +41,7 @@ export default function SocialLoginPage() {
 
   const DEFAULT_PROVIDERS = [
     { provider: "Google", icon: "G", color: "text-red-500 bg-red-50", docsUrl: "https://console.cloud.google.com/", docsLabel: "Google Cloud Console" },
-    { provider: "Apple", icon: "", color: "text-gray-900 bg-gray-100", docsUrl: "https://developer.apple.com/", docsLabel: "Apple Developer" },
+    { provider: "Apple", icon: "", color: "text-foreground bg-muted", docsUrl: "https://developer.apple.com/", docsLabel: "Apple Developer" },
     { provider: "Facebook", icon: "f", color: "text-blue-600 bg-blue-50", docsUrl: "https://developers.facebook.com/", docsLabel: "Meta Developers" },
   ];
 
@@ -53,7 +53,7 @@ export default function SocialLoginPage() {
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Social Login <Globe className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Social Login <Globe className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Allow clients and staff to sign in with Google, Apple, or Facebook.</p>
       </header>
 
@@ -65,7 +65,7 @@ export default function SocialLoginPage() {
                 <CardTitle className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-lg ${p.color} flex items-center justify-center font-bold text-sm flex-shrink-0`}>{p.icon}</div>
                   <span>{p.provider}</span>
-                  {(p as any).isEnabled ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-gray-400" />}
+                  {(p as any).isEnabled ? <CheckCircle2 className="h-4 w-4 text-success-fg" /> : <AlertCircle className="h-4 w-4 text-foreground-muted" />}
                   <a href={p.docsUrl} target="_blank" rel="noopener noreferrer" className="ml-auto">
                     <Button variant="outline" size="sm" leftIcon={<ExternalLink size={11} />}>{p.docsLabel}</Button>
                   </a>

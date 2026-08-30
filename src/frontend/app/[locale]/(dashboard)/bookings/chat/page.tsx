@@ -172,7 +172,7 @@ export default function ConversationalBookingPage() {
         active: 'bg-emerald-100 text-emerald-700',
         booked: 'bg-blue-100 text-blue-700',
         'handed-off': 'bg-amber-100 text-amber-700',
-        abandoned: 'bg-slate-100 text-slate-500',
+        abandoned: 'bg-muted text-foreground-secondary',
     };
 
     const channelIcon: Record<string, React.ReactNode> = {
@@ -184,26 +184,26 @@ export default function ConversationalBookingPage() {
     return (
         <div className="h-[calc(100vh-8rem)] flex gap-4">
             {/* Sessions Sidebar */}
-            <div className="w-72 shrink-0 bg-white rounded-xl border border-slate-200 flex flex-col overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+            <div className="w-72 shrink-0 bg-card rounded-xl border border-border flex flex-col overflow-hidden">
+                <div className="p-4 border-b border-border-subtle flex items-center justify-between">
                     <div>
-                        <h2 className="font-semibold text-slate-900">AI Booking Chat</h2>
-                        <p className="text-xs text-slate-500 mt-0.5">Conversational booking assistant</p>
+                        <h2 className="font-semibold text-foreground">AI Booking Chat</h2>
+                        <p className="text-xs text-foreground-secondary mt-0.5">Conversational booking assistant</p>
                     </div>
-                    <button onClick={startNewSession} className="p-1.5 bg-primary-50 rounded-lg text-primary-600 hover:bg-primary-100">
+                    <button onClick={startNewSession} className="p-1.5 bg-brand-subtle rounded-lg text-primary hover:bg-brand-subtle">
                         <Plus className="h-4 w-4" />
                     </button>
                 </div>
 
                 {/* Stats */}
-                <div className="p-3 grid grid-cols-2 gap-2 border-b border-slate-100">
+                <div className="p-3 grid grid-cols-2 gap-2 border-b border-border-subtle">
                     {[
-                        { label: 'Active', value: sessions.filter(s => s.status === 'active').length, color: 'text-emerald-600' },
+                        { label: 'Active', value: sessions.filter(s => s.status === 'active').length, color: 'text-success-fg' },
                         { label: 'Booked', value: sessions.filter(s => s.status === 'booked').length, color: 'text-blue-600' },
                     ].map(s => (
-                        <div key={s.label} className="text-center p-2 bg-slate-50 rounded-lg">
+                        <div key={s.label} className="text-center p-2 bg-muted rounded-lg">
                             <div className={`text-lg font-bold ${s.color}`}>{s.value}</div>
-                            <div className="text-xs text-slate-400">{s.label}</div>
+                            <div className="text-xs text-foreground-muted">{s.label}</div>
                         </div>
                     ))}
                 </div>
@@ -217,23 +217,23 @@ export default function ConversationalBookingPage() {
                                 // For demo: load the welcome message for any session
                                 if (messages.length === 0) startNewSession();
                             }}
-                            className={`w-full text-left p-3 rounded-lg border transition-all ${activeSessionId === session.id ? 'bg-primary-50 border-primary-200' : 'border-transparent hover:bg-slate-50'}`}
+                            className={`w-full text-left p-3 rounded-lg border transition-all ${activeSessionId === session.id ? 'bg-brand-subtle border-primary/25' : 'border-transparent hover:bg-accent'}`}
                         >
                             <div className="flex items-center gap-2 mb-1">
                                 <span className={`px-1.5 py-0.5 rounded-full text-xs font-medium ${statusColor[session.status]}`}>
                                     {session.status}
                                 </span>
-                                <span className="flex items-center gap-0.5 text-xs text-slate-400">
+                                <span className="flex items-center gap-0.5 text-xs text-foreground-muted">
                                     {channelIcon[session.channel]} {session.channel}
                                 </span>
                             </div>
-                            <div className="text-sm font-medium text-slate-900">{session.clientName}</div>
-                            <div className="text-xs text-slate-400 mt-0.5">{session.messageCount} msgs · {new Date(session.startedAt).toLocaleTimeString()}</div>
+                            <div className="text-sm font-medium text-foreground">{session.clientName}</div>
+                            <div className="text-xs text-foreground-muted mt-0.5">{session.messageCount} msgs · {new Date(session.startedAt).toLocaleTimeString()}</div>
                         </button>
                     ))}
                 </div>
 
-                <div className="p-3 border-t border-slate-100">
+                <div className="p-3 border-t border-border-subtle">
                     <button onClick={startNewSession} className="w-full py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 flex items-center justify-center gap-2">
                         <Plus className="h-4 w-4" /> New Chat Session
                     </button>
@@ -241,17 +241,17 @@ export default function ConversationalBookingPage() {
             </div>
 
             {/* Chat Panel */}
-            <div className="flex-1 bg-white rounded-xl border border-slate-200 flex flex-col overflow-hidden">
+            <div className="flex-1 bg-card rounded-xl border border-border flex flex-col overflow-hidden">
                 {activeSessionId && messages.length > 0 ? (
                     <>
                         {/* Chat Header */}
-                        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3 bg-gradient-to-r from-primary-50 to-primary-100">
+                        <div className="px-5 py-3.5 border-b border-border-subtle flex items-center gap-3 bg-gradient-to-r from-primary-50 to-primary-100">
                             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
                                 <Bot className="h-5 w-5 text-white" />
                             </div>
                             <div>
-                                <p className="font-semibold text-slate-900 text-sm">Upkilo AI Booking Assistant</p>
-                                <p className="text-xs text-emerald-600 flex items-center gap-1">
+                                <p className="font-semibold text-foreground text-sm">Upkilo AI Booking Assistant</p>
+                                <p className="text-xs text-success-fg flex items-center gap-1">
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" /> Online · Powered by GPT-4
                                 </p>
                             </div>
@@ -269,12 +269,12 @@ export default function ConversationalBookingPage() {
                                     <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center ${msg.role === 'assistant' ? 'bg-gradient-to-br from-primary-500 to-primary-600' : 'bg-slate-200'}`}>
                                         {msg.role === 'assistant'
                                             ? <Bot className="h-4 w-4 text-white" />
-                                            : <User className="h-4 w-4 text-slate-600" />}
+                                            : <User className="h-4 w-4 text-foreground-secondary" />}
                                     </div>
                                     <div className={`max-w-[70%] space-y-2 ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col`}>
                                         <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
                                             msg.role === 'assistant'
-                                                ? 'bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-sm'
+                                                ? 'bg-muted border border-border text-foreground rounded-tl-sm'
                                                 : 'bg-primary-600 text-white rounded-tr-sm'
                                         }`}>
                                             {msg.isTyping ? (
@@ -288,15 +288,15 @@ export default function ConversationalBookingPage() {
 
                                         {/* Booking suggestion card */}
                                         {msg.suggestedBooking && (
-                                            <div className="bg-primary-50 border border-primary-200 rounded-xl p-3 space-y-2 w-full">
-                                                <p className="text-xs font-semibold text-primary-700 flex items-center gap-1">
+                                            <div className="bg-brand-subtle border border-primary/25 rounded-xl p-3 space-y-2 w-full">
+                                                <p className="text-xs font-semibold text-primary flex items-center gap-1">
                                                     <Calendar className="h-3.5 w-3.5" /> Suggested Booking
                                                 </p>
                                                 {msg.suggestedBooking.service && (
-                                                    <p className="text-sm text-slate-800">{msg.suggestedBooking.service}</p>
+                                                    <p className="text-sm text-foreground">{msg.suggestedBooking.service}</p>
                                                 )}
                                                 {msg.suggestedBooking.dateTime && (
-                                                    <p className="text-sm text-slate-600 flex items-center gap-1">
+                                                    <p className="text-sm text-foreground-secondary flex items-center gap-1">
                                                         <Clock className="h-3.5 w-3.5" /> {msg.suggestedBooking.dateTime}
                                                     </p>
                                                 )}
@@ -309,7 +309,7 @@ export default function ConversationalBookingPage() {
                                             </div>
                                         )}
 
-                                        <p className="text-xs text-slate-400 px-1">{msg.timestamp.toLocaleTimeString()}</p>
+                                        <p className="text-xs text-foreground-muted px-1">{msg.timestamp.toLocaleTimeString()}</p>
                                     </div>
                                 </div>
                             ))}
@@ -317,13 +317,13 @@ export default function ConversationalBookingPage() {
                         </div>
 
                         {/* Quick prompts */}
-                        <div className="px-4 py-2 border-t border-slate-100 flex gap-2 overflow-x-auto scrollbar-thin">
+                        <div className="px-4 py-2 border-t border-border-subtle flex gap-2 overflow-x-auto scrollbar-thin">
                             {QUICK_PROMPTS.map(p => (
                                 <button
                                     key={p}
                                     onClick={() => sendMessage(p)}
                                     disabled={sending}
-                                    className="shrink-0 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-full text-slate-600 hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700 transition-colors"
+                                    className="shrink-0 px-3 py-1.5 text-xs bg-muted border border-border rounded-full text-foreground-secondary hover:bg-brand-subtle hover:border-primary-300 hover:text-primary transition-colors"
                                 >
                                     {p}
                                 </button>
@@ -331,13 +331,13 @@ export default function ConversationalBookingPage() {
                         </div>
 
                         {/* Input */}
-                        <div className="px-4 py-3 border-t border-slate-100 bg-white flex gap-3">
+                        <div className="px-4 py-3 border-t border-border-subtle bg-card flex gap-3">
                             <input
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
                                 placeholder="Type a message... (Press Enter to send)"
-                                className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="flex-1 border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                                 disabled={sending || handedOff}
                             />
                             <button
@@ -350,12 +350,12 @@ export default function ConversationalBookingPage() {
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                    <div className="flex-1 flex flex-col items-center justify-center text-foreground-muted">
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-4">
                             <Bot className="h-8 w-8 text-white" />
                         </div>
-                        <h3 className="text-lg font-semibold text-slate-700">AI Booking Assistant</h3>
-                        <p className="text-sm text-slate-500 mt-1 mb-6 text-center max-w-sm">
+                        <h3 className="text-lg font-semibold text-foreground">AI Booking Assistant</h3>
+                        <p className="text-sm text-foreground-secondary mt-1 mb-6 text-center max-w-sm">
                             An AI-powered chat interface that helps clients book appointments through natural conversation
                         </p>
                         <button onClick={startNewSession} className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700">

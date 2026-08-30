@@ -61,7 +61,7 @@ export default function TwoFAPage() {
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Two-Factor Authentication <Shield className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Two-Factor Authentication <Shield className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Add an extra layer of security to your account.</p>
       </header>
 
@@ -70,7 +70,7 @@ export default function TwoFAPage() {
           <Card className={status.isEnabled ? "border-green-200 bg-green-50/30" : ""}>
             <CardContent className="pt-5 pb-5 flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${status.isEnabled ? "bg-green-100" : "bg-surface-100"}`}>
-                {status.isEnabled ? <CheckCircle2 className="h-6 w-6 text-green-600" /> : <Shield className="h-6 w-6 text-text-tertiary" />}
+                {status.isEnabled ? <CheckCircle2 className="h-6 w-6 text-success-fg" /> : <Shield className="h-6 w-6 text-text-tertiary" />}
               </div>
               <div className="flex-1">
                 <p className={`font-semibold ${status.isEnabled ? "text-green-800" : "text-text-primary"}`}>
@@ -84,7 +84,7 @@ export default function TwoFAPage() {
               </div>
               {status.isEnabled && (
                 <Button variant="outline" size="sm" leftIcon={disabling ? <Loader2 size={12} className="animate-spin" /> : undefined}
-                  onClick={disable2FA} disabled={disabling} className="text-red-500 border-red-200 hover:bg-red-50">
+                  onClick={disable2FA} disabled={disabling} className="text-danger-fg border-red-200 hover:bg-red-50">
                   Disable 2FA
                 </Button>
               )}
@@ -99,14 +99,14 @@ export default function TwoFAPage() {
                 { method: "sms" as const, label: "SMS Text Message", desc: "Receive a code via SMS to your phone number", icon: <Key className="h-5 w-5" /> },
                 { method: "email" as const, label: "Email Code", desc: "Receive a code to your email address", icon: <Mail className="h-5 w-5" /> },
               ].map((opt) => (
-                <Card key={opt.method} className="cursor-pointer hover:border-ai-300 transition-colors" onClick={() => startSetup(opt.method)}>
+                <Card key={opt.method} className="cursor-pointer hover:border-ai/25 transition-colors" onClick={() => startSetup(opt.method)}>
                   <CardContent className="pt-4 pb-4 flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-surface-100 flex items-center justify-center text-text-tertiary flex-shrink-0">{opt.icon}</div>
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-text-primary">{opt.label}</p>
                       <p className="text-xs text-text-tertiary">{opt.desc}</p>
                     </div>
-                    <span className="text-xs text-ai-600">Set up →</span>
+                    <span className="text-xs text-ai">Set up →</span>
                   </CardContent>
                 </Card>
               ))}

@@ -134,11 +134,11 @@ export default function ClassPackagesPage() {
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Class Packages</h1>
-                    <p className="text-slate-500 mt-1">Sell credit bundles for group classes and sessions</p>
+                    <h1 className="text-2xl font-bold text-foreground">Class Packages</h1>
+                    <p className="text-foreground-secondary mt-1">Sell credit bundles for group classes and sessions</p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={fetchPackages} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                    <button onClick={fetchPackages} className="p-2 rounded-lg hover:bg-accent text-foreground-secondary">
                         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                     <Button onClick={() => { setShowForm(true); setEditingId(null); setForm(DEFAULT_FORM); }} className="flex items-center gap-2">
@@ -150,15 +150,15 @@ export default function ClassPackagesPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Active Packages', value: packages.filter(p => p.isActive).length, icon: <Package className="h-5 w-5 text-primary-500" /> },
-                    { label: 'Total Credits Available', value: packages.reduce((s, p) => s + p.credits, 0), icon: <Tag className="h-5 w-5 text-emerald-500" /> },
-                    { label: 'Starting From', value: `$${Math.min(...packages.map(p => p.price || 0)).toFixed(0)}`, icon: <DollarSign className="h-5 w-5 text-amber-500" /> },
+                    { label: 'Active Packages', value: packages.filter(p => p.isActive).length, icon: <Package className="h-5 w-5 text-primary" /> },
+                    { label: 'Total Credits Available', value: packages.reduce((s, p) => s + p.credits, 0), icon: <Tag className="h-5 w-5 text-success-fg" /> },
+                    { label: 'Starting From', value: `$${Math.min(...packages.map(p => p.price || 0)).toFixed(0)}`, icon: <DollarSign className="h-5 w-5 text-warning-fg" /> },
                 ].map(s => (
-                    <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-                        <div className="p-2 bg-slate-50 rounded-lg">{s.icon}</div>
+                    <div key={s.label} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                        <div className="p-2 bg-muted rounded-lg">{s.icon}</div>
                         <div>
-                            <div className="text-xl font-bold text-slate-900">{s.value}</div>
-                            <div className="text-xs text-slate-500">{s.label}</div>
+                            <div className="text-xl font-bold text-foreground">{s.value}</div>
+                            <div className="text-xs text-foreground-secondary">{s.label}</div>
                         </div>
                     </div>
                 ))}
@@ -166,48 +166,48 @@ export default function ClassPackagesPage() {
 
             {/* Create/Edit Form */}
             {showForm && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+                <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-semibold text-slate-900">{editingId ? 'Edit Package' : 'New Package'}</h2>
-                        <button onClick={() => { setShowForm(false); setEditingId(null); }} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+                        <h2 className="font-semibold text-foreground">{editingId ? 'Edit Package' : 'New Package'}</h2>
+                        <button onClick={() => { setShowForm(false); setEditingId(null); }} className="text-foreground-muted hover:text-foreground-secondary"><X className="h-4 w-4" /></button>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Package Name</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Package Name</label>
                             <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g., 10-Class Pack" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Number of Credits</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Number of Credits</label>
                             <Input type="number" min={1} max={100} value={form.credits} onChange={e => setForm(p => ({ ...p, credits: parseInt(e.target.value) || 1 }))} />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Description (optional)</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Description (optional)</label>
                         <Input value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Brief description..." />
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Price ($)</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Price ($)</label>
                             <Input type="number" min={0} step="0.01" value={form.price} onChange={e => setForm(p => ({ ...p, price: parseFloat(e.target.value) || 0 }))} />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Valid for (days)</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Valid for (days)</label>
                             <Input type="number" min={1} value={form.validityDays} onChange={e => setForm(p => ({ ...p, validityDays: parseInt(e.target.value) || 30 }))} />
                         </div>
                         <div className="flex items-center gap-2 mt-6">
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" checked={form.isTransferable} onChange={e => setForm(p => ({ ...p, isTransferable: e.target.checked }))} className="rounded" />
-                                <span className="text-sm text-slate-700">Transferable</span>
+                                <span className="text-sm text-foreground">Transferable</span>
                             </label>
                         </div>
                     </div>
                     {form.credits > 0 && form.price > 0 && (
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-foreground-secondary">
                             ${pricePerCredit({ credits: form.credits, price: form.price } as ClassPackage)} per credit
                             {form.price > 0 && ` · ${((1 - (form.price / (form.credits * 20))) * 100).toFixed(0)}% savings vs single class`}
                         </p>
                     )}
-                    <div className="flex gap-3 pt-2 border-t border-slate-100">
+                    <div className="flex gap-3 pt-2 border-t border-border-subtle">
                         <Button onClick={handleSave} disabled={saving}>
                             {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                             {editingId ? 'Update Package' : 'Create Package'}
@@ -220,16 +220,16 @@ export default function ClassPackagesPage() {
             {/* Purchase Modal */}
             {purchasingId && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 space-y-4">
+                    <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 space-y-4">
                         <div className="flex items-center justify-between">
-                            <h3 className="font-bold text-slate-900">Sell Package to Client</h3>
-                            <button onClick={() => setPurchasingId(null)} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+                            <h3 className="font-bold text-foreground">Sell Package to Client</h3>
+                            <button onClick={() => setPurchasingId(null)} className="text-foreground-muted hover:text-foreground-secondary"><X className="h-4 w-4" /></button>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Client ID (UUID)</label>
+                            <label className="block text-sm font-medium text-foreground mb-1">Client ID (UUID)</label>
                             <Input value={clientId} onChange={e => setClientId(e.target.value)} placeholder="Paste client UUID..." />
                         </div>
-                        <div className="flex gap-3 pt-2 border-t border-slate-100">
+                        <div className="flex gap-3 pt-2 border-t border-border-subtle">
                             <Button onClick={handlePurchase} disabled={purchasing} className="flex-1">
                                 {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4 mr-2" />}
                                 Process Purchase
@@ -243,41 +243,41 @@ export default function ClassPackagesPage() {
             {/* Package List */}
             {loading ? (
                 <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 animate-pulse h-28" />)}
+                    {[...Array(3)].map((_, i) => <div key={i} className="bg-card border border-border rounded-xl p-5 animate-pulse h-28" />)}
                 </div>
             ) : packages.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+                <div className="text-center py-16 bg-card rounded-xl border border-border">
                     <Gift className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-slate-700">No packages yet</h3>
-                    <p className="text-slate-500 text-sm mt-1 mb-4">Create class credit bundles to sell to clients</p>
+                    <h3 className="text-lg font-semibold text-foreground">No packages yet</h3>
+                    <p className="text-foreground-secondary text-sm mt-1 mb-4">Create class credit bundles to sell to clients</p>
                     <Button onClick={() => setShowForm(true)}><Plus className="h-4 w-4 mr-2" /> New Package</Button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {packages.map(pkg => (
-                        <div key={pkg.id} className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
+                        <div key={pkg.id} className="bg-card border border-border rounded-xl p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
                             <div className="flex items-start gap-3">
                                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white shrink-0">
                                     <Package className="h-5 w-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-slate-900 truncate">{pkg.name}</h3>
-                                    {pkg.description && <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{pkg.description}</p>}
+                                    <h3 className="font-semibold text-foreground truncate">{pkg.name}</h3>
+                                    {pkg.description && <p className="text-xs text-foreground-secondary mt-0.5 line-clamp-2">{pkg.description}</p>}
                                 </div>
                             </div>
 
                             <div className="flex gap-4">
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-primary-600">{pkg.credits}</div>
-                                    <div className="text-xs text-slate-500">credits</div>
+                                    <div className="text-2xl font-bold text-primary">{pkg.credits}</div>
+                                    <div className="text-xs text-foreground-secondary">credits</div>
                                 </div>
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-slate-900">${pkg.price}</div>
-                                    <div className="text-xs text-slate-500">${pricePerCredit(pkg)}/class</div>
+                                    <div className="text-2xl font-bold text-foreground">${pkg.price}</div>
+                                    <div className="text-xs text-foreground-secondary">${pricePerCredit(pkg)}/class</div>
                                 </div>
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-slate-600">{pkg.validityDays}d</div>
-                                    <div className="text-xs text-slate-500">validity</div>
+                                    <div className="text-2xl font-bold text-foreground-secondary">{pkg.validityDays}d</div>
+                                    <div className="text-xs text-foreground-secondary">validity</div>
                                 </div>
                             </div>
 
@@ -285,12 +285,12 @@ export default function ClassPackagesPage() {
                                 {pkg.isTransferable && (
                                     <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full">Transferable</span>
                                 )}
-                                <span className={`px-2 py-0.5 rounded-full ${pkg.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                                <span className={`px-2 py-0.5 rounded-full ${pkg.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-muted text-foreground-secondary'}`}>
                                     {pkg.isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
 
-                            <div className="flex gap-2 pt-2 border-t border-slate-100">
+                            <div className="flex gap-2 pt-2 border-t border-border-subtle">
                                 <Button
                                     size="sm"
                                     className="flex-1 text-xs"
@@ -298,10 +298,10 @@ export default function ClassPackagesPage() {
                                 >
                                     <CreditCard className="h-3.5 w-3.5 mr-1" /> Sell to Client
                                 </Button>
-                                <button onClick={() => handleEdit(pkg)} className="p-1.5 text-slate-400 hover:text-primary-500 hover:bg-primary-50 rounded-lg">
+                                <button onClick={() => handleEdit(pkg)} className="p-1.5 text-foreground-muted hover:text-primary hover:bg-brand-subtle rounded-lg">
                                     <Edit3 className="h-3.5 w-3.5" />
                                 </button>
-                                <button onClick={() => handleDelete(pkg.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg">
+                                <button onClick={() => handleDelete(pkg.id)} className="p-1.5 text-foreground-muted hover:text-red-500 hover:bg-red-50 rounded-lg">
                                     <Trash2 className="h-3.5 w-3.5" />
                                 </button>
                             </div>

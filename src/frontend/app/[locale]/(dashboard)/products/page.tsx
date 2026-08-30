@@ -128,13 +128,13 @@ export default function ProductsPage() {
                             <Package className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl lg:text-3xl font-bold text-slate-900"
+                            className="text-2xl lg:text-3xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Products
                         </h1>
                     </div>
-                    <p className="text-slate-500">Manage your retail products and inventory</p>
+                    <p className="text-foreground-secondary">Manage your retail products and inventory</p>
                 </div>
                 <Link
                     href="/products/new"
@@ -171,7 +171,7 @@ export default function ProductsPage() {
                             </div>
                             <div>
                                 <p className="stat-value text-xl">{stat.value}</p>
-                                <p className="text-sm text-slate-500">{stat.label}</p>
+                                <p className="text-sm text-foreground-secondary">{stat.label}</p>
                             </div>
                         </div>
                     </div>
@@ -181,7 +181,7 @@ export default function ProductsPage() {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                     <input
                         type="text"
                         placeholder="Search products by name or SKU..."
@@ -201,12 +201,12 @@ export default function ProductsPage() {
                         </option>
                     ))}
                 </select>
-                <div className="flex border border-slate-200 rounded-lg overflow-hidden">
+                <div className="flex border border-border rounded-lg overflow-hidden">
                     <button
                         onClick={() => setViewMode('grid')}
                         className={cn(
                             'px-3 py-2 transition-colors',
-                            viewMode === 'grid' ? 'bg-primary-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
+                            viewMode === 'grid' ? 'bg-primary-500 text-white' : 'bg-card text-foreground-secondary hover:bg-accent'
                         )}
                     >
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
@@ -220,7 +220,7 @@ export default function ProductsPage() {
                         onClick={() => setViewMode('list')}
                         className={cn(
                             'px-3 py-2 transition-colors',
-                            viewMode === 'list' ? 'bg-primary-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
+                            viewMode === 'list' ? 'bg-primary-500 text-white' : 'bg-card text-foreground-secondary hover:bg-accent'
                         )}
                     >
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
@@ -288,17 +288,17 @@ export default function ProductsPage() {
                                 </div>
 
                                 <div className="p-4">
-                                    <p className="text-xs text-slate-500 mb-1">{product.category}</p>
-                                    <h3 className="font-semibold text-slate-900 mb-2 line-clamp-1">{product.name}</h3>
+                                    <p className="text-xs text-foreground-secondary mb-1">{product.category}</p>
+                                    <h3 className="font-semibold text-foreground mb-2 line-clamp-1">{product.name}</h3>
 
                                     <div className="flex items-center justify-between mb-3">
-                                        <p className="text-lg font-bold text-slate-900">{formatCurrency(product.price)}</p>
+                                        <p className="text-lg font-bold text-foreground">{formatCurrency(product.price)}</p>
                                         <span className="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full">
                                             +{profit}% margin
                                         </span>
                                     </div>
 
-                                    <div className="flex items-center justify-between text-sm text-slate-500">
+                                    <div className="flex items-center justify-between text-sm text-foreground-secondary">
                                         <span>{product.stock} in stock</span>
                                         <span>{product.sales} sold</span>
                                     </div>
@@ -338,13 +338,13 @@ export default function ProductsPage() {
                                                         <Package className="h-5 w-5 text-white/70" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-medium text-slate-900">{product.name}</p>
-                                                        <p className="text-xs text-slate-500">{product.sku}</p>
+                                                        <p className="font-medium text-foreground">{product.name}</p>
+                                                        <p className="text-xs text-foreground-secondary">{product.sku}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="text-slate-600">{product.category}</td>
-                                            <td className="font-semibold text-slate-900">{formatCurrency(product.price)}</td>
+                                            <td className="text-foreground-secondary">{product.category}</td>
+                                            <td className="font-semibold text-foreground">{formatCurrency(product.price)}</td>
                                             <td>
                                                 <span className={cn(
                                                     'px-2 py-1 rounded-full text-xs font-medium',
@@ -353,12 +353,12 @@ export default function ProductsPage() {
                                                     {product.stock}
                                                 </span>
                                             </td>
-                                            <td className="text-slate-600">{product.sales}</td>
-                                            <td className="font-semibold text-emerald-600">{formatCurrency(product.revenue)}</td>
+                                            <td className="text-foreground-secondary">{product.sales}</td>
+                                            <td className="font-semibold text-success-fg">{formatCurrency(product.revenue)}</td>
                                             <td>
                                                 <div className="flex gap-1 justify-end">
-                                                    <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                                                        <Edit className="h-4 w-4 text-slate-400" />
+                                                    <button className="p-2 hover:bg-accent rounded-lg transition-colors">
+                                                        <Edit className="h-4 w-4 text-foreground-muted" />
                                                     </button>
                                                     <button 
                                                         onClick={() => confirmDelete(product)}
@@ -381,8 +381,8 @@ export default function ProductsPage() {
             {!loading && filteredProducts.length === 0 && (
                 <div className="card-elevated py-16 text-center animate-fade-in">
                     <Package className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">No products found</h3>
-                    <p className="text-slate-500 mb-6">Try adjusting your filters or add a new product</p>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No products found</h3>
+                    <p className="text-foreground-secondary mb-6">Try adjusting your filters or add a new product</p>
                     <Link href="/products/new" className="btn btn-primary">
                         <Plus className="h-4 w-4" />
                         Add Product

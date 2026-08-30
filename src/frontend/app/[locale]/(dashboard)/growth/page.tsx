@@ -226,7 +226,7 @@ export default function GrowthPage() {
                             {doneCount} of {steps.length} steps complete
                         </p>
                     </div>
-                    <span className="text-2xl font-bold text-emerald-500">{pct}%</span>
+                    <span className="text-2xl font-bold text-success-fg">{pct}%</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
@@ -318,11 +318,11 @@ export default function GrowthPage() {
                                         : `bg-gradient-to-br ${step.color}`
                                 )}>
                                     {step.done
-                                        ? <CheckCircle className="h-6 w-6 text-emerald-500" />
+                                        ? <CheckCircle className="h-6 w-6 text-success-fg" />
                                         : <Icon className="h-5 w-5 text-white" />
                                     }
                                 </div>
-                                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">#{step.id}</span>
+                                <span className="text-xs font-bold text-foreground-muted">#{step.id}</span>
                             </div>
 
                             {/* Content */}
@@ -331,7 +331,7 @@ export default function GrowthPage() {
                                     <h3 className={cn(
                                         'font-semibold text-sm',
                                         step.done
-                                            ? 'line-through text-slate-400 dark:text-slate-500'
+                                            ? 'line-through text-foreground-muted'
                                             : 'text-slate-900 dark:text-white'
                                     )}>
                                         {step.title}
@@ -361,7 +361,7 @@ export default function GrowthPage() {
 
                                 {/* Pro tip */}
                                 <div className="flex items-start gap-2 p-2.5 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 rounded-lg mb-3">
-                                    <Sparkles className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                                    <Sparkles className="h-3.5 w-3.5 text-warning-fg shrink-0 mt-0.5" />
                                     <p className="text-xs text-amber-700 dark:text-amber-400">{step.tip}</p>
                                 </div>
 
@@ -399,7 +399,7 @@ export default function GrowthPage() {
                 <div className="space-y-3">
                     {/* Google preview */}
                     <div className="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
-                        <p className="text-xs text-slate-400 mb-2 uppercase tracking-wider">Google Search Preview</p>
+                        <p className="text-xs text-foreground-muted mb-2 uppercase tracking-wider">Google Search Preview</p>
                         <p className="text-blue-600 dark:text-blue-400 text-base font-medium hover:underline cursor-pointer">
                             Book {business?.name || 'Your Business'} — Online Booking
                         </p>
@@ -452,8 +452,8 @@ export default function GrowthPage() {
                 {[
                     { label: 'Campaigns',      href: '/marketing/campaigns',     icon: Megaphone,    color: 'text-primary-500' },
                     { label: 'Landing Pages',  href: '/marketing/landing-pages', icon: Globe,        color: 'text-blue-500' },
-                    { label: 'Loyalty',        href: '/loyalty',                 icon: Award,        color: 'text-emerald-500' },
-                    { label: 'Analytics',      href: '/analytics',               icon: BarChart3,    color: 'text-amber-500' },
+                    { label: 'Loyalty',        href: '/loyalty',                 icon: Award,        color: 'text-success-fg' },
+                    { label: 'Analytics',      href: '/analytics',               icon: BarChart3,    color: 'text-warning-fg' },
                 ].map(item => {
                     const Icon = item.icon;
                     return (

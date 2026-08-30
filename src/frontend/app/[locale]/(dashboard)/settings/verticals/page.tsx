@@ -51,14 +51,14 @@ export default function VerticalsPage() {
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Industry Features <Layers className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Industry Features <Layers className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Specialized tools for medical spas, clinics, fitness studios, and gyms.</p>
       </header>
 
       <div className="flex gap-1 p-1 bg-surface-100 rounded-xl max-w-xs">
         {TABS.map((t) => (
           <button key={t.k} onClick={() => { setTab(t.k); if (t.k === "medical" && plans.length === 0) loadPlans(); }}
-            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5 ${tab === t.k ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5 ${tab === t.k ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
             {t.icon}{t.l}
           </button>
         ))}
@@ -67,7 +67,7 @@ export default function VerticalsPage() {
       {tab === "medical" && (
         <div className="space-y-4">
           <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><Heart size={16} className="text-red-500" /> Treatment Plan Templates</CardTitle>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Heart size={16} className="text-danger-fg" /> Treatment Plan Templates</CardTitle>
               <CardDescription>Pre-built treatment protocols for common medical/spa services</CardDescription></CardHeader>
             <CardContent>
               {loadingPlans ? <div className="flex justify-center py-4"><Loader2 className="h-4 w-4 animate-spin text-text-tertiary" /></div>
@@ -80,7 +80,7 @@ export default function VerticalsPage() {
                   <div className="space-y-2">
                     {plans.map((p) => (
                       <div key={p.id} className="flex items-center gap-3 py-2 border-b border-surface-100 last:border-0">
-                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-success-fg flex-shrink-0" />
                         <div className="flex-1">
                           <p className="text-sm font-medium text-text-primary">{p.name}</p>
                           {p.description && <p className="text-xs text-text-tertiary">{p.description}</p>}
@@ -123,7 +123,7 @@ export default function VerticalsPage() {
 
       {tab === "fitness" && (
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2"><Activity size={16} className="text-green-500" /> Log Fitness Session</CardTitle>
+          <CardHeader><CardTitle className="flex items-center gap-2"><Activity size={16} className="text-success-fg" /> Log Fitness Session</CardTitle>
             <CardDescription>Record training sessions for client progress tracking</CardDescription></CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">

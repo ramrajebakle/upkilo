@@ -133,7 +133,7 @@ function BrandingContent() {
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
             <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Branding Matrix...</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Branding Matrix...</p>
         </div>
     );
 
@@ -147,7 +147,7 @@ function BrandingContent() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Identity Nexus</h1>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">High-Fidelity White-Label Engine</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">High-Fidelity White-Label Engine</p>
                     </div>
                 </div>
                 <Button 
@@ -170,10 +170,10 @@ function BrandingContent() {
                             'flex-1 flex items-center justify-center gap-3 px-8 py-4 rounded-[28px] text-[10px] font-black uppercase tracking-widest transition-all duration-500 group',
                             activeTab === tab.id 
                                 ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-xl' 
-                                : 'text-slate-500 dark:text-slate-600 hover:text-slate-900 dark:hover:text-slate-300'
+                                : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                         )}
                     >
-                        <tab.icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", activeTab === tab.id ? "text-primary-500" : "text-slate-400")} />
+                        <tab.icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", activeTab === tab.id ? "text-primary-500" : "text-foreground-muted")} />
                         {tab.label}
                     </button>
                 ))}
@@ -200,9 +200,9 @@ function BrandingContent() {
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
                                             <div className="space-y-4">
-                                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Master Media URL</label>
+                                                <label className="text-[10px] font-black text-foreground-muted uppercase tracking-widest ml-1">Master Media URL</label>
                                                 <div className="relative group">
-                                                    <Building2 className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                                    <Building2 className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                                     <Input
                                                         value={config.customLogoUrl || ''}
                                                         onChange={e => setConfig(p => ({ ...p, customLogoUrl: e.target.value }))}
@@ -218,9 +218,9 @@ function BrandingContent() {
                                             </div>
                                             
                                             <div className="space-y-4">
-                                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Interface Favicon</label>
+                                                <label className="text-[10px] font-black text-foreground-muted uppercase tracking-widest ml-1">Interface Favicon</label>
                                                 <div className="relative group">
-                                                    <Monitor className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                                    <Monitor className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                                     <Input
                                                         value={config.customFavicon || ''}
                                                         onChange={e => setConfig(p => ({ ...p, customFavicon: e.target.value }))}
@@ -234,7 +234,7 @@ function BrandingContent() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-12 border-t border-slate-50 dark:border-slate-850">
                                         <div className="space-y-6">
-                                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Primary Spectrum</label>
+                                            <label className="text-[10px] font-black text-foreground-muted uppercase tracking-widest ml-1">Primary Spectrum</label>
                                             <div className="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-950 rounded-[24px] border border-transparent dark:border-slate-850 shadow-inner group">
                                                 <div className="relative h-12 w-12 rounded-xl overflow-hidden border-2 border-white dark:border-slate-800 shadow-lg group-hover:scale-110 transition-transform duration-500 cursor-pointer">
                                                     <input
@@ -252,7 +252,7 @@ function BrandingContent() {
                                             </div>
                                         </div>
                                         <div className="space-y-6">
-                                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Secondary Spectrum</label>
+                                            <label className="text-[10px] font-black text-foreground-muted uppercase tracking-widest ml-1">Secondary Spectrum</label>
                                             <div className="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-950 rounded-[24px] border border-transparent dark:border-slate-850 shadow-inner group">
                                                 <div className="relative h-12 w-12 rounded-xl overflow-hidden border-2 border-white dark:border-slate-800 shadow-lg group-hover:scale-110 transition-transform duration-500 cursor-pointer">
                                                     <input
@@ -279,7 +279,7 @@ function BrandingContent() {
                                                 </div>
                                                 <div>
                                                     <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Total Anonymization</p>
-                                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-1">Purge "Powered by Upkilo" artifacts from all Nodes</p>
+                                                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1">Purge "Powered by Upkilo" artifacts from all Nodes</p>
                                                 </div>
                                             </div>
                                             <button 
@@ -290,7 +290,7 @@ function BrandingContent() {
                                                 )}
                                             >
                                                 <div className={cn(
-                                                    "h-10 w-10 rounded-xl bg-white shadow-xl transition-all duration-500",
+                                                    "h-10 w-10 rounded-xl bg-card shadow-xl transition-all duration-500",
                                                     config.removePoweredBy ? "translate-x-8" : "translate-x-0"
                                                 )} />
                                             </button>
@@ -306,11 +306,11 @@ function BrandingContent() {
                                             <div className="h-10 w-1 rounded-full bg-primary-500 shadow-lg shadow-primary-500/50" />
                                             <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Namespace Routing</h2>
                                         </div>
-                                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-2 ml-14">Map custom top-level domain to your reservations node</p>
+                                        <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-2 ml-14">Map custom top-level domain to your reservations node</p>
 
                                         <div className="flex flex-col md:flex-row gap-6 pt-6">
                                             <div className="flex-1 relative group">
-                                                <Globe className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                                <Globe className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                                 <Input
                                                     value={config.customDomain || ''}
                                                     onChange={e => setConfig(p => ({ ...p, customDomain: e.target.value, isVerified: false }))}
@@ -353,11 +353,11 @@ function BrandingContent() {
                                             <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm">
                                                 <Code className="h-4 w-4 text-primary-500" />
                                             </div>
-                                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Required DNS Archetype</h3>
+                                            <h3 className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Required DNS Archetype</h3>
                                         </div>
                                         
                                         <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[24px] p-8 font-mono text-xs overflow-hidden relative group">
-                                            <div className="grid grid-cols-3 gap-8 text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-4 border-b border-slate-50 dark:border-slate-850 pb-4">
+                                            <div className="grid grid-cols-3 gap-8 text-[9px] font-black text-foreground-muted uppercase tracking-[0.2em] mb-4 border-b border-slate-50 dark:border-slate-850 pb-4">
                                                 <span>Protocol</span><span>Namespace</span><span>Endpoint Target</span>
                                             </div>
                                             <div className="grid grid-cols-3 gap-8 text-[11px] font-black dark:text-white tracking-widest">
@@ -368,8 +368,8 @@ function BrandingContent() {
                                             <Zap className="absolute -bottom-6 -right-6 h-24 w-24 text-primary-500/5 -rotate-12 group-hover:rotate-0 transition-transform duration-1000" />
                                         </div>
                                         <div className="flex items-center gap-3 px-2">
-                                            <History className="h-3 w-3 text-slate-400" />
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Propagates across global nodes in 24-48 cycles</p>
+                                            <History className="h-3 w-3 text-foreground-muted" />
+                                            <p className="text-[9px] font-bold text-foreground-muted uppercase tracking-widest">Propagates across global nodes in 24-48 cycles</p>
                                         </div>
                                     </div>
                                 </div>
@@ -382,11 +382,11 @@ function BrandingContent() {
                                             <div className="h-10 w-1 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50" />
                                             <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Communication Pathways</h2>
                                         </div>
-                                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-2 ml-14">Initialise high-fidelity SMTP routing for identity mapping</p>
+                                        <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-2 ml-14">Initialise high-fidelity SMTP routing for identity mapping</p>
 
                                         <div className="flex flex-col md:flex-row gap-6 pt-6">
                                             <div className="flex-1 relative group">
-                                                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                                 <Input
                                                     value={config.customEmailDomain || ''}
                                                     onChange={e => setConfig(p => ({ ...p, customEmailDomain: e.target.value }))}
@@ -414,14 +414,14 @@ function BrandingContent() {
                                                 >
                                                     <div className={cn(
                                                         "flex items-center gap-4 text-[10px] font-black uppercase tracking-widest",
-                                                        emailVerifyResult.spfValid ? "text-emerald-500" : "text-red-500"
+                                                        emailVerifyResult.spfValid ? "text-success-fg" : "text-danger-fg"
                                                     )}>
                                                         {emailVerifyResult.spfValid ? <ShieldCheck className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                                                         SPF PROTOCOL: {emailVerifyResult.spfValid ? 'AUTHORISED' : 'UNRECOGNIZED'}
                                                     </div>
                                                     <div className={cn(
                                                         "flex items-center gap-4 text-[10px] font-black uppercase tracking-widest",
-                                                        emailVerifyResult.dkimValid ? "text-emerald-500" : "text-red-500"
+                                                        emailVerifyResult.dkimValid ? "text-success-fg" : "text-danger-fg"
                                                     )}>
                                                         {emailVerifyResult.dkimValid ? <ShieldCheck className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                                                         DKIM PROTOCOL: {emailVerifyResult.dkimValid ? 'VALIDATED' : 'UNRECOGNIZED'}
@@ -433,8 +433,8 @@ function BrandingContent() {
 
                                     <div className="space-y-6">
                                         <div className="flex items-center gap-4 px-2">
-                                            <Code className="h-4 w-4 text-slate-400" />
-                                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Required Comm Signatures</h3>
+                                            <Code className="h-4 w-4 text-foreground-muted" />
+                                            <h3 className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Required Comm Signatures</h3>
                                         </div>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -445,9 +445,9 @@ function BrandingContent() {
                                                 <div key={rec.label} className="p-8 bg-slate-50 dark:bg-slate-950 rounded-[32px] border border-transparent dark:border-slate-850 shadow-inner space-y-6 group">
                                                     <p className="text-[9px] font-black text-primary-500 uppercase tracking-widest">{rec.label}</p>
                                                     <div className="space-y-4 font-mono text-[10px] font-bold text-slate-600 dark:text-slate-500 leading-relaxed">
-                                                        <div className="flex items-center gap-4"><span className="text-[9px] font-black text-slate-400 dark:text-slate-700 uppercase">TYPE:</span> <span className="text-slate-900 dark:text-white uppercase tracking-widest">{rec.type}</span></div>
-                                                        <div className="flex flex-col gap-2"><span className="text-[9px] font-black text-slate-400 dark:text-slate-700 uppercase">NAMESPACE:</span> <span className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-[9px] font-black dark:text-slate-300 truncate uppercase tracking-widest">{rec.namespace}</span></div>
-                                                        <div className="flex flex-col gap-2"><span className="text-[9px] font-black text-slate-400 dark:text-slate-700 uppercase">TARGET:</span> <span className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-[9px] font-black dark:text-slate-300 truncate uppercase tracking-widest">{rec.target}</span></div>
+                                                        <div className="flex items-center gap-4"><span className="text-[9px] font-black text-slate-400 uppercase">TYPE:</span> <span className="text-slate-900 dark:text-white uppercase tracking-widest">{rec.type}</span></div>
+                                                        <div className="flex flex-col gap-2"><span className="text-[9px] font-black text-foreground-muted uppercase">NAMESPACE:</span> <span className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-[9px] font-black dark:text-slate-300 truncate uppercase tracking-widest">{rec.namespace}</span></div>
+                                                        <div className="flex flex-col gap-2"><span className="text-[9px] font-black text-foreground-muted uppercase">TARGET:</span> <span className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-[9px] font-black dark:text-slate-300 truncate uppercase tracking-widest">{rec.target}</span></div>
                                                     </div>
                                                 </div>
                                             ))}
@@ -463,7 +463,7 @@ function BrandingContent() {
                                             <div className="h-10 w-1 rounded-full bg-primary-500 shadow-lg shadow-primary-500/50" />
                                             <div>
                                                 <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Neural Override Schema</h2>
-                                                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Direct CSS Injection Terminal</p>
+                                                <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest mt-1">Direct CSS Injection Terminal</p>
                                             </div>
                                         </div>
                                         <button
@@ -500,7 +500,7 @@ function BrandingContent() {
                                         <textarea
                                             value={config.customCss || ''}
                                             onChange={e => setConfig(p => ({ ...p, customCss: e.target.value }))}
-                                            className="w-full h-80 bg-slate-950 border border-slate-800 rounded-[32px] p-10 font-mono text-xs font-bold text-emerald-500 outline-none focus:ring-8 focus:ring-emerald-500/[0.03] transition-all resize-none leading-relaxed selection:bg-emerald-500/20"
+                                            className="w-full h-80 bg-slate-950 border border-slate-800 rounded-[32px] p-10 font-mono text-xs font-bold text-success-fg outline-none focus:ring-8 focus:ring-emerald-500/[0.03] transition-all resize-none leading-relaxed selection:bg-emerald-500/20"
                                             placeholder={`/* Neural Override Initialised... */\n\n.RESERVATION-GATEWAY {\n  BORDER-RADIUS: 40PX;\n  BACKDROP-FILTER: BLUR(20PX);\n}\n\n.AUTH-COMMIT-ACTION {\n  BACKGROUND: VAR(--CORE-PRIMARY);\n}`}
                                         />
                                         <div className="absolute top-6 right-8 flex gap-1.5 opacity-50">
@@ -508,8 +508,8 @@ function BrandingContent() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3 px-2">
-                                        <ShieldCheck className="h-4 w-4 text-slate-400" />
-                                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest leading-relaxed">Schema is injected at runtime across all reservation nodes</p>
+                                        <ShieldCheck className="h-4 w-4 text-foreground-muted" />
+                                        <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest leading-relaxed">Schema is injected at runtime across all reservation nodes</p>
                                     </div>
                                 </div>
                             )}
@@ -521,12 +521,12 @@ function BrandingContent() {
                 <div className="space-y-12 lg:sticky lg:top-8 lg:self-start">
                     <div className="flex items-center gap-4 mb-4">
                         <Search className="h-4 w-4 text-primary-500" />
-                        <h2 className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Visual Telemetry</h2>
+                        <h2 className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Visual Telemetry</h2>
                     </div>
                     
                     <div className="p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl lg:shadow-slate-200/40 dark:lg:shadow-none space-y-10 group cursor-default">
                         <div className="flex items-center justify-between">
-                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em]">Live Feed: Reservation Node</p>
+                            <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em]">Live Feed: Reservation Node</p>
                             <div className="flex gap-2">
                                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-glow" />
                                 <span className="w-2 h-2 rounded-full bg-slate-100 dark:bg-slate-850" />
@@ -555,7 +555,7 @@ function BrandingContent() {
                                 </div>
                             </div>
 
-                            <p className="text-[8px] font-black uppercase tracking-[0.4em] text-center text-slate-300 dark:text-slate-700 bg-slate-100/50 dark:bg-slate-900/50 py-3 rounded-lg border border-slate-200/50 dark:border-slate-800/50 group-hover:opacity-60 transition-opacity">
+                            <p className="text-[8px] font-black uppercase tracking-[0.4em] text-center text-slate-300 bg-slate-100/50 dark:bg-slate-900/50 py-3 rounded-lg border border-slate-200/50 dark:border-slate-800/50 group-hover:opacity-60 transition-opacity">
                                 Alpha Version: Reserv-Nodes
                             </p>
                         </div>
@@ -567,12 +567,12 @@ function BrandingContent() {
                             </div>
                             <div className="space-y-3">
                                 {[
-                                    { label: 'MEDIA SYNC', status: 'SYNCHRONISED', color: 'text-emerald-500' },
-                                    { label: 'NAMESPACE', status: config.isVerified ? 'VERIFIED' : 'PENDING', color: config.isVerified ? 'text-emerald-500' : 'text-amber-500' },
-                                    { label: 'TLS ENCRYPTION', status: 'ACTIVE', color: 'text-emerald-500' },
+                                    { label: 'MEDIA SYNC', status: 'SYNCHRONISED', color: 'text-success-fg' },
+                                    { label: 'NAMESPACE', status: config.isVerified ? 'VERIFIED' : 'PENDING', color: config.isVerified ? 'text-success-fg' : 'text-warning-fg' },
+                                    { label: 'TLS ENCRYPTION', status: 'ACTIVE', color: 'text-success-fg' },
                                 ].map((node, i) => (
                                     <div key={i} className="flex items-center justify-between">
-                                        <span className="text-[8px] font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest">{node.label}</span>
+                                        <span className="text-[8px] font-black text-foreground-secondary uppercase tracking-widest">{node.label}</span>
                                         <span className={cn("text-[8px] font-black uppercase tracking-widest", node.color)}>{node.status}</span>
                                     </div>
                                 ))}

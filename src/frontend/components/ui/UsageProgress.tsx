@@ -23,11 +23,11 @@ export function UsageProgress({
     return (
         <div className={cn("space-y-2", className)}>
             <div className="flex justify-between items-end">
-                <span className="text-sm font-medium text-gray-700">{label}</span>
-                <span className="text-xs text-gray-500">
+                <span className="text-sm font-medium text-foreground">{label}</span>
+                <span className="text-xs text-foreground-secondary">
                     <span className={cn(
                         "font-semibold",
-                        isHigh ? "text-red-600" : isWarning ? "text-amber-600" : "text-gray-900"
+                        isHigh ? "text-danger-fg" : isWarning ? "text-warning-fg" : "text-foreground"
                     )}>
                         {format === 'currency' ? `$${used.toFixed(2)}` : used.toLocaleString()}
                     </span>
@@ -36,7 +36,7 @@ export function UsageProgress({
                 </span>
             </div>
 
-            <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                 <div
                     className={cn(
                         "h-full transition-all duration-500 rounded-full",
@@ -49,7 +49,7 @@ export function UsageProgress({
             {(isHigh || isWarning) && (
                 <p className={cn(
                     "text-[10px] uppercase font-bold tracking-tight",
-                    isHigh ? "text-red-500" : "text-amber-500"
+                    isHigh ? "text-danger-fg" : "text-warning-fg"
                 )}>
                     {isHigh ? "Limit reached soon" : "Approaching limit"}
                 </p>

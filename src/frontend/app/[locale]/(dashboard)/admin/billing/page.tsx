@@ -75,14 +75,14 @@ export default function AdminBillingPage() {
     paid: "text-green-700 bg-green-50",
     pending: "text-amber-700 bg-amber-50",
     overdue: "text-red-700 bg-red-50",
-    cancelled: "text-gray-500 bg-gray-50",
-  })[s] ?? "text-gray-500 bg-gray-50";
+    cancelled: "text-foreground-secondary bg-muted",
+  })[s] ?? "text-foreground-secondary bg-muted";
 
   return (
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Admin Billing <CreditCard className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Admin Billing <CreditCard className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">Manage tenant invoices, refunds, and platform revenue metrics.</p>
         </div>
         <Button variant="outline" leftIcon={<RefreshCw size={14} />} onClick={load} disabled={loading}>Refresh</Button>
@@ -91,10 +91,10 @@ export default function AdminBillingPage() {
       {summary && (
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "MRR", value: compact(summary.mrr), cls: "text-green-600" },
+            { label: "MRR", value: compact(summary.mrr), cls: "text-success-fg" },
             { label: "ARR", value: compact(summary.arr), cls: "text-blue-600" },
-            { label: "MRR Trend", value: `${summary.mrrTrend >= 0 ? "+" : ""}${summary.mrrTrend?.toFixed(1)}%`, cls: summary.mrrTrend >= 0 ? "text-green-600" : "text-red-600" },
-            { label: "Growth", value: `${summary.growth >= 0 ? "+" : ""}${summary.growth?.toFixed(1)}%`, cls: summary.growth >= 0 ? "text-green-600" : "text-red-600" },
+            { label: "MRR Trend", value: `${summary.mrrTrend >= 0 ? "+" : ""}${summary.mrrTrend?.toFixed(1)}%`, cls: summary.mrrTrend >= 0 ? "text-success-fg" : "text-danger-fg" },
+            { label: "Growth", value: `${summary.growth >= 0 ? "+" : ""}${summary.growth?.toFixed(1)}%`, cls: summary.growth >= 0 ? "text-success-fg" : "text-danger-fg" },
           ].map((m) => (
             <Card key={m.label}><CardContent className="pt-4 pb-4">
               <p className="text-xs text-text-tertiary font-medium">{m.label}</p>
@@ -107,7 +107,7 @@ export default function AdminBillingPage() {
       <div className="flex gap-1 p-1 bg-surface-100 rounded-xl max-w-xs">
         {[{ k: "invoices" as const, l: "Invoices" }, { k: "revenue" as const, l: "Revenue Trend" }].map((t) => (
           <button key={t.k} onClick={() => setTab(t.k)}
-            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
+            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
         ))}
       </div>
 

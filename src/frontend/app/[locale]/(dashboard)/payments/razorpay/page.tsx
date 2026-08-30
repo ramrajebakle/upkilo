@@ -55,10 +55,10 @@ export default function RazorpayPage() {
       </header>
 
       <div className="flex items-center gap-3 p-4 rounded-xl border bg-green-50 border-green-200">
-        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+        <CheckCircle2 className="h-5 w-5 text-success-fg flex-shrink-0" />
         <div>
           <p className="text-sm font-semibold text-green-800">Razorpay is active</p>
-          <p className="text-xs text-green-600">
+          <p className="text-xs text-success-fg">
             Payments are processed through Upkilo&apos;s platform Razorpay account — nothing to set up here.
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function RazorpayPage() {
                     <td className="py-3 px-4 text-xs text-text-secondary">{p.clientName ?? "—"}</td>
                     <td className="py-3 px-4 text-xs font-semibold text-text-primary">{currencySymbol(p.currency)}{p.amount}</td>
                     <td className="py-3 px-4">
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${p.status === "Succeeded" ? "text-green-600 bg-green-50" : p.status === "Pending" ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-50"}`}>{p.status}</span>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${p.status === "Succeeded" ? "text-green-600 bg-green-50" : p.status === "Pending" ? "text-blue-500 bg-blue-50" : "text-foreground-secondary bg-muted"}`}>{p.status}</span>
                     </td>
                     <td className="py-3 px-4 text-xs text-text-tertiary">{new Date(p.createdAt).toLocaleDateString()}</td>
                   </tr>

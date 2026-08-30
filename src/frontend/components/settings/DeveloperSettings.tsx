@@ -107,7 +107,7 @@ export function DeveloperSettings() {
         return (
             <div className="flex flex-col items-center justify-center py-20">
                 <Loader2 className="h-8 w-8 text-primary-500 animate-spin mb-4" />
-                <p className="text-gray-500">Loading developer settings...</p>
+                <p className="text-foreground-secondary">Loading developer settings...</p>
             </div>
         );
     }
@@ -118,7 +118,7 @@ export function DeveloperSettings() {
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Security Protocol</h2>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Authorized entity gateway</p>
+                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Authorized entity gateway</p>
                 </div>
                 <Button onClick={() => setShowCreateModal(true)} className="rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary-500/20 hover:scale-105 active:scale-95 transition-all">
                     <Plus className="h-4 w-4 mr-2" />
@@ -155,7 +155,7 @@ export function DeveloperSettings() {
                                             {newSecret.clientSecret}
                                         </div>
                                         <Button variant="outline" className="h-auto px-4 rounded-xl border-amber-200 dark:border-amber-400/30 dark:bg-slate-900" onClick={() => copyToClipboard(newSecret.clientSecret)}>
-                                            {copied ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4 text-amber-600" />}
+                                            {copied ? <CheckCircle2 className="h-4 w-4 text-success-fg" /> : <Copy className="h-4 w-4 text-warning-fg" />}
                                         </Button>
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@ export function DeveloperSettings() {
                         </div>
                         <div>
                             <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Active Deployments</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Registered neural connections</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1">Registered neural connections</p>
                         </div>
                     </div>
                 </div>
@@ -189,9 +189,9 @@ export function DeveloperSettings() {
                 {apps.length === 0 ? (
                     <div className="p-20 text-center">
                         <div className="inline-block p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl mb-4 border border-slate-100 dark:border-slate-700">
-                            <Terminal className="h-10 w-10 text-slate-200 dark:text-slate-700" />
+                            <Terminal className="h-10 w-10 text-slate-200" />
                         </div>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">No deployments detected in cluster</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">No deployments detected in cluster</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -212,7 +212,7 @@ export function DeveloperSettings() {
                                                 {app.isActive ? 'Network: Active' : 'Network: Revoked'}
                                             </span>
                                         </div>
-                                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
+                                        <p className="text-[11px] font-bold text-slate-300 uppercase tracking-widest leading-relaxed">
                                             {app.description || 'System meta description missing'}
                                         </p>
                                     </div>
@@ -229,15 +229,15 @@ export function DeveloperSettings() {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50/50 dark:bg-slate-950/30 p-6 rounded-3xl border border-slate-100/50 dark:border-slate-800/80">
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em]">Matrix ID</p>
+                                        <p className="text-[9px] font-black text-foreground-muted uppercase tracking-[0.3em]">Matrix ID</p>
                                         <p className="font-mono text-[11px] text-slate-600 dark:text-slate-400 break-all font-bold">{app.clientId}</p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em]">Protocol Redirects</p>
+                                        <p className="text-[9px] font-black text-foreground-muted uppercase tracking-[0.3em]">Protocol Redirects</p>
                                         <p className="font-mono text-[11px] text-slate-600 dark:text-slate-400 break-words font-bold">{app.redirectUris}</p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em]">Initialization Timestamp</p>
+                                        <p className="text-[9px] font-black text-foreground-muted uppercase tracking-[0.3em]">Initialization Timestamp</p>
                                         <p className="text-[11px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">{new Date(app.createdAt).toLocaleDateString()}</p>
                                     </div>
                                 </div>
@@ -256,7 +256,7 @@ export function DeveloperSettings() {
                         </div>
                         <div>
                             <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Active Uplinks</h3>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Live third-party token grants</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1">Live third-party token grants</p>
                         </div>
                     </div>
                 </div>
@@ -264,9 +264,9 @@ export function DeveloperSettings() {
                 {tokens.length === 0 ? (
                     <div className="p-20 text-center">
                         <div className="inline-block p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl mb-4 border border-slate-100 dark:border-slate-700">
-                            <ShieldAlert className="h-10 w-10 text-slate-200 dark:text-slate-700" />
+                            <ShieldAlert className="h-10 w-10 text-slate-200" />
                         </div>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">No active matrix grants detected</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">No active matrix grants detected</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -274,7 +274,7 @@ export function DeveloperSettings() {
                             <div key={token.id} className="p-8 flex flex-col sm:flex-row items-center justify-between hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all group gap-6">
                                 <div className="space-y-3">
                                     <h4 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{token.app?.name || 'Unknown Protocol'}</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Host ID: {token.userId}</p>
+                                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">Host ID: {token.userId}</p>
                                     <div className="flex flex-wrap gap-3 mt-2">
                                         <span className="text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1 rounded-lg uppercase tracking-widest border border-slate-200 dark:border-slate-700">Permissions: {token.scope}</span>
                                         <span className="text-[9px] font-black bg-primary-50 dark:bg-primary-400/10 text-primary-600 dark:text-primary-400 px-3 py-1 rounded-lg uppercase tracking-widest border border-primary-100 dark:border-primary-400/20">
@@ -303,11 +303,11 @@ export function DeveloperSettings() {
                     <div className="bg-white dark:bg-slate-900 rounded-[40px] w-full max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">
                         <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20">
                             <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Register Neural Deployment</h2>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1 text-center">New authorized connection point</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1 text-center">New authorized connection point</p>
                         </div>
                         <form onSubmit={handleCreateApp} className="p-8 space-y-8">
                             <div className="space-y-4">
-                                <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">DEPLOYMENT CODENAME *</label>
+                                <label className="block text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">DEPLOYMENT CODENAME *</label>
                                 <input 
                                     type="text" 
                                     required 
@@ -318,7 +318,7 @@ export function DeveloperSettings() {
                                 />
                             </div>
                             <div className="space-y-4">
-                                <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">META DESCRIPTION</label>
+                                <label className="block text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">META DESCRIPTION</label>
                                 <textarea 
                                     className="w-full p-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-widest focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none resize-none" 
                                     rows={3} 
@@ -328,7 +328,7 @@ export function DeveloperSettings() {
                                 />
                             </div>
                             <div className="space-y-4">
-                                <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">PROTOCOL REDIR ENDPOINTS *</label>
+                                <label className="block text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">PROTOCOL REDIR ENDPOINTS *</label>
                                 <p className="text-[9px] font-black text-primary-500 dark:text-primary-400 uppercase tracking-widest">Matrix delimited list required</p>
                                 <input 
                                     type="text" 

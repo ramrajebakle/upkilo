@@ -202,10 +202,10 @@ export default function StaffProfilePage() {
     if (!staff) {
         return (
             <div className="text-center py-20 p-6">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <User className="h-8 w-8 text-slate-400" />
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                    <User className="h-8 w-8 text-foreground-muted" />
                 </div>
-                <h2 className="text-xl font-semibold text-slate-900">Staff Member Not Found</h2>
+                <h2 className="text-xl font-semibold text-foreground">Staff Member Not Found</h2>
                 <Link href="/staff" className="btn btn-primary mt-6">Back to Staff List</Link>
             </div>
         );
@@ -216,18 +216,18 @@ export default function StaffProfilePage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 animate-fade-in-up">
                 <div className="flex items-center gap-4">
-                    <Link href="/staff" className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                        <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <Link href="/staff" className="p-2 hover:bg-accent rounded-xl transition-colors">
+                        <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                     </Link>
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary-500/20">
                             {staff.firstName[0]}{staff.lastName[0]}
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                            <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                                 {staff.firstName} {staff.lastName}
                             </h1>
-                            <div className="flex items-center gap-2 text-slate-500">
+                            <div className="flex items-center gap-2 text-foreground-secondary">
                                 <Briefcase className="h-4 w-4" />
                                 <span>{staff.role}</span>
                                 <span className="text-slate-300">•</span>
@@ -244,7 +244,7 @@ export default function StaffProfilePage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-4 border-b border-slate-200 mb-6 overflow-x-auto">
+            <div className="flex gap-4 border-b border-border mb-6 overflow-x-auto">
                 {['overview', 'shifts', 'commissions'].map((tab) => (
                     <button
                         key={tab}
@@ -252,8 +252,8 @@ export default function StaffProfilePage() {
                         className={cn(
                             'px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap',
                             activeTab === tab
-                                ? 'border-primary-500 text-primary-600'
-                                : 'border-transparent text-slate-600 hover:text-slate-900'
+                                ? 'border-primary-500 text-primary'
+                                : 'border-transparent text-foreground-secondary hover:text-foreground'
                         )}
                     >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -268,14 +268,14 @@ export default function StaffProfilePage() {
                         {/* Profile Info */}
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-primary-100 rounded-lg">
-                                    <User className="h-5 w-5 text-primary-600" />
+                                <div className="p-2 bg-brand-subtle rounded-lg">
+                                    <User className="h-5 w-5 text-primary" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Profile Information</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Profile Information</h2>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">First Name</label>
                                     <input
                                         type="text"
                                         value={formData.firstName}
@@ -284,7 +284,7 @@ export default function StaffProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Last Name</label>
                                     <input
                                         type="text"
                                         value={formData.lastName}
@@ -293,7 +293,7 @@ export default function StaffProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Email</label>
                                     <input
                                         type="email"
                                         value={formData.email}
@@ -302,7 +302,7 @@ export default function StaffProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Phone</label>
                                     <input
                                         type="tel"
                                         value={formData.phone}
@@ -311,7 +311,7 @@ export default function StaffProfilePage() {
                                     />
                                 </div>
                                 <div className="md:col-span-1">
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Timezone</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Timezone</label>
                                     <select
                                         value={formData.timezone}
                                         onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
@@ -328,7 +328,7 @@ export default function StaffProfilePage() {
                                     </select>
                                 </div>
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Bio</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Bio</label>
                                     <textarea
                                         value={formData.bio}
                                         onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
@@ -343,13 +343,13 @@ export default function StaffProfilePage() {
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="p-2 bg-emerald-100 rounded-lg">
-                                    <Briefcase className="h-5 w-5 text-emerald-600" />
+                                    <Briefcase className="h-5 w-5 text-success-fg" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Employment Details</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Employment Details</h2>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Role</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Role</label>
                                     <input
                                         type="text"
                                         value={formData.role}
@@ -358,7 +358,7 @@ export default function StaffProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Employment Status</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Employment Status</label>
                                     <select
                                         value={formData.employmentStatus}
                                         onChange={(e) => setFormData({ ...formData, employmentStatus: e.target.value })}
@@ -370,9 +370,9 @@ export default function StaffProfilePage() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Hourly Rate</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Hourly Rate</label>
                                     <div className="relative">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground-secondary">$</span>
                                         <input
                                             type="number"
                                             value={formData.hourlyRate}
@@ -382,7 +382,7 @@ export default function StaffProfilePage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Employment Type</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Employment Type</label>
                                     <select
                                         value={formData.employmentType}
                                         onChange={(e) => setFormData({ ...formData, employmentType: e.target.value as any })}
@@ -395,7 +395,7 @@ export default function StaffProfilePage() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Commission Rate (%)</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Commission Rate (%)</label>
                                     <div className="relative">
                                         <input
                                             type="number"
@@ -403,7 +403,7 @@ export default function StaffProfilePage() {
                                             onChange={(e) => setFormData({ ...formData, baseCommissionRate: parseFloat(e.target.value) })}
                                             className="input pr-8"
                                         />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">%</span>
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground-secondary">%</span>
                                     </div>
                                 </div>
                             </div>
@@ -413,9 +413,9 @@ export default function StaffProfilePage() {
                         <div className="card-elevated p-6">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="p-2 bg-rose-100 rounded-lg">
-                                    <Scissors className="h-5 w-5 text-rose-600" />
+                                    <Scissors className="h-5 w-5 text-danger-fg" />
                                 </div>
-                                <h2 className="text-lg font-semibold text-slate-900">Specialties & Tags</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Specialties & Tags</h2>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {availableSpecialties.map((spec) => (
@@ -426,7 +426,7 @@ export default function StaffProfilePage() {
                                             'px-4 py-2 rounded-lg text-sm font-medium transition-all',
                                             formData.tags.includes(spec)
                                                 ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
-                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                : 'bg-muted text-foreground-secondary hover:bg-slate-200'
                                         )}
                                     >
                                         {spec}
@@ -439,21 +439,21 @@ export default function StaffProfilePage() {
                     <div className="space-y-6">
                         {/* Summary Stats */}
                         <div className="card-elevated p-6">
-                            <h3 className="font-semibold text-slate-900 mb-4">Performance Summary</h3>
+                            <h3 className="font-semibold text-foreground mb-4">Performance Summary</h3>
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div className="flex items-center justify-between p-3 bg-muted rounded-xl">
                                     <div className="flex items-center gap-3">
                                         <Calendar className="h-5 w-5 text-blue-500" />
-                                        <span className="text-slate-600">Total Bookings</span>
+                                        <span className="text-foreground-secondary">Total Bookings</span>
                                     </div>
-                                    <span className="font-bold text-slate-900">{staff.totalBookings || 0}</span>
+                                    <span className="font-bold text-foreground">{staff.totalBookings || 0}</span>
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div className="flex items-center justify-between p-3 bg-muted rounded-xl">
                                     <div className="flex items-center gap-3">
-                                        <Star className="h-5 w-5 text-amber-500" />
-                                        <span className="text-slate-600">Avg Rating</span>
+                                        <Star className="h-5 w-5 text-warning-fg" />
+                                        <span className="text-foreground-secondary">Avg Rating</span>
                                     </div>
-                                    <span className="font-bold text-slate-900">{staff.averageRating || 'N/A'}</span>
+                                    <span className="font-bold text-foreground">{staff.averageRating || 'N/A'}</span>
                                 </div>
                             </div>
                         </div>
@@ -464,16 +464,16 @@ export default function StaffProfilePage() {
             {activeTab === 'shifts' && (
                 <div className="animate-fade-in card-elevated p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-semibold text-slate-900">Recent Shifts</h2>
+                        <h2 className="text-lg font-semibold text-foreground">Recent Shifts</h2>
                     </div>
                     {loadingShifts ? (
-                        <div className="text-center py-10 text-slate-500">Loading shifts...</div>
+                        <div className="text-center py-10 text-foreground-secondary">Loading shifts...</div>
                     ) : shifts.length === 0 ? (
-                        <div className="text-center py-10 text-slate-500">No shifts details available.</div>
+                        <div className="text-center py-10 text-foreground-secondary">No shifts details available.</div>
                     ) : (
                         <div className="space-y-4">
                             {shifts.map((shift) => (
-                                <div key={shift.id} className="flex items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div key={shift.id} className="flex items-center justify-between p-4 border border-border-subtle rounded-xl hover:bg-accent transition-colors">
                                     <div className="flex items-center gap-4">
                                         <div className={cn(
                                             "w-2 h-12 rounded-full",
@@ -481,10 +481,10 @@ export default function StaffProfilePage() {
                                                 shift.status === 'Missed' ? "bg-red-400" : "bg-blue-400"
                                         )} />
                                         <div>
-                                            <p className="font-medium text-slate-900">
+                                            <p className="font-medium text-foreground">
                                                 {formatDate(shift.startTime)}
                                             </p>
-                                            <p className="text-sm text-slate-500">
+                                            <p className="text-sm text-foreground-secondary">
                                                 {new Date(shift.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -
                                                 {new Date(shift.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </p>
@@ -506,26 +506,26 @@ export default function StaffProfilePage() {
 
             {activeTab === 'commissions' && (
                 <div className="animate-fade-in card-elevated p-6">
-                    <h2 className="text-lg font-semibold text-slate-900 mb-6">Commission History</h2>
+                    <h2 className="text-lg font-semibold text-foreground mb-6">Commission History</h2>
                     {loadingComm ? (
-                        <div className="text-center py-10 text-slate-500">Loading commissions...</div>
+                        <div className="text-center py-10 text-foreground-secondary">Loading commissions...</div>
                     ) : commissions.length === 0 ? (
-                        <div className="text-center py-10 text-slate-500">No commissions details available.</div>
+                        <div className="text-center py-10 text-foreground-secondary">No commissions details available.</div>
                     ) : (
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-slate-200">
-                                    <th className="pb-3 text-sm font-medium text-slate-500">Date</th>
-                                    <th className="pb-3 text-sm font-medium text-slate-500">Booking ID</th>
-                                    <th className="pb-3 text-sm font-medium text-slate-500">Status</th>
-                                    <th className="pb-3 text-sm font-medium text-slate-500 text-right">Amount</th>
+                                <tr className="border-b border-border">
+                                    <th className="pb-3 text-sm font-medium text-foreground-secondary">Date</th>
+                                    <th className="pb-3 text-sm font-medium text-foreground-secondary">Booking ID</th>
+                                    <th className="pb-3 text-sm font-medium text-foreground-secondary">Status</th>
+                                    <th className="pb-3 text-sm font-medium text-foreground-secondary text-right">Amount</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-border-subtle">
                                 {commissions.map((comm) => (
-                                    <tr key={comm.id} className="group hover:bg-slate-50">
-                                        <td className="py-4 text-sm text-slate-900">{formatDate(comm.date)}</td>
-                                        <td className="py-4 text-sm text-slate-600 font-mono">{comm.bookingId.substring(0, 8)}...</td>
+                                    <tr key={comm.id} className="group hover:bg-accent">
+                                        <td className="py-4 text-sm text-foreground">{formatDate(comm.date)}</td>
+                                        <td className="py-4 text-sm text-foreground-secondary font-mono">{comm.bookingId.substring(0, 8)}...</td>
                                         <td className="py-4">
                                             <span className={cn(
                                                 "px-2.5 py-0.5 text-xs font-medium rounded-full",
@@ -534,7 +534,7 @@ export default function StaffProfilePage() {
                                                 {comm.status}
                                             </span>
                                         </td>
-                                        <td className="py-4 text-sm font-medium text-slate-900 text-right">{formatCurrency(comm.amount)}</td>
+                                        <td className="py-4 text-sm font-medium text-foreground text-right">{formatCurrency(comm.amount)}</td>
                                     </tr>
                                 ))}
                             </tbody>

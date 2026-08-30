@@ -24,7 +24,7 @@ export default function PlatformCommandPage() {
           </p>
           <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
             Platform Command
-            <Sparkles className="text-ai-500" size={24} />
+            <Sparkles className="text-ai" size={24} />
           </h1>
         </div>
         <Button variant="outline" size="sm" rightIcon={<ArrowRight size={14} />}>
@@ -35,7 +35,7 @@ export default function PlatformCommandPage() {
       <section>
         <div className="flex items-center gap-2 mb-4">
           <h2 className="text-lg font-semibold text-text-primary">AI Briefing</h2>
-          <span className="bg-ai-100 text-ai-500 text-xs font-bold px-2 py-0.5 rounded-full">
+          <span className="bg-ai-subtle text-ai text-xs font-bold px-2 py-0.5 rounded-full">
             LIVE
           </span>
         </div>

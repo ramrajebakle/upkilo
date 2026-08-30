@@ -83,9 +83,9 @@ export default function NewInventoryPage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/inventory"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -93,13 +93,13 @@ export default function NewInventoryPage() {
                             <Package className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Add New Product
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Register a new product in your inventory</p>
+                    <p className="text-foreground-secondary ml-12">Register a new product in your inventory</p>
                 </div>
             </div>
 
@@ -108,14 +108,14 @@ export default function NewInventoryPage() {
                     {/* Main Info */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <Tag className="h-5 w-5 text-primary-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <Tag className="h-5 w-5 text-primary" />
                                 Product Details
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Product Name <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Product Name <span className="text-danger-fg">*</span>
                                     </label>
                                     <input
                                         {...register('name')}
@@ -123,15 +123,15 @@ export default function NewInventoryPage() {
                                         className={cn("input", errors.name && "border-red-500 focus:ring-red-500/20 focus:border-red-500")}
                                         placeholder="e.g. Lavender Massage Oil"
                                     />
-                                    {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+                                    {errors.name && <p className="text-xs text-danger-fg mt-1">{errors.name.message}</p>}
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             SKU / Barcode
                                         </label>
                                         <div className="relative">
-                                            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <input
                                                 {...register('sku')}
                                                 type="text"
@@ -141,11 +141,11 @@ export default function NewInventoryPage() {
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Category <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Category <span className="text-danger-fg">*</span>
                                         </label>
                                         <div className="relative">
-                                            <Layers className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Layers className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <select
                                                 {...register('category')}
                                                 className={cn("input pl-11 appearance-none", errors.category && "border-red-500")}
@@ -157,11 +157,11 @@ export default function NewInventoryPage() {
                                                 <option value="Supplies">Supplies</option>
                                             </select>
                                         </div>
-                                        {errors.category && <p className="text-xs text-red-500 mt-1">{errors.category.message}</p>}
+                                        {errors.category && <p className="text-xs text-danger-fg mt-1">{errors.category.message}</p>}
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Description
                                     </label>
                                     <textarea
@@ -174,13 +174,13 @@ export default function NewInventoryPage() {
                         </div>
 
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <DollarSign className="h-5 w-5 text-emerald-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <DollarSign className="h-5 w-5 text-success-fg" />
                                 Pricing
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Cost Price ($)
                                     </label>
                                     <input
@@ -190,20 +190,20 @@ export default function NewInventoryPage() {
                                         className={cn("input", errors.costPrice && "border-red-500")}
                                         placeholder="0.00"
                                     />
-                                    {errors.costPrice && <p className="text-xs text-red-500 mt-1">{errors.costPrice.message}</p>}
+                                    {errors.costPrice && <p className="text-xs text-danger-fg mt-1">{errors.costPrice.message}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Retail Price ($)
                                     </label>
                                     <input
                                         {...register('retailPrice', { valueAsNumber: true })}
                                         type="number"
                                         step="0.01"
-                                        className={cn("input font-bold text-primary-600", errors.retailPrice && "border-red-500")}
+                                        className={cn("input font-bold text-primary", errors.retailPrice && "border-red-500")}
                                         placeholder="0.00"
                                     />
-                                    {errors.retailPrice && <p className="text-xs text-red-500 mt-1">{errors.retailPrice.message}</p>}
+                                    {errors.retailPrice && <p className="text-xs text-danger-fg mt-1">{errors.retailPrice.message}</p>}
                                 </div>
                             </div>
                         </div>
@@ -212,13 +212,13 @@ export default function NewInventoryPage() {
                     {/* Sidebar Info */}
                     <div className="space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                                 <Boxes className="h-5 w-5 text-blue-500" />
                                 Stock & Supplier
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Opening Stock
                                     </label>
                                     <input
@@ -226,31 +226,31 @@ export default function NewInventoryPage() {
                                         type="number"
                                         className={cn("input", errors.currentStock && "border-red-500")}
                                     />
-                                    {errors.currentStock && <p className="text-xs text-red-500 mt-1">{errors.currentStock.message}</p>}
+                                    {errors.currentStock && <p className="text-xs text-danger-fg mt-1">{errors.currentStock.message}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Reorder Level
                                     </label>
                                     <div className="relative">
-                                        <AlertCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <AlertCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             {...register('reorderLevel', { valueAsNumber: true })}
                                             type="number"
                                             className={cn("input pl-11", errors.reorderLevel && "border-red-500")}
                                         />
                                     </div>
-                                    {errors.reorderLevel && <p className="text-xs text-red-500 mt-1">{errors.reorderLevel.message}</p>}
-                                    <p className="text-xs text-slate-400 mt-2">
+                                    {errors.reorderLevel && <p className="text-xs text-danger-fg mt-1">{errors.reorderLevel.message}</p>}
+                                    <p className="text-xs text-foreground-muted mt-2">
                                         You'll be notified when stock falls below this level.
                                     </p>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Supplier
                                     </label>
                                     <div className="relative">
-                                        <Truck className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <Truck className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             {...register('supplier')}
                                             type="text"
@@ -269,7 +269,7 @@ export default function NewInventoryPage() {
                                 </div>
                                 <h3 className="font-bold">Inventory Tip</h3>
                             </div>
-                            <p className="text-slate-400 text-sm leading-relaxed">
+                            <p className="text-slate-300 text-sm leading-relaxed">
                                 Setting accurate reorder levels helps you maintain optimal stock balance and prevents missed sales due to out-of-stock items.
                             </p>
                         </div>

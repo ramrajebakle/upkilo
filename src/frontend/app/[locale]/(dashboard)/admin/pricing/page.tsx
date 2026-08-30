@@ -94,7 +94,7 @@ export default function AdminPricingPage() {
       <div className="flex gap-1 p-1 bg-surface-100 rounded-xl max-w-xs">
         {TABS.map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.key ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
             {t.label} <span className="text-text-tertiary">({t.count})</span>
           </button>
         ))}
@@ -145,8 +145,8 @@ export default function AdminPricingPage() {
                         <p className="text-sm text-text-secondary">${p.price}/{p.interval}{p.trialDays ? ` · ${p.trialDays}-day trial` : ""}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${p.isActive ? "text-green-600 bg-green-50" : "text-gray-500 bg-gray-50"}`}>{p.isActive ? "Active" : "Inactive"}</span>
-                        <Button variant="outline" size="sm" leftIcon={<Trash2 size={12} className="text-red-500" />} onClick={() => deletePlan(p.id)} />
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${p.isActive ? "text-green-600 bg-green-50" : "text-foreground-secondary bg-muted"}`}>{p.isActive ? "Active" : "Inactive"}</span>
+                        <Button variant="outline" size="sm" leftIcon={<Trash2 size={12} className="text-danger-fg" />} onClick={() => deletePlan(p.id)} />
                       </div>
                     </CardContent>
                   </Card>
@@ -210,7 +210,7 @@ export default function AdminPricingPage() {
                           {d.expiresAt ? ` · expires ${new Date(d.expiresAt).toLocaleDateString()}` : ""}
                         </p>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${d.isActive ? "text-green-600 bg-green-50" : "text-gray-500 bg-gray-50"}`}>{d.isActive ? "Active" : "Expired"}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${d.isActive ? "text-green-600 bg-green-50" : "text-foreground-secondary bg-muted"}`}>{d.isActive ? "Active" : "Expired"}</span>
                     </CardContent>
                   </Card>
                 ))}

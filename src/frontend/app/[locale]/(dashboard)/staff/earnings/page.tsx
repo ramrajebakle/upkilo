@@ -69,7 +69,7 @@ export default function StaffEarningsPage() {
     <div className="space-y-8 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">My Earnings <DollarSign className="text-green-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">My Earnings <DollarSign className="text-success-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">Your commissions, tips, and hours worked.</p>
         </div>
         <Button variant="outline" leftIcon={<RefreshCw size={14} />} onClick={fetch} disabled={loading}>Refresh</Button>
@@ -77,9 +77,9 @@ export default function StaffEarningsPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Commissions", value: `$${summary.totalCommission.toFixed(2)}`, icon: Award, color: "text-primary-500" },
-          { label: "Tips", value: `$${summary.totalTips.toFixed(2)}`, icon: DollarSign, color: "text-red-400" },
-          { label: "Total earned", value: `$${summary.totalRevenue.toFixed(2)}`, icon: TrendingUp, color: "text-green-500" },
+          { label: "Commissions", value: `$${summary.totalCommission.toFixed(2)}`, icon: Award, color: "text-primary" },
+          { label: "Tips", value: `$${summary.totalTips.toFixed(2)}`, icon: DollarSign, color: "text-danger-fg" },
+          { label: "Total earned", value: `$${summary.totalRevenue.toFixed(2)}`, icon: TrendingUp, color: "text-success-fg" },
           { label: "Hours worked", value: `${summary.totalHours.toFixed(1)}h`, icon: Clock, color: "text-blue-500" },
         ].map((s) => (
           <Card key={s.label}>
@@ -121,9 +121,9 @@ export default function StaffEarningsPage() {
                       <td className="py-3 px-3 text-text-secondary text-xs">{new Date(e.date).toLocaleDateString([], { month: "short", day: "numeric" })}</td>
                       <td className="py-3 px-3 text-text-primary">{e.totalHours ? `${e.totalHours.toFixed(1)}h` : "—"}</td>
                       <td className="py-3 px-3 text-text-secondary">{e.bookingCount ?? "—"}</td>
-                      <td className="py-3 px-3 text-primary-600 font-medium">${e.commission.toFixed(2)}</td>
-                      <td className="py-3 px-3 text-red-500 font-medium">${e.tips.toFixed(2)}</td>
-                      <td className="py-3 px-3 text-green-600 font-bold">${(e.commission + e.tips).toFixed(2)}</td>
+                      <td className="py-3 px-3 text-primary font-medium">${e.commission.toFixed(2)}</td>
+                      <td className="py-3 px-3 text-danger-fg font-medium">${e.tips.toFixed(2)}</td>
+                      <td className="py-3 px-3 text-success-fg font-bold">${(e.commission + e.tips).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -97,15 +97,15 @@ export default function ImportingClientsGuidePage() {
           </h2>
           <ul className="mt-4 space-y-2 text-slate-700 dark:text-slate-300">
             <li className="flex gap-2">
-              <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-green-600" aria-hidden="true" />
+              <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-success-fg" aria-hidden="true" />
               <span>Your file must be a <strong>.csv</strong>. Other formats are rejected at upload.</span>
             </li>
             <li className="flex gap-2">
-              <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-green-600" aria-hidden="true" />
+              <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-success-fg" aria-hidden="true" />
               <span>Maximum file size is <strong>10&nbsp;MB</strong>. Split larger exports and import them in batches.</span>
             </li>
             <li className="flex gap-2">
-              <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-green-600" aria-hidden="true" />
+              <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-success-fg" aria-hidden="true" />
               <span>The file needs a <strong>header row</strong> plus at least one row of data.</span>
             </li>
           </ul>
@@ -180,7 +180,7 @@ export default function ImportingClientsGuidePage() {
             so you can re-run an import safely without creating a second copy of everyone.
           </p>
           <div className="mt-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" aria-hidden="true" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning-fg" aria-hidden="true" />
             <p className="text-sm text-amber-900 dark:text-amber-200">
               Skipping means an existing client&apos;s details are left untouched. If your export has
               newer phone numbers or emails, those changes are not applied to clients who already

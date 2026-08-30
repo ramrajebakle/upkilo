@@ -71,7 +71,7 @@ export default function NotificationsSettingsPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
                 <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Alert Matrix...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Alert Matrix...</p>
             </div>
         );
     }
@@ -111,7 +111,7 @@ export default function NotificationsSettingsPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
                     <div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Signal Configuration</h2>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Authorized communication protocols</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Authorized communication protocols</p>
                     </div>
                     
                     <div className="flex items-center gap-4">
@@ -147,7 +147,7 @@ export default function NotificationsSettingsPage() {
                         <div key={section.title} className="space-y-8">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850 shadow-inner">
-                                    <section.icon className="h-5 w-5 text-slate-400 dark:text-slate-600" />
+                                    <section.icon className="h-5 w-5 text-foreground-muted" />
                                 </div>
                                 <div className="h-px flex-1 bg-slate-50 dark:bg-slate-850" />
                                 <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-[0.4em]">
@@ -176,7 +176,7 @@ export default function NotificationsSettingsPage() {
                                                 )}>
                                                     {item.label}
                                                 </p>
-                                                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
+                                                <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest leading-relaxed">
                                                     {item.desc}
                                                 </p>
                                             </div>
@@ -194,7 +194,7 @@ export default function NotificationsSettingsPage() {
                                                         x: isEnabled ? 28 : 0,
                                                         scale: isEnabled ? 1.1 : 1
                                                     }}
-                                                    className="w-5 h-5 bg-white rounded-xl shadow-md"
+                                                    className="w-5 h-5 bg-card rounded-xl shadow-md"
                                                 />
                                             </div>
                                         </div>
@@ -213,7 +213,7 @@ export default function NotificationsSettingsPage() {
                 </div>
                 <div>
                     <h3 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Environmental Override</h3>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2 leading-loose">
+                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-[0.2em] mt-2 leading-loose">
                         Global intercept requires browser-level authorization. Inbound signals are prioritized via the <Zap className="inline h-3 w-3 text-primary-400 mb-0.5" /> priority-matrix for mission-critical events.
                     </p>
                 </div>

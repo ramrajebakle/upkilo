@@ -14,7 +14,7 @@ export default function SecurityCompliancePage() {
   const [scanResult, setScanResult] = useState<any>(null);
 
   const stats = [
-    { name: "Tenant Isolation", status: "Verified", icon: Users, color: "text-green-500" },
+    { name: "Tenant Isolation", status: "Verified", icon: Users, color: "text-success-fg" },
     { name: "Data Encryption", status: "Enabled (AES-256)", icon: Lock, color: "text-blue-500" },
     { name: "SSRF Protection", status: "Active", icon: Globe, color: "text-purple-500" },
     { name: "Audit Logging", status: "SOC2 Level", icon: FileSearch, color: "text-indigo-500" },
@@ -73,7 +73,7 @@ export default function SecurityCompliancePage() {
               <div className="flex items-center gap-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-primary">{scanResult?.score ?? "--"}</div>
-                  <div className="text-[10px] uppercase text-gray-500 dark:text-slate-500 font-bold">Safety Score</div>
+                  <div className="text-[10px] uppercase text-slate-300 font-bold">Safety Score</div>
                 </div>
                 <div className="h-10 w-px bg-gray-200 dark:bg-slate-700" />
                 <div>
@@ -114,15 +114,15 @@ export default function SecurityCompliancePage() {
           <CardContent>
             <div className="space-y-4">
               {[
-                { action: "Login", user: "Admin", time: "2 min ago", icon: CheckCircle, color: "text-green-500" },
-                { action: "API Key Generated", user: "DevSys", time: "1 hr ago", icon: AlertTriangle, color: "text-amber-500" },
-                { action: "Billing Updated", user: "Admin", time: "3 hr ago", icon: CheckCircle, color: "text-green-500" },
+                { action: "Login", user: "Admin", time: "2 min ago", icon: CheckCircle, color: "text-success-fg" },
+                { action: "API Key Generated", user: "DevSys", time: "1 hr ago", icon: AlertTriangle, color: "text-warning-fg" },
+                { action: "Billing Updated", user: "Admin", time: "3 hr ago", icon: CheckCircle, color: "text-success-fg" },
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm">
                   <log.icon className={`h-4 w-4 ${log.color}`} />
                   <div className="flex-1">
                     <div className="font-medium text-slate-900 dark:text-white">{log.action}</div>
-                    <div className="text-[10px] text-gray-400 dark:text-slate-500">{log.user} • {log.time}</div>
+                    <div className="text-[10px] text-foreground-muted">{log.user} • {log.time}</div>
                   </div>
                 </div>
               ))}

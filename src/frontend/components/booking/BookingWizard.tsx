@@ -251,14 +251,14 @@ export function BookingWizard({
       <div className="flex justify-between items-center mb-8 relative">
         <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 -translate-y-1/2" />
         {["Service", "Time", "Details", "Confirm"].map((label, i) => (
-          <div key={label} className="bg-white px-2 flex flex-col items-center gap-2">
+          <div key={label} className="bg-card px-2 flex flex-col items-center gap-2">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-colors ${
-              step > i + 1 ? 'bg-[var(--primary-color)] text-white border-[var(--primary-color)]' : 
-              step === i + 1 ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-gray-300 text-gray-400 bg-white'
+              step > i + 1 ? 'bg-[var(--primary-color)] text-[var(--primary-color-foreground)] border-[var(--primary-color)]' : 
+              step === i + 1 ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-border-strong text-foreground-muted bg-card'
             }`}>
               {step > i + 1 ? <Check className="w-5 h-5" /> : i + 1}
             </div>
-            <span className={`text-xs font-semibold ${step >= i + 1 ? 'text-gray-900 border-[var(--primary-color)]' : 'text-gray-400'}`}>{label}</span>
+            <span className={`text-xs font-semibold ${step >= i + 1 ? 'text-foreground border-[var(--primary-color)]' : 'text-foreground-muted'}`}>{label}</span>
           </div>
         ))}
       </div>
@@ -266,7 +266,7 @@ export function BookingWizard({
       <Card className="border-0 shadow-lg ring-1 ring-gray-900/5 min-h-[400px] flex flex-col overflow-hidden">
         {step === 1 && (
           <CardContent className="p-6 md:p-8 flex-1 space-y-6">
-            <h2 className="text-2xl font-bold text-slate-900">Select a Service</h2>
+            <h2 className="text-2xl font-bold text-foreground">Select a Service</h2>
             {loadingServices ? (
               <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-[var(--primary-color)]" /></div>
             ) : (
@@ -275,13 +275,13 @@ export function BookingWizard({
                   <button
                     key={svc.id}
                     onClick={() => handleServiceSelect(svc)}
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all flex justify-between items-center group ${selectedService?.id === svc.id ? 'border-[var(--primary-color)] bg-[var(--primary-color-light)]' : 'border-slate-100 hover:border-[var(--primary-color)] hover:bg-slate-50'}`}
+                    className={`w-full text-left p-4 rounded-xl border-2 transition-all flex justify-between items-center group ${selectedService?.id === svc.id ? 'border-[var(--primary-color)] bg-[var(--primary-color-light)]' : 'border-border-subtle hover:border-[var(--primary-color)] hover:bg-accent'}`}
                   >
                     <div>
-                      <h3 className="font-semibold text-slate-800 group-hover:text-[var(--primary-color)] transition-colors">{svc.name}</h3>
-                      <p className="text-sm text-slate-500">{svc.duration} minutes</p>
+                      <h3 className="font-semibold text-foreground group-hover:text-[var(--primary-color)] transition-colors">{svc.name}</h3>
+                      <p className="text-sm text-foreground-secondary">{svc.duration} minutes</p>
                     </div>
-                    <div className="font-bold text-slate-900">
+                    <div className="font-bold text-foreground">
                       {svc.price === 0 ? "Free" : `$${svc.price}`}
                     </div>
                   </button>
@@ -293,11 +293,11 @@ export function BookingWizard({
 
         {step === 2 && (
           <CardContent className="p-6 md:p-8 flex-1 space-y-6">
-            <h2 className="text-2xl font-bold text-slate-900">Choose a Time</h2>
+            <h2 className="text-2xl font-bold text-foreground">Choose a Time</h2>
             <div className="grid md:grid-cols-2 gap-8">
               {/* Simple Date Selector Mock */}
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4">
-                <h3 className="font-semibold text-sm text-slate-900 uppercase tracking-wider">Select Date</h3>
+              <div className="bg-muted rounded-2xl p-6 border border-border-subtle space-y-4">
+                <h3 className="font-semibold text-sm text-foreground uppercase tracking-wider">Select Date</h3>
                 <div className="grid grid-cols-7 gap-1">
                   {[...Array(14)].map((_, i) => {
                     const d = new Date();
@@ -308,7 +308,7 @@ export function BookingWizard({
                       <button
                         key={dateStr}
                         onClick={() => { setSelectedDate(dateStr); fetchAvailability(dateStr); }}
-                        className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all ${isSelected ? 'bg-[var(--primary-color)] text-white shadow-md scale-105' : 'hover:bg-slate-200 text-slate-600'}`}
+                        className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all ${isSelected ? 'bg-[var(--primary-color)] text-[var(--primary-color-foreground)] shadow-md scale-105' : 'hover:bg-slate-200 text-foreground-secondary'}`}
                       >
                         <span className="opacity-70">{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
                         <span className="font-bold text-sm">{d.getDate()}</span>
@@ -319,15 +319,15 @@ export function BookingWizard({
               </div>
               
               <div className="space-y-4">
-                <h3 className="font-semibold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <h3 className="font-semibold text-sm text-foreground uppercase tracking-wider flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[var(--primary-color)]" /> Available Times
                 </h3>
                 {loadingSlots ? (
                   <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-[var(--primary-color)]" /></div>
                 ) : !selectedDate ? (
-                  <div className="p-12 text-center text-slate-400 text-sm">Please select a date first</div>
+                  <div className="p-12 text-center text-foreground-muted text-sm">Please select a date first</div>
                 ) : availableSlots.length === 0 ? (
-                  <div className="p-12 text-center text-slate-400 text-sm">No available slots for this date</div>
+                  <div className="p-12 text-center text-foreground-muted text-sm">No available slots for this date</div>
                 ) : (
                   <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-2">
                     {availableSlots.map(slot => (
@@ -337,7 +337,7 @@ export function BookingWizard({
                           setSelectedTime(slot.time);
                           if (selectedDate) checkConflicts(selectedDate, slot.time);
                         }}
-                        className={`py-3 text-sm font-medium text-center rounded-xl border-2 transition-all ${selectedTime === slot.time ? 'border-[var(--primary-color)] bg-[var(--primary-color-light)] text-[var(--primary-color)]' : 'bg-white border-slate-100 hover:border-[var(--primary-color)] text-slate-700'}`}
+                        className={`py-3 text-sm font-medium text-center rounded-xl border-2 transition-all ${selectedTime === slot.time ? 'border-[var(--primary-color)] bg-[var(--primary-color-light)] text-[var(--primary-color)]' : 'bg-card border-border-subtle hover:border-[var(--primary-color)] text-foreground'}`}
                       >
                         {slot.time}
                       </button>
@@ -351,13 +351,13 @@ export function BookingWizard({
             {selectedTime && (
               <div className="mt-4">
                 {checkingConflict ? (
-                  <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 rounded-xl px-4 py-3">
+                  <div className="flex items-center gap-2 text-sm text-foreground-secondary bg-muted rounded-xl px-4 py-3">
                     <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                     <span>Checking availability...</span>
                   </div>
                 ) : conflicts?.hasConflict ? (
                   <div role="alert" className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-                    <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" aria-hidden="true" />
+                    <AlertTriangle className="w-4 h-4 text-warning-fg mt-0.5 shrink-0" aria-hidden="true" />
                     <div>
                       <p className="text-sm font-semibold text-amber-800">Scheduling conflict detected</p>
                       <p className="text-xs text-amber-700 mt-0.5">{conflicts.message}</p>
@@ -365,7 +365,7 @@ export function BookingWizard({
                   </div>
                 ) : conflicts && !conflicts.hasConflict ? (
                   <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
-                    <Check className="w-4 h-4 text-emerald-500 shrink-0" aria-hidden="true" />
+                    <Check className="w-4 h-4 text-success-fg shrink-0" aria-hidden="true" />
                     <span>Time slot is available — no conflicts</span>
                   </div>
                 ) : null}
@@ -374,7 +374,7 @@ export function BookingWizard({
                 <button
                   onClick={nextStep}
                   disabled={conflicts?.hasConflict === true}
-                  className="mt-3 w-full py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 bg-[var(--primary-color)] text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="mt-3 w-full py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 bg-[var(--primary-color)] text-[var(--primary-color-foreground)] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Continue with {selectedTime}
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -386,30 +386,30 @@ export function BookingWizard({
 
         {step === 3 && (
           <CardContent className="p-6 md:p-8 flex-1 space-y-6">
-            <h2 className="text-2xl font-bold text-slate-900">Your Details</h2>
+            <h2 className="text-2xl font-bold text-foreground">Your Details</h2>
             <div className="space-y-4 max-w-md">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-slate-700">First Name</label>
-                  <Input className="rounded-xl border-slate-200 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.firstName} onChange={e => setContact({...contact, firstName: e.target.value})} />
+                  <label className="text-sm font-semibold text-foreground">First Name</label>
+                  <Input className="rounded-xl border-border focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.firstName} onChange={e => setContact({...contact, firstName: e.target.value})} />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-slate-700">Last Name</label>
-                  <Input className="rounded-xl border-slate-200 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.lastName} onChange={e => setContact({...contact, lastName: e.target.value})} />
+                  <label className="text-sm font-semibold text-foreground">Last Name</label>
+                  <Input className="rounded-xl border-border focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.lastName} onChange={e => setContact({...contact, lastName: e.target.value})} />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-700">Email Address</label>
-                <Input type="email" className="rounded-xl border-slate-200 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.email} onChange={e => setContact({...contact, email: e.target.value})} />
+                <label className="text-sm font-semibold text-foreground">Email Address</label>
+                <Input type="email" className="rounded-xl border-border focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.email} onChange={e => setContact({...contact, email: e.target.value})} />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-700">Phone Number</label>
-                <Input type="tel" className="rounded-xl border-slate-200 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.phone} onChange={e => setContact({...contact, phone: e.target.value})} />
+                <label className="text-sm font-semibold text-foreground">Phone Number</label>
+                <Input type="tel" className="rounded-xl border-border focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]" value={contact.phone} onChange={e => setContact({...contact, phone: e.target.value})} />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-700">Appointment Notes (Optional)</label>
+                <label className="text-sm font-semibold text-foreground">Appointment Notes (Optional)</label>
                 <textarea 
-                  className="w-full rounded-xl border border-slate-200 p-3 text-sm min-h-[100px] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all outline-none" 
+                  className="w-full rounded-xl border border-border p-3 text-sm min-h-[100px] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all outline-none" 
                   value={contact.notes}
                   onChange={e => setContact({...contact, notes: e.target.value})}
                 />
@@ -424,25 +424,25 @@ export function BookingWizard({
               <CreditCard className="w-10 h-10 text-[var(--primary-color)]" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Reserve Your Spot</h2>
-              <p className="text-slate-500 max-w-xs mx-auto">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Reserve Your Spot</h2>
+              <p className="text-foreground-secondary max-w-xs mx-auto">
                 Your time is held — pay the deposit below to confirm {selectedService?.name}.
               </p>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl p-6 w-full max-w-sm text-left border border-slate-100 space-y-1">
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Deposit due</div>
+            <div className="bg-muted rounded-2xl p-6 w-full max-w-sm text-left border border-border-subtle space-y-1">
+              <div className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider">Deposit due</div>
               {/* INR-only for now, matching the backend's currency whitelist in
                   PublicBookingController.CreateRazorpayOrder — the initial booking response
                   doesn't include a currency field to read here. */}
-              <div className="text-3xl font-bold text-slate-900">
+              <div className="text-3xl font-bold text-foreground">
                 {currencySymbol('INR')}{bookingResult?.booking?.depositAmount}
               </div>
             </div>
 
             {paymentError && (
               <div role="alert" className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 w-full max-w-sm text-left">
-                <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" aria-hidden="true" />
+                <AlertTriangle className="w-4 h-4 text-danger-fg mt-0.5 shrink-0" aria-hidden="true" />
                 <p className="text-sm text-red-700">{paymentError}</p>
               </div>
             )}
@@ -450,7 +450,7 @@ export function BookingWizard({
             <Button
               onClick={handlePayNow}
               disabled={payingNow}
-              className="rounded-xl px-8 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-white shadow-lg transition-all w-full max-w-sm"
+              className="rounded-xl px-8 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-[var(--primary-color-foreground)] shadow-lg transition-all w-full max-w-sm"
             >
               {payingNow ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CreditCard className="w-4 h-4 mr-2" />}
               Pay Now
@@ -461,37 +461,37 @@ export function BookingWizard({
         {step === 4 && !awaitingPayment && (
           <CardContent className="p-6 md:p-8 flex-1 flex flex-col items-center justify-center text-center space-y-6">
             <div className="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mb-2">
-              <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+              <CheckCircle2 className="w-12 h-12 text-success-fg" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Booking Confirmed!</h2>
-              <p className="text-slate-500 max-w-xs mx-auto">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Booking Confirmed!</h2>
+              <p className="text-foreground-secondary max-w-xs mx-auto">
                 {bookingResult?.message || `We've sent a confirmation email to ${contact.email}.`}
               </p>
               {bookingResult?.confirmationNumber && (
-                <div className="mt-4 px-4 py-2 bg-slate-100 rounded-lg font-mono text-sm font-bold text-slate-700 inline-block uppercase tracking-widest">
+                <div className="mt-4 px-4 py-2 bg-muted rounded-lg font-mono text-sm font-bold text-foreground inline-block uppercase tracking-widest">
                   #{bookingResult.confirmationNumber}
                 </div>
               )}
             </div>
 
-            <div className="bg-slate-50 rounded-2xl p-6 w-full max-w-sm text-left border border-slate-100 space-y-4">
+            <div className="bg-muted rounded-2xl p-6 w-full max-w-sm text-left border border-border-subtle space-y-4">
               <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-[var(--primary-color)] shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-card border border-border-subtle flex items-center justify-center text-[var(--primary-color)] shadow-sm">
                   <BookmarkIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-bold text-slate-900">{selectedService?.name}</div>
-                  <div className="text-sm text-slate-500">{selectedService?.duration} mins • ${selectedService?.price}</div>
+                  <div className="font-bold text-foreground">{selectedService?.name}</div>
+                  <div className="text-sm text-foreground-secondary">{selectedService?.duration} mins • ${selectedService?.price}</div>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-[var(--primary-color)] shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-card border border-border-subtle flex items-center justify-center text-[var(--primary-color)] shadow-sm">
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-bold text-slate-900">{selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Date'}</div>
-                  <div className="text-sm text-slate-500">{selectedTime}</div>
+                  <div className="font-bold text-foreground">{selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Date'}</div>
+                  <div className="text-sm text-foreground-secondary">{selectedTime}</div>
                 </div>
               </div>
             </div>
@@ -499,8 +499,8 @@ export function BookingWizard({
         )}
 
         {/* Footer Navigation */}
-        <div className="border-t p-4 md:p-6 bg-slate-50 flex justify-between rounded-b-xl">
-          <Button variant="outline" onClick={prevStep} className={`rounded-xl border-slate-200 text-slate-600 hover:bg-white ${step === 1 || step === 4 ? "invisible" : ""}`}>
+        <div className="border-t p-4 md:p-6 bg-muted flex justify-between rounded-b-xl">
+          <Button variant="outline" onClick={prevStep} className={`rounded-xl border-border text-foreground-secondary hover:bg-card ${step === 1 || step === 4 ? "invisible" : ""}`}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
           <Button 
@@ -511,7 +511,7 @@ export function BookingWizard({
               (step === 2 && !selectedTime) || 
               (step === 3 && (!contact.firstName || !contact.email))
             }
-            className={`rounded-xl px-8 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-white shadow-lg transition-all ${step === 4 ? "hidden" : ""}`}
+            className={`rounded-xl px-8 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-[var(--primary-color-foreground)] shadow-lg transition-all ${step === 4 ? "hidden" : ""}`}
           >
             {submitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
             {step === 3 ? "Confirm Booking" : "Continue"} <ArrowRight className="w-4 h-4 ml-2" />

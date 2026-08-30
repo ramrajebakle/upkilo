@@ -64,11 +64,11 @@ export function ReportBuilder() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-3">
-            <Settings2 className="h-8 w-8 text-primary-600" />
+          <h2 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+            <Settings2 className="h-8 w-8 text-primary" />
             Custom Report Builder
           </h2>
-          <p className="text-gray-500 mt-1">Design and execute custom data exports for your business.</p>
+          <p className="text-foreground-secondary mt-1">Design and execute custom data exports for your business.</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2">
@@ -89,7 +89,7 @@ export function ReportBuilder() {
       <div className="grid grid-cols-12 gap-8">
         {/* Configuration Sidebar */}
         <div className="col-span-4 space-y-6">
-          <Card className="border-gray-100 shadow-sm">
+          <Card className="border-border-subtle shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-blue-600" />
@@ -105,19 +105,19 @@ export function ReportBuilder() {
                   className={cn(
                     "w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between group",
                     selectedMetrics.includes(metric.id) 
-                      ? "bg-primary-50 border-primary-200 ring-1 ring-primary-100 shadow-sm" 
-                      : "bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50"
+                      ? "bg-brand-subtle border-primary/25 ring-1 ring-primary-100 shadow-sm" 
+                      : "bg-card border-border-subtle hover:border-border hover:bg-accent"
                   )}
                 >
                   <div>
-                    <div className={cn("font-semibold text-sm", selectedMetrics.includes(metric.id) ? "text-primary-900" : "text-gray-700")}>
+                    <div className={cn("font-semibold text-sm", selectedMetrics.includes(metric.id) ? "text-primary-900" : "text-foreground")}>
                       {metric.name}
                     </div>
-                    <div className="text-xs text-gray-400 group-hover:text-gray-500">{metric.description}</div>
+                    <div className="text-xs text-foreground-muted group-hover:text-foreground-secondary">{metric.description}</div>
                   </div>
                   <div className={cn(
                     "h-5 w-5 rounded-full border flex items-center justify-center transition-colors",
-                    selectedMetrics.includes(metric.id) ? "bg-primary-600 border-primary-600 text-white" : "border-gray-200 bg-white"
+                    selectedMetrics.includes(metric.id) ? "bg-primary-600 border-primary-600 text-white" : "border-border bg-card"
                   )}>
                     {selectedMetrics.includes(metric.id) && <Plus className="h-3 w-3 stroke-[3]" />}
                   </div>
@@ -126,10 +126,10 @@ export function ReportBuilder() {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-100 shadow-sm">
+          <Card className="border-border-subtle shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-5 w-5 text-amber-600" />
+                <FileText className="h-5 w-5 text-warning-fg" />
                 Step 2: Choose Dimensions
               </CardTitle>
               <CardDescription>How should the data be grouped?</CardDescription>
@@ -143,18 +143,18 @@ export function ReportBuilder() {
                     "w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between group",
                     selectedDimensions.includes(dimension.id) 
                       ? "bg-amber-50 border-amber-200 ring-1 ring-amber-100 shadow-sm" 
-                      : "bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50"
+                      : "bg-card border-border-subtle hover:border-border hover:bg-accent"
                   )}
                 >
                   <div>
-                    <div className={cn("font-semibold text-sm", selectedDimensions.includes(dimension.id) ? "text-amber-900" : "text-gray-700")}>
+                    <div className={cn("font-semibold text-sm", selectedDimensions.includes(dimension.id) ? "text-amber-900" : "text-foreground")}>
                       {dimension.name}
                     </div>
-                    <div className="text-xs text-gray-400 group-hover:text-gray-500">{dimension.description}</div>
+                    <div className="text-xs text-foreground-muted group-hover:text-foreground-secondary">{dimension.description}</div>
                   </div>
                   <div className={cn(
                     "h-5 w-5 rounded-full border flex items-center justify-center transition-colors",
-                    selectedDimensions.includes(dimension.id) ? "bg-amber-600 border-amber-600 text-white" : "border-gray-200 bg-white"
+                    selectedDimensions.includes(dimension.id) ? "bg-amber-600 border-amber-600 text-white" : "border-border bg-card"
                   )}>
                     {selectedDimensions.includes(dimension.id) && <Plus className="h-3 w-3 stroke-[3]" />}
                   </div>
@@ -166,51 +166,51 @@ export function ReportBuilder() {
 
         {/* Preview Area */}
         <div className="col-span-8 space-y-6">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden min-h-[600px] flex flex-col">
-            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+          <div className="bg-card rounded-2xl border border-border-subtle shadow-xl overflow-hidden min-h-[600px] flex flex-col">
+            <div className="px-6 py-4 border-b border-border-subtle bg-muted/50 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="px-3 py-1 bg-white border border-gray-100 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-600">
+                <div className="px-3 py-1 bg-card border border-border-subtle rounded-lg text-sm font-medium flex items-center gap-2 text-foreground-secondary">
                   <CalendarIcon className="h-4 w-4" />
                   Last 30 Days
                   <ChevronDown className="h-3 w-3" />
                 </div>
-                <div className="px-3 py-1 bg-white border border-gray-100 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-600">
+                <div className="px-3 py-1 bg-card border border-border-subtle rounded-lg text-sm font-medium flex items-center gap-2 text-foreground-secondary">
                   <Filter className="h-4 w-4" />
                   All Services
                   <ChevronDown className="h-3 w-3" />
                 </div>
               </div>
-              <div className="text-xs text-gray-400 font-mono">DEFINITION_ID-XC28</div>
+              <div className="text-xs text-foreground-muted font-mono">DEFINITION_ID-XC28</div>
             </div>
 
             <div className="flex-1 p-8 flex flex-col items-center justify-center text-center">
               {isExecuting ? (
                 <div className="space-y-6">
                   <div className="relative">
-                    <div className="h-24 w-24 border-8 border-gray-100 border-t-primary-600 rounded-full animate-spin mx-auto" />
-                    <div className="absolute inset-0 flex items-center justify-center text-primary-600 font-bold">75%</div>
+                    <div className="h-24 w-24 border-8 border-border-subtle border-t-primary-600 rounded-full animate-spin mx-auto" />
+                    <div className="absolute inset-0 flex items-center justify-center text-primary font-bold">75%</div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">Processing Big Data...</h3>
-                    <p className="text-gray-500 mt-2">Aggregating transactional records across your tenant isolation layers.</p>
+                    <h3 className="text-xl font-bold text-foreground">Processing Big Data...</h3>
+                    <p className="text-foreground-secondary mt-2">Aggregating transactional records across your tenant isolation layers.</p>
                   </div>
                 </div>
               ) : (
                 <div className="max-w-md">
-                  <div className="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <div className="h-16 w-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <Play className="h-8 w-8 text-gray-300" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900">Ready to Visualize</h3>
-                  <p className="text-gray-500 mt-3 leading-relaxed">
+                  <h3 className="text-xl font-bold text-foreground">Ready to Visualize</h3>
+                  <p className="text-foreground-secondary mt-3 leading-relaxed">
                     Select your metrics and dimensions on the left, then click 
-                    <span className="font-bold text-gray-700"> Execute Report </span> 
+                    <span className="font-bold text-foreground"> Execute Report </span> 
                     to generate your business intelligence preview.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between text-sm text-gray-500 font-medium">
+            <div className="px-6 py-4 border-t border-border-subtle bg-muted/50 flex items-center justify-between text-sm text-foreground-secondary font-medium">
               <div className="flex gap-4">
                 <span>Metrics: {selectedMetrics.length}</span>
                 <span>Dimensions: {selectedDimensions.length}</span>

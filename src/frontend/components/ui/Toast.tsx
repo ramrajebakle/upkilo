@@ -86,17 +86,27 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
     };
 
     const styles = {
-        success: 'bg-green-50 border-green-200 text-green-800',
-        error: 'bg-red-50 border-red-200 text-red-800',
-        info: 'bg-blue-50 border-blue-200 text-blue-800',
-        warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+        // The light 50-tints were the only definition, so every toast was a pale card —
+        // on a dark page, a bright rectangle in the corner. The *-surface/-border/-fg
+        // triples resolve per theme, so this is one set of classes for both.
+        //
+        // The tint is applied to a ::before layer rather than to the element itself. In dark
+        // mode --status-*-surface is a translucent wash (correct for an alert panel sitting
+        // on a card, where the card shows through as intended) but a toast FLOATS over
+        // arbitrary page content — as a direct background it would let the text underneath
+        // read through it. Stacking the wash over an opaque --surface-popover base keeps one
+        // token set working for both jobs.
+        success: 'border-success-border text-success-fg before:bg-success-surface',
+        error: 'border-danger-border text-danger-fg before:bg-danger-surface',
+        info: 'border-info-border text-info-fg before:bg-info-surface',
+        warning: 'border-warning-border text-warning-fg before:bg-warning-surface',
     };
 
     const iconStyles = {
-        success: 'text-green-500',
-        error: 'text-red-500',
-        info: 'text-blue-500',
-        warning: 'text-yellow-500',
+        success: 'text-success-fg',
+        error: 'text-danger-fg',
+        info: 'text-info-fg',
+        warning: 'text-warning-fg',
     };
 
     const Icon = icons[toast.type];
@@ -104,7 +114,9 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
     return (
         <div
             className={cn(
-                'flex items-start gap-3 p-4 rounded-lg border shadow-lg animate-slide-in',
+                'relative isolate flex items-start gap-3 p-4 rounded-lg border animate-slide-in',
+                'bg-popover shadow-[var(--shadow-popover)]',
+                'before:absolute before:inset-0 before:-z-10 before:rounded-[inherit]',
                 styles[toast.type]
             )}
         >

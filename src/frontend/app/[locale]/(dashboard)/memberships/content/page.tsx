@@ -35,7 +35,7 @@ const typeIcons: Record<string, React.ReactNode> = {
 };
 
 const typeColors: Record<string, string> = {
-  video: 'bg-primary-50 text-primary-700',
+  video: 'bg-brand-subtle text-primary',
   pdf: 'bg-red-50 text-red-700',
   article: 'bg-blue-50 text-blue-700',
   download: 'bg-emerald-50 text-emerald-700',
@@ -108,8 +108,8 @@ export default function MembershipContentPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Content Library</h1>
-          <p className="text-slate-500 mt-1">Manage gated content for your membership tiers</p>
+          <h1 className="text-2xl font-bold text-foreground">Content Library</h1>
+          <p className="text-foreground-secondary mt-1">Manage gated content for your membership tiers</p>
         </div>
         <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" /> Add Content
@@ -119,15 +119,15 @@ export default function MembershipContentPage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Content', value: stats.total, icon: <BookOpen className="h-5 w-5 text-primary-500" /> },
-          { label: 'Gated Content', value: stats.gated, icon: <Lock className="h-5 w-5 text-amber-500" /> },
-          { label: 'Total Views', value: stats.totalViews.toLocaleString(), icon: <Eye className="h-5 w-5 text-emerald-500" /> },
+          { label: 'Total Content', value: stats.total, icon: <BookOpen className="h-5 w-5 text-primary" /> },
+          { label: 'Gated Content', value: stats.gated, icon: <Lock className="h-5 w-5 text-warning-fg" /> },
+          { label: 'Total Views', value: stats.totalViews.toLocaleString(), icon: <Eye className="h-5 w-5 text-success-fg" /> },
         ].map(stat => (
-          <div key={stat.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-slate-50">{stat.icon}</div>
+          <div key={stat.label} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-muted">{stat.icon}</div>
             <div>
-              <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
-              <div className="text-xs text-slate-500">{stat.label}</div>
+              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xs text-foreground-secondary">{stat.label}</div>
             </div>
           </div>
         ))}
@@ -135,22 +135,22 @@ export default function MembershipContentPage() {
 
       {/* Create Form */}
       {showForm && (
-        <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-slate-900">Add Content</h2>
-            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+            <h2 className="font-semibold text-foreground">Add Content</h2>
+            <button onClick={() => setShowForm(false)} className="text-foreground-muted hover:text-foreground-secondary">✕</button>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Title</label>
               <Input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Introduction to Yoga Meditation" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Content Type</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Content Type</label>
               <select
                 value={form.contentType}
                 onChange={e => setForm(p => ({ ...p, contentType: e.target.value as 'article' }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm"
               >
                 <option value="article">Article</option>
                 <option value="video">Video</option>
@@ -159,11 +159,11 @@ export default function MembershipContentPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Access Level</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Access Level</label>
               <select
                 value={form.accessLevel}
                 onChange={e => setForm(p => ({ ...p, accessLevel: e.target.value }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm"
               >
                 <option value="free">Free</option>
                 <option value="basic">Basic</option>
@@ -172,19 +172,19 @@ export default function MembershipContentPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">File URL</label>
+              <label className="block text-sm font-medium text-foreground mb-1">File URL</label>
               <Input value={form.fileUrl} onChange={e => setForm(p => ({ ...p, fileUrl: e.target.value }))} placeholder="https://..." />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Release Date (optional)</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Release Date (optional)</label>
               <Input type="date" value={form.releaseDate} onChange={e => setForm(p => ({ ...p, releaseDate: e.target.value }))} />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Description</label>
               <textarea
                 value={form.description}
                 onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-20 resize-none"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm h-20 resize-none"
                 placeholder="Brief description..."
               />
             </div>
@@ -194,14 +194,14 @@ export default function MembershipContentPage() {
                 id="gated"
                 checked={form.isGated}
                 onChange={e => setForm(p => ({ ...p, isGated: e.target.checked }))}
-                className="h-4 w-4 rounded border-slate-300 text-primary-600"
+                className="h-4 w-4 rounded border-border-strong text-primary"
               />
-              <label htmlFor="gated" className="text-sm text-slate-700 flex items-center gap-1.5">
-                <Lock className="h-3.5 w-3.5 text-amber-500" /> Gated content (requires membership)
+              <label htmlFor="gated" className="text-sm text-foreground flex items-center gap-1.5">
+                <Lock className="h-3.5 w-3.5 text-warning-fg" /> Gated content (requires membership)
               </label>
             </div>
           </div>
-          <div className="flex gap-3 pt-2 border-t border-slate-100">
+          <div className="flex gap-3 pt-2 border-t border-border-subtle">
             <Button onClick={handleCreate} className="flex-1">Add Content</Button>
             <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
           </div>
@@ -211,7 +211,7 @@ export default function MembershipContentPage() {
       {/* Filters */}
       <div className="flex gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search content..." className="pl-9" />
         </div>
         <div className="flex gap-1">
@@ -219,7 +219,7 @@ export default function MembershipContentPage() {
             <button
               key={type}
               onClick={() => setTypeFilter(type)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${typeFilter === type ? 'bg-primary-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${typeFilter === type ? 'bg-primary-600 text-white' : 'bg-card border border-border text-foreground-secondary hover:bg-accent'}`}
             >
               {type}
             </button>
@@ -231,24 +231,24 @@ export default function MembershipContentPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse">
+            <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse">
               <div className="h-32 bg-slate-200 rounded-lg mb-3" />
               <div className="h-5 bg-slate-200 rounded w-3/4 mb-2" />
-              <div className="h-4 bg-slate-100 rounded w-1/2" />
+              <div className="h-4 bg-muted rounded w-1/2" />
             </div>
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+        <div className="text-center py-16 bg-card rounded-xl border border-border">
           <BookOpen className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-slate-700">No content yet</h3>
-          <p className="text-slate-500 text-sm mt-1 mb-4">Add your first piece of content to the library</p>
+          <h3 className="text-lg font-semibold text-foreground">No content yet</h3>
+          <p className="text-foreground-secondary text-sm mt-1 mb-4">Add your first piece of content to the library</p>
           <Button onClick={() => setShowForm(true)}><Plus className="h-4 w-4 mr-2" /> Add Content</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map(item => (
-            <div key={item.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group">
+            <div key={item.id} className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow group">
               {/* Thumbnail / Placeholder */}
               <div className="h-32 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative">
                 {item.thumbnailUrl ? (
@@ -272,37 +272,37 @@ export default function MembershipContentPage() {
 
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="font-semibold text-slate-900 text-sm line-clamp-2">{item.title}</h3>
+                  <h3 className="font-semibold text-foreground text-sm line-clamp-2">{item.title}</h3>
                   <div className="relative shrink-0">
-                    <button className="p-1 text-slate-400 hover:text-slate-600 rounded">
+                    <button className="p-1 text-foreground-muted hover:text-foreground-secondary rounded">
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
-                {item.description && <p className="text-xs text-slate-500 line-clamp-2 mb-3">{item.description}</p>}
+                {item.description && <p className="text-xs text-foreground-secondary line-clamp-2 mb-3">{item.description}</p>}
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${typeColors[item.contentType]}`}>
                       {item.contentType}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 capitalize">
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground-secondary capitalize">
                       {item.accessLevel}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-slate-400">
+                  <div className="flex items-center gap-1 text-xs text-foreground-muted">
                     <Eye className="h-3 w-3" /> {item.viewCount}
                   </div>
                 </div>
 
                 {item.releaseDate && new Date(item.releaseDate) > new Date() && (
-                  <div className="mt-2 text-xs text-amber-600 flex items-center gap-1">
+                  <div className="mt-2 text-xs text-warning-fg flex items-center gap-1">
                     <Clock className="h-3 w-3" /> Releases {new Date(item.releaseDate).toLocaleDateString()}
                   </div>
                 )}
 
                 <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleDelete(item.id)} className="flex-1 py-1.5 text-xs text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-1">
+                  <button onClick={() => handleDelete(item.id)} className="flex-1 py-1.5 text-xs text-danger-fg border border-red-200 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-1">
                     <Trash2 className="h-3 w-3" /> Delete
                   </button>
                 </div>

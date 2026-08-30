@@ -52,12 +52,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none";
 
     const variants = {
-      primary: "bg-primary-500 text-white hover:bg-primary-600 shadow-sm hover:shadow-md",
+      // The semantic pair, not the numbered step. --brand steps to primary-400 in dark mode
+      // (primary-500 is heavy and slightly muddy on a dark ground) and --brand-foreground
+      // follows it to a dark ink, because white on #8b7cf8 measures 2.9:1. Pinning white here
+      // is what made `<Button className="bg-primary">` — call sites that override the fill but
+      // inherit the text colour — fail contrast in dark mode.
+      primary: "bg-primary text-primary-foreground hover:bg-brand-hover shadow-sm hover:shadow-md",
       secondary: "bg-surface-100 text-text-primary border border-surface-200 hover:bg-surface-200 hover:border-surface-300",
       ghost: "bg-transparent text-text-secondary hover:bg-surface-100 hover:text-text-primary",
       danger: "bg-danger-500 text-white hover:bg-danger-600 shadow-sm",
       ai: "bg-ai-500 text-white ring-1 ring-ai-500/30 shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]",
-      outline: "bg-transparent border border-primary-500 text-primary-600 hover:bg-primary-50",
+      outline: "bg-transparent border border-primary text-primary hover:bg-brand-subtle",
     };
 
     // Heights are a touch floor on small screens and revert to desktop density from `sm` up.

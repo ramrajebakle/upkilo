@@ -29,14 +29,14 @@ export const TriggerNode = memo(({ data, isConnectable }: NodeProps) => {
   const Icon = iconMap[data.type] || Zap;
   
   return (
-    <div className="px-4 py-3 shadow-lg rounded-xl bg-white border-2 border-amber-500 min-w-[200px] border-l-[6px]">
+    <div className="px-4 py-3 shadow-lg rounded-xl bg-card border-2 border-amber-500 min-w-[200px] border-l-[6px]">
       <div className="flex items-center">
-        <div className="rounded-lg p-2 bg-amber-50 text-amber-600">
+        <div className="rounded-lg p-2 bg-warning-surface text-warning-fg">
           <Icon size={18} />
         </div>
         <div className="ml-3">
-          <div className="text-xs font-bold text-amber-600 uppercase tracking-wider">Trigger</div>
-          <div className="text-sm font-bold text-gray-900">{data.label}</div>
+          <div className="text-xs font-bold text-warning-fg uppercase tracking-wider">Trigger</div>
+          <div className="text-sm font-bold text-foreground">{data.label}</div>
         </div>
       </div>
       <Handle
@@ -54,7 +54,7 @@ export const ActionNode = memo(({ data, isConnectable }: NodeProps) => {
   const isConfigured = !!data.config;
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-xl bg-white border-2 ${isConfigured ? 'border-blue-500' : 'border-gray-300'} min-w-[200px] border-l-[6px]`}>
+    <div className={`px-4 py-3 shadow-md rounded-xl bg-card border-2 ${isConfigured ? 'border-blue-500' : 'border-border-strong'} min-w-[200px] border-l-[6px]`}>
       <Handle
         type="target"
         position={Position.Top}
@@ -62,12 +62,12 @@ export const ActionNode = memo(({ data, isConnectable }: NodeProps) => {
         isConnectable={isConnectable}
       />
       <div className="flex items-center">
-        <div className={`rounded-lg p-2 ${isConfigured ? 'bg-blue-50 text-blue-600' : 'bg-gray-50 text-gray-500'}`}>
+        <div className={`rounded-lg p-2 ${isConfigured ? 'bg-info-surface text-info-fg' : 'bg-muted text-foreground-secondary'}`}>
           <Icon size={18} />
         </div>
         <div className="ml-3 flex-1">
-          <div className={`text-xs font-bold ${isConfigured ? 'text-blue-600' : 'text-gray-400'} uppercase tracking-wider`}>Action</div>
-          <div className="text-sm font-bold text-gray-900">{data.label}</div>
+          <div className={`text-xs font-bold ${isConfigured ? 'text-info-fg' : 'text-foreground-muted'} uppercase tracking-wider`}>Action</div>
+          <div className="text-sm font-bold text-foreground">{data.label}</div>
         </div>
         <ChevronRight className="w-4 h-4 text-gray-300" />
       </div>
@@ -86,7 +86,7 @@ export const LogicNode = memo(({ data, isConnectable }: NodeProps) => {
   const isCondition = data.type === 'ConditionBranch';
 
   return (
-    <div className={`px-4 py-3 shadow-md rounded-xl bg-white border-2 border-primary-500 min-w-[200px] border-l-[6px]`}>
+    <div className={`px-4 py-3 shadow-md rounded-xl bg-card border-2 border-primary-500 min-w-[200px] border-l-[6px]`}>
       <Handle
         type="target"
         position={Position.Top}
@@ -94,19 +94,19 @@ export const LogicNode = memo(({ data, isConnectable }: NodeProps) => {
         isConnectable={isConnectable}
       />
       <div className="flex items-center">
-        <div className="rounded-lg p-2 bg-primary-50 text-primary-600">
+        <div className="rounded-lg p-2 bg-brand-subtle text-primary">
           <Icon size={18} />
         </div>
         <div className="ml-3">
-          <div className="text-xs font-bold text-primary-600 uppercase tracking-wider">Logic</div>
-          <div className="text-sm font-bold text-gray-900">{data.label}</div>
+          <div className="text-xs font-bold text-primary uppercase tracking-wider">Logic</div>
+          <div className="text-sm font-bold text-foreground">{data.label}</div>
         </div>
       </div>
       
       {isCondition ? (
-        <div className="flex justify-between mt-2 pt-2 border-t border-gray-100">
+        <div className="flex justify-between mt-2 pt-2 border-t border-border-subtle">
           <div className="relative h-4 flex-1">
-            <span className="text-[10px] font-bold text-green-600">YES</span>
+            <span className="text-[10px] font-bold text-success-fg">YES</span>
             <Handle
               type="source"
               position={Position.Bottom}
@@ -116,7 +116,7 @@ export const LogicNode = memo(({ data, isConnectable }: NodeProps) => {
             />
           </div>
           <div className="relative h-4 flex-1 text-right">
-            <span className="text-[10px] font-bold text-red-600">NO</span>
+            <span className="text-[10px] font-bold text-danger-fg">NO</span>
             <Handle
               type="source"
               position={Position.Bottom}

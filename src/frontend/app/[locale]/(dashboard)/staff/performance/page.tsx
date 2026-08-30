@@ -55,7 +55,7 @@ export default function StaffPerformancePage() {
           Without wrapping, `justify-between` has nowhere to put the overflow. */}
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Staff Performance <TrendingUp className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Staff Performance <TrendingUp className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">Track individual and team performance metrics across all staff.</p>
         </div>
         {/* The outer <header> wraps, but this control cluster did not, so it still pushed the
@@ -72,9 +72,9 @@ export default function StaffPerformancePage() {
 
       {topPerformer && (
         <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200">
-          <Award className="h-8 w-8 text-amber-500 flex-shrink-0" />
+          <Award className="h-8 w-8 text-warning-fg flex-shrink-0" />
           <div>
-            <p className="text-xs text-amber-600 font-medium uppercase tracking-wide">Top Performer</p>
+            <p className="text-xs text-warning-fg font-medium uppercase tracking-wide">Top Performer</p>
             <p className="text-lg font-bold text-text-primary">{topPerformer.staffName}</p>
             <p className="text-sm text-amber-700">{money(topPerformer.revenue, currency)} revenue · {topPerformer.bookings} bookings</p>
           </div>
@@ -84,7 +84,7 @@ export default function StaffPerformancePage() {
       <div className="flex gap-1 p-1 bg-surface-100 rounded-xl max-w-xs">
         {[{ k: "performance" as const, l: "Performance" }, { k: "commissions" as const, l: "Commissions" }].map((t) => (
           <button key={t.k} onClick={() => setTab(t.k)}
-            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
+            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${tab === t.k ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>{t.l}</button>
         ))}
       </div>
 
@@ -103,14 +103,14 @@ export default function StaffPerformancePage() {
                     {perf.map((s, i) => (
                       <tr key={s.staffId} className="border-b border-surface-100 hover:bg-surface-50">
                         <td className="py-3 px-4 flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-ai-100 text-ai-600 text-xs font-bold flex items-center justify-center flex-shrink-0">#{i + 1}</div>
+                          <div className="w-7 h-7 rounded-full bg-ai-subtle text-ai text-xs font-bold flex items-center justify-center flex-shrink-0">#{i + 1}</div>
                           <span className="text-sm font-medium text-text-primary">{s.staffName}</span>
                         </td>
                         <td className="py-3 px-4 text-sm text-text-secondary">{s.bookings}</td>
                         <td className="py-3 px-4 text-sm font-semibold text-text-primary">{money(s.revenue, currency)}</td>
                         <td className="py-3 px-4 text-sm">
                           {s.avgRating != null ? (
-                            <span className="text-amber-600 font-medium">★ {s.avgRating.toFixed(1)}</span>
+                            <span className="text-warning-fg font-medium">★ {s.avgRating.toFixed(1)}</span>
                           ) : "—"}
                         </td>
                         <td className="py-3 px-4">
@@ -146,7 +146,7 @@ export default function StaffPerformancePage() {
                     {commissions.map((c) => (
                       <tr key={c.staffId} className="border-b border-surface-100 hover:bg-surface-50">
                         <td className="py-3 px-4 text-sm font-medium text-text-primary">{c.staffName}</td>
-                        <td className="py-3 px-4 text-sm font-semibold text-green-600">{money(c.totalCommission, currency)}</td>
+                        <td className="py-3 px-4 text-sm font-semibold text-success-fg">{money(c.totalCommission, currency)}</td>
                         <td className="py-3 px-4 text-sm text-text-secondary">{c.bookings}</td>
                         <td className="py-3 px-4 text-sm text-text-secondary">{c.avgPerBooking != null ? money(c.avgPerBooking, currency) : "—"}</td>
                       </tr>

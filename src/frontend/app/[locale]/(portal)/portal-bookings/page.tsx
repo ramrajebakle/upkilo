@@ -84,10 +84,10 @@ export default function CustomerBookingsPage() {
     if (loading) {
         return (
             <div className="space-y-6">
-                <div className="h-10 w-48 bg-slate-200 rounded-lg animate-pulse" />
+                <div className="h-10 w-48 bg-muted rounded-lg animate-pulse" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[1, 2].map(i => (
-                        <div key={i} className="h-48 bg-slate-100 rounded-2xl animate-pulse" />
+                        <div key={i} className="h-48 bg-muted rounded-2xl animate-pulse" />
                     ))}
                 </div>
             </div>
@@ -98,17 +98,17 @@ export default function CustomerBookingsPage() {
         <div className="space-y-8 max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h1 className="text-3xl font-black text-foreground tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                         My Appointments
                     </h1>
-                    <p className="text-slate-500 mt-1">Manage your sessions and view past visits</p>
+                    <p className="text-foreground-secondary mt-1">Manage your sessions and view past visits</p>
                 </div>
-                <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
+                <div className="flex bg-muted p-1 rounded-xl w-fit">
                     <button
                         onClick={() => setActiveTab('upcoming')}
                         className={cn(
                             "px-6 py-2 rounded-lg text-sm font-bold transition-all",
-                            activeTab === 'upcoming' ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
+                            activeTab === 'upcoming' ? "bg-card text-primary shadow-sm" : "text-foreground-secondary hover:text-foreground"
                         )}
                     >
                         Upcoming
@@ -117,7 +117,7 @@ export default function CustomerBookingsPage() {
                         onClick={() => setActiveTab('history')}
                         className={cn(
                             "px-6 py-2 rounded-lg text-sm font-bold transition-all",
-                            activeTab === 'history' ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
+                            activeTab === 'history' ? "bg-card text-primary shadow-sm" : "text-foreground-secondary hover:text-foreground"
                         )}
                     >
                         History
@@ -142,23 +142,23 @@ export default function CustomerBookingsPage() {
                                                 <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 px-3 py-1 font-bold">
                                                     {appt.status.toUpperCase()}
                                                 </Badge>
-                                                <span className="text-xs text-slate-400 font-medium">#{appt.id.split('-')[0].toUpperCase()}</span>
+                                                <span className="text-xs text-foreground-muted font-medium">#{appt.id.split('-')[0].toUpperCase()}</span>
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-bold text-slate-900 mb-1">{appt.service}</h3>
-                                                <p className="text-slate-500 font-medium flex items-center gap-1.5">
-                                                    with <span className="text-slate-700">{appt.staff}</span>
+                                                <h3 className="text-xl font-bold text-foreground mb-1">{appt.service}</h3>
+                                                <p className="text-foreground-secondary font-medium flex items-center gap-1.5">
+                                                    with <span className="text-foreground">{appt.staff}</span>
                                                 </p>
                                             </div>
                                             <div className="flex flex-wrap items-center gap-y-2 gap-x-6">
-                                                <div className="flex items-center gap-2 text-slate-600">
-                                                    <div className="p-1.5 bg-slate-100 rounded-lg">
+                                                <div className="flex items-center gap-2 text-foreground-secondary">
+                                                    <div className="p-1.5 bg-muted rounded-lg">
                                                         <Calendar className="h-4 w-4" />
                                                     </div>
                                                     <span className="text-sm font-semibold">{new Date(appt.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-slate-600">
-                                                    <div className="p-1.5 bg-slate-100 rounded-lg">
+                                                <div className="flex items-center gap-2 text-foreground-secondary">
+                                                    <div className="p-1.5 bg-muted rounded-lg">
                                                         <Clock className="h-4 w-4" />
                                                     </div>
                                                     <span className="text-sm font-semibold">{appt.time} ({appt.duration} min)</span>
@@ -169,7 +169,7 @@ export default function CustomerBookingsPage() {
                                         <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-stretch sm:items-center gap-3">
                                             <Button 
                                                 variant="outline" 
-                                                className="border-slate-200 hover:bg-slate-50 font-bold"
+                                                className="border-border hover:bg-accent font-bold"
                                                 onClick={() => handleRescheduleClick(appt)}
                                                 disabled={!appt.canReschedule}
                                             >
@@ -177,7 +177,7 @@ export default function CustomerBookingsPage() {
                                             </Button>
                                             <Button
                                                 variant="outline"
-                                                className="border-red-100 text-red-500 hover:bg-red-50 font-bold"
+                                                className="border-red-100 text-danger-fg hover:bg-red-50 font-bold"
                                                 onClick={() => handleCancel(appt.id)}
                                                 disabled={!appt.canCancel}
                                             >
@@ -186,21 +186,21 @@ export default function CustomerBookingsPage() {
                                             </Button>
                                         </div>
                                     </div>
-                                    <div className="bg-slate-50 px-8 py-6 flex flex-col items-center justify-center border-l border-slate-100 min-w-[140px]">
-                                        <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Total</p>
-                                        <p className="text-2xl font-black text-slate-900">{formatCurrency(appt.price)}</p>
+                                    <div className="bg-muted px-8 py-6 flex flex-col items-center justify-center border-l border-border-subtle min-w-[140px]">
+                                        <p className="text-xs text-foreground-muted font-bold uppercase tracking-wider mb-1">Total</p>
+                                        <p className="text-2xl font-black text-foreground">{formatCurrency(appt.price)}</p>
                                     </div>
                                 </div>
                             </Card>
                         ))}
                     </div>
                 ) : (
-                    <Card className="p-12 text-center border-dashed border-2 bg-slate-50/50">
-                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                    <Card className="p-12 text-center border-dashed border-2 bg-muted/50">
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 text-foreground-muted">
                             <Calendar className="h-8 w-8" />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900">No upcoming appointments</h3>
-                        <p className="text-slate-500 mt-2 mb-6 max-w-xs mx-auto">You don't have any bookings scheduled at the moment.</p>
+                        <h3 className="text-lg font-bold text-foreground">No upcoming appointments</h3>
+                        <p className="text-foreground-secondary mt-2 mb-6 max-w-xs mx-auto">You don't have any bookings scheduled at the moment.</p>
                         <Button onClick={() => window.location.href = '/book/demo'}>
                             Book Now
                         </Button>
@@ -214,22 +214,22 @@ export default function CustomerBookingsPage() {
                                 <div className="flex items-center gap-4">
                                     <div className={cn(
                                         "w-12 h-12 rounded-xl flex items-center justify-center",
-                                        appt.status === 'completed' ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                                        appt.status === 'completed' ? "bg-emerald-50 text-emerald-600" : "bg-muted text-foreground-muted"
                                     )}>
                                         <History className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900">{appt.service}</h4>
-                                        <p className="text-sm text-slate-500">
+                                        <h4 className="font-bold text-foreground">{appt.service}</h4>
+                                        <p className="text-sm text-foreground-secondary">
                                             {new Date(appt.date).toLocaleDateString()} • {appt.time}
                                         </p>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-bold text-slate-900">{formatCurrency(appt.price)}</p>
+                                    <p className="font-bold text-foreground">{formatCurrency(appt.price)}</p>
                                     <Badge className={cn(
                                         "capitalize px-2 py-0",
-                                        appt.status === 'completed' ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"
+                                        appt.status === 'completed' ? "bg-emerald-100 text-emerald-700" : "bg-muted text-foreground-secondary"
                                     )}>
                                         {appt.status}
                                     </Badge>
@@ -238,7 +238,7 @@ export default function CustomerBookingsPage() {
                         ))
                     ) : (
                         <Card className="p-12 text-center">
-                            <p className="text-slate-500">No past appointments found.</p>
+                            <p className="text-foreground-secondary">No past appointments found.</p>
                         </Card>
                     )}
                 </div>

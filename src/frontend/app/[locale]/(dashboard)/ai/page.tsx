@@ -26,7 +26,7 @@ const AI_TOOLS = [
     description: "Review and approve AI-generated actions before they execute.",
     href: "/ai/approvals",
     icon: ShieldAlert,
-    color: "text-amber-500",
+    color: "text-warning-fg",
     bg: "bg-amber-50 dark:bg-amber-950/30",
   },
   {
@@ -53,7 +53,7 @@ const INTELLIGENCE_FEATURES = [
     description: "AI identifies open slots and suggests clients most likely to book.",
     endpoint: "/api/v1/ai/fill-my-calendar",
     icon: Calendar,
-    color: "text-green-500",
+    color: "text-success-fg",
     actionLabel: "Run now",
   },
   {
@@ -61,7 +61,7 @@ const INTELLIGENCE_FEATURES = [
     description: "Clients showing churn signals — last visit >30 days, no upcoming booking.",
     endpoint: "/api/v1/ai/client-insights/at-risk",
     icon: Users,
-    color: "text-red-500",
+    color: "text-danger-fg",
     actionLabel: "View clients",
   },
   {
@@ -77,7 +77,7 @@ const INTELLIGENCE_FEATURES = [
     description: "AI-recommended price adjustments to maximize revenue per slot.",
     endpoint: "/api/v1/intelligence/price-optimization",
     icon: DollarSign,
-    color: "text-yellow-500",
+    color: "text-warning-fg",
     actionLabel: "View recommendations",
   },
   {
@@ -93,7 +93,7 @@ const INTELLIGENCE_FEATURES = [
     description: "30/60/90-day revenue projections based on current pipeline.",
     endpoint: "/api/v1/projections",
     icon: TrendingUp,
-    color: "text-emerald-500",
+    color: "text-success-fg",
     actionLabel: "View projections",
   },
 ];
@@ -196,8 +196,8 @@ export default function AIToolsPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: "Decisions today", value: metrics.decisionsToday, icon: BrainCircuit, color: "text-ai-500" },
-            { label: "Auto-approved", value: metrics.autoApproved, icon: CheckCircle2, color: "text-green-500" },
-            { label: "Pending review", value: metrics.pendingReview, icon: AlertTriangle, color: "text-amber-500" },
+            { label: "Auto-approved", value: metrics.autoApproved, icon: CheckCircle2, color: "text-success-fg" },
+            { label: "Pending review", value: metrics.pendingReview, icon: AlertTriangle, color: "text-warning-fg" },
             { label: "Accuracy", value: `${metrics.accuracy}%`, icon: Activity, color: "text-blue-500" },
           ].map((m) => (
             <Card key={m.label}>

@@ -96,7 +96,7 @@ export default function AdminLogsPage() {
       {/* Control Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl shadow-sm">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
           <Input 
             placeholder="Filter by action or details..." 
             className="pl-10"
@@ -138,7 +138,7 @@ export default function AdminLogsPage() {
             <TableBody>
               {filteredLogs.map((log) => (
                 <TableRow key={log.id} className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                  <TableCell className="text-xs text-slate-500">
+                  <TableCell className="text-xs text-foreground-secondary">
                     <div className="flex items-center gap-2">
                       <Clock className="h-3 w-3" />
                       {new Date(log.timestamp).toLocaleString()}
@@ -159,7 +159,7 @@ export default function AdminLogsPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <p className="text-sm text-slate-500 max-w-md truncate">{log.details}</p>
+                    <p className="text-sm text-foreground-secondary max-w-md truncate">{log.details}</p>
                   </TableCell>
                   <TableCell className="text-right">
                     <Badge 
@@ -178,7 +178,7 @@ export default function AdminLogsPage() {
         {!loading && filteredLogs.length === 0 && (
           <div className="py-20 text-center">
             <ClipboardList className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-500">No audit logs found for the selected criteria.</p>
+            <p className="text-foreground-secondary">No audit logs found for the selected criteria.</p>
           </div>
         )}
       </div>

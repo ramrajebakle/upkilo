@@ -56,8 +56,8 @@ export default function InvoicePage() {
     if (loading) {
         return (
             <div className="max-w-4xl mx-auto p-8 animate-pulse">
-                <div className="h-8 w-48 bg-slate-100 rounded-lg mb-8" />
-                <div className="bg-white rounded-3xl p-12 h-[800px] shadow-xl" />
+                <div className="h-8 w-48 bg-muted rounded-lg mb-8" />
+                <div className="bg-card rounded-3xl p-12 h-[800px] shadow-xl" />
             </div>
         );
     }
@@ -109,9 +109,9 @@ export default function InvoicePage() {
                                 </div>
                                 <div>
                                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>
-                                        UPKILO <span className="text-primary-600">SaaS</span>
+                                        UPKILO <span className="text-primary">SaaS</span>
                                     </h1>
-                                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">Operations Unit</p>
+                                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Operations Unit</p>
                                 </div>
                             </div>
                             <div className="text-xs font-bold text-slate-500 dark:text-slate-400 leading-relaxed uppercase tracking-widest bg-white dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm inline-block">
@@ -131,11 +131,11 @@ export default function InvoicePage() {
                         </div>
 
                         <div className="text-right space-y-4">
-                            <h2 className="text-7xl font-black text-slate-100 dark:text-slate-800/60 uppercase tracking-tighter leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+                            <h2 className="text-7xl font-black text-slate-100/60 uppercase tracking-tighter leading-none" style={{ fontFamily: 'var(--font-display)' }}>
                                 Receipt
                             </h2>
                             <div className="bg-white dark:bg-slate-800 inline-block px-6 py-4 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                                <p className="text-slate-400 dark:text-slate-500 text-[10px] uppercase font-black tracking-widest mb-1">System Identification</p>
+                                <p className="text-foreground-muted text-[10px] uppercase font-black tracking-widest mb-1">System Identification</p>
                                 <p className="text-slate-900 dark:text-white font-mono font-black text-lg tracking-tight">{id.toUpperCase()}</p>
                             </div>
                         </div>
@@ -166,16 +166,16 @@ export default function InvoicePage() {
                     <div className="sm:text-right space-y-8">
                         <div className="grid grid-cols-2 sm:flex sm:flex-col gap-8">
                             <div>
-                                <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">Timestamp</h3>
+                                <h3 className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mb-2">Timestamp</h3>
                                 <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tighter">{formatDate(invoice.date)}</p>
                             </div>
                             <div>
-                                <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">Network Status</h3>
+                                <h3 className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mb-2">Network Status</h3>
                                 <span className={cn(
                                     "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border",
                                     invoice.status === 'completed' ? "bg-emerald-50 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-400/20" :
                                     invoice.status === 'pending' ? "bg-amber-50 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-400/20" :
-                                    "bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-100 dark:border-slate-700"
+                                    "bg-slate-50 dark:bg-slate-800 text-foreground-muted border-slate-100 dark:border-slate-700"
                                 )}>
                                     {invoice.status === 'completed' ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                                     {invoice.status}
@@ -191,10 +191,10 @@ export default function InvoicePage() {
                         <table className="w-full text-left">
                             <thead className="bg-slate-50/50 dark:bg-slate-900/50">
                                 <tr>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Protocol / Description</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center">Unit</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">Base Price</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right whitespace-nowrap">Net Capital</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-widest">Protocol / Description</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-widest text-center">Unit</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-widest text-right">Base Price</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-foreground-muted uppercase tracking-widest text-right whitespace-nowrap">Net Capital</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -203,7 +203,7 @@ export default function InvoicePage() {
                                         <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                             {invoice.serviceName || 'Strategic Business Deployment'}
                                         </p>
-                                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase mt-1.5 tracking-widest">Enterprise Class Infrastructure</p>
+                                        <p className="text-[10px] font-black text-foreground-muted uppercase mt-1.5 tracking-widest">Enterprise Class Infrastructure</p>
                                     </td>
                                     <td className="px-8 py-8 text-slate-500 dark:text-slate-400 font-black text-center text-xs">01</td>
                                     <td className="px-8 py-8 text-slate-600 dark:text-slate-400 text-right font-mono font-bold text-xs">{formatCurrency(invoice.amount)}</td>
@@ -220,19 +220,19 @@ export default function InvoicePage() {
                         <div className="flex-1 space-y-10">
                             <div className="p-8 bg-white dark:bg-slate-900 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl inline-block min-w-[340px] relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 dark:bg-primary-500/10 blur-2xl rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-                                <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-6">Payment Protocol</h3>
+                                <h3 className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mb-6">Payment Protocol</h3>
                                 <div className="flex items-center gap-5 relative">
                                     <div className="p-4 bg-primary-50 dark:bg-primary-400/10 rounded-2xl text-primary-600 dark:text-primary-400 shadow-inner">
                                         <CreditCard className="h-6 w-6" />
                                     </div>
                                     <div>
                                         <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">{invoice.method || 'Digital Merchant'}</p>
-                                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-widest tracking-widest">Verified Transaction Gateway</p>
+                                        <p className="text-[10px] font-bold text-foreground-muted mt-1 uppercase tracking-widest tracking-widest">Verified Transaction Gateway</p>
                                     </div>
                                 </div>
                             </div>
                             <div className="max-w-sm">
-                                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em] mb-3">Transmission Notes</p>
+                                <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em] mb-3">Transmission Notes</p>
                                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 leading-relaxed italic uppercase tracking-widest">
                                     "Verified transaction integrity confirmed. Capital allocation successfully processed via secure uplink."
                                 </p>
@@ -240,11 +240,11 @@ export default function InvoicePage() {
                         </div>
 
                         <div className="w-full lg:w-80 space-y-4">
-                            <div className="flex justify-between text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-2">
+                            <div className="flex justify-between text-[11px] font-black text-foreground-muted uppercase tracking-[0.2em] px-2">
                                 <span>Sub-Allocation</span>
                                 <span className="font-mono text-slate-900 dark:text-white">{formatCurrency(invoice.amount)}</span>
                             </div>
-                            <div className="flex justify-between text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-2">
+                            <div className="flex justify-between text-[11px] font-black text-foreground-muted uppercase tracking-[0.2em] px-2">
                                 <span>Tax Load (0%)</span>
                                 <span className="font-mono text-slate-900 dark:text-white">$0.00</span>
                             </div>
@@ -259,23 +259,26 @@ export default function InvoicePage() {
 
                 {/* Footer Section */}
                 <div className="p-10 border-t border-slate-50 dark:border-slate-800 text-center bg-white dark:bg-slate-900/50">
-                    <p className="text-[10px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.6em] animate-pulse">Electronic Document Alpha-91</p>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em] animate-pulse">Electronic Document Alpha-91</p>
                 </div>
             </div>
 
-            {/* Print Styles */}
+            {/* Print styles.
+                The colour half of this block is gone. It forced `white`, `#0f172a` and six
+                other literals onto named classes, which covered exactly the classes present
+                the day it was written and silently missed every one added since — printing an
+                invoice from dark mode still produced dark panels, because none of the tokens
+                were listed. globals.css now re-declares the light token VALUES under
+                @media print, so anything resolving through a token prints light without
+                being named here.
+
+                What is left is genuinely page-specific and not expressible as a colour: hide
+                the screen-only chrome, flatten the radii, drop the elevation. */}
             <style jsx global>{`
                 @media print {
-                    body { background: white !important; }
                     .print\\:hidden { display: none !important; }
-                    .bg-white { background-color: white !important; }
-                    .text-slate-900 { color: #0f172a !important; }
-                    .text-slate-500 { color: #64748b !important; }
-                    .bg-slate-50\\/50 { background-color: #f8fafc !important; }
-                    .bg-primary-600 { background-color: #4f46e5 !important; -webkit-print-color-adjust: exact; }
                     .shadow-2xl, .shadow-xl, .shadow-lg { box-shadow: none !important; }
-                    .border { border: 1px solid #e2e8f0 !important; }
-                    .rounded-\\[40px\\], .rounded-[32px] { border-radius: 0 !important; }
+                    .rounded-\\[40px\\], .rounded-\\[32px\\] { border-radius: 0 !important; }
                 }
             `}</style>
         </div>

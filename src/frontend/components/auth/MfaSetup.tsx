@@ -64,13 +64,13 @@ export function MfaSetup({ isEnabled, qrCodeUrl, onRequestSetup, onVerify, onDis
     if (isEnabled) {
         return (
             <div className={cn('flex items-center gap-4 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800', className)}>
-                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" aria-hidden="true" />
+                <CheckCircle2 className="h-5 w-5 text-success-fg shrink-0" aria-hidden="true" />
                 <div className="flex-1">
                     <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">Two-factor authentication is active</p>
                     <p className="text-xs text-emerald-600 dark:text-emerald-400">Your account is protected by an authenticator app.</p>
                 </div>
                 {onDisable && (
-                    <Button variant="outline" size="sm" onClick={handleDisable} loading={loading} className="text-red-600 border-red-200 hover:bg-red-50">
+                    <Button variant="outline" size="sm" onClick={handleDisable} loading={loading} className="text-danger-fg border-red-200 hover:bg-red-50">
                         Disable
                     </Button>
                 )}
@@ -82,7 +82,7 @@ export function MfaSetup({ isEnabled, qrCodeUrl, onRequestSetup, onVerify, onDis
         return (
             <div className={cn('space-y-4', className)}>
                 <div className="flex items-start gap-3">
-                    <Smartphone className="h-5 w-5 text-slate-400 mt-0.5 shrink-0" aria-hidden="true" />
+                    <Smartphone className="h-5 w-5 text-foreground-muted mt-0.5 shrink-0" aria-hidden="true" />
                     <div>
                         <p className="text-sm font-semibold text-slate-900 dark:text-white">Scan QR code</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">Use Google Authenticator, Authy, or any TOTP app.</p>
@@ -110,7 +110,7 @@ export function MfaSetup({ isEnabled, qrCodeUrl, onRequestSetup, onVerify, onDis
                         className="w-full text-center text-xl font-mono tracking-[0.5em] px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500 transition"
                         aria-describedby={error ? 'mfa-error' : undefined}
                     />
-                    {error && <p id="mfa-error" role="alert" className="text-xs text-red-600">{error}</p>}
+                    {error && <p id="mfa-error" role="alert" className="text-xs text-danger-fg">{error}</p>}
                 </div>
 
                 <Button
@@ -128,7 +128,7 @@ export function MfaSetup({ isEnabled, qrCodeUrl, onRequestSetup, onVerify, onDis
 
     return (
         <div className={cn('', className)}>
-            {error && <p role="alert" className="text-xs text-red-600 mb-3">{error}</p>}
+            {error && <p role="alert" className="text-xs text-danger-fg mb-3">{error}</p>}
             <Button variant="outline" onClick={handleSetup} loading={loading} className="w-full sm:w-auto">
                 <Smartphone className="h-4 w-4 mr-2" aria-hidden="true" />
                 Set up authenticator app

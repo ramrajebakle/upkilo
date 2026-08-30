@@ -20,8 +20,8 @@ export default function FaqAccordion({ faqs }: { faqs: Faq[] }) {
         return (
           <div
             key={faq.q}
-            className={`rounded-2xl border bg-white transition-colors ${
-              isOpen ? 'border-primary-300 shadow-sm shadow-primary-500/5' : 'border-slate-200 hover:border-slate-300'
+            className={`rounded-2xl border bg-card transition-colors ${
+              isOpen ? 'border-primary-300 shadow-sm shadow-primary-500/5' : 'border-border hover:border-border-strong'
             }`}
           >
             <button
@@ -30,9 +30,9 @@ export default function FaqAccordion({ faqs }: { faqs: Faq[] }) {
               aria-expanded={isOpen}
               className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
             >
-              <span className="text-sm font-semibold text-slate-900 md:text-base">{faq.q}</span>
+              <span className="text-sm font-semibold text-foreground md:text-base">{faq.q}</span>
               <ChevronDown
-                className={`h-5 w-5 flex-shrink-0 text-primary-500 transition-transform duration-300 ${
+                className={`h-5 w-5 flex-shrink-0 text-primary transition-transform duration-300 ${
                   isOpen ? 'rotate-180' : ''
                 }`}
                 aria-hidden="true"
@@ -48,7 +48,7 @@ export default function FaqAccordion({ faqs }: { faqs: Faq[] }) {
                   transition={{ duration: 0.28, ease: [0.21, 0.47, 0.32, 0.98] }}
                   className="overflow-hidden"
                 >
-                  <p className="px-6 pb-5 text-sm leading-relaxed text-slate-600">{faq.a}</p>
+                  <p className="px-6 pb-5 text-sm leading-relaxed text-foreground-secondary">{faq.a}</p>
                 </motion.div>
               )}
             </AnimatePresence>

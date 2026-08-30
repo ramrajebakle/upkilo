@@ -57,5 +57,38 @@
       "cancelled": "İptal Edildi",
       "completed": "Tamamlandı"
     }
+  },
+  "Theme": {
+    "accentColour": "Vurgu rengi",
+    "accentHelp": "Marka renginiz; herkese açık rezervasyon sayfanızda ve müşteri portalında kullanılır. <link>Marka</link> ile paylaşılır; orada logo ve özel alan adı da tanımlayabilirsiniz.",
+    "accentPreview": "Hemen rezervasyon",
+    "accentSaveFailed": "Vurgu rengi kaydedilemedi",
+    "accentSaved": "Vurgu rengi kaydedildi",
+    "appearance": "Görünüm",
+    "appearanceSubtitle": "Upkilo'nun bu cihazda nasıl görüneceğini seçin.",
+    "colourAmber": "Kehribar",
+    "colourCyan": "Camgöbeği",
+    "colourEmerald": "Zümrüt",
+    "colourIndigo": "Çivit",
+    "colourRose": "Gül",
+    "colourTheme": "Renk teması",
+    "colourViolet": "Menekşe",
+    "contrastWarning": "Bu renk üzerindeki düğme yazıları yalnızca {ratio}:1 kontrast sağlıyor; bu, 4,5:1 erişilebilirlik alt sınırının altında. Biraz daha koyu bir ton herkes için daha okunaklı olur.",
+    "dark": "Koyu",
+    "darkHint": "Her zaman koyu tema",
+    "darkModeActive": "Koyu mod etkin",
+    "light": "Açık",
+    "lightHint": "Her zaman açık tema",
+    "lightModeActive": "Açık mod etkin",
+    "resolvedNow": "şu anda {mode}",
+    "saveAccent": "Vurgu rengini kaydet",
+    "saved": "Kaydedildi",
+    "saving": "Kaydediliyor…",
+    "switchToDark": "Koyu moda geç",
+    "switchToLight": "Açık moda geç",
+    "system": "Sistem",
+    "systemHint": "Bu cihazı takip et",
+    "themeHint": "Hemen uygulanır ve bu cihazda hatırlanır.",
+    "themeSection": "Tema"
   }
 }

@@ -49,10 +49,10 @@ export const Pagination = memo(function Pagination({
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
             {showItemCount && totalItems && (
-                <p className="text-sm text-slate-500">
-                    Showing <span className="font-medium text-slate-700">{startItem}</span> to{' '}
-                    <span className="font-medium text-slate-700">{endItem}</span> of{' '}
-                    <span className="font-medium text-slate-700">{totalItems}</span> results
+                <p className="text-sm text-foreground-secondary">
+                    Showing <span className="font-medium text-foreground">{startItem}</span> to{' '}
+                    <span className="font-medium text-foreground">{endItem}</span> of{' '}
+                    <span className="font-medium text-foreground">{totalItems}</span> results
                 </p>
             )}
 
@@ -61,26 +61,26 @@ export const Pagination = memo(function Pagination({
                 <button
                     onClick={() => onPageChange(1)}
                     disabled={currentPage === 1}
-                    className="p-2 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     aria-label="First page"
                 >
-                    <ChevronsLeft className="h-4 w-4 text-slate-600" />
+                    <ChevronsLeft className="h-4 w-4 text-foreground-secondary" />
                 </button>
 
                 {/* Previous */}
                 <button
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="p-2 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     aria-label="Previous page"
                 >
-                    <ChevronLeft className="h-4 w-4 text-slate-600" />
+                    <ChevronLeft className="h-4 w-4 text-foreground-secondary" />
                 </button>
 
                 {/* Page numbers */}
                 {getVisiblePages().map((page, i) => (
                     page === '...' ? (
-                        <span key={`dots-${i}`} className="px-2 text-slate-400">…</span>
+                        <span key={`dots-${i}`} className="px-2 text-foreground-muted">…</span>
                     ) : (
                         <button
                             key={page}
@@ -89,7 +89,7 @@ export const Pagination = memo(function Pagination({
                                 'min-w-[36px] h-9 rounded-lg text-sm font-medium transition-all',
                                 currentPage === page
                                     ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
-                                    : 'text-slate-600 hover:bg-slate-100'
+                                    : 'text-foreground-secondary hover:bg-accent'
                             )}
                         >
                             {page}
@@ -101,20 +101,20 @@ export const Pagination = memo(function Pagination({
                 <button
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="p-2 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     aria-label="Next page"
                 >
-                    <ChevronRight className="h-4 w-4 text-slate-600" />
+                    <ChevronRight className="h-4 w-4 text-foreground-secondary" />
                 </button>
 
                 {/* Last page */}
                 <button
                     onClick={() => onPageChange(totalPages)}
                     disabled={currentPage === totalPages}
-                    className="p-2 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     aria-label="Last page"
                 >
-                    <ChevronsRight className="h-4 w-4 text-slate-600" />
+                    <ChevronsRight className="h-4 w-4 text-foreground-secondary" />
                 </button>
             </div>
         </div>

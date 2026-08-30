@@ -53,7 +53,7 @@ export default function PluginMarketplacePage() {
       return (
           <div className="flex flex-col items-center justify-center py-20">
               <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-              <p className="text-gray-500">Scanning Marketplace...</p>
+              <p className="text-foreground-secondary">Scanning Marketplace...</p>
           </div>
       );
   }
@@ -72,8 +72,8 @@ export default function PluginMarketplacePage() {
           <Card key={p.id} className="flex flex-col relative overflow-hidden group hover:border-primary/50 transition-colors">
             <CardHeader className="pb-4 border-b">
               <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
-                  <ToyBrick className="h-6 w-6 text-primary-500" />
+                <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                  <ToyBrick className="h-6 w-6 text-primary" />
                 </div>
                 {pWrapper.isConnected && (
                   <span className="text-[10px] font-bold uppercase tracking-wider text-green-700 bg-green-100 px-2 py-1 rounded">
@@ -82,14 +82,14 @@ export default function PluginMarketplacePage() {
                 )}
               </div>
               <CardTitle className="text-lg">{p.name}</CardTitle>
-              <CardDescription className="text-xs uppercase font-bold tracking-tighter text-gray-400">{p.category}</CardDescription>
+              <CardDescription className="text-xs uppercase font-bold tracking-tighter text-foreground-muted">{p.category}</CardDescription>
             </CardHeader>
             <CardContent className="pt-4 flex-1 flex flex-col justify-between">
                <div className="space-y-2 mb-6">
-                 <p className="text-sm text-gray-500 leading-relaxed min-h-[40px]">{p.description}</p>
+                 <p className="text-sm text-foreground-secondary leading-relaxed min-h-[40px]">{p.description}</p>
                  <div className="flex flex-wrap gap-2 pt-2">
                     {p.features?.map((f: string) => (
-                        <span key={f} className="text-[10px] px-2 py-0.5 bg-gray-50 text-gray-500 rounded-full border border-gray-100">
+                        <span key={f} className="text-[10px] px-2 py-0.5 bg-muted text-foreground-secondary rounded-full border border-border-subtle">
                             {f}
                         </span>
                     ))}
@@ -99,7 +99,7 @@ export default function PluginMarketplacePage() {
                {pWrapper.isConnected ? (
                   <div className="flex gap-2 w-full mt-auto">
                      <Button variant="outline" className="flex-1"><Settings2 className="h-4 w-4 mr-2" /> Configure</Button>
-                     <Button variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></Button>
+                     <Button variant="ghost" className="text-danger-fg hover:text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></Button>
                   </div>
                ) : (
                   <Button 
@@ -115,8 +115,8 @@ export default function PluginMarketplacePage() {
         )})}
         
         {/* Developer CTA */}
-        <Card className="flex flex-col items-center justify-center text-center p-6 border-dashed bg-gray-50 hover:bg-gray-100 transition-all cursor-pointer group">
-           <Terminal className="h-10 w-10 text-gray-400 mb-4 group-hover:scale-110 transition-transform" />
+        <Card className="flex flex-col items-center justify-center text-center p-6 border-dashed bg-muted hover:bg-accent transition-all cursor-pointer group">
+           <Terminal className="h-10 w-10 text-foreground-muted mb-4 group-hover:scale-110 transition-transform" />
            <CardTitle>Build a Plugin</CardTitle>
            <CardDescription className="max-w-[200px] mt-2 mb-4 text-xs font-medium">
              Use our CLI and UI slots API to build your own private extensions.

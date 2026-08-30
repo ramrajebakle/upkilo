@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+/* ── THE dark variant ─────────────────────────────────────────────────────────
+   Tailwind v4 ships `dark:` wired to `@media (prefers-color-scheme: dark)` and there
+   is no config file here to change that, so every one of the 2,700+ `dark:` utilities
+   written across this app was answering the operating system and ignoring the product
+   entirely. Toggling the theme in the header swapped the `.dark` class on <html> — which
+   moved the handful of colours declared as CSS variables — while every `dark:bg-slate-900`,
+   `dark:text-white` and `dark:border-slate-800` stayed exactly where the OS had put it.
+   That is the single reason "dark mode works on some things and not others": the two
+   halves of the styling system were driven by two different signals.
+
+   Re-pointing the variant at the class makes the toggle authoritative for all of it. System
+   preference is not lost — ThemeProvider resolves 'system' to a real `.dark`/`.light` class
+   on <html>, so `prefers-color-scheme` still decides, it just does so through one channel.
+
+   :where() keeps the variant at zero specificity, matching Tailwind's own behaviour, so
+   `dark:` utilities continue to lose to more specific rules exactly as before.
+
+   The `.dark *` half is what makes overlays work: Radix portals mount into <body>, which is
+   a descendant of the themed <html>, so dialogs, dropdowns, selects, popovers and toasts
+   inherit the theme instead of needing their own copy of it. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ===========================================
    UPKILO DESIGN SYSTEM TOKENS
    Version: 1.0.0
@@ -61,15 +83,70 @@
   --color-tenant-600: #d97706;
   --color-tenant-900: #78350f;
 
-  /* AI Accent */
+  /* ── AI accent, full ramp ────────────────────────────────────────────────
+     Only 100 and 500 existed, but the app reaches for 50/200/300/400/600/700/800/900/950
+     as well — 60+ occurrences that compiled to nothing, leaving AI panels, the copilot
+     rail and every "suggested by AI" affordance with no background or border at all.
+     Interpolated around the existing 500 so the accent is unchanged where it already
+     rendered. */
+  --color-ai-50:  #f5f3ff;
   --color-ai-100: #ede9fe;
+  --color-ai-200: #ddd6fe;
+  --color-ai-300: #c4b5fd;
+  --color-ai-400: #a78bfa;
   --color-ai-500: #7c3aed;
+  --color-ai-600: #6d28d9;
+  --color-ai-700: #5b21b6;
+  --color-ai-800: #4c1d95;
+  --color-ai-900: #3b1578;
+  --color-ai-950: #250d4d;
 
-  /* Semantic */
+  /* ── Status ramps ────────────────────────────────────────────────────────
+     Same failure as the AI accent: a single 500 step was declared and the tint/shade
+     steps that every alert, badge and banner actually uses (50/100/200/400/600/700)
+     were dead. A status badge with no background is not a degraded badge — it is an
+     invisible one, which is how success and error states were shipping.
+
+     The 50/100 tints exist for light mode. Dark mode must NOT reuse them (a #f0fdf4
+     panel on a dark page is a flashbang), which is what the `-surface` and `-border`
+     semantic pairs further down are for — they resolve per theme. */
+  --color-success-50:  #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-400: #4ade80;
   --color-success-500: #16a34a;
+  --color-success-600: #15803d;
+  --color-success-700: #166534;
+
+  --color-warning-50:  #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-400: #fbbf24;
   --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+
+  --color-danger-50:  #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-400: #f87171;
   --color-danger-500: #dc2626;
+  --color-danger-600: #b91c1c;
+  --color-danger-700: #991b1b;
+
+  --color-info-50:  #eff6ff;
+  --color-info-100: #dbeafe;
+  --color-info-200: #bfdbfe;
+  --color-info-400: #60a5fa;
   --color-info-500: #2563eb;
+  --color-info-600: #1d4ed8;
+  --color-info-700: #1e40af;
+
+  /* Tailwind has no 850 step, but `dark:border-slate-850` is written 120+ times across
+     20 files as the dark-mode hairline — all of it dead, which is why dark cards had no
+     visible edge. Declaring the step is the honest fix: the intent was a border sitting
+     between slate-900 surfaces and slate-800, and that value is #172033. */
+  --color-slate-850: #172033;
 
   /* ── Primary brand scale ──────────────────────────────────────────────────
      These were referenced everywhere but defined nowhere. Tailwind v4 only emits a
@@ -95,9 +172,111 @@
   --color-primary-900: #1c1568;
   --color-primary-950: #120d45;
 
-  /* Surfaces and text resolve THROUGH the semantic vars in @layer base rather than
-     holding literal colours, so `bg-surface-50` and `text-text-primary` follow
-     light/dark automatically. A static hex here would lock the whole app to light. */
+  /* ══ SEMANTIC LAYER ══════════════════════════════════════════════════════
+     Everything below resolves THROUGH a variable declared per-theme in @layer base
+     rather than holding a literal colour. That indirection is the whole mechanism:
+     `bg-card` compiles to `background-color: var(--color-card)`, --color-card is
+     `var(--card)`, and --card is redeclared under `.dark`. One class, both themes, no
+     `dark:` variant needed at the call site.
+
+     Both --color-card and --card are declared on :root, so custom-property substitution
+     resolves them in the same scope and the dark redeclaration is picked up — this is
+     why the theme class must sit on <html> and nowhere else.
+
+     A static hex at this layer would lock the app to light mode, which is precisely the
+     bug this section replaces.
+
+     ── Why these names ──
+     Two vocabularies had grown up side by side and NEITHER was fully declared:
+       · an in-house one (surface-*, text-*), partly declared;
+       · a shadcn/Radix one (background, foreground, card, popover, muted, accent,
+         border, input, ring, destructive), declared nowhere at all — yet Select.tsx,
+         Input.tsx and 40+ pages were written against it. `bg-popover` emitting nothing
+         is why the Select dropdown rendered as transparent text floating over the page.
+     Both are declared here and point at the same underlying tokens, so the existing call
+     sites in either dialect work and neither needs a mass rename. New code should prefer
+     the semantic names; the numbered scales remain for brand and data-viz use. */
+
+  /* Page and content */
+  --color-background:           var(--surface-base);
+  --color-background-secondary: var(--surface-sunken);
+  --color-foreground:           var(--text-primary);
+  --color-foreground-secondary: var(--text-secondary);
+  --color-foreground-muted:     var(--text-tertiary);
+
+  /* Containers. `card` is the raised panel; `popover` is anything floating above it
+     (menus, dropdowns, tooltips, command palette) and is deliberately one step further
+     from the page so overlays read as detached in dark mode, where a shadow alone
+     cannot carry elevation. */
+  --color-card:            var(--surface-card);
+  --color-card-foreground: var(--text-primary);
+  --color-popover:            var(--surface-popover);
+  --color-popover-foreground: var(--text-primary);
+
+  /* Muted = de-emphasised fill (skeletons, disabled, table zebra, inert chips). */
+  --color-muted:            var(--surface-muted);
+  --color-muted-foreground: var(--text-tertiary);
+
+  /* Accent = hover/selected wash on interactive rows and menu items. */
+  --color-accent:            var(--surface-accent);
+  --color-accent-foreground: var(--text-primary);
+
+  /* Lines and controls */
+  --color-border:        var(--surface-border);
+  --color-border-subtle: var(--surface-border-subtle);
+  --color-border-strong: var(--surface-border-strong);
+  --color-input:            var(--control-border);
+  --color-control-thumb:    var(--control-thumb);
+  --color-input-background: var(--control-bg);
+  --color-ring:             var(--focus-ring);
+  --color-ring-offset-background: var(--surface-base);
+
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-hover:  var(--brand-hover);
+  /* `text-ai` / `bg-ai-subtle`, the theme-resolved pair for the AI accent. */
+  --color-ai:           var(--accent-ai);
+  --color-ai-subtle:    var(--accent-ai-subtle);
+  --color-overlay:      var(--overlay);
+
+  /* Bare brand aliases. `bg-primary` / `text-primary` are written 100+ times expecting
+     shadcn semantics; without these they were dead. They are NOT the same thing as
+     `text-text-primary` (body copy) — primary here means the brand fill. */
+  --color-primary:            var(--brand);
+  --color-primary-foreground: var(--brand-foreground);
+  --color-secondary:            var(--surface-muted);
+  --color-secondary-foreground: var(--text-primary);
+  --color-secondary-500:        var(--color-neutral-500);
+
+  /* destructive is the shadcn spelling of the danger ramp. Aliased rather than
+     duplicated so the two cannot drift. */
+  --color-destructive:            var(--status-danger-fg);
+  --color-destructive-foreground: #ffffff;
+
+  /* Status, theme-resolved. The numbered ramps above are fixed hues; these follow the
+     theme, so `bg-success-surface text-success-fg` is legible in both without a `dark:`
+     variant. Alert panels should use these. */
+  --color-success-surface: var(--status-success-bg);
+  --color-success-border:  var(--status-success-border);
+  --color-success-fg:      var(--status-success-fg);
+  --color-warning-surface: var(--status-warning-bg);
+  --color-warning-border:  var(--status-warning-border);
+  --color-warning-fg:      var(--status-warning-fg);
+  --color-danger-surface:  var(--status-danger-bg);
+  --color-danger-border:   var(--status-danger-border);
+  --color-danger-fg:       var(--status-danger-fg);
+  --color-info-surface:    var(--status-info-bg);
+  --color-info-border:     var(--status-info-border);
+  --color-info-fg:         var(--status-info-fg);
+
+  /* Chart chrome — the axes, gridlines and tooltip surface, which must follow the theme.
+     The data series palette is intentionally NOT here: series colour carries meaning and
+     brand, so it stays fixed across themes (see --chart-1..8 in @layer base). */
+  --color-chart-grid:    var(--chart-grid);
+  --color-chart-axis:    var(--chart-axis);
+
+  /* Legacy in-house names, kept so the ~400 existing call sites keep working. */
+  --color-surface-base: var(--surface-base);
+  --color-surface-0:   var(--surface-base);
   --color-surface-50:  var(--surface-raised);
   --color-surface-100: var(--surface-overlay);
   --color-surface-200: var(--surface-border);
@@ -132,6 +311,14 @@
   --radius-full: 9999px;
 
   /* Shadows */
+  /* `shadow-glow` and `shadow-glow-sm` were used on 12 primary buttons and auth cards and
+     declared nowhere, so those elements rendered flat. Built from --brand rather than a
+     literal violet, so a white-label tenant's colour glows in its own hue, and so the glow
+     tracks the lighter brand step dark mode switches to. */
+  --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--brand) 18%, transparent),
+                 0 8px 28px -6px color-mix(in srgb, var(--brand) 45%, transparent);
+  --shadow-glow-sm: 0 0 0 1px color-mix(in srgb, var(--brand) 15%, transparent),
+                    0 4px 14px -4px color-mix(in srgb, var(--brand) 35%, transparent);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
@@ -233,52 +420,346 @@
 }
 
 @layer base {
+  /* ══ LIGHT ═══════════════════════════════════════════════════════════════
+     The two themes are declared as one set of names with two sets of values. Adding a
+     token means adding it in both places; nothing else in the app should ever declare a
+     colour that changes between themes. */
   :root {
-    --surface-base: var(--color-neutral-0);
-    --surface-raised: var(--color-neutral-50);
-    --surface-overlay: var(--color-neutral-100);
-    --surface-sunken: var(--color-neutral-100);
+    color-scheme: light;
 
-    /* Border tones, referenced by --color-surface-200/300 above so borders track the
-       theme instead of being hard-coded light. */
-    --surface-border: var(--color-neutral-200);
+    /* ── Surfaces, page outward ──
+       Light mode separates a card from the page with a border and a shadow rather than a
+       tonal step — page and card are both white. Dark mode cannot borrow that trick, so
+       the same token pair carries different intent there (see below). */
+    --surface-base:    var(--color-neutral-0);    /* the page */
+    --surface-card:    var(--color-neutral-0);    /* panels, cards, table bodies */
+    --surface-raised:  var(--color-neutral-50);   /* subtly lifted regions */
+    --surface-popover: var(--color-neutral-0);    /* menus, dialogs, tooltips */
+    --surface-overlay: var(--color-neutral-100);
+    --surface-sunken:  var(--color-neutral-50);   /* page chrome behind cards */
+    --surface-muted:   var(--color-neutral-100);  /* skeletons, disabled, zebra rows */
+    --surface-accent:  var(--color-neutral-100);  /* hover / selected wash */
+
+    /* ── Lines ──
+       Three weights, because one is never enough: subtle for dividers inside a card,
+       border for the card's own edge, strong for emphasis and scrollbars. */
+    --surface-border-subtle: var(--color-neutral-100);
+    --surface-border:        var(--color-neutral-200);
     --surface-border-strong: var(--color-neutral-300);
 
-    /* Cards sit ON --surface-base rather than above it in light mode: the page and
-       the card are both white, separated by border and shadow alone. Dark mode
-       cannot borrow that trick — a card at --surface-base (#080812) against a page
-       of the same colour is invisible — so it lifts to neutral-900 instead. One
-       token, so .card-elevated and .stat-card cannot drift apart again. */
-    --surface-card: var(--color-neutral-0);
-
-    --text-primary: var(--color-neutral-900);
+    /* ── Text ── */
+    --text-primary:   var(--color-neutral-900);
     --text-secondary: var(--color-neutral-500);
-    /* Not neutral-400 (#9999b0): that measures 2.62:1 on --surface-raised, well under
-       the 4.5:1 WCAG AA floor, and axe failed the login page on it. #6e6e85 measures
-       4.68:1 while staying visibly lighter than --text-secondary. */
-    --text-tertiary: #6e6e85;
-    --text-inverse: var(--color-neutral-0);
+    /* Not neutral-400 (#9999b0): that measures 2.62:1 on --surface-raised, well under the
+       4.5:1 WCAG AA floor, and axe failed the login page on it.
+
+       #6a6a80 rather than the #6e6e85 this started at, because the binding surface is
+       --surface-muted (#f0f0f4), not white: 400-odd former `text-slate-400` labels now
+       resolve here and many of them sit on muted panels, where #6e6e85 measured 4.42:1 and
+       missed. This clears 4.5:1 on BOTH --surface-card and --surface-muted. */
+    --text-tertiary:  #6a6a80;
+    --text-inverse:   var(--color-neutral-0);
+
+    /* ── Controls ──
+       Inputs get a white fill and a border one step stronger than a card's. An input is
+       an invitation to type; it has to look recessed and clickable, not like a div. */
+    --control-bg:     var(--color-neutral-0);
+    --control-border: var(--color-neutral-300);
+    --focus-ring:     var(--color-primary-500);
+
+    /* The moving disc on a switch. It rides on a BRAND-coloured track, not on a page
+       surface, so it stays light in both themes — the one place where "same colour in dark
+       mode" is the correct answer rather than a missed migration. Distinct from
+       --surface-card precisely so a future change to card colour cannot silently turn every
+       toggle knob into an invisible hole. */
+    --control-thumb:  var(--color-neutral-0);
+
+    /* ── Brand fill ── */
+    --brand:            var(--color-primary-500);
+    --brand-hover:      var(--color-primary-600);
+    --brand-active:     var(--color-primary-700);
+    --brand-foreground: #ffffff;
+    /* Tinted brand wash for selected nav items and active tabs. A percentage mix rather
+       than primary-50, because the same rule has to work over a dark page. */
+    --brand-subtle:     color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+    /* The AI accent gets the same treatment as the brand: a theme-resolved text tone and a
+       wash, because `text-ai-600` on a dark card measures 2.1:1 for exactly the same reason
+       `text-primary-600` does. */
+    --accent-ai:        var(--color-ai-500);
+    --accent-ai-subtle: color-mix(in srgb, var(--color-ai-500) 10%, transparent);
+
+    /* ── Status, theme-resolved ──
+       Tint + border + text as a matched triple, so an alert panel is one decision rather
+       than three. The text steps are the 600/700s: the 500s do not clear 4.5:1 on their
+       own tint. */
+    --status-success-bg:     var(--color-success-50);
+    --status-success-border: var(--color-success-200);
+    --status-success-fg:     var(--color-success-700);
+    --status-warning-bg:     var(--color-warning-50);
+    --status-warning-border: var(--color-warning-200);
+    --status-warning-fg:     var(--color-warning-700);
+    --status-danger-bg:      var(--color-danger-50);
+    --status-danger-border:  var(--color-danger-200);
+    --status-danger-fg:      var(--color-danger-600);
+    --status-info-bg:        var(--color-info-50);
+    --status-info-border:    var(--color-info-200);
+    --status-info-fg:        var(--color-info-700);
+
+    /* ── Overlay and elevation ──
+       Scrims and shadows are theme decisions too. A shadow tuned for a white page is
+       almost invisible on a dark one, and a 45% black scrim over an already-dark page
+       does not read as a scrim at all. */
+    --overlay: rgb(17 17 32 / 0.45);
+    --shadow-card: 0 1px 3px rgb(0 0 0 / 0.04), 0 4px 12px rgb(0 0 0 / 0.06);
+    --shadow-popover: 0 10px 38px -10px rgb(0 0 0 / 0.18), 0 10px 20px -15px rgb(0 0 0 / 0.2);
+
+    /* ── Chart chrome ──
+       Gridlines and axis labels follow the theme. Series colours do not — see below. */
+    --chart-grid: var(--color-neutral-200);
+    --chart-axis: #6e6e85;
 
     background-color: var(--surface-base);
     color: var(--text-primary);
     font-family: var(--font-sans);
   }
 
+  /* ══ DARK ════════════════════════════════════════════════════════════════
+     Not an inversion of the light theme. Three things are deliberate:
+
+     1. The page is #0b1120, not black. Pure black maximises the contrast step against
+        every surface above it, so cards read as glowing panels rather than as paper, and
+        it leaves nothing below the page for anything to recede into.
+     2. The ramp is the slate family, not the violet-tinted --color-neutral-* scale used
+        in light mode. The app writes `dark:bg-slate-900`, `dark:border-slate-800` and
+        `dark:text-slate-400` roughly 8,000 times; once the class-based dark variant at
+        the top of this file made those live, a violet page hosting blue-grey cards would
+        have been the result. Aligning the tokens to slate makes the token surfaces and
+        the hand-written utilities the same colour instead of two near-misses.
+     3. Body text is slate-100, not #fff. Full white on a dark ground causes halation —
+        the text appears to bleed into the background during sustained reading. Pure white
+        is kept for headings and for text on brand fills, where it is a short burst and
+        the extra weight is wanted. */
   .dark {
-    --surface-base: var(--color-neutral-950);
-    --surface-raised: var(--color-neutral-900);
-    --surface-overlay: var(--color-neutral-800);
-    --surface-sunken: #060610;
+    color-scheme: dark;
 
-    --surface-border: var(--color-neutral-800);
-    --surface-border-strong: var(--color-neutral-700);
+    /* Surfaces step UP from the page as elevation increases — the opposite direction to
+       light mode, where they step down. This is the surface hierarchy: page → card →
+       popover, each one measurably lighter, so depth survives without shadows. */
+    --surface-base:    #0b1120;   /* the page: below slate-900, above black */
+    --surface-card:    #0f172a;   /* slate-900 — matches dark:bg-slate-900 call sites */
+    --surface-raised:  #0f172a;
+    --surface-popover: #1a2338;   /* a step above cards so overlays detach */
+    --surface-overlay: #1e293b;   /* slate-800 */
+    --surface-sunken:  #070c16;   /* recessed wells, code blocks, sidebar rail */
+    /* Muted sits BELOW the card, not above it. `bg-gray-50` in light mode means "recessed" —
+       a card footer, a page wrapper, a skeleton — and the dark equivalent of recessed is
+       darker, not lighter. Mapping it to slate-800 (as the first pass did) inverted the
+       hierarchy: pricing-card footers floated above their own headers, and page wrappers
+       came out brighter than the cards sitting on them.
 
-    --surface-card: var(--color-neutral-900);
+       Accent stays ABOVE the card, because hover and selection mean lift. That is the whole
+       reason these are two tokens with the same light-mode value. */
+    --surface-muted:   #0d1526;
+    --surface-accent:  #1e293b;
 
-    --text-primary: var(--color-neutral-50);
-    --text-secondary: var(--color-neutral-400);
-    --text-tertiary: var(--color-neutral-600);
-    --text-inverse: var(--color-neutral-900);
+    --surface-border-subtle: #172033;   /* slate-850 */
+    --surface-border:        #1e293b;   /* slate-800 — matches dark:border-slate-800 */
+    --surface-border-strong: #334155;   /* slate-700 */
+
+    --text-primary:   #f1f5f9;   /* slate-100, not #fff — see note above */
+    --text-secondary: #94a3b8;   /* slate-400 — 7.0:1 on --surface-card */
+    --text-tertiary:  #8296ad;   /* 5.2:1 on --surface-card; slate-500 is 4.0:1 and fails */
+    --text-inverse:   #0f172a;
+
+    /* An input must not be lighter than the popover that can sit over it, or the stack
+       reads inverted. Slightly darker than the card it sits on, so it reads as a well. */
+    --control-bg:     #0b1120;
+    --control-border: #334155;
+    --focus-ring:     var(--color-primary-400);
+    /* slate-100 rather than pure white: on a dark page a #fff disc reads as a hotspot. */
+    --control-thumb:  #f1f5f9;
+
+    /* primary-500 on a dark ground is heavy and slightly muddy; 400 keeps the hue at the
+       lightness dark UI wants. Its foreground goes dark because white on #8b7cf8 measures
+       only 2.9:1 — this is the case where a naive inversion produces an accessibility
+       failure rather than a cosmetic one. */
+    --brand:            var(--color-primary-400);
+    --brand-hover:      var(--color-primary-300);
+    --brand-active:     var(--color-primary-200);
+    --brand-foreground: #120d45;
+    --brand-subtle:     color-mix(in srgb, var(--color-primary-400) 16%, transparent);
+    --accent-ai:        var(--color-ai-400);
+    --accent-ai-subtle: color-mix(in srgb, var(--color-ai-400) 18%, transparent);
+
+    /* Status panels invert to a translucent wash of the hue over the dark page, rather
+       than the light 50-tints, which would glare. The text steps move to the 200/300s to
+       clear contrast on that wash. */
+    --status-success-bg:     rgb(22 163 74 / 0.12);
+    --status-success-border: rgb(74 222 128 / 0.28);
+    --status-success-fg:     #6ee7a8;
+    --status-warning-bg:     rgb(245 158 11 / 0.12);
+    --status-warning-border: rgb(251 191 36 / 0.3);
+    --status-warning-fg:     #fcd34d;
+    --status-danger-bg:      rgb(220 38 38 / 0.14);
+    --status-danger-border:  rgb(248 113 113 / 0.3);
+    --status-danger-fg:      #fca5a5;
+    --status-info-bg:        rgb(37 99 235 / 0.14);
+    --status-info-border:    rgb(96 165 250 / 0.3);
+    --status-info-fg:        #93c5fd;
+
+    /* A deeper, wider scrim: a modal has to separate from a page that is already dark.
+       Shadows go opaquer for the same reason. */
+    --overlay: rgb(2 6 16 / 0.7);
+    --shadow-card: 0 1px 3px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.3);
+    --shadow-popover: 0 16px 48px -12px rgb(0 0 0 / 0.65), 0 4px 12px rgb(0 0 0 / 0.4);
+
+    --chart-grid: #1e293b;
+    --chart-axis: #94a3b8;
+  }
+
+  /* ── Data-visualisation series ───────────────────────────────────────────
+     Fixed across both themes, by design. Series colour is an identity — "cyan is revenue"
+     has to survive a theme switch, or every chart the user has learned to read is
+     relearned twice a day. These hues sit in the 400-500 band, which is where they clear
+     3:1 non-text contrast against BOTH #ffffff and #0b1120; that constraint is what makes
+     one palette possible instead of two.
+
+     Chart chrome — grid, axes, tooltip surface — is the part that must follow the theme,
+     and does, via --chart-grid / --chart-axis above. */
+  :root {
+    --chart-1: #06b6d4;   /* cyan */
+    --chart-2: #8b5cf6;   /* violet */
+    --chart-3: #10b981;   /* emerald */
+    --chart-4: #f59e0b;   /* amber */
+    --chart-5: #f43f5e;   /* rose */
+    --chart-6: #3b82f6;   /* blue */
+    --chart-7: #ec4899;   /* pink */
+    --chart-8: #84cc16;   /* lime */
+  }
+
+  /* ── White-label tenant brand ────────────────────────────────────────────
+     Set at runtime from the tenant's own primaryColor by the booking and portal routes.
+     It had no declaration at all, so until that JS ran — and permanently, for any tenant
+     with no colour configured — every `bg-[var(--primary-color)]` button was transparent
+     and its white label invisible. A default means the page is always styled and the
+     tenant colour is an enhancement rather than a prerequisite. */
+  :root {
+    --primary-color: var(--color-primary-500);
+    --primary-color-hover: var(--color-primary-600);
+    --primary-color-light: color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+    /* The label colour for a tenant-chosen fill. applyTenantBrand() overrides this per tenant
+       by measuring contrast against their actual hue; white is only the default because the
+       product brand is dark enough for it. */
+    --primary-color-foreground: #ffffff;
+  }
+
+  .dark {
+    --primary-color-light: color-mix(in srgb, var(--color-primary-400) 16%, transparent);
+  }
+
+  /* ── Print ───────────────────────────────────────────────────────────────
+     Paper is white. A user who prints an invoice while the app is in dark mode was getting
+     the dark token set committed to the page: dark boxes, light text, and a lot of ink for
+     something that then had to be read off a black rectangle.
+
+     Forcing the LIGHT VALUES rather than patching classes is what makes this hold. The one
+     print rule that existed — on the invoice page — enumerated `.bg-white`, `.text-slate-900`
+     and six others by name, so it covered exactly the classes present the day it was written
+     and silently missed every token added since. Re-declaring the tokens catches everything
+     that resolves through them, on every printable page, including ones not written yet.
+
+     Scoped to :root AND :root.dark because the dark block wins on source order otherwise. */
+  @media print {
+    :root,
+    :root.dark {
+      /* !important because ThemeScript writes color-scheme as an INLINE style on <html>, and
+         an inline declaration outranks any stylesheet rule. This is the one case the keyword
+         exists for — overriding an inline style — rather than a specificity workaround. It
+         only affects how the browser paints native controls in the print preview; without it
+         a printed form still renders its inputs and scrollbars dark. */
+      color-scheme: light !important;
+
+      --surface-base:    #ffffff;
+      --surface-card:    #ffffff;
+      --surface-raised:  #ffffff;
+      --surface-popover: #ffffff;
+      --surface-overlay: #f0f0f4;
+      --surface-sunken:  #f8f8fa;
+      --surface-muted:   #f8f8fa;
+      --surface-accent:  #f0f0f4;
+
+      --surface-border-subtle: #e4e4eb;
+      --surface-border:        #d4d4dd;
+      --surface-border-strong: #b8b8c6;
+
+      --text-primary:   #111120;
+      --text-secondary: #3f3f52;
+      --text-tertiary:  #55556a;
+      --text-inverse:   #ffffff;
+
+      --control-bg:     #ffffff;
+      --control-border: #b8b8c6;
+      --control-thumb:  #ffffff;
+
+      --brand:            #4535d4;   /* primary-600: the 500 prints washed out */
+      --brand-hover:      #4535d4;
+      --brand-foreground: #ffffff;
+      --brand-subtle:     #eef0ff;
+
+      --status-success-bg: #f0fdf4; --status-success-border: #bbf7d0; --status-success-fg: #166534;
+      --status-warning-bg: #fffbeb; --status-warning-border: #fde68a; --status-warning-fg: #b45309;
+      --status-danger-bg:  #fef2f2; --status-danger-border:  #fecaca; --status-danger-fg:  #b91c1c;
+      --status-info-bg:    #eff6ff; --status-info-border:    #bfdbfe; --status-info-fg:    #1e40af;
+
+      /* Ink, not light: a drop shadow prints as a grey smear. */
+      --shadow-card: none;
+      --shadow-popover: none;
+      --shadow-glow: none;
+      --shadow-glow-sm: none;
+      --overlay: transparent;
+
+      --chart-grid: #d4d4dd;
+      --chart-axis: #55556a;
+    }
+
+    /* Browsers drop background colours from print by default, which would strip the tints
+       off status panels and table headers and leave their borders floating. */
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
+  /* Both <html> and <body> must be painted. The viewport shows <html>'s background, but an
+     unpainted <body> lets the light page show through wherever a route's own wrapper does
+     not reach — which is what produced white gutters below short pages in dark mode. */
+  html,
+  body {
+    background-color: var(--surface-base);
+    color: var(--text-primary);
+  }
+
+  /* Theme changes should read as the interface re-lighting, not as a hard cut. Scoped to
+     the three properties that actually change, and applied only while the switch is in
+     flight — ThemeProvider sets [data-theme-transition] on <html> for the duration —
+     because a permanent global colour transition makes every hover state feel laggy and
+     forces the compositor to watch every element on the page. */
+  [data-theme-transition],
+  [data-theme-transition] *,
+  [data-theme-transition] *::before,
+  [data-theme-transition] *::after {
+    transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out),
+      color 180ms var(--ease-out) !important;
+    transition-delay: 0ms !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-theme-transition],
+    [data-theme-transition] *,
+    [data-theme-transition] *::before,
+    [data-theme-transition] *::after {
+      transition: none !important;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -304,7 +785,7 @@
   ::selection {
     /* 0.22 alpha keeps selected body text above the 4.5:1 contrast floor against
        both --surface-base values; a solid brand fill would drop it below. */
-    background-color: color-mix(in srgb, var(--color-primary-500) 22%, transparent);
+    background-color: color-mix(in srgb, var(--brand) 22%, transparent);
     color: var(--text-primary);
   }
 
@@ -313,14 +794,14 @@
   input,
   textarea,
   [contenteditable] {
-    caret-color: var(--color-primary-500);
+    caret-color: var(--brand);
   }
 
   /* A global focus ring, not just the one on .btn — every interactive element
      needs a visible keyboard state, and until now anything that was not a .btn
      fell back to the UA default (or nothing, where a reset removed it). */
   :focus-visible {
-    outline: 2px solid var(--color-primary-500);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -382,7 +863,7 @@
 
   input[type="checkbox"],
   input[type="radio"] {
-    accent-color: var(--color-primary-500);
+    accent-color: var(--brand);
   }
 }
 
@@ -415,7 +896,7 @@
   }
 
   .btn:focus-visible {
-    outline: 2px solid var(--color-ai-500);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
   }
 
@@ -426,55 +907,48 @@
     pointer-events: none;
   }
 
+  /* .btn-primary was the AI violet, not the brand — two different purples sat side by
+     side wherever a .btn-primary and a <Button variant="primary"> appeared on the same
+     screen, because Button.tsx uses primary-500. Both now resolve from --brand, which is
+     also the token that steps to primary-400 in dark mode. */
   .btn-primary {
-    background-color: var(--color-ai-500);
-    color: #ffffff;
-    border-color: var(--color-ai-500);
+    background-color: var(--brand);
+    color: var(--brand-foreground);
+    border-color: var(--brand);
   }
 
   .btn-primary:hover {
-    background-color: #6d28d9;
-    border-color: #6d28d9;
+    background-color: var(--brand-hover);
+    border-color: var(--brand-hover);
   }
 
   .btn-primary:active {
-    background-color: #5b21b6;
+    background-color: var(--brand-active);
   }
 
+  /* One rule for both themes now that the surface tokens exist — the .dark override
+     below it was a second definition that had to be kept in sync by hand. */
   .btn-secondary {
-    background-color: #ffffff;
-    color: var(--color-neutral-700);
-    border-color: var(--color-neutral-200);
+    background-color: var(--surface-card);
+    color: var(--text-primary);
+    border-color: var(--surface-border-strong);
   }
 
   .btn-secondary:hover {
-    background-color: var(--color-neutral-50);
-    border-color: var(--color-neutral-300);
-  }
-
-  .dark .btn-secondary {
-    background-color: var(--color-neutral-800);
-    color: var(--color-neutral-100);
-    border-color: var(--color-neutral-700);
-  }
-
-  .dark .btn-secondary:hover {
-    background-color: var(--color-neutral-700);
+    background-color: var(--surface-accent);
+    border-color: var(--surface-border-strong);
   }
 
   /* ---- Cards ---- */
+  /* A shadow tuned for white cards on a white page all but vanishes on a dark one.
+     --shadow-card carries the per-theme value, so the four .dark overrides these rules
+     used to need are gone — elevation is now one token rather than a matched pair that
+     had to be edited together. */
   .card-elevated {
     background-color: var(--surface-card);
     border: 1px solid var(--surface-border);
     border-radius: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
-  }
-
-  /* A shadow tuned for white cards on a white page all but vanishes on a dark
-     one, leaving the card to rely on its border alone. Deepening it in dark
-     restores the same sense of elevation. */
-  .dark .card-elevated {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-card);
   }
 
   .stat-card {
@@ -482,38 +956,36 @@
     border: 1px solid var(--surface-border);
     border-radius: 1rem;
     padding: 1.25rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s var(--ease-out), transform 0.2s var(--ease-out),
+      border-color 0.2s var(--ease-out);
     cursor: pointer;
     display: block;
   }
 
   .stat-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-popover);
+    border-color: var(--surface-border-strong);
     transform: translateY(-1px);
-  }
-
-  .dark .stat-card {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  }
-
-  .dark .stat-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
   }
 
   /* ---- Glass effects ---- */
   .glass-dark {
-    background-color: rgba(15, 15, 30, 0.6);
+    background-color: rgb(15 15 30 / 0.6);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgb(255 255 255 / 0.08);
   }
 
+  /* .glass was a fixed white scrim, so in dark mode it painted a bright translucent
+     sheet over a dark page — the single most visible "this component never got dark
+     mode" surface in the app, since it is used for sticky headers. It now frosts the
+     current surface colour instead of always frosting white. */
   .glass {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: color-mix(in srgb, var(--surface-base) 72%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--surface-border);
   }
 
   /* .gradient-text removed. It clipped a violet-to-blue gradient into text, which is
@@ -543,6 +1015,154 @@
     line-height: 1.2;
     letter-spacing: -0.02em;
   }
+}
+
+/* ===========================================
+   REACT FLOW CHROME — the workflow canvas
+   =========================================== */
+/* reactflow/dist/style.css hardcodes a white minimap, white controls and a #eee dot grid. On a
+   dark page the minimap was a bright white rectangle pinned to the corner of the canvas — the
+   single most obvious unthemed element left in the app.
+
+   Same reasoning as the recharts block below: vendor CSS is unlayered, so these rules are too,
+   and driving them from tokens means the canvas follows the theme with no JS and no remount.
+
+   The class is DOUBLED (.react-flow__minimap.react-flow__minimap). Unlayered-beats-layered is
+   not enough here, because reactflow's rules are unlayered too and its stylesheet is imported
+   inside the page component — so it loads after globals.css and wins the source-order tie at
+   equal specificity. Repeating the class raises specificity without inventing a structural
+   selector that a future reactflow release could invalidate. */
+
+.react-flow__minimap.react-flow__minimap {
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.5rem;
+}
+
+.react-flow__minimap-mask.react-flow__minimap-mask {
+  fill: color-mix(in srgb, var(--surface-base) 65%, transparent);
+}
+
+.react-flow__minimap-node.react-flow__minimap-node {
+  fill: var(--surface-border-strong);
+  stroke: none;
+}
+
+.react-flow__controls-button.react-flow__controls-button {
+  background-color: var(--surface-card);
+  border-bottom: 1px solid var(--surface-border);
+  color: var(--text-primary);
+  fill: var(--text-primary);
+}
+
+.react-flow__controls-button.react-flow__controls-button:hover {
+  background-color: var(--surface-accent);
+}
+
+.react-flow__controls-button.react-flow__controls-button svg {
+  fill: currentColor;
+}
+
+/* The dot/line grid behind the canvas. */
+.react-flow__background.react-flow__background pattern circle,
+.react-flow__background.react-flow__background pattern path {
+  fill: var(--surface-border);
+  stroke: var(--surface-border);
+}
+
+.react-flow__edge-path.react-flow__edge-path {
+  stroke: var(--surface-border-strong);
+}
+
+.react-flow__edge.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge.react-flow__edge:focus .react-flow__edge-path {
+  stroke: var(--brand);
+}
+
+.react-flow__attribution.react-flow__attribution {
+  background-color: color-mix(in srgb, var(--surface-base) 70%, transparent);
+  color: var(--text-tertiary);
+}
+
+.react-flow__attribution.react-flow__attribution a {
+  color: var(--text-tertiary);
+}
+
+/* ===========================================
+   RECHARTS CHROME — theme-aware, once, for every chart in the app
+   =========================================== */
+/* Ten files render recharts, and each one passed its gridlines and axis labels as literal
+   hexes: stroke="#e2e8f0" for the grid, fill="#94a3b8" for the ticks. Those are light-mode
+   values. In dark mode the grid (slate-200 on a #0b1120 page) went from a hairline to a
+   glaring white lattice, brighter than the data drawn on top of it.
+
+   Fixing it here rather than in the components is deliberate:
+
+     · It reaches the four charts that are written inline in pages and never imported from
+       components/charts, which a component-by-component pass would have missed.
+     · Recharts emits colour as SVG *presentation attributes*, and var() is not supported
+       inside a presentation attribute — `stroke="var(--chart-grid)"` silently does nothing.
+       A stylesheet rule does support var(), and presentation attributes lose to any CSS
+       selector, so this overrides the literals without touching them.
+     · No React state is involved, so switching theme repaints the chart instead of
+       re-rendering and re-animating it.
+
+   Unlayered for the same reason as the Shepherd block below: recharts' own styles are
+   unlayered, and an unlayered rule beats a layered one regardless of specificity. */
+
+.recharts-cartesian-grid line,
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line,
+.recharts-polar-grid line,
+.recharts-polar-grid circle,
+.recharts-polar-grid path {
+  stroke: var(--chart-grid);
+}
+
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  stroke: var(--chart-grid);
+}
+
+.recharts-cartesian-axis-tick-value,
+.recharts-polar-angle-axis-tick-value,
+.recharts-polar-radius-axis-tick-value,
+.recharts-label,
+.recharts-legend-item-text {
+  fill: var(--chart-axis);
+  color: var(--chart-axis);
+}
+
+/* The hover cursor is a translucent slab behind the hovered category. Tuned for a white
+   plot area, it was invisible on a dark one. */
+.recharts-tooltip-cursor {
+  fill: color-mix(in srgb, var(--text-secondary) 10%, transparent);
+  stroke: var(--surface-border-strong);
+}
+
+/* Point markers ring themselves against the surface they sit on, so the marker reads as
+   resting on the card rather than punched through it. This was `stroke="#fff"` at the call
+   site — a white halo around every point once the card went dark.
+
+   It has to be CSS rather than a prop: recharts passes `dot={{ stroke }}` straight through
+   to an SVG presentation attribute, and var() is not resolved in a presentation attribute,
+   so `stroke="var(--surface-card)"` would have silently produced no ring at all. */
+.recharts-dot {
+  stroke: var(--surface-card);
+}
+
+/* Recharts' default tooltip, used wherever a chart does not pass a custom one. */
+.recharts-default-tooltip {
+  background-color: var(--surface-popover) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: var(--shadow-popover);
+  color: var(--text-primary) !important;
+}
+
+.recharts-surface:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* ===========================================

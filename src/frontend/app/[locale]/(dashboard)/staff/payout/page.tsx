@@ -86,16 +86,16 @@ export default function StaffPayoutPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-xs font-medium text-text-secondary">Total paid</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <CheckCircle2 className="h-4 w-4 text-success-fg" />
           </CardHeader>
-          <CardContent><p className="text-2xl font-bold text-green-500">${totalPaid.toFixed(2)}</p></CardContent>
+          <CardContent><p className="text-2xl font-bold text-success-fg">${totalPaid.toFixed(2)}</p></CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-xs font-medium text-text-secondary">Pending</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTriangle className="h-4 w-4 text-warning-fg" />
           </CardHeader>
-          <CardContent><p className="text-2xl font-bold text-amber-500">${totalPending.toFixed(2)}</p></CardContent>
+          <CardContent><p className="text-2xl font-bold text-warning-fg">${totalPending.toFixed(2)}</p></CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -128,7 +128,7 @@ export default function StaffPayoutPage() {
             <p className="text-sm text-text-secondary">
               {totalPending > 0 ? `$${totalPending.toFixed(2)} pending across ${payouts.filter((p) => p.status === "Pending").length} payout(s).` : "No pending payouts."}
             </p>
-            <Button variant="primary" className="w-full bg-green-600 hover:bg-green-700"
+            <Button variant="primary" className="w-full bg-green-600 hover:bg-green-700 text-white"
               leftIcon={processingPayouts ? <Loader2 size={14} className="animate-spin" /> : <DollarSign size={14} />}
               onClick={processPayouts} disabled={processingPayouts || totalPending === 0}>
               {processingPayouts ? "Processing…" : "Process Pending Payouts"}
@@ -158,7 +158,7 @@ export default function StaffPayoutPage() {
                   {payouts.map((p) => (
                     <tr key={p.id} className="border-b border-surface-100 hover:bg-surface-50">
                       <td className="py-3 px-3 font-medium text-text-primary">{p.staffName ?? "—"}</td>
-                      <td className="py-3 px-3 font-bold text-green-600">${p.amount.toFixed(2)}</td>
+                      <td className="py-3 px-3 font-bold text-success-fg">${p.amount.toFixed(2)}</td>
                       <td className="py-3 px-3"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_COLOR[p.status] ?? ""}`}>{p.status}</span></td>
                       <td className="py-3 px-3 text-xs text-text-secondary">{new Date(p.createdAt).toLocaleDateString()}</td>
                       <td className="py-3 px-3 text-xs text-text-secondary">{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "—"}</td>

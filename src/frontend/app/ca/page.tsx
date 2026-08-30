@@ -34,7 +34,7 @@ const plans = [
 
 export default function CanadaPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-card">
       {/* Hero */}
       <section className="bg-gradient-to-br from-red-700 to-red-900 text-white py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
@@ -63,36 +63,36 @@ export default function CanadaPage() {
 
       {/* Features */}
       <section className="py-16 px-4 max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+        <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
           Built for the Canadian market
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((f) => (
-            <div key={f.title} className="border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition">
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">{f.title}</h3>
-              <p className="text-gray-600 text-sm">{f.desc}</p>
+            <div key={f.title} className="border border-border-subtle rounded-xl p-6 shadow-sm hover:shadow-md transition">
+              <h3 className="text-lg font-semibold mb-2 text-foreground">{f.title}</h3>
+              <p className="text-foreground-secondary text-sm">{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-muted">
         <div className="max-w-5xl mx-auto">
           {/* Heading said "Simple CAD pricing" / "Tax-inclusive" directly above USD plan cards.
               Upkilo bills exclusively in USD, exclusive of tax. */}
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">Simple, transparent pricing</h2>
-          <p className="text-center text-gray-600 mb-12">Prices in USD, excluding applicable taxes. Cancel anytime.</p>
+          <h2 className="text-3xl font-bold text-center mb-4 text-foreground">Simple, transparent pricing</h2>
+          <p className="text-center text-foreground-secondary mb-12">Prices in USD, excluding applicable taxes. Cancel anytime.</p>
           <div className="grid md:grid-cols-3 gap-8">
             {plans.map((p) => (
-              <div key={p.name} className={`rounded-2xl p-8 ${p.highlight ? 'bg-red-700 text-white shadow-xl scale-105' : 'bg-white border border-gray-200'}`}>
+              <div key={p.name} className={`rounded-2xl p-8 ${p.highlight ? 'bg-red-700 text-white shadow-xl scale-105' : 'bg-card border border-border'}`}>
                 <div className="text-sm font-semibold mb-2 opacity-75">{p.name}</div>
                 <div className="text-4xl font-bold mb-1">{p.price}</div>
-                <div className={`text-sm mb-6 ${p.highlight ? 'opacity-75' : 'text-gray-500'}`}>{p.period}</div>
+                <div className={`text-sm mb-6 ${p.highlight ? 'opacity-75' : 'text-foreground-secondary'}`}>{p.period}</div>
                 <ul className="space-y-2 mb-8">
                   {p.features.map((feat) => (
                     <li key={feat} className="flex items-center gap-2 text-sm">
-                      <span className={p.highlight ? 'text-red-200' : 'text-red-600'}>✓</span> {feat}
+                      <span className={p.highlight ? 'text-red-200' : 'text-danger-fg'}>✓</span> {feat}
                     </li>
                   ))}
                 </ul>
@@ -111,8 +111,8 @@ export default function CanadaPage() {
         <div className="max-w-3xl mx-auto">
           {/* Replaced a fabricated testimonial attributed to "Marc B., Salon Beauté, Montréal".
               No such customer exists. See the equivalent note in app/au/page.tsx. */}
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">What you get on day one</h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-bold mb-6 text-foreground">What you get on day one</h2>
+          <p className="text-lg text-foreground max-w-2xl mx-auto">
             Online booking, client records and automated reminders, with province-aware
             HST/GST/PST applied to every invoice and CASL-compliant opt-in built into the
             messaging flow.

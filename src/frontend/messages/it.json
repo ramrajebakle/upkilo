@@ -57,5 +57,38 @@
       "cancelled": "Annullato",
       "completed": "Completato"
     }
+  },
+  "Theme": {
+    "accentColour": "Colore accento",
+    "accentHelp": "Il colore del tuo marchio, usato sulla pagina di prenotazione pubblica e nel portale clienti. È condiviso con <link>Brand</link>, dove puoi impostare anche logo e dominio personalizzato.",
+    "accentPreview": "Prenota ora",
+    "accentSaveFailed": "Impossibile salvare il colore accento",
+    "accentSaved": "Colore accento salvato",
+    "appearance": "Aspetto",
+    "appearanceSubtitle": "Scegli come appare Upkilo su questo dispositivo.",
+    "colourAmber": "Ambra",
+    "colourCyan": "Ciano",
+    "colourEmerald": "Smeraldo",
+    "colourIndigo": "Indaco",
+    "colourRose": "Rosa",
+    "colourTheme": "Tema colore",
+    "colourViolet": "Viola",
+    "contrastWarning": "Su questo colore le etichette dei pulsanti raggiungono solo {ratio}:1 di contrasto, sotto il minimo di accessibilità di 4,5:1. Una tonalità un po' più scura sarà più leggibile per tutti.",
+    "dark": "Scuro",
+    "darkHint": "Sempre il tema scuro",
+    "darkModeActive": "Modalità scura attiva",
+    "light": "Chiaro",
+    "lightHint": "Sempre il tema chiaro",
+    "lightModeActive": "Modalità chiara attiva",
+    "resolvedNow": "attualmente {mode}",
+    "saveAccent": "Salva colore accento",
+    "saved": "Salvato",
+    "saving": "Salvataggio…",
+    "switchToDark": "Passa alla modalità scura",
+    "switchToLight": "Passa alla modalità chiara",
+    "system": "Sistema",
+    "systemHint": "Segui questo dispositivo",
+    "themeHint": "Si applica subito e viene ricordato su questo dispositivo.",
+    "themeSection": "Tema"
   }
 }

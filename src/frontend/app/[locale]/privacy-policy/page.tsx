@@ -33,7 +33,7 @@ export default function PrivacyPolicyPage() {
                     &nbsp;·&nbsp;
                     Privacy: <a href="mailto:privacy@upkilo.com" className="underline">privacy@upkilo.com</a>
                 </p>
-                <p className="text-slate-400 dark:text-slate-500 mb-8 text-xs">
+                <p className="text-foreground-muted mb-8 text-xs">
                     Primary law: Digital Personal Data Protection Act, 2023 (India) &amp; IT Act, 2000 ·
                     Extraterritorial: GDPR (EU/EEA), UK GDPR, CCPA (California)
                 </p>
@@ -141,7 +141,7 @@ export default function PrivacyPolicyPage() {
                             <li><strong>Legitimate uses (S.7):</strong> for compliance with Indian law, legal proceedings, medical emergencies, and State functions</li>
                             <li><strong>Contractual necessity:</strong> to provide the services you have subscribed to</li>
                         </ul>
-                        <p className="text-sm text-slate-500">For EU/EEA users, corresponding GDPR Art. 6 bases apply: contract (6(1)(b)), legal obligation (6(1)(c)), consent (6(1)(a)), and legitimate interests (6(1)(f)).</p>
+                        <p className="text-sm text-foreground-secondary">For EU/EEA users, corresponding GDPR Art. 6 bases apply: contract (6(1)(b)), legal obligation (6(1)(c)), consent (6(1)(a)), and legitimate interests (6(1)(f)).</p>
                     </section>
 
                     <section className="border-l-4 border-blue-500 pl-6 bg-blue-50 dark:bg-blue-900/20 py-4 rounded-r-xl">

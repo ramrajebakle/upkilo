@@ -32,7 +32,7 @@ export default function AIInfraPage() {
     <div className="space-y-8 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">AI Infrastructure <Sparkles className="text-ai-500" size={24} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">AI Infrastructure <Sparkles className="text-ai" size={24} /></h1>
           <p className="text-text-secondary mt-1">Model usage, latency, and cost across all tenants.</p>
         </div>
         <Button variant="outline" leftIcon={loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />} onClick={load} disabled={loading}>Refresh</Button>
@@ -43,10 +43,10 @@ export default function AIInfraPage() {
           {summary && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Total AI Requests (24h)", value: summary.totalRequests24h?.toLocaleString() ?? "—", icon: Zap, color: "text-yellow-500" },
+                { label: "Total AI Requests (24h)", value: summary.totalRequests24h?.toLocaleString() ?? "—", icon: Zap, color: "text-warning-fg" },
                 { label: "Avg Latency", value: summary.avgLatencyMs ? `${(summary.avgLatencyMs / 1000).toFixed(1)}s` : "—", icon: Clock, color: "text-blue-500" },
-                { label: "Cost (24h)", value: summary.totalCostUsd24h ? `$${summary.totalCostUsd24h.toFixed(2)}` : "—", icon: TrendingUp, color: "text-green-500" },
-                { label: "Error Rate", value: summary.errorRate != null ? `${summary.errorRate.toFixed(2)}%` : "—", icon: AlertCircle, color: summary.errorRate > 1 ? "text-red-500" : "text-green-500" },
+                { label: "Cost (24h)", value: summary.totalCostUsd24h ? `$${summary.totalCostUsd24h.toFixed(2)}` : "—", icon: TrendingUp, color: "text-success-fg" },
+                { label: "Error Rate", value: summary.errorRate != null ? `${summary.errorRate.toFixed(2)}%` : "—", icon: AlertCircle, color: summary.errorRate > 1 ? "text-danger-fg" : "text-success-fg" },
               ].map((s) => (
                 <Card key={s.label}>
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -83,7 +83,7 @@ export default function AIInfraPage() {
                         </td>
                         <td className="py-2 px-3 text-xs text-text-secondary">{m.avgLatencyMs ? `${(m.avgLatencyMs / 1000).toFixed(2)}s` : "—"}</td>
                         <td className="py-2 px-3 text-xs text-text-secondary">{m.errorRate != null ? `${m.errorRate.toFixed(2)}%` : "—"}</td>
-                        <td className="py-2 px-3 text-xs font-medium text-green-600">${m.costUsd?.toFixed(4)}</td>
+                        <td className="py-2 px-3 text-xs font-medium text-success-fg">${m.costUsd?.toFixed(4)}</td>
                         <td className="py-2 px-3">
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${m.status === "Healthy" ? "text-green-600 bg-green-50" : "text-amber-600 bg-amber-50"}`}>{m.status ?? "—"}</span>
                         </td>

@@ -113,7 +113,7 @@ export default function SmsTemplatesPage() {
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-4 shadow-sm">
                     <div className="flex items-center justify-between">
                         <h2 className="font-semibold text-slate-900 dark:text-white">{editingId ? 'Edit Template' : 'New SMS Template'}</h2>
-                        <button onClick={() => setShowForm(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"><X className="h-4 w-4" /></button>
+                        <button onClick={() => setShowForm(false)} className="text-foreground-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"><X className="h-4 w-4" /></button>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -135,7 +135,7 @@ export default function SmsTemplatesPage() {
                     <div>
                         <div className="flex items-center justify-between mb-1">
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Message Body</label>
-                            <span className="text-xs text-slate-400 dark:text-slate-500">{charCount} chars · {smsCount} SMS</span>
+                            <span className="text-xs text-foreground-muted">{charCount} chars · {smsCount} SMS</span>
                         </div>
                         <textarea
                             value={form.body}
@@ -145,7 +145,7 @@ export default function SmsTemplatesPage() {
                         />
                         {/* Character warning */}
                         {charCount > 160 && (
-                            <p className="text-xs text-amber-600 mt-0.5">This message will be split into {smsCount} SMS messages</p>
+                            <p className="text-xs text-warning-fg mt-0.5">This message will be split into {smsCount} SMS messages</p>
                         )}
                     </div>
 
@@ -178,7 +178,7 @@ export default function SmsTemplatesPage() {
             {/* Filters */}
             <div className="flex gap-3 flex-wrap">
                 <div className="relative flex-1 min-w-48">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                     <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search templates..." className="pl-9" />
                 </div>
                 <div className="flex gap-1">
@@ -201,7 +201,7 @@ export default function SmsTemplatesPage() {
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <MessageSquare className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+                    <MessageSquare className="h-12 w-12 text-slate-300 mx-auto mb-3" />
                     <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">No templates found</h3>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-4">Create your first SMS template</p>
                     <Button onClick={() => setShowForm(true)}><Plus className="h-4 w-4 mr-2" /> New Template</Button>
@@ -217,7 +217,7 @@ export default function SmsTemplatesPage() {
                                         <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-800">
                                             {template.category}
                                         </span>
-                                        <span className="text-xs text-slate-400 dark:text-slate-500">
+                                        <span className="text-xs text-foreground-muted">
                                             {template.body.length} chars · {Math.ceil(template.body.length / 160) || 1} SMS
                                         </span>
                                     </div>
@@ -231,14 +231,14 @@ export default function SmsTemplatesPage() {
                                             navigator.clipboard.writeText(template.body);
                                             toast.success('Copied!');
                                         }}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
+                                        className="p-1.5 text-foreground-muted hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
                                         title="Copy body"
                                     >
                                         <Copy className="h-3.5 w-3.5" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(template.templateId)}
-                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                        className="p-1.5 text-foreground-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                                         title="Delete"
                                     >
                                         <Trash2 className="h-3.5 w-3.5" />

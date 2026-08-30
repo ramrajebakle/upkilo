@@ -87,7 +87,7 @@ export function SessionExpiryWarning() {
       >
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center">
           <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle className="h-8 w-8 text-amber-500" aria-hidden="true" />
+            <AlertTriangle className="h-8 w-8 text-warning-fg" aria-hidden="true" />
           </div>
           <h2 id="session-expired-title" className="text-xl font-bold text-slate-900 dark:text-white mb-2">
             Session expired
@@ -111,7 +111,7 @@ export function SessionExpiryWarning() {
       aria-atomic="true"
       className="fixed bottom-6 right-6 z-[9000] flex items-start gap-3 bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800 rounded-2xl shadow-xl p-4 max-w-sm w-full animate-fade-in-up"
     >
-      <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" aria-hidden="true" />
+      <AlertTriangle className="h-5 w-5 text-warning-fg shrink-0 mt-0.5" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
           Session expiring in {formatTime(secondsLeft)}
@@ -130,7 +130,7 @@ export function SessionExpiryWarning() {
       </div>
       <button
         onClick={() => setShowWarning(false)}
-        className="text-amber-500 hover:text-amber-700 shrink-0"
+        className="text-warning-fg hover:text-amber-700 shrink-0"
         aria-label="Dismiss session warning"
       >
         <X size={16} />

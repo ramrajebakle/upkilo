@@ -68,28 +68,28 @@ export function IntegrationCard({
     <Card className="relative overflow-hidden group hover:border-primary/50 transition-colors flex flex-col">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
-          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center shrink-0">
             {item.icon ? (
               <img src={item.icon} alt={item.name} className="w-6 h-6 object-contain" />
             ) : (
-              <Puzzle className="w-5 h-5 text-gray-400" />
+              <Puzzle className="w-5 h-5 text-foreground-muted" />
             )}
           </div>
           {statusBadge()}
         </div>
         <CardTitle className="text-base">{item.name}</CardTitle>
-        <CardDescription className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">
+        <CardDescription className="text-[10px] uppercase tracking-wider font-semibold text-foreground-muted">
           {item.category}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col gap-4">
-        <p className="text-sm text-gray-600 flex-1">{item.description}</p>
+        <p className="text-sm text-foreground-secondary flex-1">{item.description}</p>
 
         {/* Feature chips */}
         <div className="flex flex-wrap gap-1">
           {item.features.slice(0, 3).map((f) => (
-            <span key={f} className="text-[10px] bg-gray-100 text-gray-600 rounded px-2 py-0.5">{f}</span>
+            <span key={f} className="text-[10px] bg-muted text-foreground-secondary rounded px-2 py-0.5">{f}</span>
           ))}
         </div>
 
@@ -128,7 +128,7 @@ export function IntegrationCard({
               <Button
                 variant="ghost"
                 size="sm"
-                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 text-xs"
+                className="w-full text-danger-fg hover:text-red-700 hover:bg-red-50 text-xs"
                 onClick={() => onDisconnect(item.id)}
                 disabled={loading}
               >

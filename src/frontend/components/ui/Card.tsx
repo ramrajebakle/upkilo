@@ -12,11 +12,19 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = "default", children, ...props }, ref) => {
+    // bg-card, not bg-surface-base: a card painted in the PAGE colour is invisible in dark
+    // mode, where the page sits a full step below every surface on it. The two tokens are
+    // identical in light mode, which is why the bug never showed up there.
+    //
+    // Shadows come from --shadow-card / --shadow-popover rather than Tailwind's fixed
+    // shadow-sm/md, because a shadow tuned for a white page all but vanishes on a dark one.
     const variants = {
-      default: "bg-surface-base border border-surface-200 shadow-sm",
-      elevated: "bg-surface-base border border-surface-200 shadow-md",
-      interactive: "bg-surface-base border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-300 cursor-pointer transition-all duration-200",
-      glow: "bg-surface-base border border-surface-200 shadow-sm relative z-0 before:absolute before:inset-[-1px] before:rounded-[inherit] before:bg-gradient-to-br before:from-primary-400 before:to-accent-400 before:-z-10 before:opacity-0 hover:before:opacity-20 transition-all duration-200",
+      default: "bg-card text-card-foreground border border-border shadow-[var(--shadow-card)]",
+      elevated: "bg-card text-card-foreground border border-border shadow-[var(--shadow-popover)]",
+      interactive: "bg-card text-card-foreground border border-border shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-popover)] hover:-translate-y-1 hover:border-border-strong cursor-pointer transition-all duration-200",
+      // to-accent-400 was never a declared token, so the gradient had one stop and rendered
+      // as a flat violet. The AI accent is the intended second stop.
+      glow: "bg-card text-card-foreground border border-border shadow-[var(--shadow-card)] relative z-0 before:absolute before:inset-[-1px] before:rounded-[inherit] before:bg-gradient-to-br before:from-primary-400 before:to-ai-400 before:-z-10 before:opacity-0 hover:before:opacity-20 transition-all duration-200",
     };
 
     return (
@@ -53,7 +61,7 @@ CardTitle.displayName = "CardTitle";
 
 export const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn("text-sm text-text-secondary", className)} {...props} />
+    <p ref={ref} className={cn("text-sm text-foreground-secondary", className)} {...props} />
   )
 );
 CardDescription.displayName = "CardDescription";
@@ -67,7 +75,7 @@ CardContent.displayName = "CardContent";
 
 export const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("px-6 py-4 border-t border-surface-100 flex items-center", className)} {...props} />
+    <div ref={ref} className={cn("px-6 py-4 border-t border-border-subtle flex items-center", className)} {...props} />
   )
 );
 CardFooter.displayName = "CardFooter";

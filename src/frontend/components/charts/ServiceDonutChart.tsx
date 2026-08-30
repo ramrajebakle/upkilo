@@ -22,7 +22,7 @@ function CustomTooltip({ active, payload }: any) {
     if (!active || !payload?.length) return null;
     const { name, value, payload: { percent } } = payload[0];
     return (
-        <div className="bg-slate-900 text-white rounded-xl px-4 py-3 shadow-2xl text-sm">
+        <div className="bg-popover text-popover-foreground border border-border shadow-[var(--shadow-popover)] rounded-xl px-4 py-3 shadow-2xl text-sm">
             <p className="font-semibold">{name}</p>
             <p className="text-slate-300">{value} bookings ({(percent * 100).toFixed(1)}%)</p>
         </div>
@@ -38,8 +38,8 @@ function CustomLegend({ data }: { data: ServiceDataPoint[] }) {
                         className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                         style={{ background: item.color || PALETTE[i % PALETTE.length] }}
                     />
-                    <span className="text-slate-600 truncate">{item.name}</span>
-                    <span className="ml-auto font-semibold text-slate-700">{item.value}</span>
+                    <span className="text-foreground-secondary truncate">{item.name}</span>
+                    <span className="ml-auto font-semibold text-foreground">{item.value}</span>
                 </div>
             ))}
         </div>
@@ -49,7 +49,7 @@ function CustomLegend({ data }: { data: ServiceDataPoint[] }) {
 export function ServiceDonutChart({ data, height = 200 }: ServiceDonutChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-[200px] text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-[200px] text-foreground-muted text-sm">
                 No data available
             </div>
         );

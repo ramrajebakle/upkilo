@@ -82,7 +82,7 @@ const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
 
 export default function MedicalSpaPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(MEDICAL_SPA_JSON_LD) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
       {/* Hero */}
@@ -91,37 +91,37 @@ export default function MedicalSpaPage() {
           <span className="inline-flex items-center rounded-full bg-rose-100 px-4 py-1 text-sm font-semibold text-rose-700 mb-6">
             <Shield className="h-4 w-4 mr-2" /> HIPAA-Ready Platform for Medical Spas
           </span>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            The Booking System Built for <span className="text-rose-600">Medical-Grade Spas</span>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
+            The Booking System Built for <span className="text-danger-fg">Medical-Grade Spas</span>
           </h1>
-          <p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-6 text-xl text-foreground-secondary max-w-2xl mx-auto">
             Upkilo handles digital waivers, contraindication tracking, before/after photos, and HIPAA audit logs — so you can focus on client outcomes, not compliance paperwork.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register?vertical=medical-spa">
-              <Button className="px-8 py-4 text-lg bg-rose-600 hover:bg-rose-700">
+              <Button className="px-8 py-4 text-lg bg-rose-600 hover:bg-rose-700 text-white">
                 Start 14-Day Free Trial
               </Button>
             </Link>
             <Link href="/enterprise?interest=medical-spa">
-              <Button className="px-8 py-4 text-lg bg-white text-gray-900 border border-gray-200 hover:bg-gray-50">
+              <Button className="px-8 py-4 text-lg bg-card text-foreground border border-border hover:bg-accent">
                 Talk to Compliance Team
               </Button>
             </Link>
           </div>
-          <p className="mt-4 text-sm text-gray-500">No credit card required · BAA available on Business plan and above</p>
+          <p className="mt-4 text-sm text-foreground-secondary">No credit card required · BAA available on Business plan and above</p>
         </div>
       </section>
 
       {/* Use Cases */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-card">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-10">Built for Every Medical Aesthetics Business</h2>
+          <h2 className="text-2xl font-bold text-center text-foreground mb-10">Built for Every Medical Aesthetics Business</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {medSpaUseCases.map((useCase) => (
-              <div key={useCase} className="flex items-center gap-3 p-4 rounded-xl border border-gray-100 bg-gray-50">
-                <Check className="h-5 w-5 text-rose-500 flex-shrink-0" />
-                <span className="text-sm font-medium text-gray-700">{useCase}</span>
+              <div key={useCase} className="flex items-center gap-3 p-4 rounded-xl border border-border-subtle bg-muted">
+                <Check className="h-5 w-5 text-danger-fg flex-shrink-0" />
+                <span className="text-sm font-medium text-foreground">{useCase}</span>
               </div>
             ))}
           </div>
@@ -129,18 +129,18 @@ export default function MedicalSpaPage() {
       </section>
 
       {/* Compliance Features */}
-      <section className="py-16 px-4 bg-rose-50">
+      <section className="py-16 px-4 bg-rose-500/8">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-extrabold text-center text-gray-900 mb-4">Compliance Without the Complexity</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-extrabold text-center text-foreground mb-4">Compliance Without the Complexity</h2>
+          <p className="text-center text-foreground-secondary mb-12 max-w-2xl mx-auto">
             Every feature is designed around the real workflows of licensed aesthetic providers — not retrofitted from generic booking software.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {complianceFeatures.map((f) => (
-              <div key={f.title} className="bg-white rounded-2xl p-6 shadow-sm border border-rose-100">
-                <f.icon className="h-8 w-8 text-rose-500 mb-4" />
-                <h3 className="font-bold text-gray-900 mb-2">{f.title}</h3>
-                <p className="text-sm text-gray-600">{f.description}</p>
+              <div key={f.title} className="bg-card rounded-2xl p-6 shadow-[var(--shadow-card)] border border-rose-500/20">
+                <f.icon className="h-8 w-8 text-danger-fg mb-4" />
+                <h3 className="font-bold text-foreground mb-2">{f.title}</h3>
+                <p className="text-sm text-foreground-secondary">{f.description}</p>
               </div>
             ))}
           </div>
@@ -148,7 +148,7 @@ export default function MedicalSpaPage() {
       </section>
 
       {/* HIPAA Detail Block */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-card">
         <div className="max-w-3xl mx-auto bg-gray-900 rounded-3xl p-10 text-white">
           <Shield className="h-10 w-10 text-rose-400 mb-4" />
           <h2 className="text-2xl font-bold mb-3">What "HIPAA-Ready" means in Upkilo</h2>
@@ -160,42 +160,42 @@ export default function MedicalSpaPage() {
             <li className="flex gap-3"><Check className="h-4 w-4 text-rose-400 mt-0.5 flex-shrink-0" /> Digital consent forms with e-signature capture stored per client</li>
             <li className="flex gap-3"><Check className="h-4 w-4 text-rose-400 mt-0.5 flex-shrink-0" /> Data residency options available for EU, UK, and Australia (Enterprise)</li>
           </ul>
-          <p className="text-xs text-gray-500 mt-6">
+          <p className="text-xs text-slate-300 mt-6">
             Upkilo is not a covered entity and does not provide legal compliance advice. Please consult your HIPAA compliance officer before deployment.
           </p>
         </div>
       </section>
 
       {/* Capability summary — see note above the removed testimonial constant */}
-      <section className="py-16 px-4 bg-rose-50">
+      <section className="py-16 px-4 bg-rose-500/8">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="text-xl text-gray-700">
+          <p className="text-xl text-foreground">
             Digital waivers, contraindication tracking, and a full compliance audit trail — in
             the same system that runs your bookings, clients, and payments.
           </p>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-foreground-secondary">
             No separate consent tool, no paper intake forms, no spreadsheet of allergies.
           </p>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4 bg-white text-center">
-        <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Ready to modernize your medical spa?</h2>
+      <section className="py-20 px-4 bg-card text-center">
+        <h2 className="text-3xl font-extrabold text-foreground mb-4">Ready to modernize your medical spa?</h2>
         {/* "Join aesthetic clinics across the US, UK, UAE, and Australia running..." stood
             here — same problem as the removed testimonial: it asserts an existing customer
             base. Rewritten to describe what the product supports, which is verifiable. */}
-        <p className="text-gray-600 mb-8 max-w-xl mx-auto">
+        <p className="text-foreground-secondary mb-8 max-w-xl mx-auto">
           Set up digital waivers, consent tracking, and HIPAA-ready audit logs in an afternoon.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/register?vertical=medical-spa">
-            <Button className="px-10 py-4 text-lg bg-rose-600 hover:bg-rose-700">
+            <Button className="px-10 py-4 text-lg bg-rose-600 hover:bg-rose-700 text-white">
               Get Started Free
             </Button>
           </Link>
           <Link href="/pricing">
-            <Button className="px-10 py-4 text-lg bg-white text-gray-900 border border-gray-200 hover:bg-gray-50">
+            <Button className="px-10 py-4 text-lg bg-card text-foreground border border-border hover:bg-accent">
               View Pricing
             </Button>
           </Link>

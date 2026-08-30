@@ -59,7 +59,7 @@ export default function EscalationsPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Escalations <AlertTriangle className="text-red-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Escalations <AlertTriangle className="text-danger-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">Monitor and resolve critical issues flagged across all tenant accounts.</p>
         </div>
         <Button variant="outline" leftIcon={<RefreshCw size={14} />} onClick={load} disabled={loading}>Refresh</Button>
@@ -68,10 +68,10 @@ export default function EscalationsPage() {
       {stats && (
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Open", value: stats.open, cls: "text-red-600" },
+            { label: "Open", value: stats.open, cls: "text-danger-fg" },
             { label: "Critical", value: stats.critical, cls: "text-orange-600" },
             { label: "Avg Resolution", value: `${stats.avgResolutionHours?.toFixed(1)}h`, cls: "text-blue-600" },
-            { label: "Resolved Today", value: stats.resolvedToday, cls: "text-green-600" },
+            { label: "Resolved Today", value: stats.resolvedToday, cls: "text-success-fg" },
           ].map((m) => (
             <Card key={m.label}><CardContent className="pt-4 pb-4">
               <p className="text-xs text-text-tertiary font-medium">{m.label}</p>

@@ -146,7 +146,7 @@ export default function MarketingAutomationPage() {
           >
             <span
               className={cn(
-                "inline-block h-5 w-5 transform rounded-full bg-white transition-transform",
+                "inline-block h-5 w-5 transform rounded-full bg-card transition-transform",
                 isAutonomous ? "translate-x-6" : "translate-x-1"
               )}
             />
@@ -317,7 +317,7 @@ export default function MarketingAutomationPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {data.dashboard.attribution?.map((attr: any) => (
                 <div key={attr.source} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 group hover:border-primary-100 dark:hover:border-primary-900 transition-colors">
-                  <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{attr.source}</p>
+                  <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">{attr.source}</p>
                   <div className="flex items-end justify-between mt-1">
                     <p className="text-2xl font-bold text-slate-900 dark:text-white leading-none">{attr.count}</p>
                     <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">+{Math.round((attr.count / data.dashboard.leadsCapturedThisMonth) * 100)}%</span>
@@ -349,14 +349,14 @@ export default function MarketingAutomationPage() {
           <div className="card-elevated dark:bg-slate-900 dark:border-slate-800 p-6 shadow-sm border border-slate-200 flex flex-col h-full min-h-[600px]">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('activity.title')}</h3>
-              <Activity className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+              <Activity className="h-5 w-5 text-foreground-muted" />
             </div>
             
             <div className="flex-1 space-y-6 overflow-y-auto pr-2 scrollbar-thin">
               {actions.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Clock className="h-8 w-8 text-slate-400 dark:text-slate-500" />
+                    <Clock className="h-8 w-8 text-foreground-muted" />
                   </div>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{t('activity.empty')}</p>
                 </div>
@@ -423,7 +423,7 @@ function AgentCard({ name, icon: Icon, status, lastRun }: any) {
           </p>
         </div>
       </div>
-      <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-700 group-hover:text-primary-400 transition-colors" />
+      <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary-400 transition-colors" />
     </div>
   );
 }
@@ -449,7 +449,7 @@ function ActivityItem({ action, isLast }: any) {
       <div className="flex-1 pb-6 min-w-0">
         <div className="flex items-center justify-between gap-2 mb-1">
           <h5 className="text-sm font-bold text-slate-900 dark:text-white truncate">{action.actionType}</h5>
-          <span className="text-[10px] whitespace-nowrap text-slate-400 dark:text-slate-500 font-medium">
+          <span className="text-[10px] whitespace-nowrap text-foreground-muted font-medium">
             {new Date(action.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
@@ -508,7 +508,7 @@ function OnboardingView({ onComplete }: { onComplete: () => void }) {
           <div>
             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{t('urlLabel')}</label>
             <div className="relative">
-              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
+              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
               <input 
                 type="url" 
                 className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"

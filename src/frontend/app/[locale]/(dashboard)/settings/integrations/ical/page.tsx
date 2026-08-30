@@ -57,7 +57,7 @@ export default function IcalTokensPage() {
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">iCal / Calendar Tokens <Calendar className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">iCal / Calendar Tokens <Calendar className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Generate private iCal feed URLs to sync your bookings with Google Calendar, Apple Calendar, or Outlook.</p>
       </header>
 
@@ -107,17 +107,17 @@ export default function IcalTokensPage() {
                           <div className="flex items-center gap-2 mb-1">
                             <p className="text-sm font-semibold text-text-primary">{t.name}</p>
                             <span className="text-xs text-text-tertiary">Created {new Date(t.createdAt).toLocaleDateString()}</span>
-                            {t.lastUsedAt && <span className="text-xs text-green-600">Last synced {new Date(t.lastUsedAt).toLocaleDateString()}</span>}
+                            {t.lastUsedAt && <span className="text-xs text-success-fg">Last synced {new Date(t.lastUsedAt).toLocaleDateString()}</span>}
                           </div>
                           <div className="flex items-center gap-2 mt-1.5">
                             <code className="text-xs bg-surface-100 text-text-secondary px-2 py-1 rounded font-mono truncate max-w-xs">{url}</code>
-                            <button onClick={() => copy(url, t.id)} className="text-text-tertiary hover:text-ai-500 flex-shrink-0">
-                              {copied === t.id ? <CheckCircle2 size={13} className="text-green-500" /> : <Copy size={13} />}
+                            <button onClick={() => copy(url, t.id)} className="text-text-tertiary hover:text-ai flex-shrink-0">
+                              {copied === t.id ? <CheckCircle2 size={13} className="text-success-fg" /> : <Copy size={13} />}
                             </button>
                           </div>
                         </div>
                         <Button variant="outline" size="sm"
-                          leftIcon={deleting === t.id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} className="text-red-500" />}
+                          leftIcon={deleting === t.id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} className="text-danger-fg" />}
                           onClick={() => remove(t.id)} disabled={!!deleting}>Revoke</Button>
                       </div>
                     </CardContent>

@@ -44,7 +44,7 @@ export const BillingBanner: React.FC<BillingBannerProps> = ({
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
         }}
       />
-      <div className="absolute -right-10 -top-10 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute -right-10 -top-10 w-40 h-40 bg-card opacity-5 rounded-full blur-2xl pointer-events-none" />
 
       <div className="relative z-10 flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row">
         <div className="flex items-center gap-4">

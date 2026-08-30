@@ -72,7 +72,7 @@ export default function KnowledgeBasePage() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Knowledge Base <BookOpen className="text-ai-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Knowledge Base <BookOpen className="text-ai" size={22} /></h1>
         <p className="text-text-secondary mt-1">Train your AI chatbot with Q&A pairs, FAQs, and business information.</p>
       </header>
 
@@ -150,7 +150,7 @@ export default function KnowledgeBasePage() {
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          {entry.category && <span className="text-xs font-medium text-ai-500 bg-ai-50 px-1.5 py-0.5 rounded">{entry.category}</span>}
+                          {entry.category && <span className="text-xs font-medium text-ai bg-ai-subtle px-1.5 py-0.5 rounded">{entry.category}</span>}
                           <span className="text-xs text-text-tertiary">{new Date(entry.createdAt).toLocaleDateString()}</span>
                         </div>
                         <p className="text-sm font-semibold text-text-primary mb-1">{entry.question}</p>
@@ -163,7 +163,7 @@ export default function KnowledgeBasePage() {
                       </div>
                       <div className="flex gap-1 flex-shrink-0">
                         <Button variant="outline" size="sm" leftIcon={<Edit2 size={11} />} onClick={() => startEdit(entry)}>Edit</Button>
-                        <Button variant="outline" size="sm" leftIcon={<Trash2 size={11} className="text-red-500" />} onClick={() => remove(entry.id)} />
+                        <Button variant="outline" size="sm" leftIcon={<Trash2 size={11} className="text-danger-fg" />} onClick={() => remove(entry.id)} />
                       </div>
                     </div>
                   )}

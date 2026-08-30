@@ -46,14 +46,14 @@ function PoweredByUpkiloBadge() {
     if (!showBadge) return null;
 
     return (
-        <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mt-2">
+        <div className="flex items-center justify-center gap-1.5 text-xs text-foreground-muted mt-2">
             <Zap className="h-3 w-3 text-primary-400" />
             <span>Powered by</span>
             <a
                 href="https://upkilo.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold text-primary-500 hover:text-primary-600 transition-colors"
+                className="font-semibold text-primary hover:text-primary transition-colors"
                 title="Grow your service business with Upkilo"
             >
                 Upkilo
@@ -72,20 +72,20 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     const isGuestPage = pathname === '/portal-login' || pathname === '/verify';
 
     if (isGuestPage) {
-        return <div className="min-h-screen bg-slate-50">{children}</div>;
+        return <div className="min-h-screen bg-muted">{children}</div>;
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col">
+        <div className="min-h-screen bg-muted flex flex-col">
             {/* Header */}
-            <header className="bg-white border-b sticky top-0 z-50">
+            <header className="bg-card border-b sticky top-0 z-50">
                 <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link href="/portal-dashboard" className="flex items-center gap-2">
                             <div className="p-1.5 bg-primary rounded-lg">
                                 <ChevronLeft className="h-5 w-5 text-white" />
                             </div>
-                            <span className="font-bold text-slate-900 hidden sm:inline-block">Client Portal</span>
+                            <span className="font-bold text-foreground hidden sm:inline-block">Client Portal</span>
                         </Link>
                     </div>
 
@@ -98,8 +98,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                                 className={cn(
                                     "px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
                                     pathname === item.href
-                                        ? "bg-primary-50 text-primary-600"
-                                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                        ? "bg-brand-subtle text-primary"
+                                        : "text-foreground-secondary hover:bg-accent hover:text-foreground"
                                 )}
                             >
                                 <item.icon className="h-4 w-4" />
@@ -110,13 +110,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
                     <div className="flex items-center gap-2">
                         <Button variant="ghost" size="icon" className="relative">
-                            <Bell className="h-5 w-5 text-slate-500" />
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+                            <Bell className="h-5 w-5 text-foreground-secondary" />
+                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white text-white" />
                         </Button>
                         <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
                             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                         </Button>
-                        <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2 text-slate-600">
+                        <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2 text-foreground-secondary">
                             <LogOut className="h-4 w-4" />
                             Sign Out
                         </Button>
@@ -125,7 +125,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
                 {/* Mobile Nav */}
                 <div className={cn(
-                    "md:hidden absolute top-16 left-0 right-0 bg-white border-b shadow-lg transition-all duration-300 overflow-hidden",
+                    "md:hidden absolute top-16 left-0 right-0 bg-card border-b shadow-lg transition-all duration-300 overflow-hidden",
                     isMobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
                 )}>
                     <div className="px-4 py-4 space-y-2">
@@ -137,15 +137,15 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all",
                                     pathname === item.href
-                                        ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                        : "text-slate-600 hover:bg-slate-50"
+                                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                                        : "text-foreground-secondary hover:bg-accent"
                                 )}
                             >
                                 <item.icon className="h-5 w-5" />
                                 {item.label}
                             </Link>
                         ))}
-                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-red-500 hover:bg-red-50">
+                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-danger-fg hover:bg-red-50">
                             <LogOut className="h-5 w-5" />
                             Sign Out
                         </button>
@@ -161,9 +161,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             </main>
 
             {/* Simple Footer */}
-            <footer className="bg-white border-t py-8 mt-auto">
+            <footer className="bg-card border-t py-8 mt-auto">
                 <div className="max-w-5xl mx-auto px-4 text-center">
-                    <p className="text-slate-400 text-sm">
+                    <p className="text-foreground-muted text-sm">
                         &copy; 2026 Upkilo. All rights reserved.
                     </p>
                     <PoweredByUpkiloBadge />

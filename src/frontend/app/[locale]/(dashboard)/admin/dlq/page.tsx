@@ -54,7 +54,7 @@ export default function DlqDashboardPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Dead Letter Queue <AlertCircle className="text-red-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Dead Letter Queue <AlertCircle className="text-danger-fg" size={22} /></h1>
           <p className="text-text-secondary mt-1">Failed background messages awaiting retry or deletion.</p>
         </div>
         <Button variant="outline" leftIcon={<RefreshCw size={14} />} onClick={load} disabled={loading}>Refresh</Button>
@@ -64,13 +64,13 @@ export default function DlqDashboardPage() {
         <Card>
           <CardContent className="pt-5">
             <p className="text-xs text-text-secondary">Total Messages</p>
-            <p className="text-2xl font-bold text-red-500 mt-1">{messages.length}</p>
+            <p className="text-2xl font-bold text-danger-fg mt-1">{messages.length}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-5">
             <p className="text-xs text-text-secondary">Queues Affected</p>
-            <p className="text-2xl font-bold text-amber-500 mt-1">{queues.length}</p>
+            <p className="text-2xl font-bold text-warning-fg mt-1">{queues.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -87,7 +87,7 @@ export default function DlqDashboardPage() {
         : messages.length === 0 ? (
           <Card><CardContent className="text-center py-12 text-text-tertiary">
             <Activity className="h-10 w-10 mx-auto mb-3 text-green-400 opacity-60" />
-            <p className="font-medium text-green-600">No messages in DLQ — all queues healthy</p>
+            <p className="font-medium text-success-fg">No messages in DLQ — all queues healthy</p>
           </CardContent></Card>
         ) : (
           <div className="space-y-3">
@@ -103,9 +103,9 @@ export default function DlqDashboardPage() {
                         </span>
                         <span className="text-xs text-text-tertiary">{new Date(m.createdAt).toLocaleDateString()}</span>
                       </div>
-                      {m.error && <p className="text-xs text-red-600 font-mono mb-1 line-clamp-1">{m.error}</p>}
+                      {m.error && <p className="text-xs text-danger-fg font-mono mb-1 line-clamp-1">{m.error}</p>}
                       <button onClick={() => setExpanded(expanded === m.id ? null : m.id)}
-                        className="text-xs text-ai-500 hover:text-ai-700">
+                        className="text-xs text-ai hover:text-ai">
                         {expanded === m.id ? "Hide payload" : "Show payload"}
                       </button>
                       {expanded === m.id && (
@@ -119,7 +119,7 @@ export default function DlqDashboardPage() {
                         leftIcon={actioning === m.id ? <Loader2 size={12} className="animate-spin" /> : <RotateCcw size={12} />}
                         onClick={() => retry(m.id)} disabled={!!actioning}>Retry</Button>
                       <Button variant="outline" size="sm"
-                        leftIcon={<Trash2 size={12} className="text-red-500" />}
+                        leftIcon={<Trash2 size={12} className="text-danger-fg" />}
                         onClick={() => remove(m.id)} disabled={!!actioning} />
                     </div>
                   </div>

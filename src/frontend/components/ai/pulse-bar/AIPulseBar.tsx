@@ -95,13 +95,13 @@ export const AIPulseBar = () => {
         <div className="w-px h-4 bg-neutral-200 mx-1" />
 
         {/* User Profile Mock */}
-        <div className="h-7 w-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-bold border border-primary-200">
+        <div className="h-7 w-7 rounded-full bg-brand-subtle flex items-center justify-center text-primary text-xs font-bold border border-primary/25">
           {isPlatform ? "PO" : "TO"}
         </div>
         
         <button 
           onClick={toggleCopilot}
-          className="flex items-center gap-1.5 px-2 py-1 rounded bg-ai-50 text-ai-600 hover:bg-ai-100 transition-colors font-medium cursor-pointer"
+          className="flex items-center gap-1.5 px-2 py-1 rounded bg-ai-subtle text-ai hover:bg-ai-subtle transition-colors font-medium cursor-pointer"
         >
           <Sparkles size={14} />
           Copilot

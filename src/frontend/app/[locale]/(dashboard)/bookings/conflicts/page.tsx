@@ -57,7 +57,7 @@ const SEVERITY_CONFIG = {
     critical: { label: 'Critical', bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', badge: 'bg-red-100 text-red-700' },
     high: { label: 'High', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', badge: 'bg-orange-100 text-orange-700' },
     medium: { label: 'Medium', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' },
-    low: { label: 'Low', bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-600', badge: 'bg-gray-100 text-gray-600' },
+    low: { label: 'Low', bg: 'bg-muted', border: 'border-border', text: 'text-foreground-secondary', badge: 'bg-muted text-foreground-secondary' },
 };
 
 export default function ConflictsPage() {
@@ -227,23 +227,23 @@ export default function ConflictsPage() {
     const criticalCount = pendingConflicts.filter(c => c.severity === 'critical').length;
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-muted">
             {/* Header */}
-            <div className="bg-white border-b border-gray-100 px-6 py-5 sticky top-0 z-10 shadow-sm">
+            <div className="bg-card border-b border-border-subtle px-6 py-5 sticky top-0 z-10 shadow-sm">
                 <div className="max-w-5xl mx-auto flex items-center justify-between gap-4 flex-wrap">
                     <div className="flex items-center gap-3">
-                        <Link href="/bookings" className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500">
+                        <Link href="/bookings" className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground-secondary">
                             <ArrowRight className="w-4 h-4 rotate-180" />
                         </Link>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                <AlertTriangle className="w-5 h-5 text-red-500" />
+                            <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+                                <AlertTriangle className="w-5 h-5 text-danger-fg" />
                                 Booking Conflicts
                             </h1>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-foreground-secondary">
                                 {totalScanned} bookings scanned · {pendingConflicts.length} conflicts detected
                                 {criticalCount > 0 && (
-                                    <span className="ml-2 text-red-600 font-medium">⚠ {criticalCount} critical</span>
+                                    <span className="ml-2 text-danger-fg font-medium">⚠ {criticalCount} critical</span>
                                 )}
                             </p>
                         </div>
@@ -258,13 +258,13 @@ export default function ConflictsPage() {
                             {bulkResolving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                             Auto-Resolve
                         </button>
-                        <button onClick={exportReport} className="flex items-center gap-2 px-3 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                        <button onClick={exportReport} className="flex items-center gap-2 px-3 py-2 border border-border text-foreground-secondary rounded-lg text-sm hover:bg-accent transition-colors">
                             <Download className="w-4 h-4" />
                             Export
                         </button>
                         <button
                             onClick={fetchConflicts}
-                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500"
+                            className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground-secondary"
                         >
                             <RefreshCw className={cn('w-4 h-4', loading && 'animate-spin')} />
                         </button>
@@ -274,16 +274,16 @@ export default function ConflictsPage() {
 
             <div className="max-w-5xl mx-auto px-6 py-6 space-y-5">
                 {/* Scan controls */}
-                <div className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 flex-wrap shadow-sm">
+                <div className="bg-card border border-border-subtle rounded-xl p-4 flex items-center gap-4 flex-wrap shadow-sm">
                     <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-gray-700">From</label>
+                        <label className="text-sm font-medium text-foreground">From</label>
                         <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
+                            className="px-3 py-1.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
                     </div>
                     <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-gray-700">To</label>
+                        <label className="text-sm font-medium text-foreground">To</label>
                         <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
+                            className="px-3 py-1.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
                     </div>
                     <button onClick={fetchConflicts}
                         className="px-4 py-1.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
@@ -295,7 +295,7 @@ export default function ConflictsPage() {
                         <select
                             value={severityFilter ?? ''}
                             onChange={e => setSeverityFilter(e.target.value || null)}
-                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none"
+                            className="px-3 py-1.5 border border-border rounded-lg text-sm bg-card focus:outline-none"
                         >
                             <option value="">All Severities</option>
                             {Object.entries(SEVERITY_CONFIG).map(([k, v]) => (
@@ -305,7 +305,7 @@ export default function ConflictsPage() {
                         <select
                             value={typeFilter ?? ''}
                             onChange={e => setTypeFilter(e.target.value || null)}
-                            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none"
+                            className="px-3 py-1.5 border border-border rounded-lg text-sm bg-card focus:outline-none"
                         >
                             <option value="">All Types</option>
                             {Object.entries(CONFLICT_TYPE_CONFIG).map(([k, v]) => (
@@ -318,28 +318,28 @@ export default function ConflictsPage() {
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {[
-                        { label: 'Total', value: conflicts.length, color: 'text-gray-900' },
+                        { label: 'Total', value: conflicts.length, color: 'text-foreground' },
                         { label: 'Critical', value: criticalCount, color: 'text-red-700' },
                         { label: 'Pending', value: pendingConflicts.length, color: 'text-amber-700' },
                         { label: 'Resolved', value: resolvedIds.size, color: 'text-emerald-700' },
                     ].map(s => (
-                        <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm text-center">
+                        <div key={s.label} className="bg-card rounded-xl border border-border-subtle p-4 shadow-sm text-center">
                             <p className={cn('text-2xl font-bold', s.color)}>{s.value}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
+                            <p className="text-xs text-foreground-secondary mt-0.5">{s.label}</p>
                         </div>
                     ))}
                 </div>
 
                 {/* Resolution panel */}
                 {resolutionForm && (
-                    <div className="bg-primary-50 border border-primary-200 rounded-xl p-5 space-y-4 shadow-sm">
+                    <div className="bg-brand-subtle border border-primary/25 rounded-xl p-5 space-y-4 shadow-sm">
                         <div className="flex items-center justify-between">
-                            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-primary-600" />
+                            <h3 className="font-semibold text-foreground flex items-center gap-2">
+                                <Zap className="w-4 h-4 text-primary" />
                                 Resolve Booking #{resolutionForm.bookingId.slice(0, 8)}
                             </h3>
                             <button onClick={() => setResolutionForm(null)}>
-                                <XCircle className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                                <XCircle className="h-4 w-4 text-foreground-muted hover:text-foreground-secondary" />
                             </button>
                         </div>
 
@@ -358,7 +358,7 @@ export default function ConflictsPage() {
                                             'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-all',
                                             resolutionForm.type === opt.value
                                                 ? 'bg-primary-600 text-white border-primary-600'
-                                                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                                                : 'bg-card border-border text-foreground-secondary hover:bg-accent'
                                         )}
                                     >
                                         <Icon className="w-3.5 h-3.5" /> {opt.label}
@@ -369,24 +369,24 @@ export default function ConflictsPage() {
 
                         {resolutionForm.type === 'reschedule' && (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">New start time</label>
+                                <label className="block text-sm font-medium text-foreground mb-1">New start time</label>
                                 <input
                                     type="datetime-local"
                                     value={resolutionForm.newStartTime ?? ''}
                                     onChange={e => setResolutionForm(p => p ? { ...p, newStartTime: e.target.value } : p)}
-                                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                                    className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                                 />
                             </div>
                         )}
 
                         {resolutionForm.type === 'reassign_staff' && (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">New staff member ID</label>
+                                <label className="block text-sm font-medium text-foreground mb-1">New staff member ID</label>
                                 <input
                                     value={resolutionForm.newStaffId ?? ''}
                                     onChange={e => setResolutionForm(p => p ? { ...p, newStaffId: e.target.value } : p)}
                                     placeholder="Staff UUID"
-                                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 w-64"
+                                    className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 w-64"
                                 />
                             </div>
                         )}
@@ -406,14 +406,14 @@ export default function ConflictsPage() {
                 {loading ? (
                     <div className="space-y-3">
                         {[...Array(3)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 animate-pulse h-32" />
+                            <div key={i} className="bg-card rounded-xl border border-border-subtle p-5 animate-pulse h-32" />
                         ))}
                     </div>
                 ) : filteredConflicts.length === 0 ? (
-                    <div className="text-center py-16 bg-white rounded-xl border border-gray-100 shadow-sm">
+                    <div className="text-center py-16 bg-card rounded-xl border border-border-subtle shadow-sm">
                         <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
-                        <h3 className="text-lg font-semibold text-gray-700">No conflicts detected!</h3>
-                        <p className="text-gray-500 text-sm mt-1">
+                        <h3 className="text-lg font-semibold text-foreground">No conflicts detected!</h3>
+                        <p className="text-foreground-secondary text-sm mt-1">
                             {severityFilter || typeFilter ? 'Try clearing filters' : 'All bookings are free of scheduling conflicts'}
                         </p>
                     </div>
@@ -428,7 +428,7 @@ export default function ConflictsPage() {
                             return (
                                 <div
                                     key={conflict.id}
-                                    className={cn('bg-white rounded-xl border shadow-sm overflow-hidden', sev.border)}
+                                    className={cn('bg-card rounded-xl border shadow-sm overflow-hidden', sev.border)}
                                 >
                                     {/* Conflict header */}
                                     <div
@@ -440,14 +440,14 @@ export default function ConflictsPage() {
                                             <span className={cn('text-sm font-semibold', sev.text)}>
                                                 {typeConfig?.label} — {conflict.overlapMinutes}min overlap
                                             </span>
-                                            <span className="text-xs text-gray-500 ml-3">
+                                            <span className="text-xs text-foreground-secondary ml-3">
                                                 {conflict.bookingA.staffName} · {new Date(conflict.bookingA.startTime).toLocaleDateString()}
                                             </span>
                                         </div>
                                         <span className={cn('px-2 py-0.5 rounded-full text-xs font-bold', sev.badge)}>
                                             {sev.label}
                                         </span>
-                                        {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                                        {expanded ? <ChevronUp className="w-4 h-4 text-foreground-muted" /> : <ChevronDown className="w-4 h-4 text-foreground-muted" />}
                                     </div>
 
                                     {/* Conflict details */}
@@ -460,12 +460,12 @@ export default function ConflictsPage() {
                                                         key={bi}
                                                         className={cn(
                                                             'p-3 rounded-xl border text-sm',
-                                                            bi === 0 ? 'border-primary-200 bg-primary-50' : 'border-blue-200 bg-blue-50'
+                                                            bi === 0 ? 'border-primary/25 bg-brand-subtle' : 'border-blue-200 bg-blue-50'
                                                         )}
                                                     >
-                                                        <p className="font-semibold text-gray-900 mb-1">{booking.clientName}</p>
-                                                        <p className="text-gray-600">{booking.serviceName}</p>
-                                                        <div className="text-gray-500 mt-2 space-y-0.5 text-xs">
+                                                        <p className="font-semibold text-foreground mb-1">{booking.clientName}</p>
+                                                        <p className="text-foreground-secondary">{booking.serviceName}</p>
+                                                        <div className="text-foreground-secondary mt-2 space-y-0.5 text-xs">
                                                             <div className="flex items-center gap-1">
                                                                 <User className="w-3 h-3" /> {booking.staffName}
                                                             </div>
@@ -476,7 +476,7 @@ export default function ConflictsPage() {
                                                         </div>
                                                         <button
                                                             onClick={() => setResolutionForm({ bookingId: booking.id, type: 'reschedule' })}
-                                                            className="mt-3 flex items-center gap-1 text-xs font-medium text-primary-700 hover:text-primary-900"
+                                                            className="mt-3 flex items-center gap-1 text-xs font-medium text-primary hover:text-primary-900"
                                                         >
                                                             <Zap className="w-3 h-3" />
                                                             Resolve this
@@ -487,12 +487,12 @@ export default function ConflictsPage() {
 
                                             {/* AI suggestion */}
                                             {conflict.suggestedResolution && (
-                                                <div className="flex items-start justify-between gap-3 p-3 bg-primary-50 border border-primary-200 rounded-lg text-sm">
+                                                <div className="flex items-start justify-between gap-3 p-3 bg-brand-subtle border border-primary/25 rounded-lg text-sm">
                                                     <div className="flex items-start gap-2">
-                                                        <Sparkles className="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" />
+                                                        <Sparkles className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                                                         <div>
                                                             <p className="font-medium text-primary-800">AI Suggestion</p>
-                                                            <p className="text-primary-600 text-xs mt-0.5">
+                                                            <p className="text-primary text-xs mt-0.5">
                                                                 {conflict.suggestedResolution.action === 'reschedule' ? 'Reschedule' :
                                                                  conflict.suggestedResolution.action === 'cancel' ? 'Cancel' : 'Reassign staff'}
                                                                 {' — '}

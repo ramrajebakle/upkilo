@@ -160,18 +160,18 @@ export default function SsoSettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Single Sign-On (SSO)</h1>
-          <p className="text-slate-500 mt-1">Configure enterprise SAML or OIDC authentication for your team</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Single Sign-On (SSO)</h1>
+          <p className="text-foreground-secondary mt-1">Configure enterprise SAML or OIDC authentication for your team</p>
         </div>
         <div className="flex items-center gap-2">
           {config?.sso && (
             <>
               <button onClick={handleTest} disabled={testing}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+                className="inline-flex items-center gap-2 px-4 py-2 border border-border-strong rounded-lg text-foreground hover:bg-accent disabled:opacity-50">
                 {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
                 Test Connection
               </button>
-              <button onClick={handleDelete} className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50">
+              <button onClick={handleDelete} className="px-4 py-2 border border-red-200 text-danger-fg rounded-lg hover:bg-red-50">
                 Remove
               </button>
             </>
@@ -184,9 +184,9 @@ export default function SsoSettingsPage() {
         <div className={`rounded-xl border p-4 ${testResult.status === 'healthy' ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
           <div className="flex items-center gap-2">
             {testResult.status === 'healthy' ? (
-              <CheckCircle className="w-5 h-5 text-emerald-600" />
+              <CheckCircle className="w-5 h-5 text-success-fg" />
             ) : (
-              <AlertCircle className="w-5 h-5 text-red-600" />
+              <AlertCircle className="w-5 h-5 text-danger-fg" />
             )}
             <span className={`font-medium ${testResult.status === 'healthy' ? 'text-emerald-700' : 'text-red-700'}`}>
               {testResult.status === 'healthy' ? 'Connection is healthy' : 'Issues detected'}
@@ -195,7 +195,7 @@ export default function SsoSettingsPage() {
           {testResult.issues.length > 0 && (
             <ul className="mt-2 space-y-1">
               {testResult.issues.map((issue, i) => (
-                <li key={i} className="text-sm text-red-600 flex items-center gap-1">
+                <li key={i} className="text-sm text-danger-fg flex items-center gap-1">
                   <XCircle className="w-3 h-3" /> {issue}
                 </li>
               ))}
@@ -205,79 +205,79 @@ export default function SsoSettingsPage() {
       )}
 
       {/* Provider Selection */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Globe className="w-5 h-5 text-primary-500" /> Identity Provider
+      <div className="bg-card rounded-xl border border-border shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Globe className="w-5 h-5 text-primary" /> Identity Provider
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {providers.map((p) => (
             <button key={p.id} onClick={() => setForm({ ...form, provider: p.id })}
-              className={`p-4 border-2 rounded-xl text-left transition-all ${form.provider === p.id ? 'border-primary-500 bg-primary-50' : 'border-slate-200 hover:border-slate-300'}`}>
-              <p className="font-semibold text-slate-900">{p.name}</p>
-              <p className="text-xs text-slate-500 mt-1">{p.protocols.join(' / ')}</p>
+              className={`p-4 border-2 rounded-xl text-left transition-all ${form.provider === p.id ? 'border-primary-500 bg-brand-subtle' : 'border-border hover:border-border-strong'}`}>
+              <p className="font-semibold text-foreground">{p.name}</p>
+              <p className="text-xs text-foreground-secondary mt-1">{p.protocols.join(' / ')}</p>
             </button>
           ))}
         </div>
       </div>
 
       {/* Configuration */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Settings className="w-5 h-5 text-primary-500" /> Configuration
+      <div className="bg-card rounded-xl border border-border shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Settings className="w-5 h-5 text-primary" /> Configuration
         </h2>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Protocol</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Protocol</label>
               <select value={form.protocol} onChange={e => setForm({ ...form, protocol: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                 <option value="SAML">SAML 2.0</option>
                 <option value="OIDC">OpenID Connect</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Entity ID / Issuer</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Entity ID / Issuer</label>
               <input type="text" value={form.entityId} onChange={e => setForm({ ...form, entityId: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com" />
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">IdP Metadata URL</label>
+            <label className="block text-sm font-medium text-foreground mb-1">IdP Metadata URL</label>
             <input type="url" value={form.metadataUrl} onChange={e => setForm({ ...form, metadataUrl: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/metadata" />
+              className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/metadata" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Sign-In URL</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Sign-In URL</label>
               <input type="url" value={form.signInUrl} onChange={e => setForm({ ...form, signInUrl: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/sso" />
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/sso" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Logout URL</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Logout URL</label>
               <input type="url" value={form.logoutUrl} onChange={e => setForm({ ...form, logoutUrl: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/slo" />
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" placeholder="https://idp.example.com/slo" />
             </div>
           </div>
 
           {form.protocol === 'SAML' && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">X.509 Certificate {config?.sso?.hasCertificate && <span className="text-emerald-500">(configured)</span>}</label>
+              <label className="block text-sm font-medium text-foreground mb-1">X.509 Certificate {config?.sso?.hasCertificate && <span className="text-success-fg">(configured)</span>}</label>
               <textarea value={form.certificate} onChange={e => setForm({ ...form, certificate: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none font-mono text-xs" rows={4} placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----" />
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none font-mono text-xs" rows={4} placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----" />
             </div>
           )}
 
           {form.protocol === 'OIDC' && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Client ID</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Client ID</label>
                 <input type="text" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                  className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Client Secret {config?.sso?.hasClientSecret && <span className="text-emerald-500">(configured)</span>}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Client Secret {config?.sso?.hasClientSecret && <span className="text-success-fg">(configured)</span>}</label>
                 <input type="password" value={form.clientSecret} onChange={e => setForm({ ...form, clientSecret: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                  className="w-full px-3 py-2 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
               </div>
             </div>
           )}
@@ -285,9 +285,9 @@ export default function SsoSettingsPage() {
       </div>
 
       {/* Options */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Lock className="w-5 h-5 text-primary-500" /> Options
+      <div className="bg-card rounded-xl border border-border shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Lock className="w-5 h-5 text-primary" /> Options
         </h2>
         <div className="space-y-4">
           {[
@@ -296,13 +296,13 @@ export default function SsoSettingsPage() {
             { key: 'allowPasswordLogin', label: 'Allow password login', desc: 'Users can still sign in with email/password' },
             { key: 'autoCreateUsers', label: 'Auto-create users', desc: 'Automatically create accounts for new SSO users' },
           ].map(opt => (
-            <label key={opt.key} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 cursor-pointer">
+            <label key={opt.key} className="flex items-center justify-between p-3 rounded-lg hover:bg-accent cursor-pointer">
               <div>
-                <p className="font-medium text-slate-900">{opt.label}</p>
-                <p className="text-sm text-slate-500">{opt.desc}</p>
+                <p className="font-medium text-foreground">{opt.label}</p>
+                <p className="text-sm text-foreground-secondary">{opt.desc}</p>
               </div>
               <input type="checkbox" checked={(form as any)[opt.key]} onChange={e => setForm({ ...form, [opt.key]: e.target.checked })}
-                className="w-5 h-5 text-primary-500 rounded border-slate-300 focus:ring-primary-500" />
+                className="w-5 h-5 text-primary rounded border-border-strong focus:ring-primary-500" />
             </label>
           ))}
         </div>

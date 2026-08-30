@@ -173,13 +173,13 @@ function SettingsToggle({ label, description, enabled, onToggle }: { label: stri
         <div className="flex items-start justify-between gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
             <div className="flex-1">
                 <div className="font-bold text-slate-900 dark:text-white">{label}</div>
-                <div className="text-xs text-slate-500">{description}</div>
+                <div className="text-xs text-foreground-secondary">{description}</div>
             </div>
             <button 
                 onClick={onToggle}
                 className={`flex-shrink-0 w-12 h-6 rounded-full p-1 transition-colors ${enabled ? 'bg-primary-600' : 'bg-slate-300 dark:bg-slate-700'}`}
             >
-                <div className={`h-4 w-4 rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                <div className={`h-4 w-4 rounded-full bg-card transition-transform ${enabled ? 'translate-x-6' : 'translate-x-0'}`} />
             </button>
         </div>
     );

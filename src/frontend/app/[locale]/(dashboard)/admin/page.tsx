@@ -101,7 +101,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>Platform Revenue</h2>
-              <p className="text-sm text-slate-500">Gross revenue across all active tenants.</p>
+              <p className="text-sm text-foreground-secondary">Gross revenue across all active tenants.</p>
             </div>
           </div>
           <RevenueAreaChart data={revenueTrend} height={300} />
@@ -111,7 +111,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-display)' }}>Subscription Tiers</h2>
-            <p className="text-sm text-slate-500">Breakdown of tenants by plan.</p>
+            <p className="text-sm text-foreground-secondary">Breakdown of tenants by plan.</p>
           </div>
           <ServiceDonutChart data={tierDistributionData} height={200} />
         </div>
@@ -121,12 +121,12 @@ export default function AdminDashboardPage() {
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2" style={{ fontFamily: 'var(--font-display)' }}>
-            <Building2 className="h-6 w-6 text-slate-400" />
+            <Building2 className="h-6 w-6 text-foreground-muted" />
             Tenant Management
           </h2>
           <div className="flex items-center gap-3">
             <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
               <Input 
                 placeholder="Search by name or slug..." 
                 className="pl-10"

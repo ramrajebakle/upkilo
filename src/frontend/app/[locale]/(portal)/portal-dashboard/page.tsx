@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Clock, DollarSign, Star, MessageSquare, User, LogOut, Gift, ChevronRight, Loader2, Download } from 'lucide-react';
+import { applyTenantBrand } from '@/lib/brand';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -46,16 +47,9 @@ export default function PortalDashboard() {
       setUpcoming(upcomingRes.data || []);
       setRewards(rewardsRes);
 
-      // Inject dynamic branding
-      if (profileRes.business?.primaryColor) {
-        document.documentElement.style.setProperty('--primary-color', profileRes.business.primaryColor);
-        // Also calculate a hover color (darken)
-        const hex = profileRes.business.primaryColor.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        document.documentElement.style.setProperty('--primary-color-hover', `rgb(${Math.max(0, r-20)}, ${Math.max(0, g-20)}, ${Math.max(0, b-20)})`);
-      }
+      // This block used to set --primary-color and --primary-color-hover but not
+      // --primary-color-light, so the tinted surfaces on this page fell back to transparent.
+      applyTenantBrand(profileRes.business?.primaryColor);
     } catch (err) {
       console.error('Failed to load portal data:', err);
     } finally {
@@ -156,7 +150,7 @@ export default function PortalDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-muted flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-[var(--primary-color)] animate-spin" />
       </div>
     );
@@ -167,16 +161,16 @@ export default function PortalDashboard() {
     pending: 'bg-amber-100 text-amber-700',
     completed: 'bg-blue-100 text-blue-700',
     cancelled: 'bg-red-100 text-red-700',
-    noshow: 'bg-slate-100 text-slate-500',
+    noshow: 'bg-muted text-foreground-secondary',
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 shadow-sm">
+      <header className="bg-card border-b border-border shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[var(--primary-color)] flex items-center justify-center text-white font-bold ring-2 ring-white shadow-sm overflow-hidden">
+            <div className="w-10 h-10 rounded-full bg-[var(--primary-color)] flex items-center justify-center text-[var(--primary-color-foreground)] font-bold ring-2 ring-white shadow-sm overflow-hidden">
               {profile?.business?.logo ? (
                 <img src={profile.business.logo} alt={profile.business.name} className="w-full h-full object-cover" />
               ) : (
@@ -184,19 +178,19 @@ export default function PortalDashboard() {
               )}
             </div>
             <div>
-              <h1 className="font-semibold text-slate-900">{profile?.firstName} {profile?.lastName}</h1>
-              <p className="text-sm text-slate-500">{profile?.business?.name || profile?.email}</p>
+              <h1 className="font-semibold text-foreground">{profile?.firstName} {profile?.lastName}</h1>
+              <p className="text-sm text-foreground-secondary">{profile?.business?.name || profile?.email}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             {rewards && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full">
-                <Gift className="w-4 h-4 text-amber-500" />
+                <Gift className="w-4 h-4 text-warning-fg" />
                 <span className="text-sm font-medium text-amber-700">{rewards.points} pts</span>
-                <span className="text-xs text-amber-500">({rewards.tier})</span>
+                <span className="text-xs text-warning-fg">({rewards.tier})</span>
               </div>
             )}
-            <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-red-500">
+            <button onClick={handleLogout} className="p-2 text-foreground-muted hover:text-red-500">
               <LogOut className="w-5 h-5" />
             </button>
           </div>
@@ -209,21 +203,21 @@ export default function PortalDashboard() {
           {[
             { label: 'Upcoming', value: upcoming.length, icon: <Calendar className="w-5 h-5 text-[var(--primary-color)]" /> },
             { label: 'Total Visits', value: rewards?.lifetimePoints ? Math.floor(rewards.lifetimePoints / 10) : 0, icon: <Clock className="w-5 h-5 text-blue-500" /> },
-            { label: 'Loyalty Points', value: rewards?.points || 0, icon: <Star className="w-5 h-5 text-amber-500" /> },
-            { label: 'Tier', value: rewards?.tier || 'Bronze', icon: <Gift className="w-5 h-5 text-emerald-500" /> },
+            { label: 'Loyalty Points', value: rewards?.points || 0, icon: <Star className="w-5 h-5 text-warning-fg" /> },
+            { label: 'Tier', value: rewards?.tier || 'Bronze', icon: <Gift className="w-5 h-5 text-success-fg" /> },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+            <div key={s.label} className="bg-card rounded-xl border border-border p-4 shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-slate-500">{s.label}</span>
+                <span className="text-sm text-foreground-secondary">{s.label}</span>
                 {s.icon}
               </div>
-              <p className="text-xl font-bold text-slate-900">{s.value}</p>
+              <p className="text-xl font-bold text-foreground">{s.value}</p>
             </div>
           ))}
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-2 bg-white rounded-xl border border-slate-200 p-1">
+        <div className="flex gap-2 bg-card rounded-xl border border-border p-1">
           {[
             { id: 'upcoming', label: 'Upcoming', icon: Calendar },
             { id: 'history', label: 'History', icon: Clock },
@@ -231,35 +225,35 @@ export default function PortalDashboard() {
             { id: 'messages', label: 'Messages', icon: MessageSquare },
           ].map(tab => (
             <button key={tab.id} onClick={() => loadTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === tab.id ? 'bg-[var(--primary-color)] text-white shadow-sm' : 'text-slate-500 hover:text-[var(--primary-color)] hover:bg-slate-50'}`}>
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === tab.id ? 'bg-[var(--primary-color)] text-[var(--primary-color-foreground)] shadow-sm' : 'text-foreground-secondary hover:text-[var(--primary-color)] hover:bg-accent'}`}>
               <tab.icon className="w-4 h-4" /> {tab.label}
             </button>
           ))}
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-card rounded-xl border border-border shadow-sm">
           {activeTab === 'upcoming' && (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border-subtle">
               {upcoming.length === 0 ? (
                 <div className="p-12 text-center">
                   <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No upcoming appointments</p>
+                  <p className="text-foreground-secondary">No upcoming appointments</p>
                 </div>
               ) : upcoming.map(apt => (
-                <div key={apt.id} className="p-4 flex items-center gap-4 hover:bg-slate-50">
-                  <div className="w-14 h-14 rounded-xl bg-primary-50 flex flex-col items-center justify-center">
-                    <span className="text-xs text-primary-500 font-medium">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
-                    <span className="text-lg font-bold text-primary-700">{new Date(apt.date).getDate()}</span>
+                <div key={apt.id} className="p-4 flex items-center gap-4 hover:bg-accent">
+                  <div className="w-14 h-14 rounded-xl bg-brand-subtle flex flex-col items-center justify-center">
+                    <span className="text-xs text-primary font-medium">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
+                    <span className="text-lg font-bold text-primary">{new Date(apt.date).getDate()}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-slate-900">{apt.service}</p>
-                    <p className="text-sm text-slate-500">{apt.time} · {apt.duration}min · {apt.staff}</p>
+                    <p className="font-semibold text-foreground">{apt.service}</p>
+                    <p className="text-sm text-foreground-secondary">{apt.time} · {apt.duration}min · {apt.staff}</p>
                   </div>
-                  <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[apt.status] || 'bg-slate-100'}`}>{apt.status}</span>
-                  <span className="font-semibold text-slate-900">${apt.price}</span>
+                  <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[apt.status] || 'bg-muted'}`}>{apt.status}</span>
+                  <span className="font-semibold text-foreground">${apt.price}</span>
                   {apt.canCancel && (
-                    <button onClick={() => cancelAppointment(apt.id)} className="text-xs text-red-500 hover:text-red-700">Cancel</button>
+                    <button onClick={() => cancelAppointment(apt.id)} className="text-xs text-danger-fg hover:text-red-700">Cancel</button>
                   )}
                 </div>
               ))}
@@ -267,19 +261,19 @@ export default function PortalDashboard() {
           )}
 
           {activeTab === 'history' && (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border-subtle">
               {history.length === 0 ? (
-                <div className="p-12 text-center"><p className="text-slate-500">No past appointments</p></div>
+                <div className="p-12 text-center"><p className="text-foreground-secondary">No past appointments</p></div>
               ) : history.map((apt: any) => (
                 <div key={apt.id} className="p-4 flex items-center gap-4">
                   <div className="flex-1">
-                    <p className="font-medium text-slate-900">{apt.service}</p>
-                    <p className="text-sm text-slate-500">{apt.date} at {apt.time} · {apt.staff}</p>
+                    <p className="font-medium text-foreground">{apt.service}</p>
+                    <p className="text-sm text-foreground-secondary">{apt.date} at {apt.time} · {apt.staff}</p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[apt.status] || 'bg-slate-100'}`}>{apt.status}</span>
-                      <span className="text-slate-700 font-medium">${apt.price}</span>
+                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[apt.status] || 'bg-muted'}`}>{apt.status}</span>
+                      <span className="text-foreground font-medium">${apt.price}</span>
                     </div>
                     {apt.status === 'completed' && !apt.hasReview && (
                       <button 
@@ -290,7 +284,7 @@ export default function PortalDashboard() {
                       </button>
                     )}
                     {apt.hasReview && (
-                      <span className="text-xs text-slate-400 flex items-center gap-1">
+                      <span className="text-xs text-foreground-muted flex items-center gap-1">
                         <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> Reviewed
                       </span>
                     )}
@@ -301,18 +295,18 @@ export default function PortalDashboard() {
           )}
 
           {activeTab === 'invoices' && (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border-subtle">
               {invoices.length === 0 ? (
-                <div className="p-12 text-center"><p className="text-slate-500">No invoices found</p></div>
+                <div className="p-12 text-center"><p className="text-foreground-secondary">No invoices found</p></div>
               ) : invoices.map((inv: any) => (
                 <div key={inv.id} className="p-4 flex items-center gap-4">
-                  <DollarSign className="w-5 h-5 text-emerald-500" />
+                  <DollarSign className="w-5 h-5 text-success-fg" />
                   <div className="flex-1">
-                    <p className="font-medium text-slate-900">{inv.invoiceNumber} · ${inv.amount} {inv.currency}</p>
-                    <p className="text-sm text-slate-500">{inv.date}</p>
+                    <p className="font-medium text-foreground">{inv.invoiceNumber} · ${inv.amount} {inv.currency}</p>
+                    <p className="text-sm text-foreground-secondary">{inv.date}</p>
                   </div>
                   <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${['paid', 'succeeded'].includes(inv.status) ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{inv.status}</span>
-                  <button onClick={() => handleDownloadInvoice(inv.id, inv.invoiceNumber)} className="p-2 text-slate-400 hover:text-[var(--primary-color)] transition-colors">
+                  <button onClick={() => handleDownloadInvoice(inv.id, inv.invoiceNumber)} className="p-2 text-foreground-muted hover:text-[var(--primary-color)] transition-colors">
                     <Download className="w-4 h-4" />
                   </button>
                 </div>
@@ -321,17 +315,17 @@ export default function PortalDashboard() {
           )}
 
           {activeTab === 'messages' && (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border-subtle">
               {messages.length === 0 ? (
-                <div className="p-12 text-center"><p className="text-slate-500">No messages yet</p></div>
+                <div className="p-12 text-center"><p className="text-foreground-secondary">No messages yet</p></div>
               ) : messages.map((msg: any) => (
                 <div key={msg.id} className="p-4">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs font-medium ${msg.direction === 'Inbound' ? 'text-blue-500' : 'text-[var(--primary-color)]'}`}>{msg.direction === 'Inbound' ? 'You' : 'Business'}</span>
-                    <span className="text-xs text-slate-400">{new Date(msg.createdAt).toLocaleString()}</span>
+                    <span className="text-xs text-foreground-muted">{new Date(msg.createdAt).toLocaleString()}</span>
                   </div>
-                  {msg.subject && <p className="font-medium text-slate-900 text-sm">{msg.subject}</p>}
-                  <p className="text-sm text-slate-600 mt-1">{msg.body}</p>
+                  {msg.subject && <p className="font-medium text-foreground text-sm">{msg.subject}</p>}
+                  <p className="text-sm text-foreground-secondary mt-1">{msg.body}</p>
                 </div>
               ))}
             </div>
@@ -342,9 +336,9 @@ export default function PortalDashboard() {
       {/* Review Modal */}
       {reviewBooking && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Leave a Review</h3>
-            <p className="text-sm text-slate-500 mb-6">How was your {reviewBooking.service} with {reviewBooking.staff}?</p>
+          <div className="bg-card rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+            <h3 className="text-lg font-bold text-foreground mb-1">Leave a Review</h3>
+            <p className="text-sm text-foreground-secondary mb-6">How was your {reviewBooking.service} with {reviewBooking.staff}?</p>
             
             <div className="flex justify-center gap-2 mb-6">
               {[1, 2, 3, 4, 5].map(star => (
@@ -359,7 +353,7 @@ export default function PortalDashboard() {
             </div>
             
             <textarea
-              className="w-full rounded-xl border-slate-200 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] min-h-[100px] text-sm mb-6"
+              className="w-full rounded-xl border-border focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] min-h-[100px] text-sm mb-6"
               placeholder="Tell us about your experience (optional)..."
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
@@ -368,14 +362,14 @@ export default function PortalDashboard() {
             <div className="flex gap-3">
               <button 
                 onClick={() => setReviewBooking(null)}
-                className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50"
+                className="flex-1 px-4 py-2 border border-border rounded-lg text-sm font-medium text-foreground-secondary hover:bg-accent"
               >
                 Cancel
               </button>
               <button 
                 onClick={submitReview}
                 disabled={submittingReview}
-                className="flex-1 px-4 py-2 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] rounded-lg text-sm font-medium text-white disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+                className="flex-1 px-4 py-2 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] rounded-lg text-sm font-medium text-[var(--primary-color-foreground)] disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
               >
                 {submittingReview ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit Review'}
               </button>

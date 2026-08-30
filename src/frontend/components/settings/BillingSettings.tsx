@@ -89,7 +89,7 @@ export function BillingSettings() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
                 <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Financial Ledger...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Financial Ledger...</p>
             </div>
         );
     }
@@ -113,7 +113,7 @@ export function BillingSettings() {
                             )}
                         </h3>
                         {subscription?.currentPeriodEnd && (
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-2 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <p className="text-[10px] font-bold text-foreground-muted mt-2 uppercase tracking-[0.2em] flex items-center gap-2">
                                 <History className="h-3 w-3" /> Next Synchronization: {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
                             </p>
                         )}
@@ -146,7 +146,7 @@ export function BillingSettings() {
                             <h3 className="text-5xl font-black tracking-tighter text-white">
                                 {formatCurrency(creditBalance)}
                             </h3>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Verified Ledger Balance</p>
+                            <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-2">Verified Ledger Balance</p>
                         </div>
                     </div>
                     <Button className="h-14 bg-white text-primary-950 hover:bg-slate-100 font-black px-12 rounded-2xl border-none shadow-xl uppercase tracking-widest text-[10px] hover:scale-105 transition-all active:scale-95">
@@ -161,8 +161,8 @@ export function BillingSettings() {
                 {[
                     { label: 'Agent Spectrum', used: usage?.staffCount || 0, limit: usage?.staffLimit || 0, icon: Users, color: 'text-primary-500', bg: 'bg-primary-500/10', border: 'border-primary-500/20', format: 'number' as const },
                     { label: 'Origin Points', used: usage?.locationCount || 0, limit: usage?.locationLimit || 0, icon: MapPin, color: 'text-primary-500', bg: 'bg-primary-500/10', border: 'border-primary-500/20', format: 'number' as const },
-                    { label: 'Event Volume', used: usage?.bookingsUsed || 0, limit: usage?.bookingsLimit || 0, icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', format: 'number' as const },
-                    { label: 'AI Consumption', used: usage?.aiCostUsed || 0, limit: usage?.aiCostLimit || 0, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', format: 'currency' as const }
+                    { label: 'Event Volume', used: usage?.bookingsUsed || 0, limit: usage?.bookingsLimit || 0, icon: Zap, color: 'text-success-fg', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', format: 'number' as const },
+                    { label: 'AI Consumption', used: usage?.aiCostUsed || 0, limit: usage?.aiCostLimit || 0, icon: Zap, color: 'text-warning-fg', bg: 'bg-amber-500/10', border: 'border-amber-500/20', format: 'currency' as const }
                 ].map((item, i) => (
                     <div key={i} className="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-6 group hover:border-primary-500/30 transition-all">
                         <div className="flex items-center gap-4">
@@ -177,7 +177,7 @@ export function BillingSettings() {
                             limit={item.limit}
                             format={item.format}
                         />
-                        <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest text-center">Live Feedback</p>
+                        <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest text-center">Live Feedback</p>
                     </div>
                 ))}
             </div>
@@ -189,7 +189,7 @@ export function BillingSettings() {
                         onClick={() => setIsAnnual(false)}
                         className={cn(
                             'px-10 py-3.5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all duration-500',
-                            !isAnnual ? 'bg-white dark:bg-slate-900 shadow-xl text-primary-600 dark:text-primary-400' : 'text-slate-500 dark:text-slate-600 hover:text-slate-900 dark:hover:text-slate-300'
+                            !isAnnual ? 'bg-white dark:bg-slate-900 shadow-xl text-primary-600 dark:text-primary-400' : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                         )}
                     >
                         Monthly Sync
@@ -198,7 +198,7 @@ export function BillingSettings() {
                         onClick={() => setIsAnnual(true)}
                         className={cn(
                             'px-10 py-3.5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all duration-500 flex items-center gap-3',
-                            isAnnual ? 'bg-white dark:bg-slate-900 shadow-xl text-primary-600 dark:text-primary-400' : 'text-slate-500 dark:text-slate-600 hover:text-slate-900 dark:hover:text-slate-300'
+                            isAnnual ? 'bg-white dark:bg-slate-900 shadow-xl text-primary-600 dark:text-primary-400' : 'text-foreground-secondary hover:text-slate-900 dark:hover:text-slate-300'
                         )}
                     >
                         Annual Sync <span className="px-2 py-0.5 bg-emerald-500 text-white rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/30">-17%</span>
@@ -229,12 +229,12 @@ export function BillingSettings() {
                                 <span className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter shadow-glow-sm">
                                     {formatCurrency(isAnnual ? plan.annualPrice / 12 : plan.monthlyPrice)}
                                 </span>
-                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">/ NODE</span>
+                                <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">/ NODE</span>
                             </div>
                         </div>
 
                         <div className="space-y-5 mb-12 flex-1 pt-8 border-t border-slate-50 dark:border-slate-850">
-                            <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] mb-4">Functional Matrix</p>
+                            <p className="text-[9px] font-black text-foreground-muted uppercase tracking-[0.3em] mb-4">Functional Matrix</p>
                             {plan.features && Object.entries(plan.features).map(([key, value]) => {
                                 if (typeof value === 'boolean' && value) {
                                     return (
@@ -242,7 +242,7 @@ export function BillingSettings() {
                                             <div className="w-5 h-5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-center shrink-0 mt-0.5 group-hover/feat:border-primary-500/50 group-hover/feat:bg-primary-50 transition-all">
                                                 <Check className="h-3 w-3 text-primary-500 opacity-0 group-hover/feat:opacity-100 transition-opacity" />
                                             </div>
-                                            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest leading-loose group-hover/feat:text-slate-900 dark:group-hover/feat:text-white transition-colors">
+                                            <span className="text-[10px] font-bold text-foreground-secondary uppercase tracking-widest leading-loose group-hover/feat:text-slate-900 dark:group-hover/feat:text-white transition-colors">
                                                 {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                                             </span>
                                         </div>
@@ -256,7 +256,7 @@ export function BillingSettings() {
                             className={cn(
                                 "h-14 w-full rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-500",
                                 plan.id === subscription?.plan?.id 
-                                    ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-none"
+                                    ? "bg-slate-100 dark:bg-slate-800 text-foreground-muted cursor-not-allowed border-none"
                                     : "shadow-2xl shadow-primary-500/20 active:scale-[0.98] hover:scale-105"
                             )}
                             variant={plan.id === subscription?.plan?.id ? "outline" : "primary"}
@@ -275,11 +275,11 @@ export function BillingSettings() {
                 <div className="p-10 border-b border-slate-50 dark:border-slate-850 flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850 shadow-inner">
-                            <History className="h-6 w-6 text-slate-400 dark:text-slate-600" />
+                            <History className="h-6 w-6 text-foreground-muted" />
                         </div>
                         <div>
                             <h4 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Financial Timeline</h4>
-                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-2">Immutable Transaction Logs</p>
+                            <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-2">Immutable Transaction Logs</p>
                         </div>
                     </div>
                 </div>
@@ -288,11 +288,11 @@ export function BillingSettings() {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-slate-50/50 dark:bg-slate-950/20">
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Transaction</th>
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Timestamp</th>
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Allocation</th>
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Stance</th>
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em] text-right">Artifact</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Transaction</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Timestamp</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Allocation</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Stance</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em] text-right">Artifact</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50 dark:divide-slate-850">
@@ -300,9 +300,9 @@ export function BillingSettings() {
                                 <tr>
                                     <td colSpan={5} className="px-10 py-24 text-center">
                                         <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-full inline-block mb-6 shadow-inner">
-                                            <History className="h-10 w-10 text-slate-200 dark:text-slate-800" />
+                                            <History className="h-10 w-10 text-slate-200" />
                                         </div>
-                                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">No financial artifacts found in timeline</p>
+                                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">No financial artifacts found in timeline</p>
                                     </td>
                                 </tr>
                             ) : (
@@ -312,7 +312,7 @@ export function BillingSettings() {
                                             <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest group-hover:text-primary-500 transition-colors">{inv.invoiceNumber}</p>
                                         </td>
                                         <td className="px-10 py-8">
-                                            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest">{new Date(inv.issueDate).toLocaleDateString()}</p>
+                                            <p className="text-[10px] font-bold text-foreground-secondary uppercase tracking-widest">{new Date(inv.issueDate).toLocaleDateString()}</p>
                                         </td>
                                         <td className="px-10 py-8">
                                             <p className="text-xs font-black text-slate-900 dark:text-white tabular-nums tracking-tighter">{formatCurrency(inv.totalAmount)}</p>
@@ -333,7 +333,7 @@ export function BillingSettings() {
                                                     href={inv.pdfUrl} 
                                                     target="_blank" 
                                                     rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-3 h-12 px-5 bg-white dark:bg-slate-800 hover:bg-primary-600 dark:hover:bg-primary-500 text-slate-400 hover:text-white transition-all border border-slate-100 dark:border-slate-700 rounded-xl shadow-sm active:scale-95"
+                                                    className="inline-flex items-center gap-3 h-12 px-5 bg-white dark:bg-slate-800 hover:bg-primary-600 dark:hover:bg-primary-500 text-foreground-muted hover:text-white transition-all border border-slate-100 dark:border-slate-700 rounded-xl shadow-sm active:scale-95"
                                                 >
                                                     <Download className="h-4 w-4" />
                                                     <span className="text-[8px] font-black uppercase tracking-widest">Download</span>

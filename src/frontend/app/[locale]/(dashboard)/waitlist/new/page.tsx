@@ -123,9 +123,9 @@ export default function NewWaitlistPage() {
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
                 <Link
                     href="/waitlist"
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -133,13 +133,13 @@ export default function NewWaitlistPage() {
                             <Clock className="h-5 w-5 text-white" />
                         </div>
                         <h1
-                            className="text-2xl font-bold text-slate-900"
+                            className="text-2xl font-bold text-foreground"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Add to Waitlist
                         </h1>
                     </div>
-                    <p className="text-slate-500 ml-12">Capture client interest for future openings</p>
+                    <p className="text-foreground-secondary ml-12">Capture client interest for future openings</p>
                 </div>
             </div>
 
@@ -148,17 +148,17 @@ export default function NewWaitlistPage() {
                     {/* Main Info */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                                 <User className="h-5 w-5 text-blue-500" />
                                 Client Information
                             </h2>
                             <div className="space-y-4">
                                 <div className="relative">
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Search Existing Client
                                     </label>
                                     <div className="relative">
-                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                         <input
                                             type="text"
                                             value={searchQuery}
@@ -168,16 +168,16 @@ export default function NewWaitlistPage() {
                                         />
                                     </div>
                                     {filteredClients.length > 0 && (
-                                        <div className="absolute z-20 w-full mt-2 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden max-h-60 overflow-y-auto">
+                                        <div className="absolute z-20 w-full mt-2 bg-card rounded-xl shadow-2xl border border-border-subtle overflow-hidden max-h-60 overflow-y-auto">
                                             {filteredClients.map(client => (
                                                 <button
                                                     key={client.id}
                                                     type="button"
                                                     onClick={() => handleClientSelect(client)}
-                                                    className="w-full p-4 hover:bg-slate-50 text-left border-b border-slate-50 last:border-0 transition-colors"
+                                                    className="w-full p-4 hover:bg-accent text-left border-b border-slate-50 last:border-0 transition-colors"
                                                 >
-                                                    <div className="font-bold text-slate-900">{client.firstName} {client.lastName}</div>
-                                                    <div className="text-xs text-slate-500">{client.email}</div>
+                                                    <div className="font-bold text-foreground">{client.firstName} {client.lastName}</div>
+                                                    <div className="text-xs text-foreground-secondary">{client.email}</div>
                                                 </button>
                                             ))}
                                         </div>
@@ -186,8 +186,8 @@ export default function NewWaitlistPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Client Name <span className="text-red-500">*</span>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            Client Name <span className="text-danger-fg">*</span>
                                         </label>
                                         <input
                                             {...register('clientName')}
@@ -195,14 +195,14 @@ export default function NewWaitlistPage() {
                                             className={cn("input", errors.clientName && "border-red-500")}
                                             placeholder="Full Name"
                                         />
-                                        {errors.clientName && <p className="text-xs text-red-500 mt-1">{errors.clientName.message}</p>}
+                                        {errors.clientName && <p className="text-xs text-danger-fg mt-1">{errors.clientName.message}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             Email
                                         </label>
                                         <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <input
                                                 {...register('email')}
                                                 type="email"
@@ -210,14 +210,14 @@ export default function NewWaitlistPage() {
                                                 placeholder="email@example.com"
                                             />
                                         </div>
-                                        {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
+                                        {errors.email && <p className="text-xs text-danger-fg mt-1">{errors.email.message}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             Phone
                                         </label>
                                         <div className="relative">
-                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <input
                                                 {...register('phone')}
                                                 type="tel"
@@ -231,14 +231,14 @@ export default function NewWaitlistPage() {
                         </div>
 
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                                <Briefcase className="h-5 w-5 text-primary-500" />
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                                <Briefcase className="h-5 w-5 text-primary" />
                                 Preference
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Interested Service <span className="text-red-500">*</span>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Interested Service <span className="text-danger-fg">*</span>
                                     </label>
                                     <select
                                         {...register('serviceId')}
@@ -249,15 +249,15 @@ export default function NewWaitlistPage() {
                                             <option key={s.id} value={s.id}>{s.name}</option>
                                         ))}
                                     </select>
-                                    {errors.serviceId && <p className="text-xs text-red-500 mt-1">{errors.serviceId.message}</p>}
+                                    {errors.serviceId && <p className="text-xs text-danger-fg mt-1">{errors.serviceId.message}</p>}
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             Preferred Date
                                         </label>
                                         <div className="relative">
-                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                                             <input
                                                 {...register('preferredDate')}
                                                 type="date"
@@ -266,7 +266,7 @@ export default function NewWaitlistPage() {
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             Preferred Time
                                         </label>
                                         <select
@@ -281,7 +281,7 @@ export default function NewWaitlistPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Notes
                                     </label>
                                     <textarea
@@ -297,11 +297,11 @@ export default function NewWaitlistPage() {
                     {/* Sidebar Info */}
                     <div className="space-y-6">
                         <div className="card-elevated p-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                            <h2 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                                 <Info className="h-5 w-5 text-cyan-500" />
                                 Waitlist Info
                             </h2>
-                            <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+                            <div className="space-y-4 text-sm text-foreground-secondary leading-relaxed">
                                 <p>Adding a client to the waitlist ensures they are first in line for cancellations or new availability.</p>
                                 <div className="flex items-start gap-3 p-3 bg-cyan-50 rounded-xl text-cyan-700 border border-cyan-100">
                                     <Sparkles className="h-4 w-4 mt-0.5 flex-shrink-0" />

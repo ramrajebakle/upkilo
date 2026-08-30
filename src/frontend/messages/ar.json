@@ -57,5 +57,38 @@
       "cancelled": "ملغى",
       "completed": "مكتمل"
     }
+  },
+  "Theme": {
+    "accentColour": "لون التمييز",
+    "accentHelp": "لون علامتك التجارية، ويُستخدم في صفحة الحجز العامة وبوابة العملاء. وهو مشترك مع <link>الهوية البصرية</link>، حيث يمكنك أيضًا ضبط الشعار والنطاق المخصص.",
+    "accentPreview": "احجز الآن",
+    "accentSaveFailed": "تعذّر حفظ لون التمييز",
+    "accentSaved": "تم حفظ لون التمييز",
+    "appearance": "المظهر",
+    "appearanceSubtitle": "اختر شكل Upkilo على هذا الجهاز.",
+    "colourAmber": "كهرماني",
+    "colourCyan": "سماوي",
+    "colourEmerald": "زمردي",
+    "colourIndigo": "نيلي",
+    "colourRose": "وردي",
+    "colourTheme": "سمة الألوان",
+    "colourViolet": "بنفسجي",
+    "contrastWarning": "لا يتجاوز تباين نصوص الأزرار على هذا اللون {ratio}:1، وهو أقل من الحد الأدنى لإمكانية الوصول البالغ 4.5:1. درجة أغمق قليلًا ستكون أوضح للجميع.",
+    "dark": "داكن",
+    "darkHint": "السمة الداكنة دائمًا",
+    "darkModeActive": "الوضع الداكن مُفعَّل",
+    "light": "فاتح",
+    "lightHint": "السمة الفاتحة دائمًا",
+    "lightModeActive": "الوضع الفاتح مُفعَّل",
+    "resolvedNow": "{mode} حاليًا",
+    "saveAccent": "حفظ لون التمييز",
+    "saved": "تم الحفظ",
+    "saving": "جارٍ الحفظ…",
+    "switchToDark": "التبديل إلى الوضع الداكن",
+    "switchToLight": "التبديل إلى الوضع الفاتح",
+    "system": "النظام",
+    "systemHint": "اتّباع إعداد هذا الجهاز",
+    "themeHint": "يُطبَّق فورًا ويُحفَظ على هذا الجهاز.",
+    "themeSection": "السمة"
   }
 }

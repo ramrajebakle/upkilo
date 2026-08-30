@@ -1,8 +1,12 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import '../globals.css';
+import { RootHtml } from '@/components/layout/RootHtml';
 import { safeJsonLd } from '@/lib/jsonLd';
 import { breadcrumbJsonLd } from '@/lib/seo';
+import { themedViewport } from '../viewport';
+
+export const viewport = themedViewport;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://upkilo.com';
 
@@ -43,12 +47,16 @@ const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
 
 export default function PoweredByLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="en">
-            <body>
-                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(POWERED_BY_JSON_LD) }} />
-                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
-                {children}
-            </body>
-        </html>
+        <RootHtml
+            lang="en"
+            headChildren={
+                <>
+                    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(POWERED_BY_JSON_LD) }} />
+                    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(BREADCRUMB_JSON_LD) }} />
+                </>
+            }
+        >
+            {children}
+        </RootHtml>
     );
 }

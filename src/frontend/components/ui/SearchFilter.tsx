@@ -26,7 +26,7 @@ export function SearchFilter({
     return (
         <div className={cn('flex flex-col sm:flex-row gap-4 animate-fade-in-up', className)} style={{ animationDelay: '300ms' }}>
             <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                 <input
                     type="text"
                     placeholder={searchPlaceholder}
@@ -46,7 +46,7 @@ export function SearchFilter({
                                 filters.capitalize !== false && 'capitalize',
                                 filters.value === option
                                     ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
-                                    : 'bg-white text-slate-600 border border-slate-200 hover:border-primary-300'
+                                    : 'bg-card text-foreground-secondary border border-border hover:border-primary-300'
                             )}
                         >
                             {option}

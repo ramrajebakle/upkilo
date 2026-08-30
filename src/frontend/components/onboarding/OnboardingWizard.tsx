@@ -247,7 +247,7 @@ export function OnboardingWizard() {
                                                         ) : (
                                                             // Was slate-700 on a near-black card — roughly 2:1, effectively
                                                             // invisible. Decorative only; state is in the aria-label.
-                                                            <Circle className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-primary-500" aria-hidden="true" />
+                                                            <Circle className="h-5 w-5 text-foreground-muted group-hover:text-primary-500" aria-hidden="true" />
                                                         )}
                                                     </div>
                                                 </div>

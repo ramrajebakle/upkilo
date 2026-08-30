@@ -80,7 +80,7 @@ export default function UsageDashboardPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
                 <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Resource Gauges...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Resource Gauges...</p>
             </div>
         );
     }
@@ -97,7 +97,7 @@ export default function UsageDashboardPage() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Resource Dashboard</h1>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">
                             Current Tier: {subscription?.planName || 'ACTIVE'} • Cycle Ends: {new Date(summary?.periodEnd).toLocaleDateString()}
                         </p>
                     </div>
@@ -160,7 +160,7 @@ export default function UsageDashboardPage() {
                     color="from-primary-500 to-blue-600"
                 />
                 <UsageMetricCard
-                    icon={<MessageSquare className="h-6 w-6 text-emerald-500" />}
+                    icon={<MessageSquare className="h-6 w-6 text-success-fg" />}
                     title="Communication Band"
                     subtitle="SMS Protocols"
                     used={summary?.smsUsed || 0}
@@ -185,7 +185,7 @@ export default function UsageDashboardPage() {
                     color="from-blue-500 to-cyan-600"
                 />
                 <UsageMetricCard
-                    icon={<Users className="h-6 w-6 text-rose-500" />}
+                    icon={<Users className="h-6 w-6 text-danger-fg" />}
                     title="Operative Seats"
                     subtitle="Authorized Agents"
                     used={summary?.staffCount || 0}
@@ -200,11 +200,11 @@ export default function UsageDashboardPage() {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl">
-                                    <DollarSign className="h-6 w-6 text-emerald-500" />
+                                    <DollarSign className="h-6 w-6 text-success-fg" />
                                 </div>
                                 <div>
                                     <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">AI Monetary Budget</h3>
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Tactical Cost Management</p>
+                                    <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest mt-0.5">Tactical Cost Management</p>
                                 </div>
                             </div>
                             <Button
@@ -216,7 +216,7 @@ export default function UsageDashboardPage() {
                                 }}
                                 className="h-10 w-10 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors"
                             >
-                                <Settings2 className="h-4 w-4 text-slate-400" />
+                                <Settings2 className="h-4 w-4 text-foreground-muted" />
                             </Button>
                         </div>
                         
@@ -225,7 +225,7 @@ export default function UsageDashboardPage() {
                                 <span className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
                                     ${summary?.aiCostUsed?.toFixed(2)}
                                 </span>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest pb-1.5">
+                                <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest pb-1.5">
                                     of ${summary?.aiCostLimit} Budget
                                 </span>
                             </div>
@@ -248,7 +248,7 @@ export default function UsageDashboardPage() {
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="relative flex-1">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-400 text-xs">$</span>
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-foreground-muted text-xs">$</span>
                                         <input
                                             type="number"
                                             value={newBudget}
@@ -257,11 +257,11 @@ export default function UsageDashboardPage() {
                                             placeholder="NEW BUDGET"
                                         />
                                     </div>
-                                    <Button onClick={handleUpdateBudget} loading={updatingBudget} className="h-12 w-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/20">
+                                    <Button onClick={handleUpdateBudget} loading={updatingBudget} className="h-12 w-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 text-white">
                                         <Save className="h-4 w-4" />
                                     </Button>
                                     <Button variant="ghost" onClick={() => setShowBudgetForm(false)} className="h-12 w-12 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850">
-                                        <X className="h-4 w-4 text-slate-400" />
+                                        <X className="h-4 w-4 text-foreground-muted" />
                                     </Button>
                                 </div>
                             </motion.div>
@@ -280,7 +280,7 @@ export default function UsageDashboardPage() {
                             <div className="h-10 w-1 rounded-full bg-primary-500 shadow-lg" />
                             <div>
                                 <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">AI Cognitive Matrix</h2>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">System-Wide Inference Analysis</p>
+                                <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest mt-0.5">System-Wide Inference Analysis</p>
                             </div>
                         </div>
                         <div className="flex gap-4">
@@ -293,7 +293,7 @@ export default function UsageDashboardPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                         {[
                             { label: 'Total Inferences', value: aiBreakdown.totalCredits?.toLocaleString(), icon: Cpu, color: 'text-primary-500' },
-                            { label: 'Cumulative Cost', value: `$${aiBreakdown.totalCost?.toFixed(2)}`, icon: DollarSign, color: 'text-emerald-500' },
+                            { label: 'Cumulative Cost', value: `$${aiBreakdown.totalCost?.toFixed(2)}`, icon: DollarSign, color: 'text-success-fg' },
                             { label: 'Accuracy Density', value: `${aiBreakdown.successRate?.toFixed(1)}%`, icon: ShieldCheck, color: 'text-blue-500' }
                         ].map((b, i) => (
                             <div key={i} className="flex items-center gap-6 p-6 bg-slate-50/50 dark:bg-slate-950/50 rounded-[32px] border border-transparent dark:border-slate-850 group hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl transition-all">
@@ -301,7 +301,7 @@ export default function UsageDashboardPage() {
                                     <b.icon className={cn("h-6 w-6", b.color)} />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{b.label}</p>
+                                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest mb-1">{b.label}</p>
                                     <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{b.value}</p>
                                 </div>
                             </div>
@@ -311,7 +311,7 @@ export default function UsageDashboardPage() {
                     {/* Feature Breakdown Corridor */}
                     {aiBreakdown.byFeature && Object.entries(aiBreakdown.byFeature).length > 0 && (
                         <div className="space-y-6 pt-10 border-t border-slate-50 dark:border-slate-850 relative z-10">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Linguistic & Cognitive Distribution</h3>
+                            <h3 className="text-[10px] font-black text-foreground-muted uppercase tracking-widest ml-1">Linguistic & Cognitive Distribution</h3>
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {Object.entries(aiBreakdown.byFeature).map(([feature, data]: [string, any]) => (
                                     <div key={feature} className="flex items-center justify-between p-6 bg-slate-50 dark:bg-slate-950/20 rounded-[24px] border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-colors">
@@ -319,12 +319,12 @@ export default function UsageDashboardPage() {
                                             <div className="w-1.5 h-6 bg-primary-500/20 rounded-full" />
                                             <div>
                                                 <p className="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-widest capitalize">{feature.replace('-', ' ')}</p>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{data.requests} REQUEST NODES</p>
+                                                <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest mt-1">{data.requests} REQUEST NODES</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-sm font-black text-slate-900 dark:text-white tabular-nums">${data.cost?.toFixed(2)}</p>
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{data.credits?.toLocaleString()} TOKENS</p>
+                                            <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest mt-1">{data.credits?.toLocaleString()} TOKENS</p>
                                         </div>
                                     </div>
                                 ))}
@@ -383,14 +383,14 @@ function UsageMetricCard({ icon, title, subtitle, used, limit, unit = '', color 
                 </div>
                 <div>
                     <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">{title}</h3>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{subtitle}</p>
+                    <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest mt-0.5">{subtitle}</p>
                 </div>
             </div>
             
             <div className="space-y-4">
                 <div className="flex items-end justify-between">
                     <span className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{used.toLocaleString()}</span>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest pb-1.5">{unit} of {limit.toLocaleString()}</span>
+                    <span className="text-[10px] font-black text-foreground-muted uppercase tracking-widest pb-1.5">{unit} of {limit.toLocaleString()}</span>
                 </div>
                 <div className="h-3 w-full bg-slate-50 dark:bg-slate-950 rounded-full overflow-hidden shadow-inner">
                     <div 

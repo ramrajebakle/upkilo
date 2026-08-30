@@ -89,7 +89,7 @@ export default function TeamPage() {
     return (
         <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
             <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Agent Spectrum...</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Agent Spectrum...</p>
         </div>
     );
   }
@@ -104,7 +104,7 @@ export default function TeamPage() {
             </div>
             <div>
                 <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Agent Matrix</h1>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Human Resource & Permission Layer</p>
+                <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Human Resource & Permission Layer</p>
             </div>
         </div>
         <Button 
@@ -119,8 +119,8 @@ export default function TeamPage() {
       <div className="grid md:grid-cols-3 gap-8">
           {[
               { label: 'Total Agents', value: team.length, icon: Users, color: 'text-primary-500', bg: 'bg-primary-500/10' },
-              { label: 'Active Nodes', value: team.filter(m => m.isActive).length, icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-              { label: 'Pending Comms', value: invitations.length, icon: Mail, color: 'text-amber-500', bg: 'bg-amber-500/10' }
+              { label: 'Active Nodes', value: team.filter(m => m.isActive).length, icon: Zap, color: 'text-success-fg', bg: 'bg-emerald-500/10' },
+              { label: 'Pending Comms', value: invitations.length, icon: Mail, color: 'text-warning-fg', bg: 'bg-amber-500/10' }
           ].map((stat, i) => (
               <div key={i} className="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-4 group overflow-hidden relative">
                   <div className="relative z-10 flex items-center justify-between">
@@ -129,7 +129,7 @@ export default function TeamPage() {
                       </div>
                       <span className="text-4xl font-black text-slate-900 dark:text-white tabular-nums tracking-tighter">{stat.value}</span>
                   </div>
-                  <p className="relative z-10 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">{stat.label}</p>
+                  <p className="relative z-10 text-[10px] font-black text-foreground-muted uppercase tracking-widest">{stat.label}</p>
                   <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-slate-50 dark:bg-slate-850/30 rounded-full blur-2xl group-hover:scale-150 transition-transform" />
               </div>
           ))}
@@ -140,11 +140,11 @@ export default function TeamPage() {
         <div className="p-10 border-b border-slate-50 dark:border-slate-850 flex items-center justify-between bg-slate-50/20 dark:bg-slate-950/20">
             <div className="flex items-center gap-6">
                 <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
-                    <Monitor className="h-6 w-6 text-slate-400 dark:text-slate-600" />
+                    <Monitor className="h-6 w-6 text-foreground-muted" />
                 </div>
                 <div>
                     <h4 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Active Operatives</h4>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-2">Authenticated System Access Map</p>
+                    <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-2">Authenticated System Access Map</p>
                 </div>
             </div>
         </div>
@@ -153,10 +153,10 @@ export default function TeamPage() {
             <table className="w-full text-left border-collapse">
                 <thead>
                     <tr className="bg-slate-50/30 dark:bg-slate-950/30">
-                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Agent Identity</th>
-                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Auth Role</th>
-                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Neural Stance</th>
-                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Last Uplink</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Agent Identity</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Auth Role</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Neural Stance</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Last Uplink</th>
                         <th className="px-10 py-6 text-right"></th>
                     </tr>
                 </thead>
@@ -165,9 +165,9 @@ export default function TeamPage() {
                         <tr>
                             <td colSpan={5} className="px-10 py-24 text-center">
                                 <div className="p-8 bg-slate-50 dark:bg-slate-950 rounded-full inline-block mb-6 shadow-inner">
-                                    <Users className="h-10 w-10 text-slate-200 dark:text-slate-800" />
+                                    <Users className="h-10 w-10 text-slate-200" />
                                 </div>
-                                <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Zero agent nodes detected in matrix</p>
+                                <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.4em]">Zero agent nodes detected in matrix</p>
                             </td>
                         </tr>
                     ) : (
@@ -180,7 +180,7 @@ export default function TeamPage() {
                                     </div>
                                     <div>
                                         <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{member.firstName} {member.lastName}</p>
-                                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-1">{member.email}</p>
+                                        <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mt-1">{member.email}</p>
                                     </div>
                                 </div>
                             </td>
@@ -197,13 +197,13 @@ export default function TeamPage() {
                                     "px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm",
                                     member.isActive 
                                         ? "bg-emerald-50 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-400/20 shadow-emerald-500/[0.05]" 
-                                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500 border-slate-200 dark:border-slate-700 shadow-none"
+                                        : "bg-slate-100 dark:bg-slate-800 text-foreground-secondary border-slate-200 dark:border-slate-700 shadow-none"
                                 )}>
                                     {member.isActive ? 'Active Node' : 'Suspended'}
                                 </span>
                             </td>
                             <td className="px-10 py-8">
-                                <p className="text-[10px] font-bold text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em]">{member.lastLoginAt ? new Date(member.lastLoginAt).toLocaleDateString() : 'Historical'}</p>
+                                <p className="text-[10px] font-bold text-foreground-secondary uppercase tracking-[0.2em]">{member.lastLoginAt ? new Date(member.lastLoginAt).toLocaleDateString() : 'Historical'}</p>
                             </td>
                             <td className="px-10 py-8 text-right">
                                 <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -262,17 +262,17 @@ export default function TeamPage() {
                       </span>
                     </td>
                     <td className="px-10 py-8">
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{new Date(invite.createdAt).toLocaleDateString()}</p>
+                      <p className="text-[10px] font-bold text-foreground-secondary uppercase tracking-widest">{new Date(invite.createdAt).toLocaleDateString()}</p>
                     </td>
                     <td className="px-10 py-8">
-                      <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">{Math.ceil((new Date(invite.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} CYCLES</p>
+                      <p className="text-[10px] font-black text-warning-fg uppercase tracking-widest">{Math.ceil((new Date(invite.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} CYCLES</p>
                     </td>
                     <td className="px-10 py-8 text-right">
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         onClick={() => handleCancelInvite(invite.id, invite.email)}
-                        className="h-10 w-10 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-all"
+                        className="h-10 w-10 text-foreground-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-all"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -294,9 +294,9 @@ export default function TeamPage() {
       >
         <form onSubmit={handleInvite} className="space-y-8 py-6">
           <div className="space-y-4">
-            <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">Agent Neural Address</label>
+            <label className="text-[10px] font-black text-foreground-muted uppercase tracking-widest ml-1">Agent Neural Address</label>
             <div className="relative">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700" />
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                 <Input 
                   type="email" 
                   placeholder="AGENT-ID@SYSTEM.ROOT"
@@ -310,7 +310,7 @@ export default function TeamPage() {
           </div>
           
           <div className="space-y-4">
-            <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest ml-1">System Privilege Matrix</label>
+            <label className="text-[10px] font-black text-foreground-muted uppercase tracking-widest ml-1">System Privilege Matrix</label>
             <Select 
               value={inviteForm.role} 
               onValueChange={(val) => setInviteForm({ ...inviteForm, role: val })}
@@ -333,7 +333,7 @@ export default function TeamPage() {
                 variant="ghost" 
                 onClick={() => setIsInviteModalOpen(false)}
                 disabled={isInviting}
-                className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px] text-slate-400 hover:text-slate-900"
+                className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px] text-foreground-muted hover:text-foreground"
             >
               Abort
             </Button>

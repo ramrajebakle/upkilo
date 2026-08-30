@@ -51,12 +51,12 @@ interface Service {
 }
 
 const RULE_TYPES = [
-    { value: 'surge', label: 'Surge Pricing', icon: TrendingUp, color: 'text-red-500', desc: 'Increase price during high demand' },
+    { value: 'surge', label: 'Surge Pricing', icon: TrendingUp, color: 'text-danger-fg', desc: 'Increase price during high demand' },
     { value: 'off_peak', label: 'Off-Peak Discount', icon: TrendingDown, color: 'text-blue-500', desc: 'Reduce price during slow periods' },
     { value: 'seasonal', label: 'Seasonal', icon: Calendar, color: 'text-orange-500', desc: 'Apply within a date range' },
     { value: 'demand', label: 'Demand-Based', icon: BarChart3, color: 'text-purple-500', desc: 'Activate when bookings exceed threshold' },
-    { value: 'early_bird', label: 'Early Bird', icon: Zap, color: 'text-emerald-500', desc: 'Discount for advance bookings' },
-    { value: 'last_minute', label: 'Last Minute', icon: Clock, color: 'text-yellow-600', desc: 'Deals close to booking time' },
+    { value: 'early_bird', label: 'Early Bird', icon: Zap, color: 'text-success-fg', desc: 'Discount for advance bookings' },
+    { value: 'last_minute', label: 'Last Minute', icon: Clock, color: 'text-warning-fg', desc: 'Deals close to booking time' },
 ];
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -292,8 +292,8 @@ export default function DynamicPricingPage() {
                             </div>
                         ) : rules.length === 0 ? (
                             <div className="bg-white dark:bg-slate-900 rounded-xl border border-dashed border-gray-200 dark:border-slate-800 p-10 text-center">
-                                <TrendingUp className="w-8 h-8 text-gray-300 dark:text-slate-700 mx-auto mb-2" />
-                                <p className="text-gray-500 dark:text-slate-500 text-sm">No pricing rules yet.</p>
+                                <TrendingUp className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                                <p className="text-slate-300 text-sm">No pricing rules yet.</p>
                                 <button
                                     onClick={() => setShowForm(true)}
                                     className="mt-3 text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline"
@@ -322,7 +322,7 @@ export default function DynamicPricingPage() {
                                                 title={rule.isActive ? 'Disable' : 'Enable'}
                                             >
                                                 {rule.isActive ? (
-                                                    <ToggleRight className="w-8 h-8 text-emerald-500" />
+                                                    <ToggleRight className="w-8 h-8 text-success-fg" />
                                                 ) : (
                                                     <ToggleLeft className="w-8 h-8 text-gray-300" />
                                                 )}
@@ -335,7 +335,7 @@ export default function DynamicPricingPage() {
                                                     </span>
                                                     <RuleTypeBadge type={rule.type} />
                                                 </div>
-                                                <p className="text-xs text-gray-400 dark:text-slate-400 mt-0.5">
+                                                <p className="text-xs text-foreground-muted mt-0.5">
                                                     {rule.adjustmentType === 'percentage'
                                                         ? `${isPositive ? '+' : ''}${rule.adjustmentValue}%`
                                                         : `${isPositive ? '+' : ''}${formatCurrency(rule.adjustmentValue)}`}{' '}
@@ -368,14 +368,14 @@ export default function DynamicPricingPage() {
                                                     className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                                 >
                                                     {expanded ? (
-                                                        <ChevronUp className="w-4 h-4 text-gray-400 dark:text-slate-500" />
+                                                        <ChevronUp className="w-4 h-4 text-foreground-muted" />
                                                     ) : (
-                                                        <ChevronDown className="w-4 h-4 text-gray-400 dark:text-slate-500" />
+                                                        <ChevronDown className="w-4 h-4 text-foreground-muted" />
                                                     )}
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(rule.id)}
-                                                    className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 rounded-lg transition-colors text-gray-400 dark:text-slate-500"
+                                                    className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 rounded-lg transition-colors text-foreground-muted"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -511,7 +511,7 @@ export default function DynamicPricingPage() {
                                         </span>
                                     </div>
                                     {simResult.appliedRules.length === 0 && (
-                                        <p className="text-xs text-gray-400 mt-2">No rules applied at this time.</p>
+                                        <p className="text-xs text-foreground-muted mt-2">No rules applied at this time.</p>
                                     )}
                                 </div>
                             )}
@@ -528,7 +528,7 @@ export default function DynamicPricingPage() {
                                             <Icon className={cn('w-4 h-4 mt-0.5 flex-shrink-0', rt.color)} />
                                             <div>
                                                 <p className="text-xs font-semibold text-gray-700 dark:text-slate-300">{rt.label}</p>
-                                                <p className="text-xs text-gray-400 dark:text-slate-500">{rt.desc}</p>
+                                                <p className="text-xs text-foreground-muted">{rt.desc}</p>
                                             </div>
                                         </div>
                                     );
@@ -618,7 +618,7 @@ export default function DynamicPricingPage() {
                                         placeholder="e.g. 20 for +20%"
                                     />
                                 </div>
-                                <p className="text-xs text-gray-400 mt-1">
+                                <p className="text-xs text-foreground-muted mt-1">
                                     Use negative values for discounts (e.g. −15 for 15% off)
                                 </p>
                             </div>
@@ -736,7 +736,7 @@ export default function DynamicPricingPage() {
                                                     className="rounded accent-primary-600 dark:bg-slate-700 dark:border-slate-600"
                                                 />
                                                 <span className="text-sm text-gray-700 dark:text-slate-300">{s.name}</span>
-                                                <span className="text-xs text-gray-400 dark:text-slate-500 ml-auto">
+                                                <span className="text-xs text-foreground-muted ml-auto">
                                                     {formatCurrency(s.price)}
                                                 </span>
                                             </label>

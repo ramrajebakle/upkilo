@@ -66,7 +66,7 @@ const DATE_RANGES = [
 function PlatformBadge({ platform }: { platform: string }) {
     const cfg = PLATFORM_CONFIG[platform as keyof typeof PLATFORM_CONFIG] ?? { name: platform, color: '#888', icon: '📢' };
     return (
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600">
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-foreground-secondary">
             <span>{cfg.icon}</span>
             {cfg.name}
         </span>
@@ -82,7 +82,7 @@ function MetricCard({
     icon: React.ElementType; trend?: number; color?: string;
 }) {
     const colorMap: Record<string, string> = {
-        violet: 'bg-primary-50 text-primary-600',
+        violet: 'bg-brand-subtle text-primary',
         emerald: 'bg-emerald-50 text-emerald-600',
         blue: 'bg-blue-50 text-blue-500',
         amber: 'bg-amber-50 text-amber-600',
@@ -90,22 +90,22 @@ function MetricCard({
     };
 
     return (
-        <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+        <div className="bg-card rounded-xl border border-border-subtle p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
                 <div className={cn('p-2 rounded-lg', colorMap[color] ?? colorMap.violet)}>
                     <Icon className="w-4 h-4" />
                 </div>
                 {trend !== undefined && (
                     <span className={cn('text-xs font-medium flex items-center gap-0.5',
-                        trend >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                        trend >= 0 ? 'text-success-fg' : 'text-danger-fg')}>
                         {trend >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                         {Math.abs(trend)}%
                     </span>
                 )}
             </div>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{label}</p>
-            {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
+            <p className="text-2xl font-bold text-foreground">{value}</p>
+            <p className="text-xs text-foreground-secondary mt-0.5">{label}</p>
+            {sub && <p className="text-xs text-foreground-muted mt-0.5">{sub}</p>}
         </div>
     );
 }
@@ -202,20 +202,20 @@ export default function AdPerformancePage() {
     const overallCtr = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-muted">
             {/* Header */}
-            <div className="bg-white border-b border-gray-100 px-6 py-5 sticky top-0 z-10 shadow-sm">
+            <div className="bg-card border-b border-border-subtle px-6 py-5 sticky top-0 z-10 shadow-sm">
                 <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
                     <div className="flex items-center gap-3">
-                        <Link href="/analytics" className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500">
+                        <Link href="/analytics" className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground-secondary">
                             <ArrowLeft className="w-4 h-4" />
                         </Link>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                <Megaphone className="w-5 h-5 text-primary-600" />
+                            <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+                                <Megaphone className="w-5 h-5 text-primary" />
                                 Ad Performance
                             </h1>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-foreground-secondary">
                                 Across {Object.keys(PLATFORM_CONFIG).length} platforms · {campaigns.length} campaigns
                             </p>
                         </div>
@@ -227,13 +227,13 @@ export default function AdPerformancePage() {
                             <select
                                 value={dateRange}
                                 onChange={e => setDateRange(e.target.value)}
-                                className="appearance-none pl-3 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-400"
+                                className="appearance-none pl-3 pr-8 py-2 border border-border rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-primary-400"
                             >
                                 {DATE_RANGES.map(r => (
                                     <option key={r.value} value={r.value}>{r.label}</option>
                                 ))}
                             </select>
-                            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground-muted pointer-events-none" />
                         </div>
 
                         {/* Platform sync buttons */}
@@ -242,7 +242,7 @@ export default function AdPerformancePage() {
                                 key={key}
                                 onClick={() => handleSync(key)}
                                 disabled={syncing === key}
-                                className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-gray-600 rounded-lg text-xs hover:bg-gray-50 transition-colors disabled:opacity-40"
+                                className="flex items-center gap-1.5 px-3 py-2 border border-border text-foreground-secondary rounded-lg text-xs hover:bg-accent transition-colors disabled:opacity-40"
                             >
                                 {syncing === key ? (
                                     <Loader2 className="w-3 h-3 animate-spin" />
@@ -268,8 +268,8 @@ export default function AdPerformancePage() {
                 </div>
 
                 {/* Chart */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                    <h2 className="font-semibold text-gray-900 mb-4">Performance Trend</h2>
+                <div className="bg-card rounded-xl border border-border-subtle shadow-sm p-5">
+                    <h2 className="font-semibold text-foreground mb-4">Performance Trend</h2>
                     <ResponsiveContainer width="100%" height={240}>
                         <AreaChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                             <defs>
@@ -302,7 +302,7 @@ export default function AdPerformancePage() {
                                 onClick={() => setPlatformFilter(null)}
                                 className={cn(
                                     'px-3 py-1.5 rounded-full text-sm font-medium border transition-all',
-                                    !platformFilter ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-600 border-gray-200'
+                                    !platformFilter ? 'bg-primary-600 text-white border-primary-600' : 'bg-card text-foreground-secondary border-border'
                                 )}
                             >
                                 All Platforms
@@ -315,7 +315,7 @@ export default function AdPerformancePage() {
                                         'px-3 py-1.5 rounded-full text-sm font-medium border transition-all',
                                         platformFilter === key
                                             ? 'bg-primary-600 text-white border-primary-600'
-                                            : 'bg-white text-gray-600 border-gray-200'
+                                            : 'bg-card text-foreground-secondary border-border'
                                     )}
                                 >
                                     {cfg.icon} {cfg.name}
@@ -323,11 +323,11 @@ export default function AdPerformancePage() {
                             ))}
                         </div>
 
-                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="bg-card rounded-xl border border-border-subtle shadow-sm overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="border-b border-gray-50 text-xs text-gray-400 font-medium">
+                                        <tr className="border-b border-gray-50 text-xs text-foreground-muted font-medium">
                                             <th className="text-left px-4 py-3">Campaign</th>
                                             <th className="text-right px-4 py-3">Spend</th>
                                             <th className="text-right px-4 py-3 hidden md:table-cell">Clicks</th>
@@ -341,36 +341,36 @@ export default function AdPerformancePage() {
                                             [...Array(4)].map((_, i) => (
                                                 <tr key={i}>
                                                     <td colSpan={6} className="px-4 py-4">
-                                                        <div className="h-4 bg-gray-100 rounded animate-pulse" />
+                                                        <div className="h-4 bg-muted rounded animate-pulse" />
                                                     </td>
                                                 </tr>
                                             ))
                                         ) : filtered.map(campaign => (
-                                            <tr key={campaign.id} className="hover:bg-gray-50 transition-colors">
+                                            <tr key={campaign.id} className="hover:bg-accent transition-colors">
                                                 <td className="px-4 py-3">
                                                     <div>
-                                                        <p className="font-medium text-gray-900 text-sm">{campaign.name}</p>
+                                                        <p className="font-medium text-foreground text-sm">{campaign.name}</p>
                                                         <PlatformBadge platform={campaign.platform} />
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-3 text-right">
-                                                    <p className="font-medium text-gray-900">{formatCurrency(campaign.spend)}</p>
-                                                    <p className="text-xs text-gray-400">of {formatCurrency(campaign.budget)}</p>
+                                                    <p className="font-medium text-foreground">{formatCurrency(campaign.spend)}</p>
+                                                    <p className="text-xs text-foreground-muted">of {formatCurrency(campaign.budget)}</p>
                                                 </td>
-                                                <td className="px-4 py-3 text-right hidden md:table-cell text-gray-700">
+                                                <td className="px-4 py-3 text-right hidden md:table-cell text-foreground">
                                                     {campaign.clicks.toLocaleString()}
-                                                    <span className="block text-xs text-gray-400">
+                                                    <span className="block text-xs text-foreground-muted">
                                                         {campaign.ctr.toFixed(1)}% CTR
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 text-right hidden lg:table-cell text-gray-700">
+                                                <td className="px-4 py-3 text-right hidden lg:table-cell text-foreground">
                                                     {campaign.conversions}
                                                 </td>
                                                 <td className="px-4 py-3 text-right">
                                                     <span className={cn(
                                                         'font-bold',
-                                                        campaign.roas >= 4 ? 'text-emerald-600' :
-                                                        campaign.roas >= 2 ? 'text-amber-600' : 'text-red-500'
+                                                        campaign.roas >= 4 ? 'text-success-fg' :
+                                                        campaign.roas >= 2 ? 'text-warning-fg' : 'text-danger-fg'
                                                     )}>
                                                         {campaign.roas.toFixed(1)}×
                                                     </span>
@@ -384,7 +384,7 @@ export default function AdPerformancePage() {
                                                                 ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                                                                 : campaign.status === 'paused'
                                                                 ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
-                                                                : 'bg-gray-50 text-gray-500'
+                                                                : 'bg-muted text-foreground-secondary'
                                                         )}
                                                     >
                                                         {campaign.status === 'active' ? (
@@ -406,7 +406,7 @@ export default function AdPerformancePage() {
 
                     {/* Platform breakdown sidebar */}
                     <div className="space-y-4">
-                        <h3 className="font-semibold text-gray-900">By Platform</h3>
+                        <h3 className="font-semibold text-foreground">By Platform</h3>
 
                         {Object.entries(PLATFORM_CONFIG).map(([key, cfg]) => {
                             const platformCampaigns = campaigns.filter(c => c.platform === key);
@@ -416,26 +416,26 @@ export default function AdPerformancePage() {
                                 ? platformCampaigns.reduce((s, c) => s + c.roas, 0) / platformCampaigns.length : 0;
 
                             return (
-                                <div key={key} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                                <div key={key} className="bg-card rounded-xl border border-border-subtle shadow-sm p-4">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-2">
                                             <span className="text-xl">{cfg.icon}</span>
-                                            <span className="font-medium text-gray-900 text-sm">{cfg.name}</span>
+                                            <span className="font-medium text-foreground text-sm">{cfg.name}</span>
                                         </div>
-                                        <span className="text-xs text-gray-400">{platformCampaigns.length} campaigns</span>
+                                        <span className="text-xs text-foreground-muted">{platformCampaigns.length} campaigns</span>
                                     </div>
                                     <div className="grid grid-cols-3 gap-2 text-sm">
                                         <div>
-                                            <p className="text-gray-400 text-xs">Spend</p>
-                                            <p className="font-bold text-gray-900">{formatCurrency(spend)}</p>
+                                            <p className="text-foreground-muted text-xs">Spend</p>
+                                            <p className="font-bold text-foreground">{formatCurrency(spend)}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-400 text-xs">Conv.</p>
-                                            <p className="font-bold text-gray-900">{conv}</p>
+                                            <p className="text-foreground-muted text-xs">Conv.</p>
+                                            <p className="font-bold text-foreground">{conv}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-400 text-xs">ROAS</p>
-                                            <p className={cn('font-bold', roas >= 3 ? 'text-emerald-600' : roas >= 1.5 ? 'text-amber-600' : 'text-red-500')}>
+                                            <p className="text-foreground-muted text-xs">ROAS</p>
+                                            <p className={cn('font-bold', roas >= 3 ? 'text-success-fg' : roas >= 1.5 ? 'text-warning-fg' : 'text-danger-fg')}>
                                                 {roas > 0 ? `${roas.toFixed(1)}×` : '—'}
                                             </p>
                                         </div>
@@ -443,11 +443,11 @@ export default function AdPerformancePage() {
                                     {/* Budget bar */}
                                     {platformCampaigns.length > 0 && (
                                         <div className="mt-3">
-                                            <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                            <div className="flex justify-between text-xs text-foreground-muted mb-1">
                                                 <span>Budget utilization</span>
                                                 <span>{Math.round(spend / platformCampaigns.reduce((s, c) => s + c.budget, 0) * 100)}%</span>
                                             </div>
-                                            <div className="h-1.5 bg-gray-100 rounded-full">
+                                            <div className="h-1.5 bg-muted rounded-full">
                                                 <div
                                                     className="h-1.5 rounded-full transition-all"
                                                     style={{

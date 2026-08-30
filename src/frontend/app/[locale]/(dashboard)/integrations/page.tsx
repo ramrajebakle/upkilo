@@ -108,7 +108,7 @@ export default function IntegrationsPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-        <p className="text-gray-500">Loading integrations…</p>
+        <p className="text-foreground-secondary">Loading integrations…</p>
       </div>
     );
   }
@@ -124,7 +124,7 @@ export default function IntegrationsPage() {
           </p>
         </div>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground-muted" />
           <Input
             placeholder="Search integrations…"
             value={search}
@@ -143,7 +143,7 @@ export default function IntegrationsPage() {
             className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${
               category === cat
                 ? "bg-gray-900 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                : "bg-muted text-foreground-secondary hover:bg-gray-200"
             }`}
           >
             {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -152,15 +152,15 @@ export default function IntegrationsPage() {
       </div>
 
       {/* Stats bar */}
-      <div className="flex gap-6 text-sm text-gray-500 border-b pb-4">
-        <span><strong className="text-gray-900">{integrations.filter(i => i.isConnected).length}</strong> connected</span>
-        <span><strong className="text-gray-900">{integrations.filter(i => i.isVerified).length}</strong> verified</span>
-        <span><strong className="text-gray-900">{filtered.length}</strong> shown</span>
+      <div className="flex gap-6 text-sm text-foreground-secondary border-b pb-4">
+        <span><strong className="text-foreground">{integrations.filter(i => i.isConnected).length}</strong> connected</span>
+        <span><strong className="text-foreground">{integrations.filter(i => i.isVerified).length}</strong> verified</span>
+        <span><strong className="text-foreground">{filtered.length}</strong> shown</span>
       </div>
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-foreground-muted">
           <p className="text-lg font-medium">No integrations found</p>
           <p className="text-sm">Try a different search or category.</p>
         </div>

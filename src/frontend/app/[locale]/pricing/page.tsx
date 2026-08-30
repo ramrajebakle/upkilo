@@ -135,57 +135,64 @@ export default function PricingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-muted py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl tracking-tight">
+          <h1 className="text-4xl font-extrabold text-foreground sm:text-5xl tracking-tight">
             Simple, transparent pricing
           </h1>
-          <p className="mt-4 text-xl text-gray-600">
+          <p className="mt-4 text-xl text-foreground-secondary">
             No hidden fees. No surprise charges. Choose the plan that fits your growth.
           </p>
           
           <div className="mt-8 flex justify-center items-center gap-3">
-            <span className={`text-sm font-medium ${!annual ? 'text-gray-900' : 'text-gray-500'}`}>Monthly</span>
+            <span className={`text-sm font-medium ${!annual ? 'text-foreground' : 'text-foreground-secondary'}`}>Monthly</span>
             <button 
               onClick={() => setAnnual(!annual)}
               className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
-              <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${annual ? 'translate-x-5' : 'translate-x-0'}`} />
+              <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-control-thumb shadow ring-0 transition duration-200 ease-in-out ${annual ? 'translate-x-5' : 'translate-x-0'}`} />
             </button>
-            <span className={`text-sm font-medium ${annual ? 'text-gray-900' : 'text-gray-500'}`}>Annually <span className="text-green-600 text-xs bg-green-100 px-2 py-0.5 rounded-full ml-1">Save 21%</span></span>
+            <span className={`text-sm font-medium ${annual ? 'text-foreground' : 'text-foreground-secondary'}`}>Annually <span className="text-green-600 text-xs bg-green-100 px-2 py-0.5 rounded-full ml-1">Save 21%</span></span>
           </div>
         </div>
 
         <div className="mt-16 grid gap-8 lg:grid-cols-3 max-w-md mx-auto lg:max-w-none">
           {plans.map((plan) => (
-            <div key={plan.id} className={`flex flex-col rounded-3xl bg-white shadow-xl ring-1 ${plan.popular ? 'ring-2 ring-primary scale-105 z-10' : 'ring-gray-200'}`}>
+            <div key={plan.id} className={`flex flex-col rounded-3xl bg-card shadow-xl ring-1 ${plan.popular ? 'ring-2 ring-primary scale-105 z-10' : 'ring-border'}`}>
               <div className="p-8 sm:p-10">
                 {plan.popular && (
                   <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary mb-4">
                     Most Popular
                   </span>
                 )}
-                <h3 className="text-2xl font-bold tracking-tight text-gray-900">{plan.name}</h3>
-                <p className="mt-4 text-sm leading-6 text-gray-600 h-12">{plan.description}</p>
-                <div className="mt-4 flex items-baseline text-5xl font-extrabold tracking-tight text-gray-900">
+                <h3 className="text-2xl font-bold tracking-tight text-foreground">{plan.name}</h3>
+                <p className="mt-4 text-sm leading-6 text-foreground-secondary h-12">{plan.description}</p>
+                <div className="mt-4 flex items-baseline text-5xl font-extrabold tracking-tight text-foreground">
                   ${annual ? plan.priceAnnually : plan.priceMonthly}
-                  <span className="ml-1 text-xl font-medium tracking-normal text-gray-500">/mo</span>
+                  <span className="ml-1 text-xl font-medium tracking-normal text-foreground-secondary">/mo</span>
                 </div>
-                <p className="mt-1 text-sm text-gray-500">{annual ? 'Billed annually' : 'Billed monthly'}</p>
+                <p className="mt-1 text-sm text-foreground-secondary">{annual ? 'Billed annually' : 'Billed monthly'}</p>
 
                 <Link href={`/checkout/${plan.id}?billing=${annual ? 'annual' : 'monthly'}`} className="block mt-8">
-                  <Button className={`w-full py-6 text-lg ${plan.popular ? '' : 'bg-gray-900 hover:bg-gray-800'}`}>
+                  {/* The non-popular tiers used `bg-gray-900` to read as the quieter option —
+                      a fixed near-black slab, which in dark mode is a button the same colour
+                      as the card behind it. `secondary` is the variant that already means
+                      "the quieter option" and resolves per theme. */}
+                  <Button
+                    variant={plan.popular ? 'primary' : 'secondary'}
+                    className="w-full py-6 text-lg"
+                  >
                     Get Started
                   </Button>
                 </Link>
               </div>
-              <div className="flex flex-1 flex-col justify-between p-8 sm:p-10 bg-gray-50 rounded-b-3xl border-t border-gray-100">
+              <div className="flex flex-1 flex-col justify-between p-8 sm:p-10 bg-muted rounded-b-3xl border-t border-border-subtle">
                 <ul className="space-y-4">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start">
                       <Check className="h-5 w-5 flex-shrink-0 text-primary" />
-                      <span className="ml-3 text-sm leading-6 text-gray-600">{feature}</span>
+                      <span className="ml-3 text-sm leading-6 text-foreground-secondary">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -217,16 +224,16 @@ export default function PricingPage() {
             <div className="flex flex-col items-center md:items-end gap-4 min-w-[180px]">
               <div className="text-center md:text-right">
                 <div className="text-4xl font-extrabold text-white">Custom</div>
-                <p className="text-xs text-gray-400 mt-1">Tailored to your organisation</p>
+                <p className="text-xs text-foreground-muted mt-1">Tailored to your organisation</p>
               </div>
               {/* Enterprise is IsCustom in PricingSeeder — no price rows, so no self-serve
                   checkout. Routing to sales instead of /checkout keeps the page honest. */}
               <Link href="/enterprise" className="w-full md:w-auto">
-                <Button className="w-full bg-amber-400 hover:bg-amber-300 text-gray-900 font-bold py-4 px-8 text-base">
+                <Button className="w-full bg-amber-400 hover:bg-amber-300 text-neutral-900 font-bold py-4 px-8 text-base">
                   Contact Sales
                 </Button>
               </Link>
-              <p className="text-xs text-gray-500 text-center">30-day trial · Custom onboarding</p>
+              <p className="text-xs text-foreground-secondary text-center">30-day trial · Custom onboarding</p>
             </div>
           </div>
         </div>
@@ -235,7 +242,7 @@ export default function PricingPage() {
             staff/locations/credits, customers scale the plan they already have. */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold text-center tracking-tight">Scale without changing plan</h2>
-          <p className="mt-2 text-center text-sm text-gray-500 max-w-2xl mx-auto">
+          <p className="mt-2 text-center text-sm text-foreground-secondary max-w-2xl mx-auto">
             Need more than your plan includes? Add exactly what you use — no forced upgrade.
           </p>
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -248,36 +255,36 @@ export default function PricingPage() {
                 key={a.key}
                 className={`rounded-xl px-5 py-4 flex items-center justify-between gap-4 ${
                   a.isAvailable
-                    ? "border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
-                    : "border border-dashed border-gray-300 dark:border-gray-700 bg-transparent"
+                    ? "border border-border bg-card"
+                    : "border border-dashed border-border-strong dark:border-gray-700 bg-transparent"
                 }`}
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{a.name}</span>
+                    <span className="font-semibold text-sm text-foreground dark:text-gray-100">{a.name}</span>
                     {!a.isAvailable && (
-                      <span className="shrink-0 rounded-full bg-gray-200 dark:bg-gray-800 px-2 py-0.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                      <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-foreground-secondary">
                         Coming soon
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">{a.billingUnit}</p>
+                  <p className="mt-1 text-xs text-foreground-secondary dark:text-foreground-muted">{a.billingUnit}</p>
                 </div>
                 {/* No amount = nothing published yet (roadmap add-ons). Showing a price there
                     would promise a checkout path that does not exist. */}
                 {a.amount != null ? (
-                  <span className="shrink-0 text-lg font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                  <span className="shrink-0 text-lg font-bold tracking-tight text-foreground dark:text-gray-100">
                     {formatAddOnPrice(a.amount, a.currency)}
                   </span>
                 ) : (
-                  <span className="shrink-0 text-xs font-medium text-gray-600 dark:text-gray-400">
+                  <span className="shrink-0 text-xs font-medium text-foreground-secondary dark:text-foreground-muted">
                     Contact sales
                   </span>
                 )}
               </div>
             ))}
           </div>
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-foreground-secondary">
             Add-on prices are in USD, excluding applicable taxes, and are billed on top of your plan.
           </p>
         </div>
@@ -288,22 +295,22 @@ export default function PricingPage() {
             item is open — a div toggled by useState would ship the same markup but depend on
             client JS for something that needs none. */}
         <section className="mt-20 max-w-3xl mx-auto" aria-labelledby="pricing-faq-heading">
-          <h2 id="pricing-faq-heading" className="text-2xl font-bold text-center tracking-tight text-gray-900">
+          <h2 id="pricing-faq-heading" className="text-2xl font-bold text-center tracking-tight text-foreground">
             Pricing questions
           </h2>
-          <div className="mt-8 divide-y divide-gray-200 rounded-2xl bg-white ring-1 ring-gray-200">
+          <div className="mt-8 divide-y divide-border rounded-2xl bg-card ring-1 ring-border">
             {PRICING_FAQS.map((faq) => (
               <details key={faq.question} className="group px-6 py-5">
-                <summary className="flex cursor-pointer items-center justify-between gap-4 list-none font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 list-none font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded">
                   {faq.question}
                   <span
                     aria-hidden="true"
-                    className="shrink-0 text-gray-500 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
+                    className="shrink-0 text-foreground-secondary transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
                   >
                     +
                   </span>
                 </summary>
-                <p className="mt-3 text-sm leading-6 text-gray-600">{faq.answer}</p>
+                <p className="mt-3 text-sm leading-6 text-foreground-secondary">{faq.answer}</p>
               </details>
             ))}
           </div>

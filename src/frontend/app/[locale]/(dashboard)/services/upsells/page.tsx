@@ -59,17 +59,17 @@ export default function UpsellsPage() {
   ];
 
   const UpsellCard = ({ item }: { item: UpsellItem }) => (
-    <div className="p-4 rounded-xl border border-surface-200 hover:border-ai-300 hover:bg-ai-50/30 transition-all group">
+    <div className="p-4 rounded-xl border border-surface-200 hover:border-ai/25 hover:bg-ai-50/30 transition-all group">
       <div className="flex items-start justify-between gap-2 mb-1">
-        <p className="font-medium text-text-primary group-hover:text-ai-700 transition-colors">{item.name}</p>
-        <span className="text-sm font-bold text-green-600 flex-shrink-0">${item.price}</span>
+        <p className="font-medium text-text-primary group-hover:text-ai transition-colors">{item.name}</p>
+        <span className="text-sm font-bold text-success-fg flex-shrink-0">${item.price}</span>
       </div>
       {item.description && <p className="text-xs text-text-secondary mb-2 line-clamp-2">{item.description}</p>}
       <div className="flex items-center justify-between">
-        <span className="text-xs text-ai-600 bg-ai-50 px-2 py-0.5 rounded-full">{item.suggestedReason}</span>
+        <span className="text-xs text-ai bg-ai-subtle px-2 py-0.5 rounded-full">{item.suggestedReason}</span>
         {item.duration && <span className="text-xs text-text-tertiary">{item.duration} min</span>}
         {item.priceDifference !== undefined && item.priceDifference > 0 && (
-          <span className="text-xs text-amber-600">+${item.priceDifference}</span>
+          <span className="text-xs text-warning-fg">+${item.priceDifference}</span>
         )}
       </div>
     </div>
@@ -97,7 +97,7 @@ export default function UpsellsPage() {
             <div className="max-h-96 overflow-y-auto">
               {filteredServices.map((s) => (
                 <button key={s.id} onClick={() => handleSelectService(s)}
-                  className={`w-full text-left px-4 py-2.5 transition-colors hover:bg-surface-50 ${selectedService?.id === s.id ? "bg-ai-50 text-ai-700 font-medium" : "text-text-primary"}`}>
+                  className={`w-full text-left px-4 py-2.5 transition-colors hover:bg-surface-50 ${selectedService?.id === s.id ? "bg-ai-subtle text-ai font-medium" : "text-text-primary"}`}>
                   <p className="text-sm">{s.name}</p>
                   <p className="text-xs text-text-tertiary">${s.price} · {s.durationMinutes} min</p>
                 </button>
@@ -121,9 +121,9 @@ export default function UpsellsPage() {
               <div className="flex gap-1 p-1 bg-surface-100 rounded-xl">
                 {TABS.map((t) => (
                   <button key={t.key} onClick={() => setActiveTab(t.key)}
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg transition-colors ${activeTab === t.key ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg transition-colors ${activeTab === t.key ? "bg-card text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
                     {t.icon}{t.label}
-                    <span className={`ml-0.5 text-xs px-1.5 py-0.5 rounded-full ${activeTab === t.key ? "bg-ai-50 text-ai-600" : "bg-surface-200 text-text-tertiary"}`}>{t.items.length}</span>
+                    <span className={`ml-0.5 text-xs px-1.5 py-0.5 rounded-full ${activeTab === t.key ? "bg-ai-subtle text-ai" : "bg-surface-200 text-text-tertiary"}`}>{t.items.length}</span>
                   </button>
                 ))}
               </div>

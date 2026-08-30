@@ -46,7 +46,7 @@ export default function FillMyCalendarPage() {
     <div className="space-y-6 animate-fade-in">
       <header className="flex items-end justify-between border-b border-surface-200 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Fill My Calendar <Calendar className="text-ai-500" size={22} /></h1>
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Fill My Calendar <Calendar className="text-ai" size={22} /></h1>
           <p className="text-text-secondary mt-1">AI identifies gaps in your calendar and suggests clients to re-engage.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -60,8 +60,8 @@ export default function FillMyCalendarPage() {
 
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Open Slots", value: emptySlots.length, color: "text-amber-500", icon: <Clock className="h-5 w-5 text-amber-400" /> },
-          { label: "AI Suggestions", value: suggestions.length, color: "text-ai-600", icon: <Zap className="h-5 w-5 text-ai-400" /> },
+          { label: "Open Slots", value: emptySlots.length, color: "text-warning-fg", icon: <Clock className="h-5 w-5 text-amber-400" /> },
+          { label: "AI Suggestions", value: suggestions.length, color: "text-ai", icon: <Zap className="h-5 w-5 text-ai-400" /> },
           { label: "Clients to Contact", value: new Set(suggestions.map((s) => s.clientId)).size, color: "text-text-primary", icon: <Users className="h-5 w-5 text-text-tertiary" /> },
         ].map((s) => (
           <Card key={s.label}><CardContent className="pt-5 flex items-center gap-3">{s.icon}<div><p className="text-xs text-text-secondary">{s.label}</p><p className={`text-2xl font-bold mt-0.5 ${s.color}`}>{s.value}</p></div></CardContent></Card>
@@ -71,7 +71,7 @@ export default function FillMyCalendarPage() {
       {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-text-tertiary" /></div> : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
-            <h2 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-1.5"><Zap size={14} className="text-ai-500" /> AI Re-Engagement Suggestions</h2>
+            <h2 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-1.5"><Zap size={14} className="text-ai" /> AI Re-Engagement Suggestions</h2>
             {suggestions.length === 0 ? (
               <Card><CardContent className="text-center py-10 text-text-tertiary">
                 <Zap className="h-8 w-8 mx-auto mb-2 opacity-20" />
@@ -106,7 +106,7 @@ export default function FillMyCalendarPage() {
           </div>
 
           <div>
-            <h2 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-1.5"><Clock size={14} className="text-amber-500" /> Open Time Slots</h2>
+            <h2 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-1.5"><Clock size={14} className="text-warning-fg" /> Open Time Slots</h2>
             {emptySlots.length === 0 ? (
               <Card><CardContent className="text-center py-10 text-text-tertiary">
                 <Calendar className="h-8 w-8 mx-auto mb-2 opacity-20" />

@@ -36,21 +36,21 @@ const PRESET_SEGMENTS = [
     name: "At Risk (Lapsed)",
     description: "Haven't visited in 30–90 days",
     filters: { minSpend: "", minDaysSinceLastVisit: "30", maxDaysSinceLastVisit: "90", tags: "", loyaltyTier: "" },
-    color: "text-red-500",
+    color: "text-danger-fg",
     bg: "bg-red-50",
   },
   {
     name: "High Value",
     description: "Lifetime spend over $500",
     filters: { minSpend: "500", minDaysSinceLastVisit: "", maxDaysSinceLastVisit: "", tags: "", loyaltyTier: "" },
-    color: "text-green-600",
+    color: "text-success-fg",
     bg: "bg-green-50",
   },
   {
     name: "VIP Members",
     description: "Gold or Platinum loyalty tier",
     filters: { minSpend: "", minDaysSinceLastVisit: "", maxDaysSinceLastVisit: "", tags: "", loyaltyTier: "Gold" },
-    color: "text-amber-600",
+    color: "text-warning-fg",
     bg: "bg-amber-50",
   },
   {
@@ -83,7 +83,7 @@ function TagInput({ value, onChange }: { value: string; onChange: (v: string) =>
   return (
     <div className="border border-surface-200 rounded-lg p-2 bg-surface-50 flex flex-wrap gap-1.5 min-h-[42px]">
       {tags.map((t) => (
-        <span key={t} className="inline-flex items-center gap-1 bg-ai-100 text-ai-700 text-xs px-2 py-0.5 rounded-full">
+        <span key={t} className="inline-flex items-center gap-1 bg-ai-subtle text-ai text-xs px-2 py-0.5 rounded-full">
           {t}
           <button onClick={() => remove(t)} className="hover:text-ai-900 font-bold">×</button>
         </span>
@@ -155,7 +155,7 @@ export default function ClientSegmentsPage() {
       <header className="border-b border-surface-200 pb-6">
         <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
           Client Segments
-          <Users className="text-ai-500" size={24} />
+          <Users className="text-ai" size={24} />
         </h1>
         <p className="text-text-secondary mt-1">
           Filter and group clients for targeted marketing campaigns.
@@ -366,7 +366,7 @@ export default function ClientSegmentsPage() {
                             {c.totalSpend !== undefined ? `$${c.totalSpend.toFixed(0)}` : "—"}
                           </td>
                           <td className="py-2.5 px-3">
-                            <a href={`/clients/${c.id}`} className="text-ai-500 hover:text-ai-700">
+                            <a href={`/clients/${c.id}`} className="text-ai hover:text-ai">
                               <ChevronRight className="h-4 w-4" />
                             </a>
                           </td>

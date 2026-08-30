@@ -29,8 +29,8 @@ export default function EmailCapture({ dark = false }: { dark?: boolean }) {
         aria-label="Work email address"
         className={`flex-1 rounded-xl border px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-primary-500 ${
           dark
-            ? 'border-white/20 bg-white/10 text-white placeholder-slate-400 focus:border-transparent'
-            : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-transparent'
+            ? 'border-white/20 bg-white/10 text-white placeholder-foreground-muted focus:border-transparent'
+            : 'border-border-strong bg-card text-foreground placeholder-foreground-muted focus:border-transparent'
         }`}
       />
       <button

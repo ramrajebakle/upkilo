@@ -90,7 +90,7 @@ export default function BusinessSettingsPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
                 <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Corporate Nexus...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Corporate Nexus...</p>
             </div>
         );
     }
@@ -105,7 +105,7 @@ export default function BusinessSettingsPage() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Corporate Nexus</h1>
-                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Foundational Entity Parameters and Global Identification</p>
+                        <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Foundational Entity Parameters and Global Identification</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -150,9 +150,9 @@ export default function BusinessSettingsPage() {
 
                             <div className="flex-1 space-y-8 w-full">
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] ml-1">Logo Asset URL</label>
+                                    <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] ml-1">Logo Asset URL</label>
                                     <div className="relative group">
-                                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                         <input
                                             type="url"
                                             placeholder="HTTPS://ASSETS.ENTITY.COM/LOGO.PNG"
@@ -164,7 +164,7 @@ export default function BusinessSettingsPage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] ml-1">Brand Luminosity</label>
+                                    <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] ml-1">Brand Luminosity</label>
                                     <div className="flex items-center gap-4">
                                         <div className="relative w-24 h-14 rounded-2xl overflow-hidden border-2 border-slate-100 dark:border-slate-800 shadow-xl group">
                                             <input 
@@ -175,7 +175,7 @@ export default function BusinessSettingsPage() {
                                             />
                                         </div>
                                         <div className="relative flex-1 group">
-                                            <Palette className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                            <Palette className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                             <input 
                                                 type="text"
                                                 className="w-full h-14 bg-slate-50 dark:bg-slate-950 border border-transparent dark:border-slate-850 rounded-2xl pl-12 pr-6 text-xs font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all dark:text-white shadow-inner"
@@ -205,9 +205,9 @@ export default function BusinessSettingsPage() {
                                 { label: 'Web: Active Namespace', value: businessSettings.website, icon: Globe, key: 'website', type: 'url' }
                             ].map((field) => (
                                 <div key={field.key} className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] ml-1">{field.label}</label>
+                                    <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.2em] ml-1">{field.label}</label>
                                     <div className="relative group">
-                                        <field.icon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                        <field.icon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                         <input
                                             type={field.type || 'text'}
                                             value={field.value}
@@ -221,14 +221,14 @@ export default function BusinessSettingsPage() {
 
                         <div className="space-y-8 pt-12 border-t border-slate-50 dark:border-slate-850">
                             <div className="flex items-center justify-between">
-                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] ml-1 flex items-center gap-2">
+                                <label className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] ml-1 flex items-center gap-2">
                                     <MapPin className="h-4 w-4" /> Physical Matrix Allocation
                                 </label>
                             </div>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2 relative group">
-                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
                                     <input
                                         type="text"
                                         placeholder="STREET INFRASTRUCTURE"
@@ -264,7 +264,7 @@ export default function BusinessSettingsPage() {
 
                         <div className="space-y-8">
                             <div>
-                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">What happens when you save?</h4>
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">What happens when you save?</h4>
                                 <ul className="space-y-4">
                                     {[
                                         { icon: Globe2, text: 'Global Namespace Synchronization' },
@@ -285,10 +285,10 @@ export default function BusinessSettingsPage() {
                                     <Target className="h-4 w-4 text-emerald-400" />
                                     <span className="text-[10px] font-black text-white uppercase tracking-widest">Next Step Protocol</span>
                                 </div>
-                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-loose">
+                                <p className="text-[9px] font-bold text-foreground-muted uppercase tracking-widest leading-loose">
                                     Verify your <span className="text-primary-400">Custom Domain</span> to finalize white-labeling and establish domain authority across all tactical nodes.
                                 </p>
-                                <Button className="w-full h-12 bg-white text-slate-900 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-slate-100 shadow-xl">
+                                <Button className="w-full h-12 bg-card text-foreground rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-muted shadow-xl">
                                     Finalise Domain Access
                                 </Button>
                             </div>
@@ -296,9 +296,9 @@ export default function BusinessSettingsPage() {
                             <div className="pt-4 flex items-center justify-between border-t border-white/10">
                                 <div className="flex items-center gap-2">
                                     <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Security: Optimal</span>
+                                    <span className="text-[9px] font-black text-foreground-secondary uppercase tracking-widest">Security: Optimal</span>
                                 </div>
-                                <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">v2.4.0-CORE</span>
+                                <span className="text-[9px] font-black text-foreground-secondary uppercase tracking-widest">v2.4.0-CORE</span>
                             </div>
                         </div>
                     </div>
@@ -306,7 +306,7 @@ export default function BusinessSettingsPage() {
                     {/* Live Performance Matrix (Small Telemetry) */}
                     <div className="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">Core Flux Telemetry</h3>
+                            <h3 className="text-[9px] font-black text-foreground-muted uppercase tracking-widest">Core Flux Telemetry</h3>
                             <Activity className="h-4 w-4 text-primary-500" />
                         </div>
                         <div className="space-y-4">
@@ -316,7 +316,7 @@ export default function BusinessSettingsPage() {
                             ].map((s, i) => (
                                 <div key={i} className="space-y-2">
                                     <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
-                                        <span className="text-slate-400">{s.label}</span>
+                                        <span className="text-foreground-muted">{s.label}</span>
                                         <span className="text-slate-900 dark:text-white tabular-nums">{s.value}</span>
                                     </div>
                                     <div className="h-1 w-full bg-slate-50 dark:bg-slate-950 rounded-full overflow-hidden">

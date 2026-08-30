@@ -138,7 +138,7 @@ export default function StaffPage() {
                 <div className="card-elevated p-6 animate-fade-in-up dark:bg-slate-900 dark:border-slate-800 shadow-sm" style={{ animationDelay: '150ms' }}>
                     <div className="flex items-center gap-2 mb-5">
                         <div className="p-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                            <Trophy className="h-5 w-5 text-amber-500" />
+                            <Trophy className="h-5 w-5 text-warning-fg" />
                         </div>
                         <h3 className="font-bold text-slate-900 dark:text-white uppercase tracking-widest text-xs">Top Performers</h3>
                     </div>
@@ -162,7 +162,7 @@ export default function StaffPage() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{member.firstName} {member.lastName}</p>
-                                            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-tighter">{member.bookingsTotal} bookings</p>
+                                            <p className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">{member.bookingsTotal} bookings</p>
                                         </div>
                                     </div>
                                 );
@@ -174,7 +174,7 @@ export default function StaffPage() {
             {/* Search and Filters */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
                     <input
                         type="text"
                         placeholder="Search staff by name or role..."
@@ -270,13 +270,13 @@ export default function StaffPage() {
                                     <h3 className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                         {member.firstName} {member.lastName}
                                     </h3>
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">{member.role}</p>
+                                    <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest mb-4">{member.role}</p>
 
                                     {/* Lifetime bookings */}
                                     <div className="flex items-center gap-1.5 mb-5 bg-slate-50 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-700">
-                                        <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                                        <Calendar className="h-3.5 w-3.5 text-foreground-muted" />
                                         <span className="font-bold text-slate-900 dark:text-white text-sm">{member.bookingsTotal}</span>
-                                        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">bookings</span>
+                                        <span className="text-[10px] font-medium text-foreground-muted">bookings</span>
                                     </div>
 
                                     {/* Specialties */}
@@ -309,7 +309,7 @@ export default function StaffPage() {
                             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 flex gap-2">
                                 <button
                                     onClick={(e) => confirmDelete(e, member)}
-                                    className="p-2 hover:bg-red-50 dark:hover:bg-red-900/40 bg-white dark:bg-slate-800 shadow-md rounded-xl transition-all text-red-500 hover:text-red-600 active:scale-90 border border-slate-100 dark:border-slate-700"
+                                    className="p-2 hover:bg-red-50 dark:hover:bg-red-900/40 bg-white dark:bg-slate-800 shadow-md rounded-xl transition-all text-danger-fg hover:text-red-600 active:scale-90 border border-slate-100 dark:border-slate-700"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </button>
@@ -348,7 +348,7 @@ export default function StaffPage() {
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-slate-900 dark:text-white text-sm">{member.firstName} {member.lastName}</p>
-                                                    <p className="text-[10px] font-medium text-slate-500 dark:text-slate-500 uppercase tracking-widest">{member.email}</p>
+                                                    <p className="text-[10px] font-medium text-foreground-secondary uppercase tracking-widest">{member.email}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -369,13 +369,13 @@ export default function StaffPage() {
                                             <div className="flex gap-2 justify-end">
                                                 <Link 
                                                     href={`/staff/${member.id}`}
-                                                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                                                    className="p-2 hover:bg-muted rounded-lg transition-colors"
                                                 >
-                                                    <ChevronRight className="h-4 w-4 text-slate-400 font-bold" />
+                                                    <ChevronRight className="h-4 w-4 text-foreground-muted font-bold" />
                                                 </Link>
                                                 <button 
                                                     onClick={(e) => confirmDelete(e, member)}
-                                                    className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg transition-colors"
+                                                    className="p-2 hover:bg-red-50 text-foreground-muted hover:text-red-500 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>

@@ -62,7 +62,7 @@ export default function ServicesPage() {
             {/* Filters & Search */}
             <div className="card-elevated p-4 md:p-5 flex flex-col md:flex-row gap-4 items-center dark:bg-slate-900 dark:border-slate-800 shadow-lg">
                 <div className="relative flex-1 group w-full">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted group-focus-within:text-primary-500 transition-colors" />
                     <input 
                         type="text"
                         placeholder="Search services..."
@@ -79,8 +79,8 @@ export default function ServicesPage() {
                     <div className="w-px h-10 bg-slate-200 dark:bg-slate-800 hidden md:block" />
                     <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shadow-inner border border-slate-200 dark:border-slate-700">
                         <button className="px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-lg bg-white dark:bg-slate-700 shadow-md text-primary-600 dark:text-white">All</button>
-                        <button className="px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-lg text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">Active</button>
-                        <button className="px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-lg text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">Inactive</button>
+                        <button className="px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-lg text-foreground-secondary hover:text-slate-700 dark:hover:text-slate-300 transition-colors">Active</button>
+                        <button className="px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-lg text-foreground-secondary hover:text-slate-700 dark:hover:text-slate-300 transition-colors">Inactive</button>
                     </div>
                 </div>
             </div>
@@ -131,7 +131,7 @@ export default function ServicesPage() {
                                             )}
                                             {service.isActive ? 'Active' : 'Inactive'}
                                         </div>
-                                        <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all text-slate-400 hover:text-slate-600 active:scale-90">
+                                        <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all text-foreground-muted hover:text-slate-600 active:scale-90">
                                             <MoreVertical className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -148,20 +148,20 @@ export default function ServicesPage() {
 
                                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800/50">
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Duration</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-foreground-muted">Duration</span>
                                         <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                                             <Clock className="w-4 h-4 text-primary-500" />
                                             <span className="text-sm font-bold">{service.durationMinutes} min</span>
                                         </div>
                                     </div>
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Pricing</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-foreground-muted">Pricing</span>
                                         <div className="flex items-center gap-1.5 text-slate-900 dark:text-white">
                                             <div className="p-1 bg-primary-50 dark:bg-primary-900/20 rounded-md">
                                                 <DollarSign className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                                             </div>
                                             <span className="text-sm font-black whitespace-nowrap">
-                                                {service.price} <span className="text-[10px] text-slate-400 font-bold">{service.currency}</span>
+                                                {service.price} <span className="text-[10px] text-foreground-muted font-bold">{service.currency}</span>
                                             </span>
                                         </div>
                                     </div>
@@ -177,7 +177,7 @@ export default function ServicesPage() {
                                     <ChevronRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                                 </Link>
                                 <div className="flex gap-2">
-                                    <button className="p-2.5 hover:bg-red-50 dark:hover:bg-red-900/40 hover:text-red-600 text-slate-400 dark:text-slate-500 rounded-xl transition-all active:scale-90 border border-transparent hover:border-red-100 dark:hover:border-red-900/50" title="Delete Service">
+                                    <button className="p-2.5 hover:bg-red-50 dark:hover:bg-red-900/40 hover:text-red-600 text-foreground-muted rounded-xl transition-all active:scale-90 border border-transparent hover:border-red-100 dark:hover:border-red-900/50" title="Delete Service">
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -188,7 +188,7 @@ export default function ServicesPage() {
             ) : (
                 <div className="card-elevated p-16 flex flex-col items-center text-center gap-8 animate-scale-in dark:bg-slate-900 dark:border-slate-800 shadow-xl">
                     <div className="relative">
-                        <div className="w-24 h-24 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 dark:text-slate-600">
+                        <div className="w-24 h-24 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300">
                             <Package className="w-12 h-12" />
                         </div>
                         <div className="absolute -inset-4 blur-2xl bg-primary-500/5 rounded-full" />

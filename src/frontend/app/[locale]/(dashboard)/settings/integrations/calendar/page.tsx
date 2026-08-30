@@ -134,12 +134,12 @@ export default function CalendarIntegrationsPage() {
         return (
             <div className="max-w-4xl mx-auto py-8">
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="h-10 w-10 bg-slate-200 rounded-xl animate-pulse" />
-                    <div className="h-8 w-64 bg-slate-200 rounded animate-pulse" />
+                    <div className="h-10 w-10 bg-muted rounded-xl animate-pulse" />
+                    <div className="h-8 w-64 bg-muted rounded animate-pulse" />
                 </div>
                 <div className="grid gap-6">
-                    <div className="h-64 bg-slate-200 rounded-xl animate-pulse" />
-                    <div className="h-64 bg-slate-200 rounded-xl animate-pulse" />
+                    <div className="h-64 bg-muted rounded-xl animate-pulse" />
+                    <div className="h-64 bg-muted rounded-xl animate-pulse" />
                 </div>
             </div>
         );
@@ -149,14 +149,14 @@ export default function CalendarIntegrationsPage() {
         <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8 animate-fade-in-up">
-                <Link href="/settings" className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                <Link href="/settings" className="p-2 hover:bg-accent rounded-xl transition-colors">
+                    <ArrowLeft className="h-5 w-5 text-foreground-secondary" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
                         Calendar Integrations
                     </h1>
-                    <p className="text-slate-500">Sync your bookings with external calendars to avoid double booking.</p>
+                    <p className="text-foreground-secondary">Sync your bookings with external calendars to avoid double booking.</p>
                 </div>
             </div>
 
@@ -166,14 +166,14 @@ export default function CalendarIntegrationsPage() {
                         key={provider.id}
                         className={cn(
                             "card-elevated p-6 animate-fade-in-up transition-all duration-300",
-                            provider.isConnected ? "border-emerald-100 bg-emerald-50/10" : "bg-white"
+                            provider.isConnected ? "border-emerald-100 bg-emerald-50/10" : "bg-card"
                         )}
                         style={{ animationDelay: `${index * 100}ms` }}
                     >
                         <div className="flex flex-col md:flex-row gap-6">
                             {/* Icon */}
                             <div className="flex-shrink-0">
-                                <div className="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center p-3">
+                                <div className="w-16 h-16 rounded-2xl bg-card shadow-sm border border-border-subtle flex items-center justify-center p-3">
                                     <img
                                         src={provider.icon}
                                         alt={provider.name}
@@ -186,7 +186,7 @@ export default function CalendarIntegrationsPage() {
                             <div className="flex-1">
                                 <div className="flex items-start justify-between mb-2">
                                     <div>
-                                        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                                        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                                             {provider.name}
                                             {provider.isConnected && (
                                                 <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium flex items-center gap-1">
@@ -196,8 +196,8 @@ export default function CalendarIntegrationsPage() {
                                             )}
                                         </h3>
                                         {provider.isConnected && provider.accountEmail && (
-                                            <p className="text-sm font-medium text-slate-600 mt-1">
-                                                Connected as: <span className="text-slate-900">{provider.accountEmail}</span>
+                                            <p className="text-sm font-medium text-foreground-secondary mt-1">
+                                                Connected as: <span className="text-foreground">{provider.accountEmail}</span>
                                             </p>
                                         )}
                                     </div>
@@ -207,14 +207,14 @@ export default function CalendarIntegrationsPage() {
                                             <>
                                                 <button
                                                     onClick={() => handleSyncNow(provider.id)}
-                                                    className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                                                    className="p-2 text-foreground-secondary hover:text-primary hover:bg-brand-subtle rounded-lg transition-colors"
                                                     title="Sync Now"
                                                 >
                                                     <RefreshCw className="h-4 w-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDisconnect(provider.id)}
-                                                    className="btn btn-secondary text-red-600 hover:bg-red-50 px-3 py-1.5 h-auto text-sm"
+                                                    className="btn btn-secondary text-danger-fg hover:bg-red-50 px-3 py-1.5 h-auto text-sm"
                                                 >
                                                     Disconnect
                                                 </button>
@@ -230,21 +230,21 @@ export default function CalendarIntegrationsPage() {
                                     </div>
                                 </div>
 
-                                <p className="text-slate-600 text-sm mb-4 leading-relaxed">
+                                <p className="text-foreground-secondary text-sm mb-4 leading-relaxed">
                                     {provider.description}
                                 </p>
 
                                 {provider.isConnected && (
-                                    <div className="flex items-center gap-6 pt-4 border-t border-slate-100">
-                                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                                    <div className="flex items-center gap-6 pt-4 border-t border-border-subtle">
+                                        <div className="flex items-center gap-2 text-xs text-foreground-secondary">
                                             <RefreshCw className="h-3.5 w-3.5" />
                                             Last synced: {provider.lastSync ? formatDate(provider.lastSync) : 'Never'}
                                         </div>
-                                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                                        <div className="flex items-center gap-2 text-xs text-foreground-secondary">
                                             <Globe className="h-3.5 w-3.5" />
                                             Two-way sync active
                                         </div>
-                                        <div className="flex items-center gap-2 text-xs text-emerald-600 ml-auto">
+                                        <div className="flex items-center gap-2 text-xs text-success-fg ml-auto">
                                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                             Live Updates On
                                         </div>

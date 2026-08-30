@@ -25,7 +25,7 @@ export function StatCard({ title, value, icon: Icon, trend, className }: StatCar
         <div className="text-2xl font-bold">{value}</div>
         {trend && (
           <p className="text-xs mt-1">
-            <span className={trend.isUp ? "text-green-600" : "text-red-600"}>
+            <span className={trend.isUp ? "text-success-fg" : "text-danger-fg"}>
               {trend.isUp ? "↑" : "↓"} {trend.value}
             </span>
             {" "}{trend.label || "from last month"}

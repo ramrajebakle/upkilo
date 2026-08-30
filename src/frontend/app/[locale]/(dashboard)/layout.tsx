@@ -7,7 +7,7 @@ import {
     CreditCard, BarChart3, Settings, LogOut, Menu, X, UserCog, FileText,
     Star, Megaphone, Package, Gift, Ticket, ChevronRight, ChevronDown,
     Bell, Sparkles, Zap, Crown, Clock, ClipboardList, Shield, TrendingUp,
-    Sun, Moon, Globe, Layers, Award, MessageSquare, Upload, FlaskConical,
+    Globe, Layers, Award, MessageSquare, Upload, FlaskConical,
     Flag, Copy, GraduationCap, AlertTriangle, GitBranch, Bot, Inbox,
     DollarSign, RotateCcw, Database, Phone, ShieldAlert, ShoppingBag, Target,
     Share2, Coins, Home, UserCheck, Truck, Heart, Percent, Camera, ArrowLeftRight, ArrowUpRight, Wrench, LifeBuoy,
@@ -18,7 +18,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useSession } from 'next-auth/react';
 import { NotificationCenter } from '@/components/NotificationCenter';
 import { GlobalSearch } from '@/components/GlobalSearch';
-import { useTheme } from '@/components/ThemeProvider';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
 import { ProductTour } from '@/components/onboarding/ProductTour';
 import { useTranslations } from 'next-intl';
@@ -90,7 +90,7 @@ function NavGroupSection({ group, pathname, defaultOpen = true }: {
         <div className="mb-1">
             <button
                 onClick={() => setOpen(o => !o)}
-                className="w-full flex items-center justify-between px-4 py-2 min-h-11 sm:min-h-0 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-white/5"
+                className="w-full flex items-center justify-between px-4 py-2 min-h-11 sm:min-h-0 text-xs font-semibold uppercase tracking-wider text-foreground-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded-lg hover:bg-slate-50 dark:hover:bg-white/5"
                 aria-expanded={open}
             >
                 <span>{group.label}</span>
@@ -117,7 +117,7 @@ function NavGroupSection({ group, pathname, defaultOpen = true }: {
                                 )}
                                 <item.icon className={cn(
                                     'h-4 w-4 flex-shrink-0 transition-colors',
-                                    isActive ? 'text-primary-400' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                                    isActive ? 'text-primary-400' : 'text-foreground-muted group-hover:text-slate-600 dark:group-hover:text-slate-300'
                                 )} />
                                 <span className="font-medium text-sm truncate">{item.name}</span>
                                 {item.badge === 'escalation' && <EscalationBadge />}
@@ -138,7 +138,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [copilotOpen, setCopilotOpen] = useState(false);
     const { user, logout, checkAuth, isInitialized } = useAuthStore();
     const { data: session } = useSession();
-    const { setTheme, resolvedTheme } = useTheme();
 
     // Two role vocabularies reach this component and only one is ever populated
     // at a time:
@@ -359,13 +358,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         if (!isInitialized) checkAuth();
     }, [checkAuth, isInitialized]);
 
-    const toggleTheme = () => {
-        setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-    };
-
     if (!isInitialized) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+            <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
             </div>
         );
@@ -373,7 +368,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     return (
         <SignalRProvider>
-            <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] transition-colors duration-300">
+            <div className="min-h-screen bg-background text-foreground">
                 <DemoModeBanner />
                 <a href="#main-content" className="skip-to-content sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary-500 focus:text-white focus:rounded-lg focus:shadow-lg">
                     Skip to content
@@ -423,7 +418,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 </span>
                             </Link>
                             <button
-                                className="lg:hidden p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
+                                className="lg:hidden p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-foreground-muted hover:text-slate-600 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
                                 onClick={() => setSidebarOpen(false)}
                                 aria-label="Close navigation menu"
                             >
@@ -450,7 +445,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                 )}
                                             >
                                                 {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-7 bg-primary-500 rounded-r-full" />}
-                                                <item.icon className={cn('h-4 w-4 flex-shrink-0', isActive ? 'text-primary-400' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300')} />
+                                                <item.icon className={cn('h-4 w-4 flex-shrink-0', isActive ? 'text-primary-400' : 'text-foreground-muted group-hover:text-slate-600 dark:group-hover:text-slate-300')} />
                                                 <span className="font-medium text-sm">{item.name}</span>
                                             </Link>
                                         );
@@ -463,7 +458,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                             href="/admin"
                                             className="flex items-center gap-3 px-4 py-2.5 min-h-11 sm:min-h-0 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors"
                                         >
-                                            <Shield className="h-4 w-4 text-slate-400" />
+                                            <Shield className="h-4 w-4 text-foreground-muted" />
                                             Platform Admin
                                         </Link>
                                     )}
@@ -513,7 +508,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <div className="flex items-center justify-between h-16 px-4 lg:px-6">
                             <div className="flex items-center gap-3">
                                 <button
-                                    className="lg:hidden p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
+                                    className="lg:hidden p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-foreground-secondary hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
                                     onClick={() => setSidebarOpen(true)}
                                     aria-label="Open navigation menu"
                                     aria-expanded={sidebarOpen}
@@ -531,13 +526,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <div className="flex items-center gap-2 lg:gap-3">
                                 <LocaleSwitcher />
 
-                                <button
-                                    onClick={toggleTheme}
-                                    className="p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
-                                    aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                                >
-                                    {resolvedTheme === 'dark' ? <Sun className="h-5 w-5" aria-hidden="true" /> : <Moon className="h-5 w-5" aria-hidden="true" />}
-                                </button>
+                                <ThemeToggle />
 
                                 {!isAdminSpace && (
                                     <button
@@ -546,7 +535,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                             'p-2 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium',
                                             copilotOpen
                                                 ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300'
-                                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10'
+                                                : 'text-foreground-secondary hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-white/10'
                                         )}
                                         aria-label={copilotOpen ? 'Close AI Copilot' : 'Open AI Copilot'}
                                         aria-expanded={copilotOpen}

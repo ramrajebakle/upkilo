@@ -57,5 +57,38 @@
       "cancelled": "Geannuleerd",
       "completed": "Voltooid"
     }
+  },
+  "Theme": {
+    "accentColour": "Accentkleur",
+    "accentHelp": "Je merkkleur, gebruikt op je openbare boekingspagina en het klantportaal. Hij wordt gedeeld met <link>Huisstijl</link>, waar je ook een logo en eigen domein instelt.",
+    "accentPreview": "Nu boeken",
+    "accentSaveFailed": "Accentkleur opslaan mislukt",
+    "accentSaved": "Accentkleur opgeslagen",
+    "appearance": "Weergave",
+    "appearanceSubtitle": "Kies hoe Upkilo eruitziet op dit apparaat.",
+    "colourAmber": "Amber",
+    "colourCyan": "Cyaan",
+    "colourEmerald": "Smaragd",
+    "colourIndigo": "Indigo",
+    "colourRose": "Roze",
+    "colourTheme": "Kleurthema",
+    "colourViolet": "Violet",
+    "contrastWarning": "Knoplabels op deze kleur halen slechts {ratio}:1 contrast, onder het toegankelijkheidsminimum van 4,5:1. Een iets donkerdere tint leest voor iedereen beter.",
+    "dark": "Donker",
+    "darkHint": "Altijd het donkere thema",
+    "darkModeActive": "Donkere modus actief",
+    "light": "Licht",
+    "lightHint": "Altijd het lichte thema",
+    "lightModeActive": "Lichte modus actief",
+    "resolvedNow": "nu {mode}",
+    "saveAccent": "Accentkleur opslaan",
+    "saved": "Opgeslagen",
+    "saving": "Opslaan…",
+    "switchToDark": "Schakel over naar donkere modus",
+    "switchToLight": "Schakel over naar lichte modus",
+    "system": "Systeem",
+    "systemHint": "Volg dit apparaat",
+    "themeHint": "Wordt direct toegepast en onthouden op dit apparaat.",
+    "themeSection": "Thema"
   }
 }

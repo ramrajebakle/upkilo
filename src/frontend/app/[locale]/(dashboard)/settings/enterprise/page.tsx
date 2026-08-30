@@ -56,13 +56,13 @@ export default function EnterpriseSettingsPage() {
               </div>
             </div>
             
-            <div className="p-4 bg-gray-50 rounded-lg border text-xs font-mono space-y-2">
-              <div className="text-gray-500 uppercase font-bold text-[10px]">Required DNS TXT Record:</div>
-              <div className="flex justify-between items-center text-gray-700">
+            <div className="p-4 bg-muted rounded-lg border text-xs font-mono space-y-2">
+              <div className="text-foreground-secondary uppercase font-bold text-[10px]">Required DNS TXT Record:</div>
+              <div className="flex justify-between items-center text-foreground">
                 <span>Type: TXT</span>
                 <span>Name: @</span>
               </div>
-              <div className="p-2 bg-white border rounded break-all select-all">
+              <div className="p-2 bg-card border rounded break-all select-all">
                 upkilo-verification=67ed59e4-c0b0-43eb-ab31-1d2e4c9e0d38
               </div>
             </div>
@@ -73,19 +73,19 @@ export default function EnterpriseSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-primary-500" />
+              <ShieldCheck className="h-5 w-5 text-primary" />
               Enterprise SSO (Task 1737)
             </CardTitle>
             <CardDescription>Configure SAML 2.0 or OIDC for your team.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 rounded-xl border border-dashed flex flex-col items-center justify-center py-8 text-center space-y-4">
-              <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center">
-                <Plus className="h-6 w-6 text-primary-500" />
+              <div className="w-12 h-12 bg-brand-subtle rounded-full flex items-center justify-center">
+                <Plus className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-sm font-medium">No SSO Identity Providers</p>
-                <p className="text-xs text-gray-500">Connect Okta, Azure AD, or Google Workspace.</p>
+                <p className="text-xs text-foreground-secondary">Connect Okta, Azure AD, or Google Workspace.</p>
               </div>
               <Button variant="outline" size="sm">Add SSO Provider</Button>
             </div>
@@ -96,7 +96,7 @@ export default function EnterpriseSettingsPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-rose-500" />
+              <MapPin className="h-5 w-5 text-danger-fg" />
               Data Residency & Privacy (Task 1794)
             </CardTitle>
             <CardDescription>Pin your tenant data to specific geographic regions for compliance.</CardDescription>
@@ -108,17 +108,17 @@ export default function EnterpriseSettingsPage() {
                 { name: "EU West (Dublin)", status: "Available", latency: "112ms", selected: false },
                 { name: "Asia East (Singapore)", status: "Available", latency: "240ms", selected: false }
               ].map((region) => (
-                <div key={region.name} className={`p-4 rounded-xl border flex flex-col justify-between h-32 transition-colors cursor-pointer ${region.selected ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'bg-gray-50'}`}>
+                <div key={region.name} className={`p-4 rounded-xl border flex flex-col justify-between h-32 transition-colors cursor-pointer ${region.selected ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'bg-muted'}`}>
                   <div>
                     <div className="text-sm font-bold">{region.name}</div>
-                    <div className="text-[10px] text-gray-500">Latency: {region.latency}</div>
+                    <div className="text-[10px] text-foreground-secondary">Latency: {region.latency}</div>
                   </div>
                   {region.selected ? (
                     <div className="text-[10px] font-bold text-primary flex items-center gap-1">
                       <CheckCircle2 className="h-3 w-3" /> Pinned
                     </div>
                   ) : (
-                    <Button variant="ghost" size="sm" className="h-6 text-[10px] p-0 text-gray-400">Migrate Region</Button>
+                    <Button variant="ghost" size="sm" className="h-6 text-[10px] p-0 text-foreground-muted">Migrate Region</Button>
                   )}
                 </div>
               ))}

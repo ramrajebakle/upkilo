@@ -76,15 +76,15 @@ export default function DuplicateClientsPage() {
         <div className="p-6 max-w-5xl mx-auto space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4 flex-wrap">
-                <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-accent text-foreground-secondary">
                     <ArrowLeft className="h-4 w-4" />
                 </button>
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-slate-900">Duplicate Client Detection</h1>
-                    <p className="text-slate-500 mt-1">Find and merge duplicate client records to keep your database clean</p>
+                    <h1 className="text-2xl font-bold text-foreground">Duplicate Client Detection</h1>
+                    <p className="text-foreground-secondary mt-1">Find and merge duplicate client records to keep your database clean</p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={fetchDuplicates} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                    <button onClick={fetchDuplicates} className="p-2 rounded-lg hover:bg-accent text-foreground-secondary">
                         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                 </div>
@@ -93,15 +93,15 @@ export default function DuplicateClientsPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 {[
-                    { label: 'Duplicate Groups', value: groups.length, icon: <AlertTriangle className="h-5 w-5 text-amber-500" /> },
-                    { label: 'Affected Clients', value: groups.reduce((acc, g) => acc + g.clients.length, 0), icon: <Users className="h-5 w-5 text-primary-500" /> },
-                    { label: 'Resolved', value: resolvedGroups.size, icon: <CheckCircle className="h-5 w-5 text-emerald-500" /> },
+                    { label: 'Duplicate Groups', value: groups.length, icon: <AlertTriangle className="h-5 w-5 text-warning-fg" /> },
+                    { label: 'Affected Clients', value: groups.reduce((acc, g) => acc + g.clients.length, 0), icon: <Users className="h-5 w-5 text-primary" /> },
+                    { label: 'Resolved', value: resolvedGroups.size, icon: <CheckCircle className="h-5 w-5 text-success-fg" /> },
                 ].map(s => (
-                    <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-                        <div className="p-2 bg-slate-50 rounded-lg">{s.icon}</div>
+                    <div key={s.label} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                        <div className="p-2 bg-muted rounded-lg">{s.icon}</div>
                         <div>
-                            <div className="text-xl font-bold text-slate-900">{s.value}</div>
-                            <div className="text-xs text-slate-500">{s.label}</div>
+                            <div className="text-xl font-bold text-foreground">{s.value}</div>
+                            <div className="text-xs text-foreground-secondary">{s.label}</div>
                         </div>
                     </div>
                 ))}
@@ -110,42 +110,42 @@ export default function DuplicateClientsPage() {
             {/* Groups */}
             {loading ? (
                 <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 animate-pulse h-32" />)}
+                    {[...Array(3)].map((_, i) => <div key={i} className="bg-card border border-border rounded-xl p-5 animate-pulse h-32" />)}
                 </div>
             ) : groups.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+                <div className="text-center py-16 bg-card rounded-xl border border-border">
                     <UserCheck className="h-12 w-12 text-emerald-400 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-slate-700">No duplicates found!</h3>
-                    <p className="text-slate-500 text-sm mt-1">Your client database looks clean</p>
+                    <h3 className="text-lg font-semibold text-foreground">No duplicates found!</h3>
+                    <p className="text-foreground-secondary text-sm mt-1">Your client database looks clean</p>
                 </div>
             ) : (
                 <div className="space-y-4">
                     {groups.map(group => (
-                        <div key={group.groupId} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                        <div key={group.groupId} className="bg-card border border-border rounded-xl overflow-hidden">
                             {/* Group header */}
                             <div
-                                className="flex items-center gap-4 p-4 cursor-pointer hover:bg-slate-50"
+                                className="flex items-center gap-4 p-4 cursor-pointer hover:bg-accent"
                                 onClick={() => setExpandedGroup(expandedGroup === group.groupId ? null : group.groupId)}
                             >
                                 <div className="h-8 w-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
-                                    <AlertTriangle className="h-4 w-4 text-amber-600" />
+                                    <AlertTriangle className="h-4 w-4 text-warning-fg" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="font-semibold text-slate-900">
+                                    <p className="font-semibold text-foreground">
                                         {group.clients.map(c => `${c.firstName || ''} ${c.lastName || ''}`.trim() || c.email).join(' & ')}
                                     </p>
-                                    <p className="text-xs text-slate-500 mt-0.5">{group.clients.length} potential duplicates · {group.reason}</p>
+                                    <p className="text-xs text-foreground-secondary mt-0.5">{group.clients.length} potential duplicates · {group.reason}</p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
-                                    <span className="text-xs text-slate-400">Group #{group.groupId}</span>
-                                    {expandedGroup === group.groupId ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+                                    <span className="text-xs text-foreground-muted">Group #{group.groupId}</span>
+                                    {expandedGroup === group.groupId ? <ChevronUp className="h-4 w-4 text-foreground-muted" /> : <ChevronDown className="h-4 w-4 text-foreground-muted" />}
                                 </div>
                             </div>
 
                             {/* Expanded — client comparison */}
                             {expandedGroup === group.groupId && (
-                                <div className="border-t border-slate-100 p-4 space-y-3 bg-slate-50">
-                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Select primary record to keep:</p>
+                                <div className="border-t border-border-subtle p-4 space-y-3 bg-muted">
+                                    <p className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider">Select primary record to keep:</p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         {group.clients.map(client => {
                                             const isPrimary = selectedPrimary[group.groupId] === client.id;
@@ -153,7 +153,7 @@ export default function DuplicateClientsPage() {
                                                 <div
                                                     key={client.id}
                                                     onClick={() => setSelectedPrimary(prev => ({ ...prev, [group.groupId]: client.id }))}
-                                                    className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${isPrimary ? 'border-primary-500 bg-primary-50' : 'border-slate-200 bg-white hover:border-primary-200'}`}
+                                                    className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${isPrimary ? 'border-primary-500 bg-brand-subtle' : 'border-border bg-card hover:border-primary/25'}`}
                                                 >
                                                     <div className="flex items-start justify-between mb-2">
                                                         <div className="flex items-center gap-2">
@@ -161,18 +161,18 @@ export default function DuplicateClientsPage() {
                                                                 {(client.firstName?.[0] || client.email?.[0] || 'C').toUpperCase()}
                                                             </div>
                                                             <div>
-                                                                <p className="font-semibold text-slate-900 text-sm">
+                                                                <p className="font-semibold text-foreground text-sm">
                                                                     {`${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Unknown'}
                                                                 </p>
-                                                                {isPrimary && <span className="text-xs text-primary-600 font-medium">Primary (keep)</span>}
+                                                                {isPrimary && <span className="text-xs text-primary font-medium">Primary (keep)</span>}
                                                             </div>
                                                         </div>
-                                                        {isPrimary && <CheckCircle className="h-4 w-4 text-primary-600 shrink-0" />}
+                                                        {isPrimary && <CheckCircle className="h-4 w-4 text-primary shrink-0" />}
                                                     </div>
-                                                    <div className="space-y-1 text-xs text-slate-600">
+                                                    <div className="space-y-1 text-xs text-foreground-secondary">
                                                         {client.email && <p>✉ {client.email}</p>}
                                                         {client.phone && <p>📱 {client.phone}</p>}
-                                                        <div className="flex gap-3 pt-1 text-slate-500">
+                                                        <div className="flex gap-3 pt-1 text-foreground-secondary">
                                                             <span>{client.totalBookings} bookings</span>
                                                             <span>${client.lifetimeValue?.toFixed(0) || 0} spent</span>
                                                             <span>Since {new Date(client.createdAt).toLocaleDateString()}</span>

@@ -56,8 +56,8 @@ export default function LiveChatSettingsPage() {
                  {copied ? 'Copied' : 'Copy'}
                </Button>
              </div>
-             <p className="text-xs text-gray-500 flex items-center gap-1">
-               <Zap className="h-3 w-3 text-amber-500" /> Changes to widget colors and rules update instantly.
+             <p className="text-xs text-foreground-secondary flex items-center gap-1">
+               <Zap className="h-3 w-3 text-warning-fg" /> Changes to widget colors and rules update instantly.
              </p>
           </CardContent>
         </Card>
@@ -65,37 +65,37 @@ export default function LiveChatSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-primary-500" />
+              <Bot className="h-5 w-5 text-primary" />
               AI Chatbot Handoff (Task 1849)
             </CardTitle>
             <CardDescription>Rules for escalating chats to human staff.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
              <div className="space-y-4">
-               <div className="flex justify-between items-center p-3 border rounded-lg bg-gray-50">
+               <div className="flex justify-between items-center p-3 border rounded-lg bg-muted">
                  <div>
                    <div className="font-bold text-sm">First Responder</div>
-                   <div className="text-xs text-gray-500">Who answers incoming chats?</div>
+                   <div className="text-xs text-foreground-secondary">Who answers incoming chats?</div>
                  </div>
-                 <select className="text-sm border rounded p-1 bg-white">
+                 <select className="text-sm border rounded p-1 bg-card">
                    <option>AI Agent</option>
                    <option>Human Staff</option>
                  </select>
                </div>
                
-               <div className="flex justify-between items-center p-3 border rounded-lg bg-gray-50">
+               <div className="flex justify-between items-center p-3 border rounded-lg bg-muted">
                  <div>
                    <div className="font-bold text-sm">Handoff Triggers</div>
-                   <div className="text-xs text-gray-500">When should AI tag a human?</div>
+                   <div className="text-xs text-foreground-secondary">When should AI tag a human?</div>
                  </div>
                  <Button variant="outline" size="sm">Configure 3 Rules</Button>
                </div>
 
                <div className="flex gap-2">
-                  <span className="bg-primary-100 text-primary-700 text-[10px] uppercase font-bold px-2 py-1 rounded">
+                  <span className="bg-brand-subtle text-primary text-[10px] uppercase font-bold px-2 py-1 rounded">
                     Trigger: Sentiment is Negative
                   </span>
-                  <span className="bg-primary-100 text-primary-700 text-[10px] uppercase font-bold px-2 py-1 rounded">
+                  <span className="bg-brand-subtle text-primary text-[10px] uppercase font-bold px-2 py-1 rounded">
                     Trigger: "Speak to agent"
                   </span>
                </div>

@@ -53,7 +53,7 @@ export default function CompliancePage() {
   return (
     <div className="space-y-6 animate-fade-in max-w-3xl">
       <header className="border-b border-surface-200 pb-6">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Compliance & Privacy <Shield className="text-green-500" size={22} /></h1>
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">Compliance & Privacy <Shield className="text-success-fg" size={22} /></h1>
         <p className="text-text-secondary mt-1">HIPAA, SOC2, GDPR, CCPA compliance management and evidence collection.</p>
       </header>
 
@@ -63,8 +63,8 @@ export default function CompliancePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 {hipaa?.status === "Compliant"
-                  ? <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  : <AlertCircle className="h-5 w-5 text-amber-500" />}
+                  ? <CheckCircle2 className="h-5 w-5 text-success-fg" />
+                  : <AlertCircle className="h-5 w-5 text-warning-fg" />}
                 HIPAA Status
               </CardTitle>
               <CardDescription>Healthcare data protection assessment</CardDescription>
@@ -80,7 +80,7 @@ export default function CompliancePage() {
                 <ul className="space-y-1">
                   {hipaa.findings.map((f, i) => (
                     <li key={i} className="text-xs text-text-secondary flex items-start gap-1.5">
-                      <AlertCircle className="h-3 w-3 text-amber-500 mt-0.5 flex-shrink-0" />{f}
+                      <AlertCircle className="h-3 w-3 text-warning-fg mt-0.5 flex-shrink-0" />{f}
                     </li>
                   ))}
                 </ul>
@@ -120,7 +120,7 @@ export default function CompliancePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Trash2 className="h-4 w-4 text-red-500" /> GDPR Erasure Request</CardTitle>
+              <CardTitle className="flex items-center gap-2"><Trash2 className="h-4 w-4 text-danger-fg" /> GDPR Erasure Request</CardTitle>
               <CardDescription>Submit a data erasure request for an individual (Right to be Forgotten)</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -141,17 +141,17 @@ export default function CompliancePage() {
             <CardHeader><CardTitle>CCPA — Do Not Sell</CardTitle><CardDescription>California Consumer Privacy Act compliance</CardDescription></CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border border-green-200">
-                <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-success-fg flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-green-800">Do-Not-Sell flag is respected</p>
-                  <p className="text-xs text-green-600">Client records with opt-out flags are excluded from all data sharing.</p>
+                  <p className="text-xs text-success-fg">Client records with opt-out flags are excluded from all data sharing.</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border border-green-200">
-                <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-success-fg flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-green-800">Privacy Notice linked in booking portal</p>
-                  <p className="text-xs text-green-600">Clients are informed of their rights before booking.</p>
+                  <p className="text-xs text-success-fg">Clients are informed of their rights before booking.</p>
                 </div>
               </div>
             </CardContent>

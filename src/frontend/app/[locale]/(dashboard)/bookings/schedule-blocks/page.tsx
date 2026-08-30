@@ -111,7 +111,7 @@ export default function ScheduleBlocksPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-text-primary">{b.reason || "Blocked time"}</p>
-                        {b.isRecurring && <span className="text-xs bg-ai-50 text-ai-600 px-2 py-0.5 rounded-full">Recurring</span>}
+                        {b.isRecurring && <span className="text-xs bg-ai-subtle text-ai px-2 py-0.5 rounded-full">Recurring</span>}
                         {b.staffName && <span className="text-xs text-text-tertiary">{b.staffName}</span>}
                       </div>
                       <p className="text-xs text-text-secondary mt-0.5">
@@ -119,7 +119,7 @@ export default function ScheduleBlocksPage() {
                       </p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" leftIcon={deleting === b.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} className="text-red-500" />}
+                  <Button variant="outline" size="sm" leftIcon={deleting === b.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} className="text-danger-fg" />}
                     onClick={() => handleDelete(b.id)} disabled={!!deleting}>Remove</Button>
                 </CardContent>
               </Card>

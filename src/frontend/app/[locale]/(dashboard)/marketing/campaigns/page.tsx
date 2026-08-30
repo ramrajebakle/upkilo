@@ -130,7 +130,7 @@ export default function CampaignsPage() {
   if (loading && campaigns.length === 0) return (
     <div className="flex flex-col items-center justify-center min-h-[500px] gap-6">
         <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Syncing Broadcast Tunnels...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground-secondary">Syncing Broadcast Tunnels...</p>
     </div>
   );
 
@@ -144,11 +144,11 @@ export default function CampaignsPage() {
             </div>
             <div>
                 <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Broadcast Nexus</h1>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Multi-Channel Audience Engagement and Protocol Broadcast</p>
+                <p className="text-[10px] font-black text-foreground-muted uppercase tracking-[0.3em] mt-1">Multi-Channel Audience Engagement and Protocol Broadcast</p>
             </div>
         </div>
         <div className="flex items-center gap-4">
-            <button onClick={fetchCampaigns} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-transparent dark:border-slate-850 text-slate-400 hover:text-primary-500 transition-all shadow-inner">
+            <button onClick={fetchCampaigns} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-transparent dark:border-slate-850 text-foreground-muted hover:text-primary-500 transition-all shadow-inner">
                 <RefreshCw className={cn("h-5 w-5", loading && "animate-spin")} />
             </button>
             <Button onClick={() => router.push('/marketing/campaigns/new')} className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary-500/30 active:scale-95 transition-all flex items-center gap-3 bg-primary-600 hover:bg-primary-700">
@@ -161,20 +161,20 @@ export default function CampaignsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
               { label: 'Cumulative Reach', value: stats.totalSent?.toLocaleString() || '0', icon: Send, color: 'text-blue-500', trend: '+18.5%' },
-              { label: 'Density Yield (Open)', value: `${stats.avgOpenRate?.toFixed(1) || '0.0'}%`, icon: Eye, color: 'text-emerald-500', trend: 'Optimal' },
+              { label: 'Density Yield (Open)', value: `${stats.avgOpenRate?.toFixed(1) || '0.0'}%`, icon: Eye, color: 'text-success-fg', trend: 'Optimal' },
               { label: 'Interaction Delta', value: `${stats.avgClickRate?.toFixed(1) || '0.0'}%`, icon: MousePointer, color: 'text-primary-500', trend: 'Stable' },
-              { label: 'Scheduled Nodes', value: campaigns.filter(c => c.status === 'scheduled').length, icon: Clock, color: 'text-amber-500', trend: 'Ready' }
+              { label: 'Scheduled Nodes', value: campaigns.filter(c => c.status === 'scheduled').length, icon: Clock, color: 'text-warning-fg', trend: 'Ready' }
           ].map((stat, i) => (
               <div key={i} className="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] shadow-2xl shadow-slate-200/40 dark:shadow-none space-y-4 group overflow-hidden relative">
                   <div className="relative z-10 flex items-center justify-between">
                       <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-transparent dark:border-slate-850 shadow-inner group-hover:scale-110 transition-transform">
                           <stat.icon className={cn("h-6 w-6", stat.color)} />
                       </div>
-                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{stat.trend}</span>
+                      <span className="text-[9px] font-black text-success-fg uppercase tracking-widest">{stat.trend}</span>
                   </div>
                   <div className="relative z-10 space-y-1">
                       <p className="text-3xl font-black text-slate-900 dark:text-white tabular-nums tracking-tighter">{stat.value}</p>
-                      <p className="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">{stat.label}</p>
+                      <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest">{stat.label}</p>
                   </div>
               </div>
           ))}
@@ -183,7 +183,7 @@ export default function CampaignsPage() {
       {/* Matrix Overlays (Filters) */}
       <div className="flex flex-col lg:flex-row gap-6 items-center">
           <div className="relative flex-1 w-full group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 dark:text-slate-700 group-focus-within:text-primary-500 transition-colors" />
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-primary-500 transition-colors" />
               <input
                   type="text"
                   placeholder="SEARCH CAMPAIGN NODES OR SUBJECT HASHES..."
@@ -223,10 +223,10 @@ export default function CampaignsPage() {
           {filtered.length === 0 ? (
               <div className="p-20 text-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] shadow-2xl">
                   <div className="p-8 bg-slate-50 dark:bg-slate-950 rounded-full inline-block mb-8">
-                      <Megaphone className="h-14 w-14 text-slate-200 dark:text-slate-800" />
+                      <Megaphone className="h-14 w-14 text-slate-200" />
                   </div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Zero Active Broadcasts</h3>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4">The broadcast nexus is currently silent. Initialize a new campaign vector to engage your audience.</p>
+                  <p className="text-[10px] font-black text-foreground-muted uppercase tracking-widest mt-4">The broadcast nexus is currently silent. Initialize a new campaign vector to engage your audience.</p>
               </div>
           ) : (
               filtered.map((campaign, i) => (
@@ -251,7 +251,7 @@ export default function CampaignsPage() {
                                       <span className={cn("px-2.5 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border", getStatusStyles(campaign.status))}>
                                           {campaign.status}
                                       </span>
-                                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                      <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest">
                                           {campaign.sentAt ? `SENT ${new Date(campaign.sentAt).toLocaleDateString()}` : `CREATED ${new Date(campaign.createdAt).toLocaleDateString()}`}
                                       </p>
                                   </div>
@@ -267,7 +267,7 @@ export default function CampaignsPage() {
                                   { label: 'REPLIED', value: `${campaign.replyRate?.toFixed(1) || '0.0'}%`, icon: Activity }
                               ].map((m, idx) => (
                                   <div key={idx} className="text-center xl:text-left space-y-1">
-                                      <p className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">{m.label}</p>
+                                      <p className="text-[9px] font-black text-foreground-muted uppercase tracking-widest">{m.label}</p>
                                       <p className="text-sm font-black text-slate-900 dark:text-white tabular-nums tracking-tighter">{m.value}</p>
                                   </div>
                               ))}
@@ -277,14 +277,14 @@ export default function CampaignsPage() {
                           <div className="xl:col-span-3 flex items-center justify-end gap-3">
                               <button 
                                 onClick={() => router.push(`/marketing/campaigns/${campaign.id}/analytics`)}
-                                className="h-12 w-12 rounded-xl bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-400 hover:text-primary-500 transition-all shadow-inner border border-transparent dark:border-slate-850"
+                                className="h-12 w-12 rounded-xl bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-foreground-muted hover:text-primary-500 transition-all shadow-inner border border-transparent dark:border-slate-850"
                               >
                                   <BarChart2 className="h-4 w-4" />
                               </button>
                               {(campaign.status === 'active' || campaign.status === 'paused') && (
                                   <button 
                                     onClick={() => handleToggleStatus(campaign)}
-                                    className="h-12 px-6 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-400 hover:text-amber-500 transition-all font-black uppercase tracking-widest text-[9px] border border-transparent dark:border-slate-850"
+                                    className="h-12 px-6 rounded-xl bg-slate-50 dark:bg-slate-950 text-foreground-muted hover:text-amber-500 transition-all font-black uppercase tracking-widest text-[9px] border border-transparent dark:border-slate-850"
                                   >
                                       {campaign.status === 'active' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                                   </button>
@@ -295,7 +295,7 @@ export default function CampaignsPage() {
                               >
                                   <Trash2 className="h-4 w-4" />
                               </button>
-                              <ChevronRight className="h-5 w-5 text-slate-200 dark:text-slate-800 ml-2 group-hover:translate-x-1 transition-transform" />
+                              <ChevronRight className="h-5 w-5 text-slate-200 ml-2 group-hover:translate-x-1 transition-transform" />
                           </div>
                       </div>
                       
@@ -320,7 +320,7 @@ export default function CampaignsPage() {
                       <button className="h-12 px-8 rounded-xl bg-white/5 border border-white/10 text-emerald-400 font-black uppercase tracking-widest text-[9px] hover:bg-white/10 flex items-center gap-2">
                           <Activity className="h-4 w-4" /> Engagement Flux
                       </button>
-                      <button className="h-12 px-8 rounded-xl bg-white/5 border border-white/10 text-slate-400 font-black uppercase tracking-widest text-[9px] hover:bg-white/10 flex items-center gap-2">
+                      <button className="h-12 px-8 rounded-xl bg-white/5 border border-white/10 text-foreground-muted font-black uppercase tracking-widest text-[9px] hover:bg-white/10 flex items-center gap-2">
                           <Zap className="h-4 w-4" /> Auto-Scheduler Node
                       </button>
                   </div>

@@ -65,7 +65,7 @@ function PoweredByContent() {
         </ul>
         <p className="text-primary-200 text-sm">Taking you to sign up…</p>
         <div className="mt-4 h-1 bg-primary-500 rounded-full overflow-hidden">
-          <div className="h-full bg-white rounded-full animate-[progress_2.5s_ease-in-out_forwards]" style={{ width: "0%" }} />
+          <div className="h-full bg-control-thumb rounded-full animate-[progress_2.5s_ease-in-out_forwards]" style={{ width: "0%" }} />
         </div>
       </div>
     </div>

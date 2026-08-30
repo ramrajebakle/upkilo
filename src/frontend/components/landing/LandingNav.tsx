@@ -27,7 +27,12 @@ export default function LandingNav() {
     <nav
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? 'border-b border-slate-200 bg-white/85 backdrop-blur-lg'
+          // bg-background, not bg-white: this bar frosts whatever the page is, and the
+          // page is dark in dark mode. An opacity modifier is the one shape the token
+          // codemod deliberately skips (a `/10` scrim over a gradient is usually
+          // decorative), so a sticky nav is exactly where that exception has to be
+          // undone by hand — it was a pale bar pinned over every dark marketing page.
+          ? 'border-b border-border bg-background/85 backdrop-blur-lg'
           : 'border-b border-transparent bg-transparent'
       }`}
       aria-label="Main navigation"
@@ -40,7 +45,7 @@ export default function LandingNav() {
           </div>
           <span
             className={`text-lg font-bold tracking-tight transition-colors ${
-              scrolled ? 'text-slate-900' : 'text-white'
+              scrolled ? 'text-foreground' : 'text-white'
             }`}
           >
             Upkilo
@@ -50,14 +55,14 @@ export default function LandingNav() {
         {/* Desktop links */}
         <div
           className={`hidden items-center gap-8 text-sm font-medium md:flex ${
-            scrolled ? 'text-slate-600' : 'text-slate-300'
+            scrolled ? 'text-foreground-secondary' : 'text-slate-300'
           }`}
         >
           {LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className={`transition-colors ${scrolled ? 'hover:text-primary-600' : 'hover:text-white'}`}
+              className={`transition-colors ${scrolled ? 'hover:text-primary' : 'hover:text-white'}`}
             >
               {l.label}
             </a>
@@ -69,7 +74,7 @@ export default function LandingNav() {
           <Link
             href="/login"
             className={`text-sm font-medium transition-colors ${
-              scrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-300 hover:text-white'
+              scrolled ? 'text-foreground-secondary hover:text-foreground' : 'text-slate-300 hover:text-white'
             }`}
           >
             Sign in
@@ -85,7 +90,7 @@ export default function LandingNav() {
         {/* Mobile toggle */}
         <button
           type="button"
-          className={`md:hidden ${scrolled ? 'text-slate-900' : 'text-white'}`}
+          className={`md:hidden ${scrolled ? 'text-foreground' : 'text-white'}`}
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
@@ -96,23 +101,23 @@ export default function LandingNav() {
 
       {/* Mobile panel */}
       {open && (
-        <div className="border-t border-slate-200 bg-white px-4 py-4 md:hidden">
+        <div className="border-t border-border bg-card px-4 py-4 md:hidden">
           <div className="flex flex-col gap-1">
             {LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent"
               >
                 {l.label}
               </a>
             ))}
-            <div className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">
+            <div className="mt-2 flex flex-col gap-2 border-t border-border-subtle pt-3">
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent"
               >
                 Sign in
               </Link>

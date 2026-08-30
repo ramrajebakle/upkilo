@@ -154,7 +154,7 @@ export function GlobalSearch() {
             >
                 <Search className="h-4 w-4" />
                 <span className="flex-1">Search...</span>
-                <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-slate-300 dark:border-white/10 bg-white dark:bg-slate-800 px-1.5 font-sans text-[10px] font-medium text-slate-400 opacity-100">
+                <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-slate-300 dark:border-white/10 bg-white dark:bg-slate-800 px-1.5 font-sans text-[10px] font-medium text-foreground-muted opacity-100">
                     <span className="text-xs">⌘</span>K
                 </kbd>
             </button>
@@ -172,7 +172,7 @@ export function GlobalSearch() {
                         className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 overflow-hidden animate-in slide-in-from-top-4 duration-300"
                     >
                         <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-white/5">
-                            <Search className="h-5 w-5 text-slate-400" aria-hidden="true" />
+                            <Search className="h-5 w-5 text-foreground-muted" aria-hidden="true" />
                             <input
                                 autoFocus
                                 role="combobox"
@@ -191,7 +191,7 @@ export function GlobalSearch() {
                             ) : (
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="text-[10px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded transition-colors"
+                                    className="text-[10px] font-bold text-foreground-muted hover:text-slate-600 dark:hover:text-slate-300 bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded transition-colors"
                                 >
                                     ESC
                                 </button>
@@ -244,14 +244,14 @@ export function GlobalSearch() {
                                     ))}
                                 </div>
                             ) : query.length >= 2 && !loading ? (
-                                <div className="py-12 text-center text-slate-500">
+                                <div className="py-12 text-center text-foreground-secondary">
                                     <p>No results found for "{query}"</p>
                                 </div>
                             ) : (
                                 <div className="space-y-6 py-4">
                                     {savedSearches.length > 0 && (
                                         <div>
-                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider px-4 mb-2 flex items-center gap-2">
+                                            <h4 className="text-xs font-bold text-foreground-muted uppercase tracking-wider px-4 mb-2 flex items-center gap-2">
                                                 <Star className="h-3 w-3" /> Saved Searches
                                             </h4>
                                             {savedSearches.map((saved: any, idx: number) => (
@@ -265,7 +265,7 @@ export function GlobalSearch() {
                                                         selectedIndex === idx ? "bg-slate-100 dark:bg-white/10" : "hover:bg-slate-50 dark:hover:bg-white/5"
                                                     )}
                                                 >
-                                                    <Search className="h-4 w-4 text-slate-300 dark:text-slate-600" />
+                                                    <Search className="h-4 w-4 text-slate-300" />
                                                     <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{saved.name}</span>
                                                 </button>
                                             ))}
@@ -273,7 +273,7 @@ export function GlobalSearch() {
                                     )}
                                     {recentSearches.length > 0 && (
                                         <div>
-                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider px-4 mb-2 flex items-center gap-2">
+                                            <h4 className="text-xs font-bold text-foreground-muted uppercase tracking-wider px-4 mb-2 flex items-center gap-2">
                                                 <Clock className="h-3 w-3" /> Recent Searches
                                             </h4>
                                             {recentSearches.map((recent: any, idx: number) => {
@@ -289,7 +289,7 @@ export function GlobalSearch() {
                                                             selectedIndex === recentIdx ? "bg-slate-100 dark:bg-white/10" : "hover:bg-slate-50 dark:hover:bg-white/5"
                                                         )}
                                                     >
-                                                        <Search className="h-4 w-4 text-slate-300 dark:text-slate-600" />
+                                                        <Search className="h-4 w-4 text-slate-300" />
                                                         <span className="text-sm text-slate-600 dark:text-slate-300 truncate">{recent.query}</span>
                                                     </button>
                                                 );
@@ -301,7 +301,7 @@ export function GlobalSearch() {
                                             <div className="flex justify-center mb-3">
                                                 <Command className="h-10 w-10 text-slate-200" />
                                             </div>
-                                            <p className="text-sm text-slate-400">
+                                            <p className="text-sm text-foreground-muted">
                                                 Search for anything across your platform.
                                             </p>
                                         </div>
@@ -310,7 +310,7 @@ export function GlobalSearch() {
                             )}
                         </div>
 
-                        <div className="px-4 py-2 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] font-bold text-slate-400">
+                        <div className="px-4 py-2 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] font-bold text-foreground-muted">
                             <div className="flex gap-4">
                                 <span className="flex items-center gap-1"><kbd className="bg-white dark:bg-slate-800 border dark:border-white/10 rounded px-1">↓</kbd><kbd className="bg-white dark:bg-slate-800 border dark:border-white/10 rounded px-1">↑</kbd> Navigate</span>
                                 <span className="flex items-center gap-1"><kbd className="bg-white dark:bg-slate-800 border dark:border-white/10 rounded px-1">↵</kbd> Select</span>

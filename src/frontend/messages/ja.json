@@ -57,5 +57,38 @@
       "cancelled": "キャンセル",
       "completed": "完了"
     }
+  },
+  "Theme": {
+    "accentColour": "アクセントカラー",
+    "accentHelp": "公開予約ページと顧客ポータルで使われるブランドカラーです。<link>ブランディング</link> と共有されており、そちらではロゴやカスタムドメインも設定できます。",
+    "accentPreview": "今すぐ予約",
+    "accentSaveFailed": "アクセントカラーを保存できませんでした",
+    "accentSaved": "アクセントカラーを保存しました",
+    "appearance": "外観",
+    "appearanceSubtitle": "この端末での Upkilo の表示を選択します。",
+    "colourAmber": "アンバー",
+    "colourCyan": "シアン",
+    "colourEmerald": "エメラルド",
+    "colourIndigo": "インディゴ",
+    "colourRose": "ローズ",
+    "colourTheme": "カラーテーマ",
+    "colourViolet": "バイオレット",
+    "contrastWarning": "この色のボタン文字のコントラストは {ratio}:1 にとどまり、アクセシビリティの最低基準 4.5:1 を下回ります。少し濃い色合いにすると誰にとっても読みやすくなります。",
+    "dark": "ダーク",
+    "darkHint": "常にダークテーマ",
+    "darkModeActive": "ダークモードが有効です",
+    "light": "ライト",
+    "lightHint": "常にライトテーマ",
+    "lightModeActive": "ライトモードが有効です",
+    "resolvedNow": "現在は{mode}",
+    "saveAccent": "アクセントカラーを保存",
+    "saved": "保存済み",
+    "saving": "保存中…",
+    "switchToDark": "ダークモードに切り替える",
+    "switchToLight": "ライトモードに切り替える",
+    "system": "システム",
+    "systemHint": "この端末の設定に従う",
+    "themeHint": "すぐに適用され、この端末に保存されます。",
+    "themeSection": "テーマ"
   }
 }

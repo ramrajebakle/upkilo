@@ -9,7 +9,7 @@ function Badge({ className, variant = 'default', ...props }: BadgeProps) {
     const variants = {
         default: 'bg-primary-500 text-white',
         secondary: 'bg-secondary-500 text-white',
-        outline: 'border-2 border-gray-200 text-gray-600',
+        outline: 'border-2 border-border text-foreground-secondary',
         danger: 'bg-red-500 text-white',
         success: 'bg-emerald-500 text-white',
     };

@@ -16,7 +16,7 @@ interface PeakHoursChartProps {
 function CustomTooltip({ active, payload, label }: any) {
     if (!active || !payload?.length) return null;
     return (
-        <div className="bg-slate-900 text-white rounded-xl px-3 py-2 shadow-2xl text-xs">
+        <div className="bg-popover text-popover-foreground border border-border shadow-[var(--shadow-popover)] rounded-xl px-3 py-2 shadow-2xl text-xs">
             <p className="text-slate-300">{label}</p>
             <p className="font-bold">{payload[0].value} bookings</p>
         </div>
@@ -34,7 +34,7 @@ function intensityColor(val: number, max: number): string {
 export function PeakHoursChart({ data, height = 180 }: PeakHoursChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-[180px] text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-[180px] text-foreground-muted text-sm">
                 No data available
             </div>
         );
@@ -47,10 +47,10 @@ export function PeakHoursChart({ data, height = 180 }: PeakHoursChartProps) {
         <div>
             <ResponsiveContainer width="100%" height={height}>
                 <BarChart data={data} margin={{ top: 4, right: 0, left: -30, bottom: 0 }} barGap={2}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis
                         dataKey="hour"
-                        tick={{ fontSize: 10, fill: '#94a3b8' }}
+                        tick={{ fontSize: 10 }}
                         axisLine={false}
                         tickLine={false}
                         interval={2}
@@ -65,14 +65,14 @@ export function PeakHoursChart({ data, height = 180 }: PeakHoursChartProps) {
                 </BarChart>
             </ResponsiveContainer>
             {peak && (
-                <div className="flex items-center justify-between text-xs mt-3 pt-3 border-t border-slate-100">
-                    <span className="text-slate-500">Peak hour</span>
+                <div className="flex items-center justify-between text-xs mt-3 pt-3 border-t border-border-subtle">
+                    <span className="text-foreground-secondary">Peak hour</span>
                     <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                         {peak.hour} · {peak.bookings} bookings
                     </span>
                 </div>
             )}
-            <div className="flex items-center gap-3 mt-2 text-[10px] text-slate-400">
+            <div className="flex items-center gap-3 mt-2 text-[10px] text-foreground-muted">
                 {[
                     { color: '#e2e8f0', label: 'Low' },
                     { color: '#818cf8', label: 'Medium' },
