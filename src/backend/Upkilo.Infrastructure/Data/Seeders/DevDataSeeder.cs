@@ -5,18 +5,74 @@ namespace Upkilo.Infrastructure.Data.Seeders;
 
 /// <summary>
 /// Seeds realistic dummy data for local development and testing.
-/// Idempotent: checks for existing dev tenants before inserting.
 /// Test credentials: owner@glowbeauty.test / Test@1234! (and similar for other tenants)
+///
+/// Idempotent AND safe against concurrent startup — the guard alone is not enough, see
+/// <see cref="SeedAsync"/>.
 /// </summary>
 public static class DevDataSeeder
 {
     private const string DevPassword = "Test@1234!";
 
+    /// <summary>
+    /// Seeds the dev fixtures, tolerating a concurrent seeder.
+    ///
+    /// The AnyAsync guard below is check-then-act, and two application hosts can pass it before
+    /// either commits. That is not hypothetical: PublicRazorpayPaymentTests and
+    /// OpenApiContractTests each boot the app through WebApplicationFactory, xUnit runs
+    /// different test classes in parallel, and both hosts seed against the same database. The
+    /// loser of that race died on
+    ///
+    ///   23505: duplicate key value violates unique constraint "IX_Tenants_Slug"
+    ///
+    /// thrown out of host startup, which fails the WebApplicationFactory constructor and so
+    /// fails every test in that class — a red build caused entirely by demo fixtures.
+    ///
+    /// A unique violation here means precisely "someone else already seeded", which is the
+    /// success condition, so it is swallowed. Anything else still throws: a schema or mapping
+    /// fault must not hide behind this.
+    ///
+    /// The change tracker is cleared on that path because the failed SaveChanges leaves the
+    /// added entities tracked, and returning a poisoned context would make the caller's next
+    /// SaveChanges retry the same doomed insert.
+    /// </summary>
     public static async Task SeedAsync(AppDbContext context)
     {
         if (await context.Tenants.AnyAsync(t => t.Slug == "glow-beauty-dev"))
             return;
 
+        try
+        {
+            await SeedCoreAsync(context);
+        }
+        catch (DbUpdateException ex) when (IsUniqueViolation(ex))
+        {
+            context.ChangeTracker.Clear();
+        }
+    }
+
+    /// <summary>
+    /// True when the failure is a unique-constraint violation, i.e. a row we were inserting is
+    /// already there. Matched on PostgreSQL's SQLSTATE 23505 by name rather than by referencing
+    /// Npgsql's exception type, so this still compiles and behaves on the SQLite provider the
+    /// unit tests use.
+    /// </summary>
+    private static bool IsUniqueViolation(DbUpdateException ex)
+    {
+        for (Exception? e = ex.InnerException; e is not null; e = e.InnerException)
+        {
+            var sqlState = e.GetType().GetProperty("SqlState")?.GetValue(e) as string;
+            if (sqlState == "23505") return true;
+
+            // SQLite surfaces the same condition without a SQLSTATE.
+            if (e.Message.Contains("UNIQUE constraint failed", StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+        return false;
+    }
+
+    private static async Task SeedCoreAsync(AppDbContext context)
+    {
         // ── Tenants ──────────────────────────────────────────────────
         var glowTenant = new Tenant
         {
