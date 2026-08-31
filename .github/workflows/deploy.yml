@@ -44,6 +44,39 @@ env:
   REGISTRY: upkiloprod.azurecr.io
 
 jobs:
+  # ── Preflight: does the chosen target actually exist? ──────────────────
+  #
+  # Selecting "staging" used to produce a green run that deployed nothing, because every
+  # staging job is gated on `vars.STAGING_ENABLED == 'true'` and that variable is unset.
+  # A skipped job reports success, so the run looked identical to a successful staging
+  # deploy — which is how "I deployed to staging" and "nothing happened" became
+  # indistinguishable.
+  #
+  # Failing here makes the missing prerequisite explicit and actionable instead.
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Reject a staging deploy when staging is not provisioned
+        if: inputs.environment == 'staging' && vars.STAGING_ENABLED != 'true'
+        run: |
+          echo "::error::Target environment is 'staging' but the repository variable STAGING_ENABLED is not 'true', so every staging job would be skipped and this run would deploy nothing while reporting success."
+          echo "To enable staging: Settings -> Secrets and variables -> Actions -> Variables -> new variable STAGING_ENABLED = true."
+          echo "The staging Azure resources and STAGING_* secrets must exist first, otherwise the staging jobs will fail on login."
+          exit 1
+
+      - name: Report target
+        run: |
+          echo "Target environment: ${{ inputs.environment }}"
+          echo "Staging enabled:    ${{ vars.STAGING_ENABLED == 'true' }}"
+          if [ "${{ inputs.environment }}" = "production" ]; then
+            echo "::notice::This run WILL migrate and deploy PRODUCTION."
+          else
+            echo "::notice::This run targets staging only. Production jobs are skipped."
+          fi
+
   # ── Build Docker Images & Push to ACR ─────────────────────────────
   #
   # ── Content-addressed image reuse ────────────────────────────────────────────────
@@ -580,9 +613,16 @@ jobs:
     # which the deploy-staging clause below explicitly permits. Checking only deploy-staging
     # therefore let a failed rehearsal wave the production migration through, defeating the
     # entire reason migrate-staging exists.
+    #
+    # `inputs.environment == 'production'` is what makes the Target environment dropdown
+    # mean anything. Without it this job — and deploy-production below — ran on EVERY
+    # workflow_dispatch, so choosing "staging" migrated and deployed PRODUCTION. The input
+    # was declared, rendered in the UI, defaulted to 'staging', and then referenced nowhere
+    # in the file: a selector that implied a safety it did not provide.
     if: >-
       always()
       && github.event_name == 'workflow_dispatch'
+      && inputs.environment == 'production'
       && needs.build-and-push.result == 'success'
       && needs.migrate-staging.result != 'failure'
       && (needs.deploy-staging.result == 'success' || needs.deploy-staging.result == 'skipped')
@@ -786,9 +826,13 @@ jobs:
     # Without always() this job inherited the skip and silently did nothing — the run
     # reported "Success" having only migrated the database and never deployed. The explicit
     # result checks keep a genuine failure upstream blocking the deploy.
+    #
+    # See migrate-database: `inputs.environment == 'production'` is the guard that stops a
+    # "staging" dispatch from deploying production.
     if: >-
       always()
       && github.event_name == 'workflow_dispatch'
+      && inputs.environment == 'production'
       && needs.build-and-push.result == 'success'
       && needs.migrate-database.result == 'success'
     # The environment restricts deployments to the `main` branch. On GitHub Free with a
