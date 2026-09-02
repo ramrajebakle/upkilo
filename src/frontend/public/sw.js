@@ -1,7 +1,7 @@
 // Cache version is auto-updated by scripts/update-sw-version.js after every Next.js build.
 // The activate handler deletes all caches whose name differs from CACHE_NAME,
 // ensuring users receive fresh assets on deployment.
-const CACHE_NAME = 'upkilo-OrW0mUGV8_bXdEieaAR8C';
+const CACHE_NAME = 'upkilo-IXyO2TY3m19ajbnv7wZX3';
 
 // Shell resources cached on install for offline access.
 // Includes all manifest icon sizes so home-screen icons work offline.

@@ -240,6 +240,29 @@ public class StaffControllerTests : ControllerTestBase
         WithAuth(_sut);
     }
 
+    /// <summary>
+    /// POST /api/v1/staff had no caller until the /staff/new page existed, so nothing had
+    /// ever exercised it — and it returns 500 in production. This drives the real controller
+    /// path to find out where.
+    /// </summary>
+    [Fact]
+    public async Task CreateStaff_MinimalPayload_DoesNotThrow()
+    {
+        var request = new CreateStaffRequest(
+            FirstName: "Ada",
+            LastName: "Lovelace",
+            Email: "ada@example.test",
+            Phone: null,
+            Role: "Stylist",
+            Color: null,
+            ServiceIds: null);
+
+        var act = async () => await _sut.CreateStaff(request);
+
+        await act.Should().NotThrowAsync();
+        Context.Staff.Should().Contain(x => x.Email == "ada@example.test");
+    }
+
     [Fact]
     public async Task GetStaff_ReturnsOk()
     {

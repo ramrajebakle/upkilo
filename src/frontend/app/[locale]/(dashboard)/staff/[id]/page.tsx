@@ -62,7 +62,22 @@ interface Commission {
     status: 'Pending' | 'Paid';
 }
 
-const availableSpecialties = ['Hair Styling', 'Coloring', 'Massage', 'Nails', 'Facials', 'Makeup'];
+/**
+ * Specialty chips used to come from a hardcoded salon list, shown to every tenant whatever
+ * they do — a gym was offered "Hair Styling" and "Nails", a veterinary clinic "Coloring" and
+ * "Makeup". Upkilo sells to salons, gyms and clinics alike, so a fixed vocabulary from one
+ * vertical is wrong for the other two.
+ *
+ * They are now the tenant's OWN service names, which is the list a staff member can actually
+ * be a specialist in. Any tag already saved on the staff member is kept too, so a tag that
+ * predates a service being renamed or removed stays visible and removable rather than
+ * vanishing from the UI while remaining in the data.
+ */
+function buildSpecialties(serviceNames: string[], existingTags: string[]): string[] {
+    return Array.from(new Set([...serviceNames, ...existingTags])).sort((a, b) =>
+        a.localeCompare(b),
+    );
+}
 
 export default function StaffProfilePage() {
     const router = useRouter();
@@ -81,6 +96,7 @@ export default function StaffProfilePage() {
     const [saving, setSaving] = useState(false);
     const [staff, setStaff] = useState<StaffData | null>(null);
     const [activeTab, setActiveTab] = useState<'overview' | 'shifts' | 'commissions'>('overview');
+    const [serviceNames, setServiceNames] = useState<string[]>([]);
 
     // Tab Data
     const [shifts, setShifts] = useState<Shift[]>([]);
@@ -141,6 +157,26 @@ export default function StaffProfilePage() {
             setLoading(false);
         }
     }, [staffId, isNew]);
+
+    useEffect(() => {
+        const loadServices = async () => {
+            try {
+                const res = await api.services.list();
+                const list = res.data?.data ?? res.data?.items ?? res.data ?? [];
+                setServiceNames(
+                    (Array.isArray(list) ? list : [])
+                        .map((svc: any) => svc?.name)
+                        .filter((n: unknown): n is string => typeof n === 'string' && n.length > 0),
+                );
+            } catch {
+                // Falls back to whatever tags the staff member already has. An empty chip list
+                // is honest; salon defaults on a veterinary clinic are not.
+            }
+        };
+        loadServices();
+    }, []);
+
+    const availableSpecialties = buildSpecialties(serviceNames, formData.tags);
 
     useEffect(() => {
         if (isNew) return;
@@ -450,8 +486,14 @@ export default function StaffProfilePage() {
                                 </div>
                                 <h2 className="text-lg font-semibold text-foreground">Specialties & Tags</h2>
                             </div>
+                            {availableSpecialties.length === 0 && (
+                                <p className="text-sm text-foreground-secondary">
+                                    Specialties come from your services. Add a service and it will
+                                    appear here as a tag you can assign.
+                                </p>
+                            )}
                             <div className="flex flex-wrap gap-2">
-                                {availableSpecialties.map((spec) => (
+                                {availableSpecialties.map((spec: string) => (
                                     <button
                                         key={spec}
                                         onClick={() => toggleTag(spec)}
