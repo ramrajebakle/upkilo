@@ -313,7 +313,9 @@ public class ServicesControllerTests : ControllerTestBase
             // a different generic instantiation, which raised CS8619.
             .Returns<Guid, string, Func<Task<List<object>>>, TimeSpan?>(
                 async (_, _, factory, _) => (List<object>?)await factory());
-        _sut = new ServicesController(logger.Object, Context, TenantProvider.Object, aiService.Object, cacheMock.Object);
+        // ServicesController no longer takes IAIService: its one AI action receives it via
+        // [FromServices] so plain CRUD requests never construct the AI stack.
+        _sut = new ServicesController(logger.Object, Context, TenantProvider.Object, cacheMock.Object);
         WithAuth(_sut);
     }
 

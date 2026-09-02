@@ -20,15 +20,13 @@ public class ServicesController : ControllerBase
     private readonly ILogger<ServicesController> _logger;
     private readonly AppDbContext _context;
     private readonly ITenantProvider _tenantProvider;
-    private readonly IAIService _aiService;
     private readonly ICacheService _cache;
 
-    public ServicesController(ILogger<ServicesController> logger, AppDbContext context, ITenantProvider tenantProvider, IAIService aiService, ICacheService cache)
+    public ServicesController(ILogger<ServicesController> logger, AppDbContext context, ITenantProvider tenantProvider, ICacheService cache)
     {
         _logger = logger;
         _context = context;
         _tenantProvider = tenantProvider;
-        _aiService = aiService;
         _cache = cache;
     }
 
@@ -290,7 +288,18 @@ public class ServicesController : ControllerBase
     /// </summary>
     [HttpPost("{id}/ai-content")]
     [RequiresFeature(FeatureKeys.AiCopilot)]
-    public async Task<IActionResult> GenerateServiceContent(Guid id)
+    // IAIService is injected PER-ACTION, not into the constructor.
+    //
+    // A constructor dependency is resolved for EVERY action on the controller, so the one
+    // AI-backed endpoint here forced the whole AI stack — AzureOpenAIService, and through it
+    // ContentModerationService — to be constructed on every plain CRUD request. When
+    // ContentModerationService threw in Production (unconfigured Azure Content Safety), that
+    // took down endpoints that have nothing to do with AI: GET /api/v1/services answered 400
+    // and the Services page showed "Couldn't load services".
+    //
+    // [FromServices] defers resolution to the action that actually needs it, so a failure in
+    // the AI stack can only ever affect the AI endpoint.
+    public async Task<IActionResult> GenerateServiceContent(Guid id, [FromServices] IAIService aiService)
     {
         var tenantId = _tenantProvider.GetTenantId();
         if (tenantId == null) return Unauthorized();
@@ -316,7 +325,7 @@ public class ServicesController : ControllerBase
             "\"benefits\": [\"benefit 1\", \"benefit 2\", \"benefit 3\"], " +
             "\"seoKeywords\": [\"keyword1\", \"keyword2\", \"keyword3\"] }";
 
-        var result = await _aiService.GenerateTextAsync(tenantId.Value, Guid.Empty, prompt);
+        var result = await aiService.GenerateTextAsync(tenantId.Value, Guid.Empty, prompt);
         if (!result.Success)
             return StatusCode(503, new { error = "AI content generation unavailable.", details = result.Error });
 

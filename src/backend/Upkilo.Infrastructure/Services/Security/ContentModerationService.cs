@@ -78,9 +78,16 @@ public class ContentModerationService : IContentModerationService
         if (!_isEnabled || _client == null)
         {
             // Fail CLOSED in Production. "The moderator is unavailable" is not evidence that
-            // the text is safe, and this method is what stands between user-supplied prompts
-            // and AI generation. Outside Production it stays permissive so local and CI runs
-            // do not need an Azure resource.
+            // the text is safe, so a caller that asked to moderate gets a refusal, not a pass.
+            // Outside Production it stays permissive so local and CI runs need no Azure
+            // resource.
+            //
+            // Scope, accurately: the only production caller is ContentModerationController.
+            // AI generation does NOT pass through here. IAIService.CheckSafetyAsync wraps this
+            // method but nothing outside tests calls it, so prompts and completions currently
+            // reach Azure OpenAI unmoderated. That is a pre-existing gap in the generation
+            // path, not something this refusal covers - do not read this method as protecting
+            // it.
             if (_hostEnvironment.IsProduction())
             {
                 _logger.LogError(

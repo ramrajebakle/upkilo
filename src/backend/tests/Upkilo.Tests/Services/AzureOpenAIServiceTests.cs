@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using System;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -61,6 +63,60 @@ public class AzureOpenAIServiceTests : IDisposable
             _redisMock.Object,
             _piiScrubberMock.Object,
             modelResolver.Object);
+    }
+
+    /// <summary>
+    /// A tenant with no Subscription row must still be able to use a default model.
+    ///
+    /// Whether a tenant may use AI is decided by the entitlement engine and the
+    /// [RequiresFeature]/[FeatureGuard] gate on the controller. IsModelAllowedAsync only
+    /// chooses WHICH MODEL. It used to return false for a null subscription, which made it a
+    /// second gate answering a question that was not its own — and answering it differently.
+    ///
+    /// That contradiction is reachable: a TenantFeatureOverride deliberately outranks the
+    /// subscription lifecycle, so an admin can grant ai_copilot to a tenant with no
+    /// subscription. The request passed the controller gate and was then refused here as
+    /// "model not allowed", naming the wrong cause.
+    /// </summary>
+    [Fact]
+    public async Task IsModelAllowedAsync_WithNoSubscription_AllowsADefaultModel()
+    {
+        var sut = CreateSut();
+
+        var allowed = await sut.IsModelAllowedAsync(Guid.NewGuid(), "gpt-5-mini");
+
+        allowed.Should().BeTrue(
+            "entitlement decides IF the tenant gets AI; this method only decides WHICH model");
+    }
+
+    /// <summary>
+    /// The loosening above must not become "any model is allowed". An unknown or more
+    /// expensive model is still refused, so the allowlist keeps its purpose.
+    /// </summary>
+    [Fact]
+    public async Task IsModelAllowedAsync_WithNoSubscription_StillRefusesAnUnlistedModel()
+    {
+        var sut = CreateSut();
+
+        var allowed = await sut.IsModelAllowedAsync(Guid.NewGuid(), "gpt-5-turbo-unlisted");
+
+        allowed.Should().BeFalse("the default list is an allowlist, not an open door");
+    }
+
+    /// <summary>
+    /// The models AiModelResolver hands out must all survive this allowlist. When the two
+    /// drifted apart, the resolver returned a model that was then rejected before dispatch and
+    /// AI failed for the tiers using it, with nothing pointing at the mismatch.
+    /// </summary>
+    [Theory]
+    [InlineData("gpt-5-mini")]    // EconomyModel  - Free / Starter
+    [InlineData("gpt-5.4-mini")]  // StandardModel - Growth / Enterprise
+    public async Task IsModelAllowedAsync_AcceptsEveryModelTheResolverCanReturn(string model)
+    {
+        var sut = CreateSut();
+
+        (await sut.IsModelAllowedAsync(Guid.NewGuid(), model)).Should().BeTrue(
+            $"AiModelResolver can return '{model}', so dispatch must not reject it");
     }
 
     [Fact]

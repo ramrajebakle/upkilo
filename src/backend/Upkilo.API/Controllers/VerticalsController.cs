@@ -24,18 +24,15 @@ public class VerticalsController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly ITenantProvider _tenantProvider;
-    private readonly IAIService _aiService;
     private readonly ILogger<VerticalsController> _logger;
 
     public VerticalsController(
         AppDbContext context,
         ITenantProvider tenantProvider,
-        IAIService aiService,
         ILogger<VerticalsController> logger)
     {
         _context = context;
         _tenantProvider = tenantProvider;
-        _aiService = aiService;
         _logger = logger;
     }
 

@@ -20,13 +20,11 @@ public class DiscoveryController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly ILogger<DiscoveryController> _logger;
-    private readonly IAIService _aiService;
 
-    public DiscoveryController(AppDbContext context, ILogger<DiscoveryController> logger, IAIService aiService)
+    public DiscoveryController(AppDbContext context, ILogger<DiscoveryController> logger)
     {
         _context = context;
         _logger = logger;
-        _aiService = aiService;
     }
 
     /// <summary>
@@ -304,7 +302,9 @@ public class DiscoveryController : ControllerBase
     /// </summary>
     [HttpGet("best-of/{city}")]
     [ResponseCache(Duration = 21600)] // 6-hour cache
-    public async Task<IActionResult> GetBestOf(string city)
+    // IAIService is injected per-action; see ServicesController for why a constructor
+    // dependency here made every endpoint on this controller construct the AI stack.
+    public async Task<IActionResult> GetBestOf(string city, [FromServices] IAIService aiService)
     {
         var cityFormatted = FormatCity(city);
 
@@ -362,7 +362,7 @@ public class DiscoveryController : ControllerBase
                 $"Top categories: {string.Join(", ", grouped.Select(g => g.category).Take(5))}.\n" +
                 "Be warm, local, and specific. Don't mention Upkilo. Under 60 words.";
 
-            var aiResult = await _aiService.GenerateTextAsync(Guid.Empty, null, prompt);
+            var aiResult = await aiService.GenerateTextAsync(Guid.Empty, null, prompt);
             editorial = aiResult.Success ? aiResult.Content?.Trim() ?? "" : "";
         }
         catch
