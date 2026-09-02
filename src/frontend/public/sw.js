@@ -5,8 +5,14 @@ const CACHE_NAME = 'upkilo-OrW0mUGV8_bXdEieaAR8C';
 
 // Shell resources cached on install for offline access.
 // Includes all manifest icon sizes so home-screen icons work offline.
+//
+// '/' is deliberately NOT here. On app.upkilo.com it answers 308 -> https://upkilo.com/,
+// a CROSS-ORIGIN redirect; the resulting fetch is blocked by CORS, and because addAll() is
+// atomic that single rejection failed the whole install — so the service worker never
+// registered and there was no offline support at all, reported only as
+// "TypeError: Failed to fetch" from this file. The locale-prefixed routes below are
+// same-origin redirects, which fetch follows normally.
 const SHELL_URLS = [
-  '/',
   '/dashboard',
   '/offline',
   '/manifest.json',
@@ -20,9 +26,24 @@ const SHELL_URLS = [
   '/icons/icon-512x512.png',
 ];
 
+// Cached individually rather than with addAll().
+//
+// addAll() resolves only if EVERY request succeeds, so one unreachable or cross-origin-
+// redirecting URL takes the entire install down with it and leaves the app with no service
+// worker. Precaching is an optimisation; losing one shell entry should degrade offline
+// coverage, never prevent registration. allSettled keeps the install succeeding and logs
+// whatever could not be cached, so a bad entry is visible instead of fatal.
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_URLS))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const results = await Promise.allSettled(SHELL_URLS.map((url) => cache.add(url)));
+      const failed = results
+        .map((r, i) => (r.status === 'rejected' ? SHELL_URLS[i] : null))
+        .filter(Boolean);
+      if (failed.length > 0) {
+        console.warn('[sw] precache skipped:', failed.join(', '));
+      }
+    })
   );
   self.skipWaiting();
 });

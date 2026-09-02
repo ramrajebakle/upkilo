@@ -17,7 +17,16 @@ namespace Upkilo.API.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/demo")]
-[Authorize(Roles = "Owner")]
+// Authenticated rather than Owner-only at the class level. The read-only `status` action
+// backs DemoModeBanner, which the dashboard layout renders for EVERY user on EVERY page —
+// so an Owner-only gate here produced a 403 per page load for every Admin, Manager and
+// Staff session. The banner swallows the error, so the only visible symptom was console
+// noise, but it also meant non-owners were never told they were looking at demo data,
+// which is precisely who most needs telling.
+//
+// The three mutating actions below keep their own [Authorize(Roles = "Owner")]: enabling,
+// disabling and seeding demo mode rewrite tenant data and stay with the owner.
+[Authorize]
 public class DemoModeController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -92,6 +101,7 @@ public class DemoModeController : ControllerBase
     // ──────────────────────────────────────────────────────────────────────────
     // POST api/v1/demo/enable
     // ──────────────────────────────────────────────────────────────────────────
+    [Authorize(Roles = "Owner")]
     [HttpPost("enable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Enable()
@@ -114,6 +124,7 @@ public class DemoModeController : ControllerBase
     // ──────────────────────────────────────────────────────────────────────────
     // POST api/v1/demo/disable
     // ──────────────────────────────────────────────────────────────────────────
+    [Authorize(Roles = "Owner")]
     [HttpPost("disable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Disable()
@@ -139,6 +150,7 @@ public class DemoModeController : ControllerBase
     // Restricted to Development and Staging environments to prevent accidental
     // test data insertion in production databases.
     // ──────────────────────────────────────────────────────────────────────────
+    [Authorize(Roles = "Owner")]
     [HttpPost("seed")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

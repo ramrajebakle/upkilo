@@ -23,6 +23,7 @@ import {
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import api from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
+import { apiErrorMessage } from '@/lib/apiError';
 
 interface StaffData {
     id: string;
@@ -67,6 +68,13 @@ export default function StaffProfilePage() {
     const router = useRouter();
     const params = useParams();
     const staffId = params.id as string;
+
+    // The staff list links "Add Staff" to /staff/new. Next.js has no static `new` segment
+    // under staff/, so that URL falls through to this dynamic route with id === 'new', and
+    // the page then fetched GET /api/v1/staff/new — a 404, and a broken detail screen where
+    // the create form should be. Treating 'new' as create mode reuses this whole form rather
+    // than duplicating 500 lines of it in a sibling route.
+    const isNew = staffId === 'new';
     const { error: toastError, success: toastSuccess } = useToast();
 
     const [loading, setLoading] = useState(true);
@@ -126,18 +134,22 @@ export default function StaffProfilePage() {
             }
         };
 
-        if (staffId) {
+        // Nothing to fetch for a staff member that does not exist yet.
+        if (staffId && !isNew) {
             fetchStaff();
+        } else if (isNew) {
+            setLoading(false);
         }
-    }, [staffId]);
+    }, [staffId, isNew]);
 
     useEffect(() => {
+        if (isNew) return;
         if (activeTab === 'shifts' && staffId) {
             fetchShifts();
         } else if (activeTab === 'commissions' && staffId) {
             fetchCommissions();
         }
-    }, [activeTab, staffId]);
+    }, [activeTab, staffId, isNew]);
 
     const fetchShifts = async () => {
         setLoadingShifts(true);
@@ -164,14 +176,29 @@ export default function StaffProfilePage() {
     };
 
     const handleSave = async () => {
+        if (!formData.firstName.trim() || !formData.lastName.trim()) {
+            toastError('First and last name are required');
+            return;
+        }
+
         setSaving(true);
         try {
-            // Assume there is an update endpoint
-            await api.staff.update(staffId, formData); // Need to verify if this endpoint exists on api.ts, if not I might need to add it or skip
-            toastSuccess('Staff updated successfully');
+            if (isNew) {
+                const response = await api.staff.create(formData);
+                toastSuccess('Staff member created');
+                // Replace rather than push: going "back" to /staff/new after creating would
+                // land on an empty create form, which reads as the save having failed.
+                router.replace(`/staff/${response.data?.id ?? ''}`);
+            } else {
+                await api.staff.update(staffId, formData);
+                toastSuccess('Staff updated successfully');
+            }
         } catch (error: any) {
             console.error(error);
-            toastError('Failed to update staff');
+            // The API refuses with 403 when the plan's staff seat limit is reached; that
+            // message is worth showing verbatim rather than replacing with a generic failure.
+            toastError(apiErrorMessage(
+                error, isNew ? 'Failed to create staff' : 'Failed to update staff'));
         } finally {
             setSaving(false);
         }
@@ -199,7 +226,7 @@ export default function StaffProfilePage() {
         );
     }
 
-    if (!staff) {
+    if (!staff && !isNew) {
         return (
             <div className="text-center py-20 p-6">
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
@@ -221,31 +248,37 @@ export default function StaffProfilePage() {
                     </Link>
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary-500/20">
-                            {staff.firstName[0]}{staff.lastName[0]}
+                            {(formData.firstName[0] ?? '') || (staff?.firstName[0] ?? '')}{(formData.lastName[0] ?? '') || (staff?.lastName[0] ?? '')}
                         </div>
                         <div>
                             <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
-                                {staff.firstName} {staff.lastName}
+                                {isNew
+                                    ? (`${formData.firstName} ${formData.lastName}`.trim() || 'New Staff Member')
+                                    : `${staff!.firstName} ${staff!.lastName}`}
                             </h1>
                             <div className="flex items-center gap-2 text-foreground-secondary">
                                 <Briefcase className="h-4 w-4" />
-                                <span>{staff.role}</span>
-                                <span className="text-slate-300">•</span>
-                                <span>Since {formatDate(staff.employmentStartDate)}</span>
+                                <span>{formData.role || (isNew ? 'No role set' : staff!.role)}</span>
+                                {!isNew && (
+                                    <>
+                                        <span className="text-foreground-muted">•</span>
+                                        <span>Since {formatDate(staff!.employmentStartDate)}</span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={handleSave} disabled={saving} className="btn btn-primary">
-                        {saving ? 'Saving...' : 'Save Changes'}
+                        {saving ? 'Saving...' : isNew ? 'Create Staff Member' : 'Save Changes'}
                     </button>
                 </div>
             </div>
 
             {/* Tabs */}
             <div className="flex gap-4 border-b border-border mb-6 overflow-x-auto">
-                {['overview', 'shifts', 'commissions'].map((tab) => (
+                {(isNew ? ['overview'] : ['overview', 'shifts', 'commissions']).map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
@@ -446,14 +479,14 @@ export default function StaffProfilePage() {
                                         <Calendar className="h-5 w-5 text-blue-500" />
                                         <span className="text-foreground-secondary">Total Bookings</span>
                                     </div>
-                                    <span className="font-bold text-foreground">{staff.totalBookings || 0}</span>
+                                    <span className="font-bold text-foreground">{staff?.totalBookings || 0}</span>
                                 </div>
                                 <div className="flex items-center justify-between p-3 bg-muted rounded-xl">
                                     <div className="flex items-center gap-3">
                                         <Star className="h-5 w-5 text-warning-fg" />
                                         <span className="text-foreground-secondary">Avg Rating</span>
                                     </div>
-                                    <span className="font-bold text-foreground">{staff.averageRating || 'N/A'}</span>
+                                    <span className="font-bold text-foreground">{staff?.averageRating || 'N/A'}</span>
                                 </div>
                             </div>
                         </div>

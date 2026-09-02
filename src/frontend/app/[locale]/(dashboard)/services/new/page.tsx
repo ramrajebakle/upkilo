@@ -5,6 +5,7 @@ import { useRouter, Link } from '@/navigation';
 import { ArrowLeft, Sparkles, Wand2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
+import { apiErrorMessage } from '@/lib/apiError';
 import ServiceForm from '@/components/forms/ServiceForm';
 
 export default function NewServicePage() {
@@ -23,7 +24,10 @@ export default function NewServicePage() {
             }
         } catch (err) {
             console.error('Error creating service:', err);
-            error('Failed to create service. Please try again.');
+            // Surface the server's own reason. A 400 here names the failing field; replacing
+            // that with "Please try again" hides the one piece of information that would let
+            // anyone — user or developer — fix the input.
+            error(apiErrorMessage(err, 'Failed to create service. Please try again.'));
         } finally {
             setIsLoading(false);
         }

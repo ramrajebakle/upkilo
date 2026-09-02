@@ -418,6 +418,7 @@ export const api = {
   staff: {
     list: (config?: AxiosRequestConfig) => apiClient.get('/api/v1/staff', config),
     get: (id: string) => apiClient.get(`/api/v1/staff/${id}`),
+    create: (data: any) => apiClient.post('/api/v1/staff', data),
     update: (id: string, data: any) => apiClient.put(`/api/v1/staff/${id}`, data),
     delete: (id: string) => apiClient.delete(`/api/v1/staff/${id}`),
     availability: (id: string, date: string) =>
