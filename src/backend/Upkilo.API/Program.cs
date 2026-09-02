@@ -532,13 +532,31 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IMarketingAutomationService, MarketingAutomationService>();
 builder.Services.AddScoped<IMarketingIntegrationService, MarketingIntegrationService>();
 // Warn at startup when key observability/alerting config is missing — prevents silent failure.
-var aiConnStr = builder.Configuration["ApplicationInsights:ConnectionString"];
+// Both spellings, because the two environments supply different ones and only one of them
+// was ever read.
+//
+// Azure App Service sets APPLICATIONINSIGHTS_CONNECTION_STRING — that is the name the portal,
+// the ARM templates and `az webapp config appsettings` all use. .NET's environment-variable
+// provider maps that to the config key APPLICATIONINSIGHTS_CONNECTION_STRING verbatim; the
+// colon form below would need the env var spelled ApplicationInsights__ConnectionString, with
+// a DOUBLE UNDERSCORE. Reading only the colon form meant aiConnStr was null in production even
+// though the setting was present and correct, so aiConfigured was false, the disabled no-op
+// TelemetryClient was registered, and AddApplicationInsightsTelemetry — which reads the Azure
+// name natively and would have worked — was never reached.
+//
+// The result was an API that logged "not configured" at every start and sent no telemetry at
+// all, while the portal showed Application Insights wired up. A 500 in production left no
+// trace anywhere: not in App Insights, and not on disk either, since App Service application
+// logging defaults to Off. This is the same defect the codebase already documents for Stripe
+// ("Colon form — see PaymentService.cs for why 'Stripe--SecretKey' never resolved").
+var aiConnStr = builder.Configuration["ApplicationInsights:ConnectionString"]
+                ?? builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
 var aiConfigured = !string.IsNullOrWhiteSpace(aiConnStr)
                    && !aiConnStr.StartsWith("${", StringComparison.Ordinal);
 
 if (!aiConfigured)
 {
-    Log.Warning("ApplicationInsights:ConnectionString is not configured — error telemetry will not be sent to Azure Monitor.");
+    Log.Warning("Application Insights connection string is not configured (checked ApplicationInsights:ConnectionString and APPLICATIONINSIGHTS_CONNECTION_STRING) — error telemetry will not be sent to Azure Monitor.");
 
     // AddApplicationInsightsTelemetry also registers TelemetryClient, which TelemetryService
     // (and transitively GlobalExceptionHandler) require. Skipping registration entirely
