@@ -32,9 +32,28 @@ public class ContentModerationService : IContentModerationService
         var apiKey = configuration["AzureContentSafety:ApiKey"] ?? string.Empty;
         _isEnabled = !string.IsNullOrEmpty(endpoint) && !string.IsNullOrEmpty(apiKey);
 
+        // Logged, NOT thrown. This is a scoped service injected into AiService and
+        // AzureOpenAIService, which are themselves injected widely — so throwing here failed
+        // DI resolution for every endpoint whose dependency graph merely touched them, whether
+        // or not it moderated anything. Production had no AzureContentSafety settings at all,
+        // so a large part of the API answered
+        //
+        //   InvalidOperationException: Azure Content Safety API client is not configured
+        //
+        // and the dashboard showed "Couldn't load this. Check your connection." on page after
+        // page, for the owner included.
+        //
+        // The safety requirement is real and is kept — it just belongs at the moderation call,
+        // not at construction. See ModerateTextAsync, which now REFUSES in Production rather
+        // than returning Allowed(). That is strictly safer than the previous arrangement: the
+        // throw only ever protected content by taking the whole service down, and if it had
+        // been caught anywhere, moderation would have silently failed open.
         if (hostEnvironment.IsProduction() && !_isEnabled)
         {
-            throw new InvalidOperationException("Azure Content Safety API client is not configured but is mandatory in Production environment. Please configure AzureContentSafety:Endpoint and AzureContentSafety:ApiKey.");
+            _logger.LogCritical(
+                "Azure Content Safety is not configured (AzureContentSafety:Endpoint / :ApiKey). " +
+                "Content moderation cannot run, so every moderated operation will be REFUSED in " +
+                "Production until it is configured.");
         }
 
         if (_isEnabled)
@@ -58,6 +77,18 @@ public class ContentModerationService : IContentModerationService
     {
         if (!_isEnabled || _client == null)
         {
+            // Fail CLOSED in Production. "The moderator is unavailable" is not evidence that
+            // the text is safe, and this method is what stands between user-supplied prompts
+            // and AI generation. Outside Production it stays permissive so local and CI runs
+            // do not need an Azure resource.
+            if (_hostEnvironment.IsProduction())
+            {
+                _logger.LogError(
+                    "Refusing content: Azure Content Safety is not configured, so moderation "
+                    + "cannot run and this operation cannot be allowed in Production.");
+                return ModerationResult.Blocked("ModerationUnavailable");
+            }
+
             _logger.LogDebug("Content moderation is disabled (no Azure Content Safety endpoint configured)");
             return ModerationResult.Allowed();
         }
