@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -83,6 +84,92 @@ public class AIController : ControllerBase
             }
         });
     }
+
+    /// <summary>
+    /// POST /api/v1/ai/copilot - multi-turn copilot conversation.
+    ///
+    /// The copilot rail in the dashboard shell has been calling this path on every dashboard
+    /// page since it shipped, and it did not exist: every send returned 404 and the rail showed
+    /// "Failed to get AI response". Nothing caught it because the frontend route guard is a
+    /// denylist of known-bad paths, which cannot report a path that was never on it.
+    ///
+    /// It carries the same protections as /generate rather than a relaxed set of its own -
+    /// entitlement gate, usage quota, and per-message prompt-injection sanitising. A chat
+    /// surface is the easiest place to attempt injection, so the client's turns are sanitised
+    /// individually rather than after being concatenated, where an injected delimiter could
+    /// otherwise hide inside the joined transcript.
+    /// </summary>
+    [HttpPost("copilot")]
+    [RequiresFeature(FeatureKeys.AiCopilot)]
+    [ChecksUsage(UsageType.AiCredits)]
+    public async Task<IActionResult> Copilot([FromBody] CopilotRequest request)
+    {
+        if (request.Messages == null || request.Messages.Count == 0)
+            return BadRequest(ApiResponse.Fail("At least one message is required"));
+
+        // Bound the transcript. Without this, a client controls how many tokens each request
+        // bills the tenant for, and the quota is only checked per request, not per token.
+        if (request.Messages.Count > MaxCopilotMessages)
+            return BadRequest(ApiResponse.Fail(
+                $"Conversation too long. Send at most {MaxCopilotMessages} messages."));
+
+        var tenantId = GetTenantId();
+        var transcript = new StringBuilder();
+        var totalChars = 0;
+
+        foreach (var message in request.Messages)
+        {
+            var content = message.Content ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(content)) continue;
+
+            totalChars += content.Length;
+            if (totalChars > MaxCopilotChars)
+                return BadRequest(ApiResponse.Fail(
+                    $"Conversation too long. Keep it under {MaxCopilotChars} characters."));
+
+            // The role is client-supplied, so it is not trusted to mean anything: anything that
+            // is not a recognised assistant turn is treated as user input and sanitised.
+            var isAssistant = string.Equals(message.Role, "assistant", StringComparison.OrdinalIgnoreCase);
+            if (isAssistant)
+            {
+                transcript.AppendLine($"Assistant: {content}");
+                continue;
+            }
+
+            var sanitized = _promptSanitizer.SanitizeUserInput(content, tenantId);
+            if (!sanitized.IsClean && sanitized.RiskLevel == RiskLevel.Critical)
+                return BadRequest(ApiResponse.Fail("Prompt rejected: potential injection attempt detected"));
+
+            transcript.AppendLine($"User: {sanitized.SanitizedInput ?? content}");
+        }
+
+        if (transcript.Length == 0)
+            return BadRequest(ApiResponse.Fail("At least one non-empty message is required"));
+
+        var result = await _aiService.GenerateTextAsync(
+            tenantId,
+            GetUserId(),
+            transcript.ToString(),
+            request.Model ?? "gpt-4");
+
+        if (!result.Success)
+            return BadRequest(new { error = result.Error });
+
+        return Ok(new
+        {
+            reply = result.Content,
+            content = result.Content,
+            usage = new
+            {
+                inputTokens = result.InputTokens,
+                outputTokens = result.OutputTokens,
+                cost = result.Cost
+            }
+        });
+    }
+
+    private const int MaxCopilotMessages = 40;
+    private const int MaxCopilotChars = 24_000;
 
     /// <summary>
     /// Generate image using AI
@@ -575,20 +662,45 @@ public class AIController : ControllerBase
             return BadRequest(new { error = "Maximum 50 messages per batch. Use Campaigns for larger sends." });
 
         var tenantId = GetTenantId();
-        int sent = 0, failed = 0;
+        int sent = 0, failed = 0, skipped = 0;
+
+        // Resolve every destination number from this tenant's own client records.
+        //
+        // The number used to come straight from the request body and was passed to the SMS
+        // provider unverified - nothing tied item.Phone to item.ClientId, or to the tenant at
+        // all. Any authenticated user on a tenant holding ai_insights could therefore send
+        // arbitrary text to arbitrary numbers through the tenant's sender, at the tenant's
+        // expense: an outbound SMS relay wearing a business's sender ID. The client-supplied
+        // Phone is now ignored entirely rather than merely cross-checked, so there is no path
+        // where it can reach the provider.
+        var clientIds = request.Items.Select(i => i.ClientId).Distinct().ToList();
+        var phoneByClientId = await _context.Clients
+            .Where(c => c.TenantId == tenantId && clientIds.Contains(c.Id))
+            .Select(c => new { c.Id, c.Phone })
+            .ToDictionaryAsync(c => c.Id, c => c.Phone);
 
         foreach (var item in request.Items)
         {
-            if (string.IsNullOrEmpty(item.Phone) || string.IsNullOrEmpty(item.Message)) continue;
+            if (string.IsNullOrWhiteSpace(item.Message)) { skipped++; continue; }
 
-            var result = await smsService.SendSmsAsync(tenantId, item.Phone, item.Message, item.ClientId);
+            // A client id belonging to another tenant simply is not in the dictionary, so a
+            // cross-tenant send is not expressible.
+            if (!phoneByClientId.TryGetValue(item.ClientId, out var phone) || string.IsNullOrWhiteSpace(phone))
+            {
+                skipped++;
+                continue;
+            }
+
+            var result = await smsService.SendSmsAsync(tenantId, phone, item.Message, item.ClientId);
             if (result.Success) sent++;
             else failed++;
         }
 
-        _logger.LogInformation("[FillMyCalendar] Sent {Sent} outreach SMS, {Failed} failed. Tenant: {TenantId}", sent, failed, tenantId);
+        _logger.LogInformation(
+            "[FillMyCalendar] Sent {Sent} outreach SMS, {Failed} failed, {Skipped} skipped. Tenant: {TenantId}",
+            sent, failed, skipped, tenantId);
 
-        return Ok(new { sent, failed, total = request.Items.Count });
+        return Ok(new { sent, failed, skipped, total = request.Items.Count });
     }
 
     /// <summary>
@@ -685,6 +797,22 @@ public record CopywritingRequest(
 
 public record SentimentAnalysisRequest(string Content);
 
+/// <summary>
+/// One turn of a copilot conversation. Role is client-supplied and therefore untrusted;
+/// AIController.Copilot treats anything that is not "assistant" as user input to sanitise.
+/// </summary>
+public class CopilotMessage
+{
+    public string? Role { get; set; }
+    public string? Content { get; set; }
+}
+
+public class CopilotRequest
+{
+    public List<CopilotMessage> Messages { get; set; } = new();
+    public string? Model { get; set; }
+}
+
 public class FillCalendarSmsRequest
 {
     public Guid ClientId { get; set; }
@@ -697,7 +825,15 @@ public class FillCalendarSmsRequest
 public class FillCalendarSendItem
 {
     public Guid ClientId { get; set; }
+
+    /// <summary>
+    /// Ignored. The destination number is resolved server-side from the tenant's client record
+    /// - see SendFillCalendarCampaign. Kept only so existing callers posting it do not break;
+    /// nothing reads it, and it must never be passed to the SMS provider.
+    /// </summary>
+    [Obsolete("Ignored: the phone number is resolved server-side from the client record.")]
     public string Phone { get; set; } = string.Empty;
+
     public string Message { get; set; } = string.Empty;
 }
 

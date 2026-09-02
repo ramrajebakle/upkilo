@@ -829,14 +829,18 @@ export const api = {
     weeklySummary: () => apiClient.get('/api/v1/aidashboard/weekly-summary'),
   },
 
+  // Every path here is backed by a real endpoint on AIChatbotController. settings, kb and stats
+  // did not exist at all until now — the chatbot admin page 404'd on load, and because
+  // getSettings and getKnowledgeBase are awaited together in a Promise.all, the first rejection
+  // blanked the whole page.
   chatbot: {
     getSettings: () => apiClient.get('/api/v1/aichatbot/settings'),
-    updateSettings: (data: any) => apiClient.put('/api/v1/aichatbot/settings', data),
+    updateSettings: (data: unknown) => apiClient.put('/api/v1/aichatbot/settings', data),
     getKnowledgeBase: () => apiClient.get('/api/v1/aichatbot/kb'),
     addKnowledgeBase: (data: { category: string; question: string; answer: string }) =>
       apiClient.post('/api/v1/aichatbot/train', data),
     deleteKnowledgeBase: (id: string) => apiClient.delete(`/api/v1/aichatbot/kb/${id}`),
-    getConversations: (params?: any) => apiClient.get('/api/v1/aichatbot/conversations', { params }),
+    getConversations: (params?: unknown) => apiClient.get('/api/v1/aichatbot/conversations', { params }),
     getStats: () => apiClient.get('/api/v1/aichatbot/stats'),
   },
 

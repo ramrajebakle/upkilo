@@ -19,6 +19,13 @@ public class ChatRequestDto
     public string ExternalId { get; set; } = string.Empty; // Channel ID
     public ConversationChannel Channel { get; set; }
     public string Message { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Who is asking. Decides whether Upkilo platform knowledge is in scope for this turn, so it
+    /// defaults to the closed option: a caller that forgets to set it gets the public visitor's
+    /// restricted view rather than staff-level knowledge.
+    /// </summary>
+    public ChatAudience Audience { get; set; } = ChatAudience.PublicVisitor;
 }
 
 public class ChatResponseDto
