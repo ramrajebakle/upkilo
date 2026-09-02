@@ -939,6 +939,62 @@
     border-color: var(--surface-border-strong);
   }
 
+  /* ---- Form controls ---- */
+  /* `.input` is used on 147 elements across 31 files — every text field, select and
+     textarea in the product — and was never defined. Tailwind's Preflight strips the
+     browser's default border and background from form controls, so those elements
+     rendered as bare transparent text with no box: on /staff/new the four profile fields
+     showed a label and then nothing at all. The tokens this needs were already declared
+     (--control-bg, --control-border, --focus-ring, and their --color-input* aliases); only
+     the class consuming them was missing, which is why nothing flagged it — the utilities
+     resolve, and a class that matches no rule is not an error anywhere in the toolchain.
+     `check:theme` looks for dead TOKENS and inverted dark pairs, not for a class that was
+     never written.
+     Reads from the same --control-* tokens in both themes, so there is no .dark twin to
+     keep in step. */
+  .input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.625rem;
+    border: 1px solid var(--control-border);
+    background-color: var(--control-bg);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .input:focus,
+  .input:focus-visible {
+    outline: none;
+    border-color: var(--focus-ring);
+    /* A ring rather than a thicker border: growing the border by a pixel on focus shifts
+       every sibling in the grid by that pixel. */
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-ring) 25%, transparent);
+  }
+
+  .input:disabled,
+  .input[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Native selects keep the platform arrow; the padding above would otherwise let the
+     text sit under it. */
+  select.input {
+    padding-right: 2rem;
+  }
+
+  textarea.input {
+    min-height: 5rem;
+    resize: vertical;
+  }
+
   /* ---- Cards ---- */
   /* A shadow tuned for white cards on a white page all but vanishes on a dark one.
      --shadow-card carries the per-theme value, so the four .dark overrides these rules
