@@ -550,10 +550,40 @@ builder.Services.AddScoped<IMarketingIntegrationService, MarketingIntegrationSer
 // trace anywhere: not in App Insights, and not on disk either, since App Service application
 // logging defaults to Off. This is the same defect the codebase already documents for Stripe
 // ("Colon form — see PaymentService.cs for why 'Stripe--SecretKey' never resolved").
+//
+// SECOND DEFECT, found the hard way: resolving the value here is not enough, because
+// AddApplicationInsightsTelemetry(IConfiguration) goes and looks it up AGAIN under
+// ApplicationInsights:ConnectionString. Reading the Azure name satisfied the check below while
+// the SDK still found nothing, so registration proceeded and its OpenTelemetry Azure Monitor
+// metric exporter was constructed with an empty connection string:
+//
+//   InvalidOperationException: Connection String Error: Required keyword 'InstrumentationKey'
+//   is missing in connection string.
+//     at Azure.Monitor.OpenTelemetry.Exporter.AzureMonitorMetricExporter..ctor
+//
+// That throws during Host.StartAsync, before Kestrel binds a port, so the container exits and
+// App Service serves its own 503 HTML page. The deploy workflow polls /ready and pipes the
+// response to jq, so the HTML surfaced as "jq: parse error: Invalid numeric literal at line 1,
+// column 10" rather than as "the app is not starting".
+//
+// Strictly worse than the original bug: before, this resolved to null, the guard skipped
+// registration and the API came up with telemetry disabled. Now the connection string is passed
+// EXPLICITLY to the SDK below, so the value that is validated here is the value it uses.
 var aiConnStr = builder.Configuration["ApplicationInsights:ConnectionString"]
                 ?? builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+// A connection string without InstrumentationKey= is what the exporter rejects, so reject it
+// here first and degrade instead. Telemetry is optional; it must never take the API down.
 var aiConfigured = !string.IsNullOrWhiteSpace(aiConnStr)
-                   && !aiConnStr.StartsWith("${", StringComparison.Ordinal);
+                   && !aiConnStr.StartsWith("${", StringComparison.Ordinal)
+                   && aiConnStr.Contains("InstrumentationKey=", StringComparison.OrdinalIgnoreCase);
+
+if (!string.IsNullOrWhiteSpace(aiConnStr) && !aiConfigured)
+{
+    Log.Warning(
+        "Application Insights connection string is present but unusable (no InstrumentationKey=, "
+        + "or an unexpanded ${{...}} placeholder) — telemetry is disabled rather than failing startup.");
+}
 
 if (!aiConfigured)
 {
@@ -584,7 +614,19 @@ else
     // That is an UNHANDLED startup exception — the container exits 139 before Kestrel
     // binds a port, so the app is simply unreachable rather than degraded. Telemetry is
     // optional; it must never be able to take the API down.
-    builder.Services.AddApplicationInsightsTelemetry(builder.Configuration);
+    //
+    // The connection string is assigned EXPLICITLY rather than passing builder.Configuration
+    // and hoping the SDK finds it. The configuration overload re-resolves the value from
+    // ApplicationInsights:ConnectionString, which is NOT the key Azure App Service sets —
+    // App Service sets APPLICATIONINSIGHTS_CONNECTION_STRING, and only the double-underscore
+    // spelling ApplicationInsights__ConnectionString would map to the colon key. So the check
+    // above could pass on the Azure name while the SDK independently found nothing and built
+    // its exporter with an empty string. Passing the validated value removes the second lookup
+    // entirely: what is checked is what is used.
+    builder.Services.AddApplicationInsightsTelemetry(options =>
+    {
+        options.ConnectionString = aiConnStr;
+    });
 }
 
 var pdKey = builder.Configuration["PagerDuty:IntegrationKey"];
