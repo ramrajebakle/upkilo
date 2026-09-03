@@ -678,10 +678,23 @@ public class AzureOpenAIService : IAIService
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.TenantId == tenantId);
 
-            if (subscription == null) return false;
+            // A missing subscription row must NOT decide whether AI is allowed. Whether the
+            // tenant may use AI at all is settled upstream by the entitlement engine and the
+            // [RequiresFeature]/[FeatureGuard] gate on the controller; this method's only job
+            // is to say WHICH MODEL may be dispatched.
+            //
+            // Denying here contradicted that engine. A TenantFeatureOverride deliberately
+            // outranks the subscription lifecycle (EntitlementService, "Deliberately outranks
+            // the lifecycle gate"), so an admin granting ai_copilot to a tenant with no
+            // subscription row passed the controller gate and was then refused here as
+            // "model not allowed" — a second, uncoordinated gate overruling the central one,
+            // with a message that named the wrong cause.
+            //
+            // With no subscription there is no AllowedAiModels list, so the defaults apply,
+            // which is the same answer a subscription that lists nothing already gets.
 
             // If no specifically allowed models are listed, allow all Upkilo-tier models
-            if (subscription.AllowedAiModels == null || !subscription.AllowedAiModels.Any())
+            if (subscription?.AllowedAiModels == null || !subscription.AllowedAiModels.Any())
             {
                 // Must stay in sync with AiModelResolver — a model it returns but this list
                 // omits is rejected here before dispatch. gpt-4o was missing while the

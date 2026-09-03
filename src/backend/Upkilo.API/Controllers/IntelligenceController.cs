@@ -30,18 +30,15 @@ public class IntelligenceController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly ITenantProvider _tenantProvider;
-    private readonly IAIService _aiService;
     private readonly ILogger<IntelligenceController> _logger;
 
     public IntelligenceController(
         AppDbContext context,
         ITenantProvider tenantProvider,
-        IAIService aiService,
         ILogger<IntelligenceController> logger)
     {
         _context = context;
         _tenantProvider = tenantProvider;
-        _aiService = aiService;
         _logger = logger;
     }
 
@@ -390,7 +387,9 @@ public class IntelligenceController : ControllerBase
     /// </summary>
     [HttpGet("competitor-report")]
     [RequiresFeature(FeatureKeys.AiInsights)]
-    public async Task<IActionResult> GetCompetitorReport()
+    // IAIService is injected per-action; see ServicesController for why a constructor
+    // dependency here made every endpoint on this controller construct the AI stack.
+    public async Task<IActionResult> GetCompetitorReport([FromServices] IAIService aiService)
     {
         var tenantId = GetTenantId();
         var tenant = await _context.Tenants.FindAsync(tenantId);
@@ -434,7 +433,7 @@ public class IntelligenceController : ControllerBase
             $"Top competitor: {competitors[0].Name} ({competitors[0].AverageRating}★, {competitors[0].ReviewCount} reviews)\n\n" +
             "Write 2-3 sentences on where this business stands relative to competitors and one specific action to gain advantage. Under 80 words.";
 
-        var aiResult = await _aiService.GenerateTextAsync(tenantId, null, prompt);
+        var aiResult = await aiService.GenerateTextAsync(tenantId, null, prompt);
         var narrative = aiResult.Success ? aiResult.Content?.Trim() ?? "" : "Unable to generate narrative at this time.";
 
         return Ok(new

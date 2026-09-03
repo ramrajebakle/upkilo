@@ -30,18 +30,15 @@ public class KnowledgeBaseController : ControllerBase
 
     private readonly AppDbContext _db;
     private readonly ITenantProvider _tenantProvider;
-    private readonly IAIService _aiService;
     private readonly ILogger<KnowledgeBaseController> _logger;
 
     public KnowledgeBaseController(
         AppDbContext db,
         ITenantProvider tenantProvider,
-        IAIService aiService,
         ILogger<KnowledgeBaseController> logger)
     {
         _db = db;
         _tenantProvider = tenantProvider;
-        _aiService = aiService;
         _logger = logger;
     }
 
@@ -245,7 +242,9 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Semantic search using AI to rank relevant entries for the query.</summary>
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string q)
+    // IAIService is injected per-action; see ServicesController for why a constructor
+    // dependency here made every endpoint on this controller construct the AI stack.
+    public async Task<IActionResult> Search([FromQuery] string q, [FromServices] IAIService aiService)
     {
         if (string.IsNullOrWhiteSpace(q))
             return BadRequest(ApiResponse<object>.Fail("Query parameter 'q' is required"));
@@ -270,7 +269,7 @@ public class KnowledgeBaseController : ControllerBase
         contextBuilder.AppendLine();
         contextBuilder.AppendLine("Return ONLY a JSON array of GUIDs, e.g.: [\"id1\",\"id2\"]");
 
-        var aiResult = await _aiService.GenerateTextAsync(tenantId, userId, contextBuilder.ToString());
+        var aiResult = await aiService.GenerateTextAsync(tenantId, userId, contextBuilder.ToString());
 
         IEnumerable<KbEntry> ranked;
         if (aiResult.Success && !string.IsNullOrWhiteSpace(aiResult.Content))
@@ -313,7 +312,9 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Auto-generate FAQ entries from tenant's services/business info using AI.</summary>
     [HttpPost("auto-populate")]
-    public async Task<IActionResult> AutoPopulate()
+    // IAIService is injected per-action; see ServicesController for why a constructor
+    // dependency here made every endpoint on this controller construct the AI stack.
+    public async Task<IActionResult> AutoPopulate([FromServices] IAIService aiService)
     {
         var tenantId = GetTenantId();
         var userId = _tenantProvider.GetUserId();
@@ -349,7 +350,7 @@ public class KnowledgeBaseController : ControllerBase
         promptBuilder.AppendLine();
         promptBuilder.AppendLine("Generate 8-12 FAQ entries. Return ONLY the JSON array.");
 
-        var aiResult = await _aiService.GenerateTextAsync(tenantId, userId, promptBuilder.ToString());
+        var aiResult = await aiService.GenerateTextAsync(tenantId, userId, promptBuilder.ToString());
         if (!aiResult.Success || string.IsNullOrWhiteSpace(aiResult.Content))
             return StatusCode(502, ApiResponse<object>.Fail("AI service failed to generate FAQ entries. Please try again."));
 

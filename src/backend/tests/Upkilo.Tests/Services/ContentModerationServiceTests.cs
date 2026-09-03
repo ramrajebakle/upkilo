@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Upkilo.Core.Interfaces;
 using Upkilo.Infrastructure.Services.Security;
 using Xunit;
 
@@ -35,10 +36,16 @@ public class ContentModerationServiceTests
         var env = new Mock<IHostEnvironment>();
         env.SetupGet(e => e.EnvironmentName).Returns(environment);
 
+        // Returns null so the service falls back to IConfiguration, which is the live behaviour
+        // today: no Key Vault is provisioned, so ISecretProvider has nothing to hand back.
+        var secrets = new Mock<ISecretProvider>();
+        secrets.Setup(s => s.GetSecret(It.IsAny<string>())).Returns((string?)null);
+
         return new ContentModerationService(
             new ConfigurationBuilder().AddInMemoryCollection(settings).Build(),
             NullLogger<ContentModerationService>.Instance,
-            env.Object);
+            env.Object,
+            secrets.Object);
     }
 
     [Fact]
@@ -63,7 +70,51 @@ public class ContentModerationServiceTests
         // the disabled path returned Allowed() and only the constructor throw stood between
         // production and unmoderated AI content.
         result.IsAllowed.Should().BeFalse();
-        result.FlaggedCategories.Should().Contain(c => c.Category == "ModerationUnavailable");
+
+        // The reason carries a suffix naming which path could not produce a verdict
+        // ("NotConfigured" here), so logs and callers can tell "this text was harmful" apart
+        // from "we could not check it" — very different operationally, even though both deny.
+        result.FlaggedCategories.Should()
+            .Contain(c => c.Category.StartsWith("ModerationUnavailable"));
+    }
+
+    /// <summary>
+    /// The dangerous asymmetry this class did NOT cover before.
+    ///
+    /// An unconfigured service refused in Production, but a null response or ANY exception
+    /// returned Allowed() — the code said "Fail open to avoid blocking legitimate content". So
+    /// a misconfiguration blocked everything while a genuine outage, or anything that could
+    /// induce an exception, allowed everything: the protection was strongest exactly when
+    /// nothing was wrong, and absent when something was.
+    ///
+    /// A bad endpoint makes the SDK call fail, which is the exception path.
+    /// </summary>
+    [Fact]
+    public async Task Moderation_InProductionWhenTheCallFails_RefusesRatherThanAllowing()
+    {
+        var settings = new Dictionary<string, string?>
+        {
+            // Routable-looking but non-resolving, so AnalyzeTextAsync throws rather than 200s.
+            ["AzureContentSafety:Endpoint"] = "https://upkilo-invalid-host.invalid/",
+            ["AzureContentSafety:ApiKey"] = "test-key",
+        };
+
+        var env = new Mock<IHostEnvironment>();
+        env.SetupGet(e => e.EnvironmentName).Returns("Production");
+        var secrets = new Mock<ISecretProvider>();
+        secrets.Setup(s => s.GetSecret(It.IsAny<string>())).Returns((string?)null);
+
+        var sut = new ContentModerationService(
+            new ConfigurationBuilder().AddInMemoryCollection(settings).Build(),
+            NullLogger<ContentModerationService>.Instance,
+            env.Object,
+            secrets.Object);
+
+        var result = await sut.ModerateTextAsync("anything at all");
+
+        result.IsAllowed.Should().BeFalse(
+            "an outage is not evidence the text is safe; failing open here meant any induced "
+            + "error was a complete bypass of moderation");
     }
 
     [Theory]

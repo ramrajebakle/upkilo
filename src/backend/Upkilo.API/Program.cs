@@ -429,6 +429,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 // convention registration — only MediatR + validators are bulk-registered). Confirmed at runtime
 // for ILocationService and IPaymentService; the rest share the identical, verified defect.
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ILocationService, Upkilo.Infrastructure.Services.LocationService>();
+builder.Services.AddScoped<Upkilo.Core.Interfaces.IChatbotContextBuilder, Upkilo.Infrastructure.Services.ChatbotContextBuilder>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IChatbotService, Upkilo.Infrastructure.Services.ChatbotService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IAdCampaignService, Upkilo.Infrastructure.Services.AdCampaignService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IAttendanceService, Upkilo.Infrastructure.Services.AttendanceService>();

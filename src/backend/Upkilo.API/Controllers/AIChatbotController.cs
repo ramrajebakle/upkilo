@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Caching.Distributed;
+using System.Net.Mail;
+using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Upkilo.API.Attributes;
@@ -21,15 +23,18 @@ public class AIChatbotController : ControllerBase
     private readonly IChatbotService _chatbotService;
     private readonly ITenantProvider _tenantProvider;
     private readonly ILogger<AIChatbotController> _logger;
+    private readonly AppDbContext _context;
 
     public AIChatbotController(
         IChatbotService chatbotService,
         ITenantProvider tenantProvider,
-        ILogger<AIChatbotController> logger)
+        ILogger<AIChatbotController> logger,
+        AppDbContext context)
     {
         _chatbotService = chatbotService;
         _tenantProvider = tenantProvider;
         _logger = logger;
+        _context = context;
     }
 
     private Guid GetTenantId() => _tenantProvider.GetTenantId()
@@ -41,7 +46,13 @@ public class AIChatbotController : ControllerBase
     [HttpPost("message")]
     public async Task<IActionResult> ProcessMessage([FromBody] ChatRequestDto request)
     {
+        // Both are overwritten from the authenticated principal rather than trusted from the
+        // body. TenantId already was; Audience must be too, or a caller could simply post
+        // Audience = TenantStaff from the public widget and pull Upkilo platform knowledge into
+        // a customer-facing conversation.
         request.TenantId = GetTenantId();
+        request.Audience = ChatAudience.TenantStaff;
+
         var response = await _chatbotService.ProcessMessageAsync(request);
         return Ok(response);
     }
@@ -85,6 +96,146 @@ public class AIChatbotController : ControllerBase
         var trainingData = await _chatbotService.GetTrainingDataAsync(GetTenantId());
         return Ok(new { data = trainingData });
     }
+
+    // The chatbot admin page has been calling settings, kb and stats since it shipped. None of
+    // them existed, so the page threw on load and rendered nothing: getSettings and
+    // getKnowledgeBase are awaited together in a Promise.all, so the first 404 rejected the
+    // whole load. They are added here, on the persisted AIKnowledgeBase and ChatWidget stores,
+    // rather than pointed at KnowledgeBaseController - that controller keeps its entries in a
+    // private static ConcurrentDictionary, so anything written there is lost on restart and
+    // invisible to other instances.
+
+    /// <summary>
+    /// GET /api/v1/aichatbot/settings — assistant configuration for this tenant.
+    /// </summary>
+    [HttpGet("settings")]
+    public async Task<IActionResult> GetSettings()
+    {
+        var tenantId = GetTenantId();
+        var widget = await _context.ChatWidgets.AsNoTracking()
+            .FirstOrDefaultAsync(w => w.TenantId == tenantId);
+
+        // A tenant that has never opened the page has no row yet. Returning defaults keeps the
+        // form usable without writing a row on a read.
+        return Ok(new
+        {
+            isEnabled = widget?.IsEnabled ?? true,
+            botName = widget?.BotName ?? "Upkilo Assistant",
+            handoffEmail = widget?.HandoffEmail ?? string.Empty,
+            welcomeMessage = widget?.WelcomeMessage ?? "Hello! How can I help you today?"
+        });
+    }
+
+    /// <summary>
+    /// PUT /api/v1/aichatbot/settings — upsert assistant configuration.
+    /// </summary>
+    [HttpPut("settings")]
+    public async Task<IActionResult> UpdateSettings([FromBody] ChatbotSettingsRequest request)
+    {
+        if (!string.IsNullOrWhiteSpace(request.HandoffEmail)
+            && !MailAddress.TryCreate(request.HandoffEmail, out _))
+            return BadRequest(new { error = "Handoff email is not a valid email address" });
+
+        var tenantId = GetTenantId();
+        var widget = await _context.ChatWidgets.FirstOrDefaultAsync(w => w.TenantId == tenantId);
+
+        if (widget == null)
+        {
+            widget = new ChatWidget { TenantId = tenantId };
+            _context.ChatWidgets.Add(widget);
+        }
+
+        widget.IsEnabled = request.IsEnabled;
+        widget.BotName = Trim(request.BotName, 100);
+        widget.HandoffEmail = Trim(request.HandoffEmail, 256);
+        widget.WelcomeMessage = Trim(request.WelcomeMessage, 500);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            isEnabled = widget.IsEnabled,
+            botName = widget.BotName,
+            handoffEmail = widget.HandoffEmail,
+            welcomeMessage = widget.WelcomeMessage
+        });
+    }
+
+    /// <summary>
+    /// GET /api/v1/aichatbot/kb — knowledge base entries backing the assistant.
+    /// </summary>
+    [HttpGet("kb")]
+    public async Task<IActionResult> GetKnowledgeBase()
+    {
+        var entries = await _chatbotService.GetTrainingDataAsync(GetTenantId());
+        return Ok(entries);
+    }
+
+    /// <summary>
+    /// DELETE /api/v1/aichatbot/kb/{id} — remove a knowledge base entry.
+    /// </summary>
+    [HttpDelete("kb/{id:guid}")]
+    public async Task<IActionResult> DeleteKnowledgeBaseEntry(Guid id)
+    {
+        var tenantId = GetTenantId();
+
+        // Matched on both id AND tenant, so an id belonging to another tenant is a 404 rather
+        // than a cross-tenant delete.
+        var entry = await _context.Set<AIKnowledgeBase>()
+            .FirstOrDefaultAsync(e => e.Id == id && e.TenantId == tenantId);
+
+        if (entry == null) return NotFound(new { error = "Knowledge base entry not found" });
+
+        _context.Remove(entry);
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    /// <summary>
+    /// GET /api/v1/aichatbot/stats — conversation counts for the admin page header.
+    /// </summary>
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetStats()
+    {
+        var tenantId = GetTenantId();
+        var conversations = await _chatbotService.GetConversationsAsync(tenantId);
+
+        var total = conversations.Count;
+
+        // "Active handoffs" is the queue a human still has to work: a handoff asked for or
+        // being handled, but not yet closed. A closed conversation is done regardless of
+        // whether a human touched it, so it must not count as an outstanding handoff.
+        var activeHandoffs = conversations.Count(c =>
+            c.Status == ConversationStatus.HandoffRequested
+            || c.Status == ConversationStatus.HumanHandled);
+
+        // Resolved by the assistant: closed without ever needing a human.
+        var resolved = conversations.Count(c =>
+            c.Status == ConversationStatus.Closed && !c.HumanInteractionRequired);
+
+        return Ok(new
+        {
+            totalConversations = total,
+            // Percentage, and 0 rather than NaN when there is nothing to divide by.
+            resolutionRate = total == 0 ? 0 : (int)Math.Round(resolved * 100.0 / total),
+            activeHandoffs
+        });
+    }
+
+    private static string? Trim(string? value, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        var trimmed = value.Trim();
+        return trimmed.Length <= maxLength ? trimmed : trimmed[..maxLength];
+    }
+}
+
+public class ChatbotSettingsRequest
+{
+    public bool IsEnabled { get; set; } = true;
+    public string? BotName { get; set; }
+    public string? HandoffEmail { get; set; }
+    public string? WelcomeMessage { get; set; }
 }
 
 public class TrainRequest
@@ -108,6 +259,8 @@ public class PublicReceptionistController : ControllerBase
     private readonly AppDbContext _context;
     private readonly IDistributedCache _cache;
     private readonly ILogger<PublicReceptionistController> _logger;
+    private readonly IEntitlementService _entitlements;
+    private readonly IConfiguration _configuration;
 
     // A1: session TTL — conversation memory kept for 30 min of inactivity
     private static readonly DistributedCacheEntryOptions _sessionOpts = new()
@@ -119,12 +272,16 @@ public class PublicReceptionistController : ControllerBase
         IChatbotService chatbotService,
         AppDbContext context,
         IDistributedCache cache,
-        ILogger<PublicReceptionistController> logger)
+        ILogger<PublicReceptionistController> logger,
+        IEntitlementService entitlements,
+        IConfiguration configuration)
     {
         _chatbotService = chatbotService;
         _context = context;
         _cache = cache;
         _logger = logger;
+        _entitlements = entitlements;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -147,8 +304,34 @@ public class PublicReceptionistController : ControllerBase
         if (tenant == null)
             return NotFound(new { error = "Business not found." });
 
-        // A1: Load session state from Redis
-        var sessionKey = $"receptionist:session:{request.SessionId}";
+        // Entitlement is checked here explicitly because this route is [AllowAnonymous] and so
+        // carries no [FeatureGuard] - those resolve the tenant from the authenticated principal,
+        // which does not exist on a public widget request. Without this the endpoint was a
+        // subscription bypass: any business, on any plan or none, including one whose
+        // subscription had lapsed, got an unlimited public AI receptionist billed to Upkilo.
+        if (!await _entitlements.HasFeatureAsync(tenant.Id, FeatureKeys.AiCopilot))
+        {
+            _logger.LogInformation(
+                "[Receptionist] Refused for tenant {TenantId}: ai_copilot not entitled.", tenant.Id);
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { error = "This business does not have the AI assistant enabled." });
+        }
+
+        // Resolve the session from a token this server issued, never from a caller-chosen id.
+        //
+        // The old contract took a raw Guid from the request body and used it directly as the
+        // conversation's ExternalId. Conversation lookup is (TenantId, ExternalId, Channel), so
+        // anyone who learned or guessed another visitor's session id resumed THEIR conversation
+        // on that business - and now that history is replayed into the prompt, that is a direct
+        // read of a stranger's messages. A signed token cannot be forged, so a session can only
+        // be continued by whoever was given it.
+        var sessionId = ResolveSession(request.SessionToken, tenant.Id) ?? Guid.NewGuid();
+        var sessionToken = IssueSessionToken(sessionId, tenant.Id);
+
+        // Scoped by tenant as well. The key was "receptionist:session:{SessionId}", shared across
+        // every business on the platform, so a visitor's handoff flag and turn counter carried
+        // from one business's widget into another's.
+        var sessionKey = $"receptionist:session:{tenant.Id}:{sessionId}";
         SessionState session;
         var cached = await _cache.GetStringAsync(sessionKey);
         session = cached != null
@@ -161,7 +344,7 @@ public class PublicReceptionistController : ControllerBase
             return Ok(new
             {
                 reply = "You've been connected to a staff member who will respond shortly. Thank you for your patience!",
-                sessionId = request.SessionId,
+                sessionToken,
                 intent = "human_handoff",
                 confidence = 1.0m,
                 handoffRequested = true
@@ -171,9 +354,11 @@ public class PublicReceptionistController : ControllerBase
         var chatRequest = new ChatRequestDto
         {
             TenantId = tenant.Id,
-            ExternalId = request.SessionId.ToString(),
+            ExternalId = sessionId.ToString(),
             Channel = ConversationChannel.WebChat,
-            Message = request.Message
+            Message = request.Message,
+            // A member of the public, so Upkilo platform knowledge is out of scope for this turn.
+            Audience = ChatAudience.PublicVisitor
         };
 
         var response = await _chatbotService.ProcessMessageAsync(chatRequest);
@@ -201,7 +386,7 @@ public class PublicReceptionistController : ControllerBase
 
         _logger.LogInformation(
             "[A1] Receptionist slug={Slug} session={Session} intent={Intent} confidence={Confidence:F2} failed={Failed} handoff={Handoff}",
-            tenantSlug, request.SessionId, response?.Intent ?? "unknown",
+            tenantSlug, sessionId, response?.Intent ?? "unknown",
             response?.Confidence ?? 0m, session.ConsecutiveFailedIntents, triggerHandoff);
 
         var reply = triggerHandoff && !response!.HandoffRequested
@@ -211,12 +396,54 @@ public class PublicReceptionistController : ControllerBase
         return Ok(new
         {
             reply,
-            sessionId = request.SessionId,
+            sessionToken,
             intent = response?.Intent,
             confidence = response?.Confidence,
             handoffRequested = triggerHandoff,
             turnCount = session.TurnCount
         });
+    }
+
+    /// <summary>
+    /// Verifies a session token and returns its session id, or null when the token is missing,
+    /// malformed, or not one this server issued for THIS tenant.
+    /// </summary>
+    private Guid? ResolveSession(string? token, Guid tenantId)
+    {
+        if (string.IsNullOrWhiteSpace(token)) return null;
+
+        var parts = token.Split('.', 2);
+        if (parts.Length != 2 || !Guid.TryParse(parts[0], out var sessionId)) return null;
+
+        var expected = Sign(sessionId, tenantId);
+
+        // Fixed-time comparison: a length-or-prefix comparison here would leak the signature a
+        // byte at a time to anyone willing to make enough requests.
+        var provided = System.Text.Encoding.UTF8.GetBytes(parts[1]);
+        var computed = System.Text.Encoding.UTF8.GetBytes(expected);
+        if (provided.Length != computed.Length) return null;
+        if (!CryptographicOperations.FixedTimeEquals(provided, computed)) return null;
+
+        return sessionId;
+    }
+
+    private string IssueSessionToken(Guid sessionId, Guid tenantId) =>
+        $"{sessionId}.{Sign(sessionId, tenantId)}";
+
+    /// <summary>
+    /// The tenant id is inside the signature, so a token minted on one business's widget does not
+    /// verify on another's.
+    /// </summary>
+    private string Sign(Guid sessionId, Guid tenantId)
+    {
+        var secret = _configuration["Receptionist:SessionSecret"]
+                     ?? _configuration["Jwt:Secret"]
+                     ?? throw new InvalidOperationException(
+                         "No signing secret configured for receptionist sessions (Jwt:Secret).");
+
+        using var hmac = new HMACSHA256(System.Text.Encoding.UTF8.GetBytes(secret));
+        var payload = System.Text.Encoding.UTF8.GetBytes($"receptionist-session|{tenantId}|{sessionId}");
+        return Convert.ToBase64String(hmac.ComputeHash(payload)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }
 
     private class SessionState
@@ -227,5 +454,10 @@ public class PublicReceptionistController : ControllerBase
     }
 }
 
-public record PublicChatRequest(string Message, Guid SessionId);
+/// <summary>
+/// SessionToken is opaque and server-issued: the caller echoes back whatever the previous
+/// response returned, and omits it on the first turn. It replaced a caller-supplied Guid, which
+/// let anyone resume a session that was not theirs.
+/// </summary>
+public record PublicChatRequest(string Message, string? SessionToken);
 

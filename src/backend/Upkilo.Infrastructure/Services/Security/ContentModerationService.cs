@@ -24,12 +24,20 @@ public class ContentModerationService : IContentModerationService
     public ContentModerationService(
         IConfiguration configuration,
         ILogger<ContentModerationService> logger,
-        IHostEnvironment hostEnvironment)
+        IHostEnvironment hostEnvironment,
+        ISecretProvider secretProvider)
     {
         _logger = logger;
         _hostEnvironment = hostEnvironment;
-        var endpoint = configuration["AzureContentSafety:Endpoint"] ?? string.Empty;
-        var apiKey = configuration["AzureContentSafety:ApiKey"] ?? string.Empty;
+
+        // Read through ISecretProvider first, exactly as AzureOpenAIService and nine other
+        // services do. This service was the one credential holder reading IConfiguration
+        // directly, so its key could never come from a vault even once one is wired up. The
+        // provider falls back to configuration, so app settings keep working today.
+        var endpoint = secretProvider.GetSecret("AzureContentSafety:Endpoint")
+                       ?? configuration["AzureContentSafety:Endpoint"] ?? string.Empty;
+        var apiKey = secretProvider.GetSecret("AzureContentSafety:ApiKey")
+                     ?? configuration["AzureContentSafety:ApiKey"] ?? string.Empty;
         _isEnabled = !string.IsNullOrEmpty(endpoint) && !string.IsNullOrEmpty(apiKey);
 
         // Logged, NOT thrown. This is a scoped service injected into AiService and
@@ -75,23 +83,10 @@ public class ContentModerationService : IContentModerationService
     /// </summary>
     public async Task<ModerationResult> ModerateTextAsync(string text, int? severityThreshold = null, CancellationToken ct = default)
     {
+        // Every "no verdict" path - unconfigured, null response, exception - goes through the
+        // same policy. See UnavailablePolicy for why they used to disagree.
         if (!_isEnabled || _client == null)
-        {
-            // Fail CLOSED in Production. "The moderator is unavailable" is not evidence that
-            // the text is safe, and this method is what stands between user-supplied prompts
-            // and AI generation. Outside Production it stays permissive so local and CI runs
-            // do not need an Azure resource.
-            if (_hostEnvironment.IsProduction())
-            {
-                _logger.LogError(
-                    "Refusing content: Azure Content Safety is not configured, so moderation "
-                    + "cannot run and this operation cannot be allowed in Production.");
-                return ModerationResult.Blocked("ModerationUnavailable");
-            }
-
-            _logger.LogDebug("Content moderation is disabled (no Azure Content Safety endpoint configured)");
-            return ModerationResult.Allowed();
-        }
+            return UnavailablePolicy("NotConfigured");
 
         if (string.IsNullOrWhiteSpace(text))
             return ModerationResult.Allowed();
@@ -110,7 +105,7 @@ public class ContentModerationService : IContentModerationService
             if (response?.Value == null)
             {
                 _logger.LogWarning("Content moderation API returned null response");
-                return ModerationResult.Allowed();
+                return UnavailablePolicy("NullResponse");
             }
 
             var flaggedCategories = new List<FlaggedCategory>();
@@ -150,9 +145,38 @@ public class ContentModerationService : IContentModerationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Content moderation service error");
-            // Fail open to avoid blocking legitimate content
-            return ModerationResult.Allowed();
+            return UnavailablePolicy("ServiceError");
         }
+    }
+
+    /// <summary>
+    /// The single decision for "moderation could not produce a verdict".
+    ///
+    /// This used to differ by path, in the dangerous direction: an unconfigured service was
+    /// refused in Production, but a null response or ANY exception returned Allowed() with the
+    /// comment "Fail open to avoid blocking legitimate content". So a misconfiguration blocked
+    /// everything while a real outage - or anything that could induce an exception - allowed
+    /// everything. The protection was strongest exactly when nothing was wrong.
+    ///
+    /// One rule now: no verdict means refusal in Production, and permissive elsewhere so local
+    /// and CI runs need no Azure resource. The reason is carried through so callers and logs
+    /// can tell "this text was harmful" apart from "we could not check", which are very
+    /// different operationally even though both deny.
+    ///
+    /// The Azure SDK client already retries transient failures internally, so reaching here in
+    /// Production means the failure survived those retries and is worth refusing on.
+    /// </summary>
+    private ModerationResult UnavailablePolicy(string reason)
+    {
+        if (_hostEnvironment.IsProduction())
+        {
+            _logger.LogError(
+                "Refusing content: moderation could not produce a verdict ({Reason}).", reason);
+            return ModerationResult.Blocked($"ModerationUnavailable:{reason}");
+        }
+
+        _logger.LogDebug("Moderation unavailable ({Reason}); allowing outside Production.", reason);
+        return ModerationResult.Allowed();
     }
 
     /// <summary>

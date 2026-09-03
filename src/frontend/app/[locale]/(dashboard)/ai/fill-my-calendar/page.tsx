@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Zap, Users, Clock, Loader2, RefreshCw, Send } from "lucide-react";
 import { apiClient } from "@/lib/api";
+import { apiErrorMessage } from "@/lib/apiError";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
@@ -33,13 +34,49 @@ export default function FillMyCalendarPage() {
 
   useEffect(() => { load(); }, [daysAhead]);
 
-  const sendInvite = async (clientId: string, slot: string) => {
-    setSending(clientId);
+  /**
+   * Two calls, because there is no single "invite" endpoint and never was — this posted to
+   * /api/v1/ai/fill-my-calendar/invite, which 404s. The backend splits the job: generate-sms
+   * writes the personalised message, send dispatches it.
+   *
+   * Only the client id and the message go to the server. The destination number is resolved
+   * there from the tenant's own client record, so the browser neither supplies nor needs it.
+   */
+  const sendInvite = async (suggestion: Suggestion) => {
+    setSending(suggestion.clientId);
     try {
-      await apiClient.post("/api/v1/ai/fill-my-calendar/invite", { clientId, suggestedSlot: slot });
-      toastSuccess("Re-engagement message sent"); setSuggestions((s) => s.filter((x) => x.clientId !== clientId));
-    } catch (e: any) { toastError(e?.response?.data?.error ?? "Failed to send invite"); }
-    finally { setSending(null); }
+      const generated = await apiClient.post("/api/v1/ai/fill-my-calendar/generate-sms", {
+        clientId: suggestion.clientId,
+        clientName: suggestion.clientName,
+        lastServiceName: suggestion.service,
+        daysSinceLastVisit: 0,
+        slotStart: suggestion.suggestedSlot,
+      });
+
+      const message = generated.data?.message;
+      if (!message) throw new Error("No message was generated");
+
+      const res = await apiClient.post("/api/v1/ai/fill-my-calendar/send", {
+        items: [{ clientId: suggestion.clientId, message }],
+      });
+
+      // A skipped item is not a success: it means the client had no phone number on file.
+      if ((res.data?.sent ?? 0) < 1) {
+        toastError(
+          (res.data?.skipped ?? 0) > 0
+            ? "No phone number on file for this client"
+            : "Message could not be sent",
+        );
+        return;
+      }
+
+      toastSuccess("Re-engagement message sent");
+      setSuggestions((s) => s.filter((x) => x.clientId !== suggestion.clientId));
+    } catch (e: unknown) {
+      toastError(apiErrorMessage(e, "Failed to send invite"));
+    } finally {
+      setSending(null);
+    }
   };
 
   return (
@@ -94,7 +131,7 @@ export default function FillMyCalendarPage() {
                           </div>
                         </div>
                         <Button variant="primary" size="sm" leftIcon={sending === s.clientId ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                          onClick={() => sendInvite(s.clientId, s.suggestedSlot)} disabled={!!sending}>
+                          onClick={() => sendInvite(s)} disabled={!!sending}>
                           {sending === s.clientId ? "Sending…" : "Invite"}
                         </Button>
                       </div>

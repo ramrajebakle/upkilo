@@ -16,14 +16,12 @@ public class BlogController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly ITenantProvider _tenantProvider;
-    private readonly IAIService _aiService;
     private readonly ILogger<BlogController> _logger;
 
-    public BlogController(AppDbContext context, ITenantProvider tenantProvider, IAIService aiService, ILogger<BlogController> logger)
+    public BlogController(AppDbContext context, ITenantProvider tenantProvider, ILogger<BlogController> logger)
     {
         _context = context;
         _tenantProvider = tenantProvider;
-        _aiService = aiService;
         _logger = logger;
     }
 
@@ -146,7 +144,9 @@ public class BlogController : ControllerBase
     /// Day 77: POST /api/v1/blog/ai-generate — generate a full blog post draft from topic + keywords.
     /// </summary>
     [HttpPost("ai-generate")]
-    public async Task<IActionResult> AiGenerate([FromBody] AiBlogRequest req)
+    // IAIService is injected per-action; see ServicesController for why a constructor
+    // dependency here made every endpoint on this controller construct the AI stack.
+    public async Task<IActionResult> AiGenerate([FromBody] AiBlogRequest req, [FromServices] IAIService aiService)
     {
         var tenantId = _tenantProvider.GetTenantId() ?? Guid.Empty;
         var prompt = $"""
@@ -168,7 +168,7 @@ public class BlogController : ControllerBase
 
         try
         {
-            var result = await _aiService.GenerateTextAsync(tenantId, Guid.Empty, prompt);
+            var result = await aiService.GenerateTextAsync(tenantId, Guid.Empty, prompt);
             var raw = result.Content?.Trim() ?? "{}";
             var start = raw.IndexOf('{');
             var end = raw.LastIndexOf('}');

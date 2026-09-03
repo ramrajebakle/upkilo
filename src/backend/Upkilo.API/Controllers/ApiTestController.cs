@@ -13,12 +13,10 @@ namespace Upkilo.API.Controllers;
 [ApiExplorerSettings(IgnoreApi = true)]
 public class ApiTestController : ControllerBase
 {
-    private readonly IAIService _aiService;
     private readonly IAuditLogService _auditLogService;
 
-    public ApiTestController(IAIService aiService, IAuditLogService auditLogService)
+    public ApiTestController(IAuditLogService auditLogService)
     {
-        _aiService = aiService;
         _auditLogService = auditLogService;
     }
 
@@ -27,11 +25,13 @@ public class ApiTestController : ControllerBase
         => Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow });
 
     [HttpGet("ai-check")]
-    public async Task<IActionResult> AiCheck()
+    // IAIService is injected per-action; see ServicesController for why a constructor
+    // dependency here made every endpoint on this controller construct the AI stack.
+    public async Task<IActionResult> AiCheck([FromServices] IAIService aiService)
     {
         try
         {
-            var result = await _aiService.GeneralQueryAsync("ping");
+            var result = await aiService.GeneralQueryAsync("ping");
             return Ok(new { Success = true, Response = result });
         }
         catch (Exception ex)

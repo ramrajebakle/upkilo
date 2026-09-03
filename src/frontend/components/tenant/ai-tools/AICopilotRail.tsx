@@ -16,6 +16,8 @@ import {
     Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { apiClient } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/apiError';
 
 interface Message {
     id: string;
@@ -38,18 +40,22 @@ const SUGGESTED_PROMPTS = [
     'Create a workflow to follow up after appointments',
 ];
 
+/**
+ * Sends the conversation to the copilot endpoint.
+ *
+ * This used a bare `fetch('/api/v1/ai/copilot')`, which was wrong twice over. The path is
+ * relative, so it resolved against the Next.js origin rather than the API base URL, and it
+ * carried no Authorization header — so even once the endpoint existed it would have been
+ * rejected as anonymous. apiClient supplies both, along with the shared 401 refresh handling,
+ * which is why every other call in the app goes through it.
+ */
 async function sendCopilotMessage(messages: Message[], signal: AbortSignal): Promise<string> {
-    const res = await fetch('/api/v1/ai/copilot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            messages: messages.map((m) => ({ role: m.role, content: m.content })),
-        }),
-        signal,
-    });
-    if (!res.ok) throw new Error('Failed to get AI response');
-    const data = await res.json();
-    return data.reply ?? data.content ?? '';
+    const res = await apiClient.post(
+        '/api/v1/ai/copilot',
+        { messages: messages.map((m) => ({ role: m.role, content: m.content })) },
+        { signal },
+    );
+    return res.data?.reply ?? res.data?.content ?? '';
 }
 
 export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailProps) {
@@ -98,11 +104,21 @@ export function AICopilotRail({ isOpen, onClose, contextHint }: AICopilotRailPro
             };
             setMessages((prev) => [...prev, assistantMsg]);
         } catch (err: any) {
-            if (err.name !== 'AbortError') {
+            // axios reports an aborted request as CanceledError/ERR_CANCELED, not a DOMException
+            // named AbortError. Checking only the old name would render an error bubble every
+            // time the user cancels or the component unmounts mid-request.
+            const wasAborted = err?.name === 'AbortError'
+                || err?.name === 'CanceledError'
+                || err?.code === 'ERR_CANCELED';
+
+            if (!wasAborted) {
                 const errMsg: Message = {
                     id: crypto.randomUUID(),
                     role: 'assistant',
-                    content: 'Sorry, I ran into an issue. Please try again.',
+                    // The server explains a refusal precisely — an unentitled plan, an exhausted
+                    // AI quota, a rejected prompt. "Sorry, I ran into an issue" hid all of it and
+                    // left the user with nothing to act on.
+                    content: apiErrorMessage(err, 'Sorry, I ran into an issue. Please try again.'),
                     timestamp: new Date(),
                 };
                 setMessages((prev) => [...prev, errMsg]);

@@ -19,7 +19,6 @@ public class AIDashboardController : ControllerBase
     private readonly IAIDashboardService _dashboardService;
     private readonly ITenantProvider _tenantProvider;
     private readonly AppDbContext _context;
-    private readonly IAIService _aiService;
     private readonly IPushNotificationService _pushService;
     private readonly ILogger<AIDashboardController> _logger;
 
@@ -27,14 +26,12 @@ public class AIDashboardController : ControllerBase
         IAIDashboardService dashboardService,
         ITenantProvider tenantProvider,
         AppDbContext context,
-        IAIService aiService,
         IPushNotificationService pushService,
         ILogger<AIDashboardController> logger)
     {
         _dashboardService = dashboardService;
         _tenantProvider = tenantProvider;
         _context = context;
-        _aiService = aiService;
         _pushService = pushService;
         _logger = logger;
     }
@@ -161,7 +158,9 @@ public class AIDashboardController : ControllerBase
     /// </summary>
     [HttpGet("weekly-summary")]
     [RequiresFeature(FeatureKeys.AiInsights)]
-    public async Task<IActionResult> GetWeeklySummary()
+    // IAIService is injected per-action; see ServicesController for why a constructor
+    // dependency here made every endpoint on this controller construct the AI stack.
+    public async Task<IActionResult> GetWeeklySummary([FromServices] IAIService aiService)
     {
         var tenantId = GetTenantId();
         var now = DateTime.UtcNow;
@@ -203,7 +202,7 @@ public class AIDashboardController : ControllerBase
             $"- AI actions used: {aiActions}\n\n" +
             "Be encouraging, data-driven, and end with one specific actionable suggestion. Under 100 words.";
 
-        var aiResult = await _aiService.GenerateTextAsync(tenantId, Guid.Empty, prompt);
+        var aiResult = await aiService.GenerateTextAsync(tenantId, Guid.Empty, prompt);
         var narrative = aiResult.Success ? aiResult.Content?.Trim() ?? "" : "Your weekly summary is ready. Check the numbers below!";
 
         return Ok(new
@@ -230,12 +229,14 @@ public class AIDashboardController : ControllerBase
     /// </summary>
     [HttpPost("weekly-summary/push")]
     [RequiresFeature(FeatureKeys.AiInsights)]
-    public async Task<IActionResult> SendWeeklySummaryPush()
+    public async Task<IActionResult> SendWeeklySummaryPush([FromServices] IAIService aiService)
     {
         var tenantId = GetTenantId();
         var userId = GetUserId();
 
-        var summaryResult = await GetWeeklySummary() as OkObjectResult;
+        // Passed through: this action calls the summary action directly, so the service it
+        // needs travels with the call rather than being resolved a second time.
+        var summaryResult = await GetWeeklySummary(aiService) as OkObjectResult;
         if (summaryResult?.Value is not object summaryObj)
             return StatusCode(500, new { error = "Could not generate summary." });
 

@@ -30,6 +30,12 @@ public class ChatWidget : TenantEntity
     public string? Appearance { get; set; } // JSON: position, color, icon
     public bool EnableAiHandoff { get; set; } = true;
     public string? BusinessHours { get; set; } // JSON
+
+    /// <summary>Display name the assistant introduces itself with.</summary>
+    public string? BotName { get; set; }
+
+    /// <summary>Where a conversation is escalated when the assistant hands off to a human.</summary>
+    public string? HandoffEmail { get; set; }
 }
 
 /// <summary>
