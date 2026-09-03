@@ -355,10 +355,22 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    # Staging infrastructure is not provisioned (budget). Set repository variable
-    # STAGING_ENABLED=true after creating upkilo-staging-rg to switch this on —
-    # no workflow edit required. While unset, this job and deploy-staging skip.
-    if: vars.STAGING_ENABLED == 'true'
+    # Two conditions, both required.
+    #
+    # STAGING_ENABLED is the provisioning switch: while unset, this job and deploy-staging
+    # skip entirely. It is now set, and that alone used to be the whole condition — which
+    # meant enabling it silently turned every push to main into an automatic staging
+    # migration and deploy. A migration mutates a database; nothing that mutates a database
+    # should start because someone merged a PR.
+    #
+    # github.event_name == 'workflow_dispatch' is the manual gate, matching migrate-database
+    # and deploy-production. Nothing in this workflow deploys or migrates ANYTHING without a
+    # human pressing Run workflow.
+    #
+    # Deliberately NOT restricted to inputs.environment == 'staging': a production dispatch
+    # must still rehearse the migration and boot the image on staging first, which is what
+    # migrate-database's `needs` depends on.
+    if: github.event_name == 'workflow_dispatch' && vars.STAGING_ENABLED == 'true'
 
     steps:
       - uses: actions/checkout@v7
@@ -439,7 +451,8 @@ jobs:
     needs: [build-and-push, migrate-staging]
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: vars.STAGING_ENABLED == 'true'
+    # Manual gate, same as migrate-staging above — a push to main must never deploy anything.
+    if: github.event_name == 'workflow_dispatch' && vars.STAGING_ENABLED == 'true'
 
     steps:
       - name: Login to Azure
@@ -497,8 +510,43 @@ jobs:
                 App__FrontendUrl="https://test.upkilo.com" \
                 Cors__AllowedOrigins__0="https://test.upkilo.com" \
                 Cors__AllowedOrigins__1="https://test.upkilo.com" \
-                Cors__AllowedOrigins__2="https://test.upkilo.com"
+                Cors__AllowedOrigins__2="https://test.upkilo.com" \
+                VAPID__PublicKey="${{ secrets.VAPID_PUBLIC_KEY }}" \
+                VAPID__PrivateKey="${{ secrets.VAPID_PRIVATE_KEY }}" \
+                Email__FromEmail="${{ secrets.STAGING_EMAIL_FROM || 'noreply@upkilo.com' }}" \
+                Email__FromName="Upkilo (staging)" \
+                Jwt__Issuer="https://api-test.upkilo.com" \
+                Jwt__Audience="https://test.upkilo.com" \
+                AzureKeyVault__VaultUri="" \
+                SENTRY_DSN="${{ secrets.STAGING_SENTRY_DSN || secrets.SENTRY_DSN }}" \
+                APPLICATIONINSIGHTS_CONNECTION_STRING="${{ secrets.STAGING_APPLICATIONINSIGHTS_CONNECTION_STRING || secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}" \
+                PagerDuty__IntegrationKey="" \
+                ASPNETCORE_ENVIRONMENT="Staging"
             echo "✅ Staging App Service settings configured"
+
+      # Three deliberate differences from production, so "staging mirrors prod" does not become
+      # a claim nobody checked:
+      #
+      #  1. PagerDuty is BLANK. Wiring it would page the on-call rotation for staging noise,
+      #     which trains people to ignore the pager — worse than having none.
+      #
+      #  2. APPLICATIONINSIGHTS_CONNECTION_STRING and SENTRY_DSN fall back to the production
+      #     values when no STAGING_* secret exists. That is the pragmatic choice, not the right
+      #     one: staging telemetry then lands in the production resource and has to be told
+      #     apart by cloud_RoleName / environment. Only ONE App Insights component exists
+      #     (upkilo-prod-insights). Create a staging component and set
+      #     STAGING_APPLICATIONINSIGHTS_CONNECTION_STRING to separate them — no workflow change
+      #     needed, the fallback already handles it.
+      #
+      #     Setting this at all is the point: its ABSENCE is why staging could not reproduce the
+      #     Application Insights startup crash that took production down, while every other
+      #     gate reported green.
+      #
+      #  3. ASPNETCORE_ENVIRONMENT is "Staging", not "Production". That is correct — it keeps
+      #     appsettings.Production.json out of the picture — but it does mean environment-gated
+      #     code does NOT run here. ContentModerationService refuses only when IsProduction(),
+      #     so that refusal is never exercised on staging. Anything guarded by IsProduction()
+      #     is, by construction, untested before it reaches production.
 
       - name: Deploy API to Staging App Service
         uses: azure/webapps-deploy@v3
@@ -544,36 +592,69 @@ jobs:
       # Poll /ready (DB + Redis + Hangfire), not /health (liveness: memory/uptime only).
       # B-series tiers are slow to cold-start, hence the longer deadline.
       - name: Smoke test staging — await readiness
+        env:
+          PUBLIC_URL: https://api-test.upkilo.com/ready
+          DIRECT_URL: https://upkilo-api-staging.azurewebsites.net/ready
         run: |
-          echo "Polling staging /ready (max 180s)..."
+          echo "Polling staging /ready on $PUBLIC_URL (max 180s)..."
           deadline=$((SECONDS + 180))
-          until curl -sf https://upkilo-api-staging.azurewebsites.net/ready \
-                | jq -e '.status != "Unhealthy"' > /dev/null 2>&1; do
+          until curl -sf "$PUBLIC_URL" | jq -e '.status != "Unhealthy"' > /dev/null 2>&1; do
             if [ $SECONDS -ge $deadline ]; then
-              echo "❌ Staging readiness check timed out — production deploy blocked"
-              curl -s https://upkilo-api-staging.azurewebsites.net/ready | jq . || true
+              echo "❌ Staging readiness timed out — production deploy blocked"
+              # Report the failure in a form a human can read.
+              #
+              # This used to pipe the response straight into jq, so when App Service returned
+              # its own HTML 503 the only output was
+              #   jq: parse error: Invalid numeric literal at line 1, column 10
+              # which says nothing about the app being down. Print the status code and the
+              # first bytes of the body instead.
+              code=$(curl -s -o /tmp/body -w '%{http_code}' --max-time 20 "$PUBLIC_URL" || echo 000)
+              echo "   $PUBLIC_URL -> HTTP $code"
+              echo "   body: $(head -c 300 /tmp/body 2>/dev/null)"
+
+              # Then the hostname that bypasses Cloudflare, which separates "the app is broken"
+              # from "DNS/TLS/CDN in front of it is broken" — two very different fixes.
+              dcode=$(curl -s -o /tmp/dbody -w '%{http_code}' --max-time 20 "$DIRECT_URL" || echo 000)
+              echo "   $DIRECT_URL -> HTTP $dcode"
+              if [ "$dcode" = "200" ]; then
+                echo "::error::App is healthy on the direct hostname but not on api-test.upkilo.com — check the Cloudflare CNAME, the custom-domain binding and its certificate."
+              else
+                echo "::error::App is unhealthy on BOTH hostnames — this is the application, not DNS. Check container logs."
+              fi
               exit 1
             fi
             sleep 5
           done
-          echo "✅ Staging readiness OK (nothing Unhealthy)"
+          echo "✅ Staging readiness OK on $PUBLIC_URL (nothing Unhealthy)"
 
       # The staging frontend had no probe at all, which is why a missing AUTH_SECRET
       # could not have been caught here — /api/health is a server route that boots the
       # Next.js app, so a NextAuth misconfiguration surfaces before production is touched.
       - name: Smoke test staging frontend
+        env:
+          PUBLIC_URL: https://test.upkilo.com/api/health
+          DIRECT_URL: https://upkilo-frontend-staging.azurewebsites.net/api/health
         run: |
-          echo "Polling staging frontend /api/health (max 180s)..."
+          echo "Polling staging frontend on $PUBLIC_URL (max 180s)..."
           deadline=$((SECONDS + 180))
-          until curl -sf https://upkilo-frontend-staging.azurewebsites.net/api/health \
-                > /dev/null 2>&1; do
+          until curl -sf "$PUBLIC_URL" > /dev/null 2>&1; do
             if [ $SECONDS -ge $deadline ]; then
               echo "❌ Staging frontend health timed out — production deploy blocked"
+              code=$(curl -s -o /tmp/fbody -w '%{http_code}' --max-time 20 "$PUBLIC_URL" || echo 000)
+              echo "   $PUBLIC_URL -> HTTP $code"
+              echo "   body: $(head -c 300 /tmp/fbody 2>/dev/null)"
+              dcode=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$DIRECT_URL" || echo 000)
+              echo "   $DIRECT_URL -> HTTP $dcode"
+              if [ "$dcode" = "200" ]; then
+                echo "::error::Frontend is healthy on the direct hostname but not on test.upkilo.com — DNS/TLS/CDN issue, not the app."
+              else
+                echo "::error::Frontend is unhealthy on BOTH hostnames — check AUTH_SECRET and the container logs."
+              fi
               exit 1
             fi
             sleep 5
           done
-          echo "✅ Staging frontend healthy"
+          echo "✅ Staging frontend healthy on $PUBLIC_URL"
 
       # Non-fatal: proves the custom domain, its TLS binding and the Cloudflare proxy are
       # actually wired up, WITHOUT letting a DNS/CDN problem fail a deploy whose app is
