@@ -30,13 +30,20 @@ namespace Upkilo.Tests.Services;
 ///    OpenTelemetry metrics pipeline. With the real appsettings.Production.json loaded the guard
 ///    fires and registration is skipped, so that path does not fail either.
 ///
-/// A plausible key-name mismatch was the initial theory — App Service sets
-/// APPLICATIONINSIGHTS_CONNECTION_STRING, which maps to a config key of that exact name and NOT
-/// to ApplicationInsights:ConnectionString — but it does not survive the tests below, so it is
-/// recorded as disproven rather than asserted.
+/// Two theories were tried and both are disproven, recorded here so nobody repeats them:
 ///
-/// These tests therefore pin the MITIGATION, not a diagnosis: validate the string before
-/// registering, and pass it explicitly so the SDK never performs a lookup of its own.
+///  1. A key-name mismatch — App Service sets APPLICATIONINSIGHTS_CONNECTION_STRING, which maps
+///     to a config key of that exact name and NOT to ApplicationInsights:ConnectionString.
+///     Ruled out by the tests below, which resolve cleanly in that exact shape.
+///  2. Passing the connection string explicitly to AddApplicationInsightsTelemetry. Shipped as
+///     a0bc673; an image carrying it still exited 139 on staging. It sets
+///     ApplicationInsightsServiceOptions, but the object that throws is
+///     AzureMonitorExporterOptions — a different instance, resolved separately.
+///
+/// So these tests pin a DECISION, not a diagnosis: the registration is now explicit opt-in
+/// (ApplicationInsights:Enabled), and off by default. A code path that has twice taken
+/// production down and has never once delivered a trace does not run unless somebody asks for
+/// it. Staging reproduces the crash faithfully now, so re-enabling can be verified there first.
 ///
 /// The deploy failure was doubly opaque: the workflow pipes /ready into jq, so App Service's
 /// HTML 503 surfaced as "jq: parse error: Invalid numeric literal at line 1, column 10".
@@ -87,8 +94,10 @@ public class ApplicationInsightsStartupTests
     }
 
     /// <summary>
-    /// The fix: assign the resolved value explicitly, so what Program.cs validated is what the
-    /// SDK uses. No second lookup, so no way for the two to disagree.
+    /// Assigning the connection string explicitly resolves cleanly here — and did NOT fix
+    /// production. It sets ApplicationInsightsServiceOptions, while the object that throws is
+    /// AzureMonitorExporterOptions, resolved separately. Kept as a record of what was tried and
+    /// ruled out: an image carrying this change still exited 139 on staging.
     /// </summary>
     [Fact]
     public void ExplicitConnectionString_BuildsTheExporterAndStartsCleanly()
@@ -114,17 +123,23 @@ public class ApplicationInsightsStartupTests
     /// full of them and .NET does not expand them.
     /// </summary>
     [Theory]
-    [InlineData(null, false)]
-    [InlineData("", false)]
-    [InlineData("   ", false)]
-    [InlineData("${APPLICATIONINSIGHTS_CONNECTION_STRING}", false)]
-    // Present but unusable — the shape the exporter rejected, whatever produced it.
-    [InlineData("IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/", false)]
-    [InlineData("InstrumentationKey=00000000-0000-0000-0000-000000000001", true)]
-    public void TheGuard_AcceptsOnlyAConnectionStringTheExporterCanParse(string? value, bool expected)
+    // Opted OUT: nothing registers, whatever the connection string says. This is the default,
+    // and it is what stops the exporter crashing startup.
+    [InlineData(false, "InstrumentationKey=00000000-0000-0000-0000-000000000001", false)]
+    [InlineData(false, null, false)]
+    // Opted IN: the connection string still has to be one the exporter can parse.
+    [InlineData(true, null, false)]
+    [InlineData(true, "", false)]
+    [InlineData(true, "   ", false)]
+    [InlineData(true, "${APPLICATIONINSIGHTS_CONNECTION_STRING}", false)]
+    [InlineData(true, "IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/", false)]
+    [InlineData(true, "InstrumentationKey=00000000-0000-0000-0000-000000000001", true)]
+    public void TheGuard_RegistersOnlyWhenOptedInWithAParseableString(
+        bool optIn, string? value, bool expected)
     {
         // Mirrors Program.cs. Kept in sync by ProgramGuardMatchesThisTest below.
-        var configured = !string.IsNullOrWhiteSpace(value)
+        var configured = optIn
+                         && !string.IsNullOrWhiteSpace(value)
                          && !value.StartsWith("${", StringComparison.Ordinal)
                          && value.Contains("InstrumentationKey=", StringComparison.OrdinalIgnoreCase);
 
@@ -149,7 +164,10 @@ public class ApplicationInsightsStartupTests
 
         src.Should().Contain("aiConnStr.Contains(\"InstrumentationKey=\"",
             "the guard must reject a connection string the exporter cannot parse");
-        src.Should().Contain("options.ConnectionString = aiConnStr",
-            "the value must be passed explicitly, not re-looked-up by the SDK");
+        src.Should().Contain("var aiConfigured = aiOptIn",
+            "telemetry must be OFF unless explicitly opted in - passing the connection string "
+            + "explicitly was tried and did not stop the exporter crashing");
+        src.Should().Contain("ApplicationInsights:Enabled",
+            "the opt-in switch must be read from configuration");
     }
 }

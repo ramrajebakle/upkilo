@@ -566,23 +566,59 @@ builder.Services.AddScoped<IMarketingIntegrationService, MarketingIntegrationSer
 // response to jq, so the HTML surfaced as "jq: parse error: Invalid numeric literal at line 1,
 // column 10" rather than as "the app is not starting".
 //
-// Strictly worse than the original bug: before, this resolved to null, the guard skipped
-// registration and the API came up with telemetry disabled. Now the connection string is passed
-// EXPLICITLY to the SDK below, so the value that is validated here is the value it uses.
+// THIRD ATTEMPT, and the reason this is now an explicit opt-in rather than another guess.
+//
+// Passing the connection string explicitly did NOT fix it. That value lands on
+// ApplicationInsightsServiceOptions, but the object that throws is AzureMonitorExporterOptions
+// — a different options instance, resolved separately when AddApplicationInsightsTelemetry
+// registers its OpenTelemetry exporter. Validating one and hoping the other agrees is the same
+// mistake twice.
+//
+// Evidence, from staging rather than a local approximation: an image built from main WITH the
+// explicit-connection-string fix still exited 139 on startup with
+//
+//   InvalidOperationException: Connection String Error: Required keyword 'InstrumentationKey'
+//   is missing in connection string.
+//     at Azure.Monitor.OpenTelemetry.Exporter.AzureMonitorMetricExporter..ctor
+//
+// while the App Service setting held a valid four-segment connection string beginning with
+// InstrumentationKey=. Blanking that setting made the same image start cleanly. So the exporter
+// is not reading the value the platform provides, and I have not established what it does read.
+//
+// Given that, the only honest position is: do not run this code path at all unless someone
+// deliberately turns it on. Telemetry has now caused two extended production outages and has
+// never once delivered a trace — it was silently disabled by a config-key mismatch for months
+// before that. Off is where it already was; off by ACCIDENT is what made it dangerous.
+//
+// To re-enable after the exporter is understood: set ApplicationInsights__Enabled=true (double
+// underscore) alongside the connection string, and verify on staging first — staging reproduces
+// this crash faithfully now.
 var aiConnStr = builder.Configuration["ApplicationInsights:ConnectionString"]
                 ?? builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
 
+var aiOptIn = string.Equals(
+    builder.Configuration["ApplicationInsights:Enabled"], "true", StringComparison.OrdinalIgnoreCase);
+
 // A connection string without InstrumentationKey= is what the exporter rejects, so reject it
 // here first and degrade instead. Telemetry is optional; it must never take the API down.
-var aiConfigured = !string.IsNullOrWhiteSpace(aiConnStr)
+var aiConfigured = aiOptIn
+                   && !string.IsNullOrWhiteSpace(aiConnStr)
                    && !aiConnStr.StartsWith("${", StringComparison.Ordinal)
                    && aiConnStr.Contains("InstrumentationKey=", StringComparison.OrdinalIgnoreCase);
 
-if (!string.IsNullOrWhiteSpace(aiConnStr) && !aiConfigured)
+if (!aiOptIn && !string.IsNullOrWhiteSpace(aiConnStr))
 {
     Log.Warning(
-        "Application Insights connection string is present but unusable (no InstrumentationKey=, "
-        + "or an unexpanded ${{...}} placeholder) — telemetry is disabled rather than failing startup.");
+        "Application Insights has a connection string but is NOT enabled — set "
+        + "ApplicationInsights__Enabled=true to turn it on. Left off deliberately: its exporter "
+        + "has twice crashed the API at startup. See Program.cs for the evidence.");
+}
+else if (aiOptIn && !aiConfigured)
+{
+    Log.Warning(
+        "Application Insights is enabled but its connection string is unusable (no "
+        + "InstrumentationKey=, or an unexpanded ${{...}} placeholder) — telemetry is disabled "
+        + "rather than failing startup.");
 }
 
 if (!aiConfigured)
