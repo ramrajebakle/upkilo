@@ -481,8 +481,19 @@ jobs:
       #                       production origins survive into staging. The duplicates are
       #                       intentional and harmless — CORS matching is exact-match.
       #
-      # AllowedHosts needs no override: it is already "*.upkilo.com;upkilo.com;
-      # *.azurewebsites.net", which covers both test.upkilo.com and api-test.upkilo.com.
+      # AllowedHosts MUST be set explicitly here. It used not to be, and the comment that
+      # replaced said so — correctly, at the time, because staging ran with
+      # ASPNETCORE_ENVIRONMENT unset and therefore defaulted to Production, which loaded
+      # appsettings.Production.json and its
+      #   "AllowedHosts": "*.upkilo.com;upkilo.com;*.azurewebsites.net"
+      #
+      # Setting ASPNETCORE_ENVIRONMENT=Staging below (which is right on its own terms) stops
+      # that file loading, and there is no appsettings.Staging.json. AllowedHosts then falls
+      # back to the base appsettings.json value of "localhost", so HostFilteringMiddleware
+      # rejected every request with a real Host header. ASP.NET Core answers that with an
+      # empty-bodied 400, which App Service renders as its own
+      #   "Bad Request - Invalid Hostname"
+      # page — an error that looks like DNS or a binding problem and is neither.
       - name: Configure Staging App Service application settings
         uses: azure/CLI@v3
         with:
@@ -521,6 +532,7 @@ jobs:
                 SENTRY_DSN="${{ secrets.STAGING_SENTRY_DSN || secrets.SENTRY_DSN }}" \
                 APPLICATIONINSIGHTS_CONNECTION_STRING="${{ secrets.STAGING_APPLICATIONINSIGHTS_CONNECTION_STRING || secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}" \
                 PagerDuty__IntegrationKey="" \
+                AllowedHosts="*.upkilo.com;upkilo.com;*.azurewebsites.net" \
                 ASPNETCORE_ENVIRONMENT="Staging"
             echo "✅ Staging App Service settings configured"
 
