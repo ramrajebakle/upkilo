@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using Upkilo.Core.Interfaces;
 using Asp.Versioning;
@@ -49,7 +50,7 @@ public class SearchController : ControllerBase
                 await _searchEnhancementService.LogSearchAsync(tid, uid, q, type ?? "Global", 10);
             }
 
-            return Ok(results);
+            return Ok(new { results, degraded = !_searchService.IsAvailable });
         }
         catch (Exception ex)
         {
@@ -62,12 +63,18 @@ public class SearchController : ControllerBase
     /// S2: Autocomplete/typeahead — fuzzy prefix matching, returns ranked suggestions in &lt; 100ms.
     /// GET /search/autocomplete?q=mass&amp;type=services,businesses
     /// </summary>
+    /// <remarks>
+    /// Anonymous by design (public/marketplace typeahead), and therefore rate-limited: an
+    /// unauthenticated fuzzy-search endpoint with no limit is a free way to make the API do
+    /// expensive work. Uses the existing "public" policy rather than inventing another.
+    /// </remarks>
     [HttpGet("autocomplete")]
     [AllowAnonymous]
+    [EnableRateLimiting("public")]
     public async Task<IActionResult> Autocomplete([FromQuery] string q, [FromQuery] string? type = null)
     {
         if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
-            return Ok(new { suggestions = Array.Empty<object>() });
+            return Ok(new { suggestions = Array.Empty<object>(), degraded = !_searchService.IsAvailable });
 
         var tenantId = User.FindFirst("tenant_id")?.Value ?? "public";
         var types = string.IsNullOrEmpty(type)
@@ -80,13 +87,16 @@ public class SearchController : ControllerBase
             return Ok(new
             {
                 query = q,
-                suggestions = suggestions.Select(s => new { s.Id, s.Text, s.Type, s.Score })
+                suggestions = suggestions.Select(s => new { s.Id, s.Text, s.Type, s.Score }),
+                // "no matches" and "search is switched off" both returned an empty list, so a
+                // caller could not tell them apart and neither could anyone reading a bug report.
+                degraded = !_searchService.IsAvailable
             });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Autocomplete failed for query: {Query}", q);
-            return Ok(new { suggestions = Array.Empty<object>() });
+            return Ok(new { suggestions = Array.Empty<object>(), degraded = true });
         }
     }
 
@@ -106,21 +116,25 @@ public class SearchController : ControllerBase
         try
         {
             var results = await _searchService.GlobalSearchAsync(tenantId, q);
-            return Ok(new { suggestions = results });
+            return Ok(new { suggestions = results, degraded = !_searchService.IsAvailable });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Search suggestions failed for query: {Query}", q);
-            return Ok(new { suggestions = Array.Empty<object>() });
+            return Ok(new { suggestions = Array.Empty<object>(), degraded = true });
         }
     }
 
     /// <summary>
     /// S1: Bootstrap Elasticsearch indexes for this tenant with proper field mappings.
-    /// Creates services, businesses, clients indexes with search_as_you_type fields.
     /// POST /search/bootstrap-indexes
+    ///
+    /// Restricted to Owner/Admin. It was reachable by ANY authenticated user on the tenant —
+    /// index creation is an administrative operation, and the reindex endpoint below even
+    /// documented itself as "admin only" while enforcing nothing.
     /// </summary>
     [HttpPost("bootstrap-indexes")]
+    [Authorize(Roles = "Owner,Admin")]
     public async Task<IActionResult> BootstrapIndexes()
     {
         var tenantId = User.FindFirst("tenant_id")?.Value;
@@ -136,7 +150,7 @@ public class SearchController : ControllerBase
             {
                 status = "created",
                 tenantId,
-                indexes = new[] { $"{tenantId}_services", $"{tenantId}_businesses", $"{tenantId}_clients" },
+                indexes = new[] { $"{tenantId}_clients", $"{tenantId}_bookings", $"{tenantId}_services" },
                 message = "Elasticsearch indexes created with proper field mappings."
             });
         }
@@ -148,9 +162,10 @@ public class SearchController : ControllerBase
     }
 
     /// <summary>
-    /// Trigger reindexing of all tenant data (admin only)
+    /// Trigger reindexing of all tenant data. Admin only — now actually enforced.
     /// </summary>
     [HttpPost("reindex")]
+    [Authorize(Roles = "Owner,Admin")]
     public async Task<IActionResult> TriggerReindex()
     {
         var tenantId = User.FindFirst("tenant_id")?.Value;

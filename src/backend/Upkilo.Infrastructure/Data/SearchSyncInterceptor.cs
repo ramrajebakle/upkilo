@@ -44,7 +44,11 @@ public class SearchSyncInterceptor : SaveChangesInterceptor
                     // Get Id via reflection or cast to BaseEntity if possible
                     if (entry.Entity is BaseEntity baseEntity)
                     {
-                        await _searchService.DeleteEntityAsync<object>(tenantId, baseEntity.Id.ToString());
+                        // The runtime type, not `object`. DeleteEntityAsync<object> resolved to
+                        // the index "{tenant}_object", which no search ever reads — so deletes
+                        // silently removed nothing and deleted records stayed searchable.
+                        await _searchService.DeleteEntityAsync(
+                            tenantId, entry.Entity.GetType(), baseEntity.Id.ToString());
                     }
                 }
                 else
