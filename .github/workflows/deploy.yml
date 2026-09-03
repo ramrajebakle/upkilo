@@ -367,10 +367,24 @@ jobs:
     # and deploy-production. Nothing in this workflow deploys or migrates ANYTHING without a
     # human pressing Run workflow.
     #
-    # Deliberately NOT restricted to inputs.environment == 'staging': a production dispatch
-    # must still rehearse the migration and boot the image on staging first, which is what
-    # migrate-database's `needs` depends on.
-    if: github.event_name == 'workflow_dispatch' && vars.STAGING_ENABLED == 'true'
+    # inputs.environment == 'staging' makes the Target environment dropdown mean exactly what
+    # it says: picking "staging" runs staging and nothing else, picking "production" runs
+    # production and nothing else. Requested explicitly.
+    #
+    # KNOWN TRADE-OFF, recorded because it is not obvious from the diff: a production dispatch
+    # no longer rehearses the migration or boots the image on staging first. On 2026-09-03 that
+    # rehearsal is what stopped a crash-looping image reaching production — deploy-staging
+    # failed, and migrate-database and deploy-production were skipped as a result. With this
+    # condition in place, that same image would have gone straight to production.
+    #
+    # migrate-database still tolerates a skipped staging (`== 'skipped'`), which is what lets
+    # the production path run at all now that these jobs no longer fire on a production
+    # dispatch. To restore the rehearsal, delete the inputs.environment clause from this job
+    # and from deploy-staging.
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      && inputs.environment == 'staging'
+      && vars.STAGING_ENABLED == 'true'
 
     steps:
       - uses: actions/checkout@v7
@@ -451,8 +465,13 @@ jobs:
     needs: [build-and-push, migrate-staging]
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Manual gate, same as migrate-staging above — a push to main must never deploy anything.
-    if: github.event_name == 'workflow_dispatch' && vars.STAGING_ENABLED == 'true'
+    # Same three conditions as migrate-staging above, including the environment clause: this
+    # job runs only when "staging" is the selected target. See migrate-staging for the
+    # rehearsal trade-off that removing it from a production dispatch carries.
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      && inputs.environment == 'staging'
+      && vars.STAGING_ENABLED == 'true'
 
     steps:
       - name: Login to Azure
