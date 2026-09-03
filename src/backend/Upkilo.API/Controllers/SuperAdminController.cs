@@ -1281,4 +1281,84 @@ public class SuperAdminController : ControllerBase
             targetedTenants
         });
     }
+
+    // The platform AI Infrastructure page (/platform/ai-infra) has been calling these two paths
+    // since it shipped and neither existed, so the page rendered permanently empty — both calls
+    // have .catch(() => null) fallbacks, which turned a 404 into "No model data available"
+    // rather than an error anyone would notice.
+
+    /// <summary>
+    /// GET /api/v1/super-admin/ai-infrastructure/summary — platform-wide AI usage for the last 24h.
+    /// </summary>
+    [HttpGet("ai-infrastructure/summary")]
+    public async Task<IActionResult> GetAiInfrastructureSummary()
+    {
+        var since = DateTime.UtcNow.AddHours(-24);
+
+        // Cross-tenant by design: this is the platform operator's view, and the caller is
+        // restricted to SuperAdmin by the [Authorize] on this controller. AIUsageLog is not a
+        // TenantEntity so it carries no global filter, but the aggregate is stated as
+        // platform-wide rather than arrived at by accident.
+        var logs = await _context.Set<AIUsageLog>()
+            .AsNoTracking()
+            .Where(l => l.CreatedAt >= since)
+            .Select(l => new { l.Cost, l.LatencyMs, l.Success })
+            .ToListAsync();
+
+        var total = logs.Count;
+
+        return Ok(new
+        {
+            totalRequests24h = total,
+            // Average over the rows that actually recorded a latency; treating a null as zero
+            // would quietly drag the average down and make the platform look faster than it is.
+            avgLatencyMs = logs.Any(l => l.LatencyMs.HasValue)
+                ? (int)logs.Where(l => l.LatencyMs.HasValue).Average(l => l.LatencyMs!.Value)
+                : 0,
+            totalCostUsd24h = logs.Sum(l => l.Cost),
+            errorRate = total == 0 ? 0m : Math.Round(logs.Count(l => !l.Success) * 100m / total, 2)
+        });
+    }
+
+    /// <summary>
+    /// GET /api/v1/super-admin/ai-infrastructure/models — per-model breakdown for the last 24h.
+    /// </summary>
+    [HttpGet("ai-infrastructure/models")]
+    public async Task<IActionResult> GetAiInfrastructureModels()
+    {
+        var since = DateTime.UtcNow.AddHours(-24);
+
+        var rows = await _context.Set<AIUsageLog>()
+            .AsNoTracking()
+            .Where(l => l.CreatedAt >= since)
+            .GroupBy(l => l.Model)
+            .Select(g => new
+            {
+                model = g.Key,
+                requests = g.Count(),
+                avgLatencyMs = (int)(g.Average(x => (double?)x.LatencyMs) ?? 0),
+                costUsd = g.Sum(x => x.Cost),
+                failures = g.Count(x => !x.Success)
+            })
+            .ToListAsync();
+
+        var grandTotal = rows.Sum(r => r.requests);
+
+        var models = rows
+            .OrderByDescending(r => r.requests)
+            .Select(r => new
+            {
+                r.model,
+                r.requests,
+                // Share of platform traffic, so the bar in the UI means something.
+                usage = grandTotal == 0 ? 0m : Math.Round(r.requests * 100m / grandTotal, 1),
+                r.avgLatencyMs,
+                errorRate = r.requests == 0 ? 0m : Math.Round(r.failures * 100m / r.requests, 2),
+                r.costUsd,
+                status = r.failures * 100m / Math.Max(r.requests, 1) > 5m ? "Degraded" : "Healthy"
+            })
+            .ToList();
+
+        return Ok(models);
+    }
 }
