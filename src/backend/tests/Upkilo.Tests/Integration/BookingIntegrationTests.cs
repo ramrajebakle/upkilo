@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Npgsql;
 using Testcontainers.PostgreSql;
 using Upkilo.Core.Entities;
 using Upkilo.Infrastructure.Data;
@@ -31,22 +32,49 @@ public class BookingIntegrationTests : IAsyncLifetime
         .Build();
 
     private AppDbContext _context = null!;
+    private NpgsqlDataSource _dataSource = null!;
+
+    /// <summary>
+    /// Builds options over a data source with EnableDynamicJson, mirroring Program.cs.
+    ///
+    /// Tenant.Settings is a Dictionary&lt;string, object&gt; mapped to JSONB, and Npgsql 8 refuses to
+    /// write that without dynamic JSON enabled:
+    ///   "Type 'Dictionary`2' required dynamic JSON serialization, which requires an explicit
+    ///    opt-in; call 'EnableDynamicJson'"
+    ///
+    /// These tests previously passed a raw connection string to UseNpgsql, which builds a data
+    /// source WITHOUT that opt-in. They only passed because Program.cs also calls the
+    /// process-global NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson(), so any test that
+    /// booted the API through WebApplicationFactory happened to configure the whole process
+    /// first. xUnit runs collections in parallel, so whether that happened before the first
+    /// Tenant save here was a race — which is exactly how this passed on one branch and failed
+    /// on the merge commit with identical code.
+    ///
+    /// Owning the data source removes the dependency on any other test having run.
+    /// </summary>
+    private DbContextOptions<AppDbContext> BuildOptions()
+    {
+        var builder = new NpgsqlDataSourceBuilder(_postgres.GetConnectionString());
+        builder.EnableDynamicJson();
+        _dataSource ??= builder.Build();
+
+        return new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(_dataSource)
+            .Options;
+    }
 
     public async Task InitializeAsync()
     {
         await _postgres.StartAsync();
 
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseNpgsql(_postgres.GetConnectionString())
-            .Options;
-
-        _context = new AppDbContext(options);
+        _context = new AppDbContext(BuildOptions());
         await _context.Database.MigrateAsync();
     }
 
     public async Task DisposeAsync()
     {
         await _context.DisposeAsync();
+        if (_dataSource != null) await _dataSource.DisposeAsync();
         await _postgres.DisposeAsync();
     }
 
@@ -320,10 +348,9 @@ public class BookingIntegrationTests : IAsyncLifetime
         _context.Services.Add(svc);
         await _context.SaveChangesAsync();
 
-        // Simulate concurrent bookings with separate contexts
-        var opts = new DbContextOptionsBuilder<AppDbContext>()
-            .UseNpgsql(_postgres.GetConnectionString())
-            .Options;
+        // Simulate concurrent bookings with separate contexts, over the same dynamic-JSON data
+        // source — a raw connection string here would reintroduce the same latent failure.
+        var opts = BuildOptions();
 
         await Task.WhenAll(
             Task.Run(async () =>
