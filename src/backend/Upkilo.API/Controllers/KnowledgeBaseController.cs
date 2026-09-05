@@ -1,10 +1,10 @@
-using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Upkilo.API.Middleware;
+using Upkilo.Core.Entities;
 using Upkilo.Core.Interfaces;
 using Upkilo.Infrastructure.Data;
 
@@ -20,13 +20,17 @@ namespace Upkilo.API.Controllers;
 [Authorize]
 public class KnowledgeBaseController : ControllerBase
 {
-    // ---------------------------------------------------------------------------
-    // In-memory store (keyed by (tenantId, entryId) for strict tenant isolation)
-    // ---------------------------------------------------------------------------
-    private static readonly ConcurrentDictionary<(Guid TenantId, Guid EntryId), KbEntry> _store = new();
-
-    // Per-tenant training metadata: last train timestamp
-    private static readonly ConcurrentDictionary<Guid, DateTime> _lastTrained = new();
+    // Entries live in the AIKnowledgeBases table, which is the SAME store the assistant reads
+    // through ChatbotContextBuilder.
+    //
+    // They previously lived in a pair of static ConcurrentDictionaries. That made this page a
+    // dead end in three separate ways: nothing written here ever reached the assistant (the
+    // prompt is built from AIKnowledgeBases, which this controller never touched), everything
+    // was lost on restart, and nothing was visible to any other replica. A user training the
+    // bot on the page named "Knowledge Base" got silence, with no error to explain it.
+    //
+    // Every query below filters on the tenant id from the authenticated principal explicitly,
+    // rather than relying on the global query filter - the same reasoning as ChatbotContextBuilder.
 
     private readonly AppDbContext _db;
     private readonly ITenantProvider _tenantProvider;
@@ -49,30 +53,71 @@ public class KnowledgeBaseController : ControllerBase
         _tenantProvider.GetTenantId()
         ?? throw new UnauthorizedAccessException("Tenant context not available");
 
-    private IEnumerable<KbEntry> TenantEntries(Guid tenantId) =>
-        _store.Where(kv => kv.Key.TenantId == tenantId).Select(kv => kv.Value);
+    private async Task<List<KbEntry>> TenantEntriesAsync(Guid tenantId) =>
+        (await _db.AIKnowledgeBases
+            .AsNoTracking()
+            .Where(k => k.TenantId == tenantId && !k.IsDeleted)
+            .ToListAsync())
+        .Select(ToKbEntry)
+        .ToList();
+
+    /// <summary>
+    /// Maps the stored row to the wire shape. The two now use the same field names, so this is a
+    /// straight projection rather than a translation.
+    /// </summary>
+    private static KbEntry ToKbEntry(AIKnowledgeBase k) => new(
+        Id: k.Id,
+        TenantId: k.TenantId,
+        Question: k.Question,
+        Answer: k.Answer,
+        Category: k.Category,
+        Tags: DeserialiseTags(k.Tags),
+        Embedding: k.VectorEmbedding,
+        CreatedAt: k.CreatedAt,
+        UpdatedAt: k.UpdatedAt
+    );
+
+    // Tags are a string[] on the wire but a single nullable column in the table. JSON rather than
+    // a comma-join so a tag containing a comma survives the round trip.
+    private static string? SerialiseTags(string[] tags) =>
+        tags.Length == 0 ? null : JsonSerializer.Serialize(tags);
+
+    private static string[] DeserialiseTags(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return Array.Empty<string>();
+        try
+        {
+            return JsonSerializer.Deserialize<string[]>(raw) ?? Array.Empty<string>();
+        }
+        catch (JsonException)
+        {
+            // Rows written by another path (or by hand) may hold a plain comma list. Falling back
+            // keeps those readable instead of failing the whole listing.
+            return raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+    }
 
     // ---------------------------------------------------------------------------
     // GET /knowledge-base/entries
     // ---------------------------------------------------------------------------
     /// <summary>List all knowledge-base entries for the current tenant, with optional type/search filter.</summary>
     [HttpGet("entries")]
-    public IActionResult GetEntries(
+    public async Task<IActionResult> GetEntries(
         [FromQuery] string? type,
         [FromQuery] string? search)
     {
         var tenantId = GetTenantId();
-        var entries = TenantEntries(tenantId);
+        IEnumerable<KbEntry> entries = await TenantEntriesAsync(tenantId);
 
         if (!string.IsNullOrWhiteSpace(type))
-            entries = entries.Where(e => e.Type.Equals(type, StringComparison.OrdinalIgnoreCase));
+            entries = entries.Where(e => e.Category.Equals(type, StringComparison.OrdinalIgnoreCase));
 
         if (!string.IsNullOrWhiteSpace(search))
         {
             var s = search.ToLowerInvariant();
             entries = entries.Where(e =>
-                e.Title.ToLowerInvariant().Contains(s) ||
-                e.Content.ToLowerInvariant().Contains(s) ||
+                e.Question.ToLowerInvariant().Contains(s) ||
+                e.Answer.ToLowerInvariant().Contains(s) ||
                 e.Tags.Any(t => t.ToLowerInvariant().Contains(s)));
         }
 
@@ -88,31 +133,39 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Add a new knowledge-base entry.</summary>
     [HttpPost("entries")]
-    public IActionResult AddEntry([FromBody] KbEntryRequest request)
+    public async Task<IActionResult> AddEntry([FromBody] KbEntryRequest request)
     {
         var tenantId = GetTenantId();
 
-        if (string.IsNullOrWhiteSpace(request.Title))
-            return BadRequest(ApiResponse<object>.Fail("Title is required"));
-        if (string.IsNullOrWhiteSpace(request.Content))
-            return BadRequest(ApiResponse<object>.Fail("Content is required"));
+        if (string.IsNullOrWhiteSpace(request.Question))
+            return BadRequest(ApiResponse<object>.Fail("Question is required"));
+        if (string.IsNullOrWhiteSpace(request.Answer))
+            return BadRequest(ApiResponse<object>.Fail("Answer is required"));
 
-        var entry = new KbEntry(
-            Id: Guid.NewGuid(),
-            TenantId: tenantId,
-            Title: request.Title.Trim(),
-            Content: request.Content.Trim(),
-            Type: NormaliseType(request.Type),
-            Tags: NormaliseTags(request.Tags),
-            Embedding: null,
-            CreatedAt: DateTime.UtcNow,
-            UpdatedAt: DateTime.UtcNow
-        );
+        // Bounded for the same reason as AIChatbotController.Train: this text is copied verbatim
+        // into the assistant's system prompt as its highest-ranked source, so an unbounded entry
+        // is a per-turn cost and context-window problem, not just a wide column.
+        if (request.Question.Length > 500 || request.Answer.Length > 2000)
+            return BadRequest(ApiResponse<object>.Fail(
+                "Question must be under 500 characters and answer under 2000."));
 
-        _store[(tenantId, entry.Id)] = entry;
-        _logger.LogInformation("KB entry {Id} created for tenant {TenantId}", entry.Id, tenantId);
+        var row = new AIKnowledgeBase
+        {
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            Question = request.Question.Trim(),
+            Answer = request.Answer.Trim(),
+            Category = NormaliseType(request.Category),
+            Tags = SerialiseTags(NormaliseTags(request.Tags)),
+            IsActive = true
+        };
 
-        return CreatedAtAction(nameof(GetEntries), new { }, ApiResponse<KbEntry>.Ok(entry));
+        _db.AIKnowledgeBases.Add(row);
+        await _db.SaveChangesAsync();
+
+        _logger.LogInformation("KB entry {Id} created for tenant {TenantId}", row.Id, tenantId);
+
+        return CreatedAtAction(nameof(GetEntries), new { }, ApiResponse<KbEntry>.Ok(ToKbEntry(row)));
     }
 
     // ---------------------------------------------------------------------------
@@ -120,26 +173,32 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Update an existing knowledge-base entry.</summary>
     [HttpPut("entries/{id:guid}")]
-    public IActionResult UpdateEntry(Guid id, [FromBody] KbEntryRequest request)
+    public async Task<IActionResult> UpdateEntry(Guid id, [FromBody] KbEntryRequest request)
     {
         var tenantId = GetTenantId();
-        var key = (tenantId, id);
 
-        if (!_store.TryGetValue(key, out var existing))
+        // Matched on id AND tenant, so an id belonging to another tenant is a 404 rather than a
+        // cross-tenant write.
+        var existing = await _db.AIKnowledgeBases
+            .FirstOrDefaultAsync(k => k.Id == id && k.TenantId == tenantId && !k.IsDeleted);
+
+        if (existing == null)
             return NotFound(ApiResponse<object>.Fail("Entry not found"));
 
-        var updated = existing with
-        {
-            Title = string.IsNullOrWhiteSpace(request.Title) ? existing.Title : request.Title.Trim(),
-            Content = string.IsNullOrWhiteSpace(request.Content) ? existing.Content : request.Content.Trim(),
-            Type = NormaliseType(request.Type),
-            Tags = NormaliseTags(request.Tags),
-            Embedding = null, // invalidate embedding on update
-            UpdatedAt = DateTime.UtcNow
-        };
+        if (request.Question?.Length > 500 || request.Answer?.Length > 2000)
+            return BadRequest(ApiResponse<object>.Fail(
+                "Question must be under 500 characters and answer under 2000."));
 
-        _store[key] = updated;
-        return Ok(ApiResponse<KbEntry>.Ok(updated));
+        if (!string.IsNullOrWhiteSpace(request.Question)) existing.Question = request.Question.Trim();
+        if (!string.IsNullOrWhiteSpace(request.Answer)) existing.Answer = request.Answer.Trim();
+        existing.Category = NormaliseType(request.Category);
+        existing.Tags = SerialiseTags(NormaliseTags(request.Tags));
+        existing.VectorEmbedding = null; // invalidate embedding on update
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+
+        return Ok(ApiResponse<KbEntry>.Ok(ToKbEntry(existing)));
     }
 
     // ---------------------------------------------------------------------------
@@ -147,12 +206,18 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Delete a knowledge-base entry.</summary>
     [HttpDelete("entries/{id:guid}")]
-    public IActionResult DeleteEntry(Guid id)
+    public async Task<IActionResult> DeleteEntry(Guid id)
     {
         var tenantId = GetTenantId();
 
-        if (!_store.TryRemove((tenantId, id), out _))
+        var existing = await _db.AIKnowledgeBases
+            .FirstOrDefaultAsync(k => k.Id == id && k.TenantId == tenantId && !k.IsDeleted);
+
+        if (existing == null)
             return NotFound(ApiResponse<object>.Fail("Entry not found"));
+
+        _db.AIKnowledgeBases.Remove(existing);
+        await _db.SaveChangesAsync();
 
         return Ok(ApiResponse.Ok("Entry deleted"));
     }
@@ -162,7 +227,7 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Bulk-import entries from a JSON array.</summary>
     [HttpPost("entries/bulk-import")]
-    public IActionResult BulkImport([FromBody] IEnumerable<KbEntryRequest> requests)
+    public async Task<IActionResult> BulkImport([FromBody] IEnumerable<KbEntryRequest> requests)
     {
         var tenantId = GetTenantId();
         var importList = requests?.ToList();
@@ -170,32 +235,41 @@ public class KnowledgeBaseController : ControllerBase
         if (importList == null || importList.Count == 0)
             return BadRequest(ApiResponse<object>.Fail("No entries provided"));
 
-        var created = new List<KbEntry>();
+        var created = new List<AIKnowledgeBase>();
         var errors = new List<string>();
         var index = 0;
 
         foreach (var req in importList)
         {
             index++;
-            if (string.IsNullOrWhiteSpace(req.Title) || string.IsNullOrWhiteSpace(req.Content))
+            if (string.IsNullOrWhiteSpace(req.Question) || string.IsNullOrWhiteSpace(req.Answer))
             {
-                errors.Add($"Entry {index}: title and content are required");
+                errors.Add($"Entry {index}: question and answer are required");
                 continue;
             }
 
-            var entry = new KbEntry(
-                Id: Guid.NewGuid(),
-                TenantId: tenantId,
-                Title: req.Title.Trim(),
-                Content: req.Content.Trim(),
-                Type: NormaliseType(req.Type),
-                Tags: NormaliseTags(req.Tags),
-                Embedding: null,
-                CreatedAt: DateTime.UtcNow,
-                UpdatedAt: DateTime.UtcNow
-            );
-            _store[(tenantId, entry.Id)] = entry;
-            created.Add(entry);
+            if (req.Question.Length > 500 || req.Answer.Length > 2000)
+            {
+                errors.Add($"Entry {index}: question must be under 500 characters and answer under 2000");
+                continue;
+            }
+
+            created.Add(new AIKnowledgeBase
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                Question = req.Question.Trim(),
+                Answer = req.Answer.Trim(),
+                Category = NormaliseType(req.Category),
+                Tags = SerialiseTags(NormaliseTags(req.Tags)),
+                IsActive = true
+            });
+        }
+
+        if (created.Count > 0)
+        {
+            _db.AIKnowledgeBases.AddRange(created);
+            await _db.SaveChangesAsync();
         }
 
         _logger.LogInformation("Bulk-imported {Count} KB entries for tenant {TenantId}", created.Count, tenantId);
@@ -212,27 +286,27 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Trigger re-indexing of the knowledge base (async job).</summary>
     [HttpPost("train")]
-    public IActionResult TriggerTraining()
+    public async Task<IActionResult> TriggerTraining()
     {
         var tenantId = GetTenantId();
         var jobId = Guid.NewGuid();
-
-        // In a real system this queues a vector-embedding job.
-        // Here we update the "indexed" timestamp on every entry.
         var now = DateTime.UtcNow;
-        foreach (var key in _store.Keys.Where(k => k.TenantId == tenantId).ToList())
-        {
-            if (_store.TryGetValue(key, out var entry))
-                _store[key] = entry with { UpdatedAt = entry.UpdatedAt }; // no-op on content; timestamp unchanged intentionally
-        }
-        _lastTrained[tenantId] = now;
 
-        _logger.LogInformation("Training job {JobId} queued for tenant {TenantId}", jobId, tenantId);
+        var count = await _db.AIKnowledgeBases
+            .CountAsync(k => k.TenantId == tenantId && !k.IsDeleted && k.IsActive);
+
+        // There is no embedding/vector step to queue: the assistant reads these rows directly
+        // when it builds a prompt (ChatbotContextBuilder), so a saved entry is live on the very
+        // next message. The old copy promised re-indexing "in approximately 2 minutes", which
+        // described work that never happened and told the user to wait for nothing.
+        _logger.LogInformation("KB train requested for tenant {TenantId} ({Count} active entries)", tenantId, count);
 
         return Accepted(ApiResponse<TrainJobResult>.Ok(new TrainJobResult(
             JobId: jobId,
-            Status: "queued",
-            Message: "Re-indexing has been queued. Your AI will use the updated knowledge in approximately 2 minutes.",
+            Status: "completed",
+            Message: count == 0
+                ? "No active knowledge base entries yet. Add some and your assistant will use them immediately."
+                : $"Your assistant is using all {count} active entries. Changes take effect on the next message.",
             QueuedAt: now
         )));
     }
@@ -251,7 +325,7 @@ public class KnowledgeBaseController : ControllerBase
 
         var tenantId = GetTenantId();
         var userId = _tenantProvider.GetUserId();
-        var entries = TenantEntries(tenantId).ToList();
+        var entries = await TenantEntriesAsync(tenantId);
 
         if (entries.Count == 0)
             return Ok(ApiResponse<IEnumerable<KbEntry>>.Ok(Enumerable.Empty<KbEntry>()));
@@ -262,7 +336,7 @@ public class KnowledgeBaseController : ControllerBase
         contextBuilder.AppendLine();
         contextBuilder.AppendLine("### ENTRIES ###");
         foreach (var e in entries)
-            contextBuilder.AppendLine($"ID:{e.Id} TYPE:{e.Type} TITLE:{e.Title} CONTENT:{e.Content[..Math.Min(e.Content.Length, 300)]}");
+            contextBuilder.AppendLine($"ID:{e.Id} TYPE:{e.Category} TITLE:{e.Question} CONTENT:{e.Answer[..Math.Min(e.Answer.Length, 300)]}");
         contextBuilder.AppendLine();
         contextBuilder.AppendLine($"### USER QUERY ###");
         contextBuilder.AppendLine(q);
@@ -354,7 +428,7 @@ public class KnowledgeBaseController : ControllerBase
         if (!aiResult.Success || string.IsNullOrWhiteSpace(aiResult.Content))
             return StatusCode(502, ApiResponse<object>.Fail("AI service failed to generate FAQ entries. Please try again."));
 
-        var created = new List<KbEntry>();
+        var created = new List<AIKnowledgeBase>();
         try
         {
             var rawJson = aiResult.Content.Trim();
@@ -366,19 +440,22 @@ public class KnowledgeBaseController : ControllerBase
                 foreach (var dto in dtos)
                 {
                     if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Content)) continue;
-                    var entry = new KbEntry(
-                        Id: Guid.NewGuid(),
-                        TenantId: tenantId,
-                        Title: dto.Title.Trim(),
-                        Content: dto.Content.Trim(),
-                        Type: NormaliseType(dto.Type),
-                        Tags: dto.Tags ?? Array.Empty<string>(),
-                        Embedding: null,
-                        CreatedAt: DateTime.UtcNow,
-                        UpdatedAt: DateTime.UtcNow
-                    );
-                    _store[(tenantId, entry.Id)] = entry;
-                    created.Add(entry);
+
+                    // The model produced these, so they are bounded here rather than trusted -
+                    // an over-long generated answer would otherwise be persisted and then
+                    // replayed into every future prompt.
+                    if (dto.Title.Length > 500 || dto.Content.Length > 2000) continue;
+
+                    created.Add(new AIKnowledgeBase
+                    {
+                        Id = Guid.NewGuid(),
+                        TenantId = tenantId,
+                        Question = dto.Title.Trim(),
+                        Answer = dto.Content.Trim(),
+                        Category = NormaliseType(dto.Type),
+                        Tags = SerialiseTags(NormaliseTags(dto.Tags)),
+                        IsActive = true
+                    });
                 }
             }
         }
@@ -388,8 +465,15 @@ public class KnowledgeBaseController : ControllerBase
             return StatusCode(502, ApiResponse<object>.Fail("Failed to parse AI response. Please try again."));
         }
 
+        if (created.Count > 0)
+        {
+            _db.AIKnowledgeBases.AddRange(created);
+            await _db.SaveChangesAsync();
+        }
+
         _logger.LogInformation("Auto-populated {Count} KB entries for tenant {TenantId}", created.Count, tenantId);
-        return Ok(ApiResponse<IEnumerable<KbEntry>>.Ok(created, $"{created.Count} FAQ entries generated from your services"));
+        return Ok(ApiResponse<IEnumerable<KbEntry>>.Ok(
+            created.Select(ToKbEntry), $"{created.Count} FAQ entries generated from your services"));
     }
 
     // ---------------------------------------------------------------------------
@@ -397,21 +481,23 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     /// <summary>Return entry counts by type and last-trained timestamp.</summary>
     [HttpGet("stats")]
-    public IActionResult GetStats()
+    public async Task<IActionResult> GetStats()
     {
         var tenantId = GetTenantId();
-        var entries = TenantEntries(tenantId).ToList();
-
-        _lastTrained.TryGetValue(tenantId, out var lastTrained);
+        var entries = await TenantEntriesAsync(tenantId);
 
         var byType = entries
-            .GroupBy(e => e.Type)
+            .GroupBy(e => e.Category)
             .ToDictionary(g => g.Key, g => g.Count());
 
         var stats = new KbStats(
             TotalEntries: entries.Count,
             ByType: byType,
-            LastTrainedAt: lastTrained == default ? null : lastTrained
+            // Derived from the newest entry rather than read from a separate counter. The counter
+            // was a static dictionary that emptied on restart, so this figure blanked itself
+            // periodically for no reason the user could see. Since the assistant reads these rows
+            // live, "last changed" is also the honest answer to "last trained".
+            LastTrainedAt: entries.Count == 0 ? null : entries.Max(e => e.UpdatedAt)
         );
 
         return Ok(ApiResponse<KbStats>.Ok(stats));
@@ -420,15 +506,17 @@ public class KnowledgeBaseController : ControllerBase
     // ---------------------------------------------------------------------------
     // Private helpers
     // ---------------------------------------------------------------------------
+    /// <summary>
+    /// Category is free text, trimmed, defaulting to "General".
+    ///
+    /// It used to be coerced to one of faq/service/policy/custom, with everything else silently
+    /// becoming "custom". Nothing justified that: the page offers a free-text category box, and
+    /// the other writer over this same table (AIChatbotController.Train) stores whatever the user
+    /// typed. So a category of "Pricing" was accepted by the form and then quietly filed as
+    /// "custom", and re-saving an entry created on the chatbot page relabelled it.
+    /// </summary>
     private static string NormaliseType(string? type) =>
-        type?.ToLowerInvariant() switch
-        {
-            "faq" => "faq",
-            "service" => "service",
-            "policy" => "policy",
-            "custom" => "custom",
-            _ => "custom"
-        };
+        string.IsNullOrWhiteSpace(type) ? "General" : type.Trim();
 
     private static string[] NormaliseTags(string[]? tags) =>
         tags?.Select(t => t.Trim()).Where(t => t.Length > 0).ToArray()
@@ -442,8 +530,8 @@ public class KnowledgeBaseController : ControllerBase
             {
                 Entry = e,
                 Score = terms.Sum(t =>
-                    (e.Title.ToLowerInvariant().Contains(t) ? 3 : 0) +
-                    (e.Content.ToLowerInvariant().Contains(t) ? 1 : 0) +
+                    (e.Question.ToLowerInvariant().Contains(t) ? 3 : 0) +
+                    (e.Answer.ToLowerInvariant().Contains(t) ? 1 : 0) +
                     (e.Tags.Any(tag => tag.ToLowerInvariant().Contains(t)) ? 2 : 0))
             })
             .Where(x => x.Score > 0)
@@ -457,13 +545,22 @@ public class KnowledgeBaseController : ControllerBase
 // Domain models
 // ---------------------------------------------------------------------------
 
-/// <summary>Immutable knowledge-base entry stored in memory.</summary>
+/// <summary>
+/// A knowledge-base entry as sent to and from the browser.
+///
+/// Named Question/Answer/Category to match both the AIKnowledgeBase row behind it and the other
+/// endpoint over the same table (AIChatbotController's /aichatbot/kb). These fields were
+/// previously Title/Content/Type, which matched neither: the knowledge base page reads
+/// entry.question and posts { question, answer }, so every listed entry rendered its fields as
+/// undefined and every create was rejected with "Title is required". Two endpoints over one table
+/// disagreeing about its field names is what produced that.
+/// </summary>
 public record KbEntry(
     Guid Id,
     Guid TenantId,
-    string Title,
-    string Content,
-    string Type,
+    string Question,
+    string Answer,
+    string Category,
     string[] Tags,
     float[]? Embedding,
     DateTime CreatedAt,
@@ -476,9 +573,10 @@ public record KbEntry(
 
 public class KbEntryRequest
 {
-    public string Title { get; set; } = string.Empty;
-    public string Content { get; set; } = string.Empty;
-    public string? Type { get; set; }
+    // Matches what the knowledge base page actually posts: { question, answer, category, tags }.
+    public string Question { get; set; } = string.Empty;
+    public string Answer { get; set; } = string.Empty;
+    public string? Category { get; set; }
     public string[]? Tags { get; set; }
 }
 

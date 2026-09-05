@@ -2,30 +2,95 @@ using Elastic.Clients.Elasticsearch;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using Upkilo.Core.Entities;
 using Upkilo.Core.Interfaces;
 
 namespace Upkilo.Infrastructure.Services;
 
 public class ElasticsearchService : IElasticsearchService
 {
-    private readonly ElasticsearchClient _client;
+    private readonly ElasticsearchClient? _client;
     private readonly ILogger<ElasticsearchService> _logger;
+
+    /// <summary>
+    /// The ONE place an index name is built. Everything - writes, reads, autocomplete and index
+    /// creation - resolves through this map.
+    ///
+    /// It did not exist, and the three call sites disagreed, so the feature could not work at
+    /// all:
+    ///   - writes went to "{tenant}_object", because SearchSyncInterceptor calls
+    ///     IndexEntityAsync(tenantId, entry.Entity) where entry.Entity is statically `object`,
+    ///     so typeof(T).Name was "Object";
+    ///   - GlobalSearchAsync read "{tenant}_booking" / "_client" / "_service" (singular);
+    ///   - AutocompleteAsync and EnsureTenantIndexesAsync used "_services" / "_businesses" /
+    ///     "_clients" (plural).
+    ///
+    /// Writes and reads therefore never touched the same index, and the two read paths did not
+    /// agree with each other either. Provisioning Elasticsearch would have produced a search
+    /// that returned nothing while looking correctly configured.
+    ///
+    /// Plural wins because EnsureTenantIndexesAsync already creates the plural names, so
+    /// existing indexes stay valid. "businesses" is deliberately absent: no entity is ever
+    /// indexed into it.
+    /// </summary>
+    private static readonly IReadOnlyDictionary<Type, string> IndexSuffixByType =
+        new Dictionary<Type, string>
+        {
+            [typeof(Client)] = "clients",
+            [typeof(Booking)] = "bookings",
+            [typeof(Service)] = "services",
+        };
+
+    /// <summary>Suffixes a caller may name via ?type=. Anything else is ignored.</summary>
+    private static readonly HashSet<string> KnownSuffixes =
+        IndexSuffixByType.Values.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Fields worth matching on. Named explicitly so a query cannot reach a field the caller
+    /// was never meant to search - see the query-injection note on BuildTextQuery.
+    /// </summary>
+    private static readonly string[] SearchableFields =
+        { "name", "firstName", "lastName", "email", "description" };
+
+    public bool IsAvailable { get; }
 
     public ElasticsearchService(IConfiguration configuration, ILogger<ElasticsearchService> logger)
     {
-        var uri = configuration["Elasticsearch:Uri"] ?? "http://localhost:9200";
-        var settings = new ElasticsearchClientSettings(new System.Uri(uri))
+        _logger = logger;
+
+        // Only treat Elasticsearch as available when a URI was actually configured.
+        //
+        // The previous default of "http://localhost:9200" meant an unprovisioned deployment -
+        // which is every deployment today - still built a client and issued a real request on
+        // every search, then waited out the 10s RequestTimeout before returning empty. That is
+        // a request thread parked for ten seconds per search, on a B1 instance, for a feature
+        // that cannot succeed. Now it short-circuits.
+        var uri = configuration["Elasticsearch:Uri"];
+        IsAvailable = !string.IsNullOrWhiteSpace(uri);
+
+        if (!IsAvailable)
+        {
+            _logger.LogInformation(
+                "Elasticsearch:Uri is not configured - search returns no results and no requests "
+                + "are issued. Set Elasticsearch__Uri to enable it.");
+            return;
+        }
+
+        var settings = new ElasticsearchClientSettings(new System.Uri(uri!))
             .RequestTimeout(TimeSpan.FromSeconds(10))
             .DeadTimeout(TimeSpan.FromSeconds(30));
         _client = new ElasticsearchClient(settings);
-        _logger = logger;
     }
 
     public async Task IndexEntityAsync<T>(string tenantId, T entity) where T : class
     {
+        if (_client == null || entity == null) return;
+
+        // entity.GetType(), NOT typeof(T): the interceptor's compile-time T is `object`.
+        if (!TryGetIndexName(entity.GetType(), tenantId, out var indexName)) return;
+
         try
         {
-            var indexName = GetIndexName<T>(tenantId);
             await _client.IndexAsync(entity, indexName);
         }
         catch (Exception ex)
@@ -37,12 +102,18 @@ public class ElasticsearchService : IElasticsearchService
 
     public async Task BulkIndexEntitiesAsync<T>(string tenantId, IEnumerable<T> entities) where T : class
     {
+        if (_client == null) return;
+
+        var list = entities as IList<T> ?? entities.ToList();
+        if (list.Count == 0) return;
+
+        if (!TryGetIndexName(list[0]!.GetType(), tenantId, out var indexName)) return;
+
         try
         {
-            var indexName = GetIndexName<T>(tenantId);
             var response = await _client.BulkAsync(b => b
                 .Index(indexName)
-                .IndexMany(entities)
+                .IndexMany(list)
             );
 
             if (!response.IsValidResponse)
@@ -57,12 +128,22 @@ public class ElasticsearchService : IElasticsearchService
         }
     }
 
-    public async Task DeleteEntityAsync<T>(string tenantId, string id) where T : class
+    public Task DeleteEntityAsync<T>(string tenantId, string id) where T : class
+        => DeleteEntityAsync(tenantId, typeof(T), id);
+
+    /// <summary>
+    /// Type-taking overload, because the caller that matters - SearchSyncInterceptor handling a
+    /// delete - only has the runtime type. It previously passed `object`, which built
+    /// "{tenant}_object" and so deleted nothing from any index a search would read.
+    /// </summary>
+    public async Task DeleteEntityAsync(string tenantId, Type entityType, string id)
     {
+        if (_client == null) return;
+        if (!TryGetIndexName(entityType, tenantId, out var indexName)) return;
+
         try
         {
-            var indexName = GetIndexName<T>(tenantId);
-            await _client.DeleteAsync<T>(id, d => d.Index(indexName));
+            await _client.DeleteAsync(indexName, id);
         }
         catch (Exception ex)
         {
@@ -75,18 +156,14 @@ public class ElasticsearchService : IElasticsearchService
         await Task.CompletedTask;
     }
 
-    // S1: Bootstrap per-tenant indexes for services, businesses, clients with proper field mappings
+    // S1: Bootstrap per-tenant indexes with proper field mappings
     public async Task EnsureTenantIndexesAsync(string tenantId)
     {
-        var indexes = new[]
-        {
-            $"{tenantId}_services",
-            $"{tenantId}_businesses",
-            $"{tenantId}_clients"
-        };
+        if (_client == null) return;
 
-        foreach (var idxName in indexes)
+        foreach (var suffix in IndexSuffixByType.Values)
         {
+            var idxName = $"{tenantId}_{suffix}";
             try
             {
                 var exists = await _client.Indices.ExistsAsync(idxName);
@@ -103,12 +180,14 @@ public class ElasticsearchService : IElasticsearchService
 
     public async Task<IEnumerable<T>> SearchAsync<T>(string tenantId, string query, CancellationToken cancellationToken = default) where T : class
     {
+        if (_client == null) return Enumerable.Empty<T>();
+        if (!TryGetIndexName(typeof(T), tenantId, out var indexName)) return Enumerable.Empty<T>();
+
         try
         {
-            var indexName = GetIndexName<T>(tenantId);
             var response = await _client.SearchAsync<T>(s => s
                 .Index(indexName)
-                .Query(q => q.QueryString(qs => qs.Query($"*{query}*"))),
+                .Query(BuildTextQuery<T>(query)),
                 cancellationToken
             );
 
@@ -123,18 +202,15 @@ public class ElasticsearchService : IElasticsearchService
 
     public async Task<object> GlobalSearchAsync(string tenantId, string query)
     {
+        if (_client == null) return Array.Empty<SearchHit>();
+
         try
         {
-            var indices = new[]
-            {
-                GetIndexName<Upkilo.Core.Entities.Booking>(tenantId),
-                GetIndexName<Upkilo.Core.Entities.Client>(tenantId),
-                GetIndexName<Upkilo.Core.Entities.Service>(tenantId)
-            };
+            var indices = IndexSuffixByType.Values.Select(s => $"{tenantId}_{s}").ToArray();
 
             var response = await _client.SearchAsync<SearchHit>(s => s
                 .Indices(indices)
-                .Query(q => q.QueryString(qs => qs.Query($"*{query}*")))
+                .Query(BuildTextQuery<SearchHit>(query))
                 .Size(50)
             );
 
@@ -147,23 +223,36 @@ public class ElasticsearchService : IElasticsearchService
         }
     }
 
-    // S2: Autocomplete/typeahead with prefix matching across service/business/client indexes
+    // S2: Autocomplete/typeahead with prefix matching
     public async Task<IEnumerable<Upkilo.Core.Interfaces.AutocompleteSuggestion>> AutocompleteAsync(
         string tenantId, string prefix, string[]? types = null)
     {
+        if (_client == null) return Enumerable.Empty<Upkilo.Core.Interfaces.AutocompleteSuggestion>();
+
         if (string.IsNullOrWhiteSpace(prefix) || prefix.Length < 2)
+            return Enumerable.Empty<Upkilo.Core.Interfaces.AutocompleteSuggestion>();
+
+        // The caller supplies ?type= and it lands in an index NAME, so it is filtered against
+        // the known set rather than interpolated as given. The tenant prefix always bounded this
+        // to the caller's own data, so it was never a tenant escape — but "whatever the client
+        // sent" has no business reaching index resolution, and an unknown value would otherwise
+        // produce an index_not_found error per request.
+        var requested = (types is { Length: > 0 })
+            ? types.Where(t => KnownSuffixes.Contains(t)).ToArray()
+            : IndexSuffixByType.Values.ToArray();
+
+        if (requested.Length == 0)
             return Enumerable.Empty<Upkilo.Core.Interfaces.AutocompleteSuggestion>();
 
         try
         {
-            var allTypes = types ?? new[] { "services", "businesses", "clients" };
-            var indices = allTypes.Select(t => $"{tenantId}_{t}").ToArray();
+            var indices = requested.Select(t => $"{tenantId}_{t}").ToArray();
 
             var response = await _client.SearchAsync<AutocompleteHit>(s => s
                 .Indices(indices)
                 .Query(q => q.MultiMatch(mm => mm
                     .Query(prefix)
-                    .Fields(new[] { "name", "firstName", "lastName", "description" })
+                    .Fields(SearchableFields)
                     .Type(Elastic.Clients.Elasticsearch.QueryDsl.TextQueryType.BoolPrefix)
                     .Fuzziness(new Elastic.Clients.Elasticsearch.Fuzziness("AUTO"))
                 ))
@@ -187,9 +276,41 @@ public class ElasticsearchService : IElasticsearchService
         }
     }
 
-    private string GetIndexName<T>(string tenantId)
+    /// <summary>
+    /// Builds the text query for free-text search.
+    ///
+    /// This was previously a query_string query with the caller's input interpolated straight
+    /// into it:
+    ///
+    ///     .Query(q =&gt; q.QueryString(qs =&gt; qs.Query($"*{query}*")))
+    ///
+    /// query_string is a full query LANGUAGE - field selectors, boolean operators, ranges,
+    /// regex, wildcards - so the caller was writing part of the query, not supplying a term.
+    /// That let a search reach fields it was never meant to (`email:*`, `*:*`) and let a
+    /// crafted regex or leading wildcard burn CPU on demand. It stayed inside the caller's own
+    /// tenant indices, so it was never a tenant escape, but it is injection all the same.
+    ///
+    /// multi_match takes the input as a VALUE against an explicit field list, so the input can
+    /// no longer be syntax. It also drops the forced leading "*" that made every single search
+    /// a full-index scan.
+    /// </summary>
+    private static Action<Elastic.Clients.Elasticsearch.QueryDsl.QueryDescriptor<T>> BuildTextQuery<T>(string query)
+        => q => q.MultiMatch(mm => mm
+            .Query(query)
+            .Fields(SearchableFields)
+            .Type(Elastic.Clients.Elasticsearch.QueryDsl.TextQueryType.BestFields)
+            .Fuzziness(new Elastic.Clients.Elasticsearch.Fuzziness("AUTO")));
+
+    private static bool TryGetIndexName(Type entityType, string tenantId, out string indexName)
     {
-        return $"{tenantId}_{typeof(T).Name.ToLowerInvariant()}";
+        if (IndexSuffixByType.TryGetValue(entityType, out var suffix))
+        {
+            indexName = $"{tenantId}_{suffix}";
+            return true;
+        }
+
+        indexName = string.Empty;
+        return false;
     }
 
     private class SearchHit
@@ -202,8 +323,6 @@ public class ElasticsearchService : IElasticsearchService
     private class AutocompleteHit
     {
         public string? Name { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public string? FullName => !string.IsNullOrEmpty(FirstName) ? $"{FirstName} {LastName}".Trim() : Name;
+        public string? FullName { get; set; }
     }
 }

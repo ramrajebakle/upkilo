@@ -842,6 +842,19 @@ export const api = {
     deleteKnowledgeBase: (id: string) => apiClient.delete(`/api/v1/aichatbot/kb/${id}`),
     getConversations: (params?: unknown) => apiClient.get('/api/v1/aichatbot/conversations', { params }),
     getStats: () => apiClient.get('/api/v1/aichatbot/stats'),
+
+    // The tenant's own assistant, for a signed-in user. TenantId, Audience, ExternalId and
+    // Channel are all set server-side from the authenticated principal, so the body carries the
+    // message and nothing else — anything more here would simply be ignored.
+    sendMessage: (message: string) =>
+      apiClient.post('/api/v1/aichatbot/message', { message }),
+  },
+
+  // Anonymous Upkilo support chat for the marketing site. Distinct from `chatbot` above: it has
+  // no tenant, so it can answer questions about Upkilo itself and nothing about any business.
+  support: {
+    chat: (message: string, sessionToken: string | null) =>
+      apiClient.post('/api/v1/support/chat', { message, sessionToken }),
   },
 
   // Marketing Funnels

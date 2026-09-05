@@ -38,7 +38,7 @@ export default function KnowledgeBasePage() {
         ...form, tags: form.tags ? form.tags.split(",").map((t) => t.trim()) : [],
       });
       toastSuccess("Entry added"); setShowNew(false); setForm({ question: "", answer: "", category: "", tags: "" }); load();
-    } catch (e: any) { toastError(e?.response?.data?.error ?? "Save failed"); }
+    } catch (e: any) { toastError(e?.response?.data?.message ?? e?.response?.data?.error ?? "Save failed"); }
     finally { setSaving(false); }
   };
 
@@ -49,7 +49,7 @@ export default function KnowledgeBasePage() {
         ...editForm, tags: editForm.tags ? editForm.tags.split(",").map((t) => t.trim()) : [],
       });
       toastSuccess("Entry updated"); setEditingId(null); load();
-    } catch (e: any) { toastError(e?.response?.data?.error ?? "Update failed"); }
+    } catch (e: any) { toastError(e?.response?.data?.message ?? e?.response?.data?.error ?? "Update failed"); }
     finally { setSaving(false); }
   };
 

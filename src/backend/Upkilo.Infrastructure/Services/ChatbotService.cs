@@ -334,21 +334,21 @@ public class ChatbotService : IChatbotService
         return 0.3m;
     }
 
-    public async Task<bool> TrainKnowledgeBaseAsync(Guid tenantId, string category, string question, string answer)
+    public async Task<AIKnowledgeBase> TrainKnowledgeBaseAsync(Guid tenantId, string category, string question, string answer)
     {
         var entry = new AIKnowledgeBase
         {
             Id = Guid.NewGuid(),
             TenantId = tenantId,
-            Category = category,
-            Question = question,
-            Answer = answer,
+            Category = string.IsNullOrWhiteSpace(category) ? "General" : category.Trim(),
+            Question = question.Trim(),
+            Answer = answer.Trim(),
             IsActive = true
         };
 
         _context.AIKnowledgeBases.Add(entry);
         await _context.SaveChangesAsync();
-        return true;
+        return entry;
     }
 
     public async Task<List<AIConversation>> GetConversationsAsync(Guid tenantId)
