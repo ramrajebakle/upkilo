@@ -1,11 +1,13 @@
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Upkilo.Core.Entities;
 using Upkilo.Core.Interfaces;
 using Upkilo.Infrastructure.Data;
 using Upkilo.Infrastructure.Services;
@@ -206,6 +208,163 @@ public class AzureOpenAIServiceTests : IDisposable
         var allowed = await CreateSut(BudgetConfig("0")).CheckQuotaAsync(UpkiloPlatform.TenantId);
 
         allowed.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// A Redis counter that actually holds state, starting ABSENT — as it would after an
+    /// eviction, a flush, or a restart without persistence. Stateful rather than a bare stub so
+    /// the test can assert on the resulting BEHAVIOUR (was the call refused?) instead of on which
+    /// StringSetAsync overload happened to be chosen.
+    /// </summary>
+    private Mock<StackExchange.Redis.IDatabase> StatefulMissingCounter()
+    {
+        var db = new Mock<StackExchange.Redis.IDatabase>();
+        double value = 0;
+        bool exists = false;
+
+        db.Setup(d => d.KeyExistsAsync(
+                It.IsAny<StackExchange.Redis.RedisKey>(),
+                It.IsAny<StackExchange.Redis.CommandFlags>()))
+            .ReturnsAsync(() => exists);
+
+        // StringSetAsync has two overloads (with and without keepTtl) and the compiler's choice is
+        // not obvious from the call site. Stubbing only one silently no-ops the seed and the test
+        // passes for the wrong reason, so both are wired to the same state.
+        db.Setup(d => d.StringSetAsync(
+                It.IsAny<StackExchange.Redis.RedisKey>(),
+                It.IsAny<StackExchange.Redis.RedisValue>(),
+                It.IsAny<TimeSpan?>(),
+                It.IsAny<StackExchange.Redis.When>(),
+                It.IsAny<StackExchange.Redis.CommandFlags>()))
+            .ReturnsAsync((StackExchange.Redis.RedisKey _, StackExchange.Redis.RedisValue v,
+                           TimeSpan? _, StackExchange.Redis.When _, StackExchange.Redis.CommandFlags _) =>
+            {
+                value = (double)v; exists = true; return true;
+            });
+
+        db.Setup(d => d.StringSetAsync(
+                It.IsAny<StackExchange.Redis.RedisKey>(),
+                It.IsAny<StackExchange.Redis.RedisValue>(),
+                It.IsAny<TimeSpan?>(),
+                It.IsAny<bool>(),
+                It.IsAny<StackExchange.Redis.When>(),
+                It.IsAny<StackExchange.Redis.CommandFlags>()))
+            .ReturnsAsync((StackExchange.Redis.RedisKey _, StackExchange.Redis.RedisValue v,
+                           TimeSpan? _, bool _, StackExchange.Redis.When _,
+                           StackExchange.Redis.CommandFlags _) =>
+            {
+                value = (double)v; exists = true; return true;
+            });
+
+        db.Setup(d => d.StringIncrementAsync(
+                It.IsAny<StackExchange.Redis.RedisKey>(), It.IsAny<double>(),
+                It.IsAny<StackExchange.Redis.CommandFlags>()))
+            .ReturnsAsync((StackExchange.Redis.RedisKey _, double delta,
+                           StackExchange.Redis.CommandFlags _) =>
+            {
+                value += delta; exists = true; return value;
+            });
+
+        db.Setup(d => d.KeyExpireAsync(
+                It.IsAny<StackExchange.Redis.RedisKey>(), It.IsAny<TimeSpan?>(),
+                It.IsAny<StackExchange.Redis.CommandFlags>()))
+            .ReturnsAsync(true);
+
+        _redisMock.Setup(r => r.GetDatabase(It.IsAny<int>(), It.IsAny<object>())).Returns(db.Object);
+        return db;
+    }
+
+    /// <summary>Builds the service against a live-ish HTTP layer and the given config.</summary>
+    private AzureOpenAIService CreateConfiguredSut(string budget)
+    {
+        _piiScrubberMock.Setup(p => p.Scrub(It.IsAny<string>())).Returns<string>(s => s);
+        _cacheMock.Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((byte[]?)null);
+
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["AzureOpenAI:Endpoint"] = "https://unit-test.openai.azure.com",
+                ["AzureOpenAI:ApiKey"] = "unit-test-key",
+                ["Ai:PlatformMonthlyBudget"] = budget,
+            })
+            .Build();
+
+        var modelResolver = new Mock<IAiModelResolver>();
+        modelResolver.Setup(r => r.ResolveAsync(It.IsAny<Guid>())).ReturnsAsync("gpt-5-mini");
+
+        return new AzureOpenAIService(
+            _dbFactory.CreateContext(), config, _secretProviderMock.Object, _loggerMock.Object,
+            new HttpClient(new CapturingHandler()), _cacheMock.Object, _notificationMock.Object,
+            _contentModerationMock.Object, _scopeFactoryMock.Object, _redisMock.Object,
+            _piiScrubberMock.Object, modelResolver.Object);
+    }
+
+    private async Task SeedPlatformUsageLogAsync(decimal cost)
+    {
+        var db = _dbFactory.CreateContext();
+        db.Set<AIUsageLog>().Add(new AIUsageLog
+        {
+            Id = Guid.NewGuid(),
+            TenantId = UpkiloPlatform.TenantId,
+            Model = "gpt-5-mini",
+            Feature = UpkiloPlatform.UsageFeature,
+            Cost = cost,
+            CreatedAt = DateTime.UtcNow,
+        });
+        await db.SaveChangesAsync();
+        _serviceProviderMock.Setup(x => x.GetService(typeof(AppDbContext))).Returns(db);
+    }
+
+    [Fact]
+    public async Task PlatformQuota_WhenRedisCounterIsLost_IsRebuiltFromTheDurableUsageLog()
+    {
+        // THE regression this guards. The cap lived only in a Redis key created without a TTL,
+        // under a maxmemory-policy of allkeys-lru. Losing that key - eviction, flush, or a restart
+        // without persistence - reset the month's spend to zero and handed an anonymous,
+        // internet-reachable endpoint another full budget.
+        //
+        // $30 has already been spent this month and Redis has lost the counter. The service must
+        // read that total from AIUsageLogs (the durable record) and write it back, so the cap
+        // resumes from $30 rather than from $0. Asserting on the value written is the right level:
+        // Redis's own arithmetic after that point belongs to Redis, not to this test.
+        await SeedPlatformUsageLogAsync(30.00m);
+        var redis = StatefulMissingCounter();
+
+        await CreateConfiguredSut("25.00")
+            .GenerateTextAsync(UpkiloPlatform.TenantId, null, "hello", "gpt-5-mini");
+
+        var seeded = redis.Invocations
+            .Where(i => i.Method.Name == nameof(StackExchange.Redis.IDatabase.StringSetAsync))
+            .Select(i => (double)(StackExchange.Redis.RedisValue)i.Arguments[1]!)
+            .ToList();
+
+        seeded.Should().ContainSingle().Which.Should().Be(30.0d,
+            "a lost counter must be rebuilt from AIUsageLogs, not restarted at zero");
+    }
+
+    [Fact]
+    public async Task PlatformQuota_WhenRedisCounterIsPresent_DoesNotRequeryTheUsageLog()
+    {
+        // The reseed must be the exception, not a per-call database read on the hot path.
+        var db = new Mock<StackExchange.Redis.IDatabase>();
+        db.Setup(d => d.KeyExistsAsync(
+                It.IsAny<StackExchange.Redis.RedisKey>(),
+                It.IsAny<StackExchange.Redis.CommandFlags>()))
+            .ReturnsAsync(true);
+        db.Setup(d => d.StringIncrementAsync(
+                It.IsAny<StackExchange.Redis.RedisKey>(), It.IsAny<double>(),
+                It.IsAny<StackExchange.Redis.CommandFlags>()))
+            .ReturnsAsync(1.0d);
+        _redisMock.Setup(r => r.GetDatabase(It.IsAny<int>(), It.IsAny<object>())).Returns(db.Object);
+
+        await SeedPlatformUsageLogAsync(30.00m);
+
+        await CreateConfiguredSut("25.00")
+            .GenerateTextAsync(UpkiloPlatform.TenantId, null, "hello", "gpt-5-mini");
+
+        db.Invocations.Count(i => i.Method.Name == nameof(StackExchange.Redis.IDatabase.StringSetAsync))
+            .Should().Be(0, "the counter was present, so there was nothing to rebuild");
     }
 
     [Fact]
