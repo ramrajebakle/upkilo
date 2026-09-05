@@ -224,17 +224,10 @@ public class AzureOpenAIService : IAIService
             // Scrub PII from prompt before sending
             var safePrompt = _piiScrubber.Scrub(prompt);
 
-            var requestBody = new
-            {
-                messages = new[] { new { role = "user", content = safePrompt } },
-                // The gpt-5 family REJECTS max_tokens outright:
-                //   "Unsupported parameter: 'max_tokens' is not supported with this model.
-                //    Use 'max_completion_tokens' instead."  (HTTP 400, code unsupported_parameter)
-                // Verified against the live gpt-5.4-mini deployment. temperature is still accepted.
-                max_completion_tokens = 2000,
-                temperature = 0.7,
-                stream = true
-            };
+            // Shares BuildChatRequest with the non-streaming path so a model-compatibility rule can
+            // never again be fixed in one builder and missed in the other — which is exactly what
+            // happened here: max_tokens was corrected in both, temperature in neither.
+            var requestBody = BuildChatRequest(safePrompt, model, maxCompletionTokens: 2000, stream: true);
 
             var apiUrl = $"{endpoint.TrimEnd('/')}/openai/deployments/{deploymentName}/chat/completions?api-version=2024-02-01";
             // Per-request header avoids thread-unsafe mutation of DefaultRequestHeaders on shared HttpClient.
@@ -362,6 +355,45 @@ public class AzureOpenAIService : IAIService
         }
     }
 
+    /// <summary>
+    /// Whether an explicit temperature may be sent for this model.
+    ///
+    /// The gpt-5 family accepts ONLY the default (1) and rejects any explicit value outright:
+    ///   "Unsupported value: 'temperature' does not support 0.7 with this model.
+    ///    Only the default (1) value is supported."  (HTTP 400, code unsupported_value)
+    ///
+    /// Verified against the live gpt-5-mini deployment. Both request builders previously hardcoded
+    /// temperature = 0.7, and AiModelResolver returns nothing BUT gpt-5 models — so every text
+    /// generation in the product failed with a 400 before reaching the model. Mocked tests could
+    /// not catch it: the payload is only rejected by the real endpoint.
+    ///
+    /// Kept as a predicate rather than deleting temperature outright because gpt-4 and
+    /// gpt-3.5-turbo are still in IsModelAllowedAsync's default list and do honour it.
+    /// </summary>
+    private static bool SupportsCustomTemperature(string model) =>
+        !model.StartsWith("gpt-5", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Builds the chat-completions payload, including temperature only where the model allows it.
+    /// A dictionary rather than an anonymous type so the key can be omitted entirely — sending
+    /// null would be rejected just the same.
+    /// </summary>
+    private static Dictionary<string, object> BuildChatRequest(
+        string prompt, string model, int maxCompletionTokens, bool stream)
+    {
+        var body = new Dictionary<string, object>
+        {
+            ["messages"] = new[] { new { role = "user", content = prompt } },
+            // The gpt-5 family also rejects max_tokens; max_completion_tokens is the replacement.
+            ["max_completion_tokens"] = maxCompletionTokens,
+        };
+
+        if (SupportsCustomTemperature(model)) body["temperature"] = 0.7;
+        if (stream) body["stream"] = true;
+
+        return body;
+    }
+
     private async Task<AIGenerationResult> ExecuteApiCallAsync(Guid tenantId, string prompt, string model)
     {
         var endpoint = _secretProvider.GetSecret("AzureOpenAI:Endpoint") ?? _configuration["AzureOpenAI:Endpoint"];
@@ -378,12 +410,7 @@ public class AzureOpenAIService : IAIService
 
         // Model-aware token limit
         var maxTokens = model.Contains("gpt-4") || model.Contains("sonnet") ? 4096 : 2000;
-        var requestBody = new
-        {
-            messages = new[] { new { role = "user", content = safePrompt } },
-            max_completion_tokens = maxTokens,  // gpt-5 family rejects max_tokens — see GenerateTextAsync
-            temperature = 0.7
-        };
+        var requestBody = BuildChatRequest(safePrompt, model, maxTokens, stream: false);
 
         var apiUrl = $"{endpoint.TrimEnd('/')}/openai/deployments/{deploymentName}/chat/completions?api-version=2024-02-01";
         using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(90));
@@ -583,8 +610,54 @@ public class AzureOpenAIService : IAIService
         }
     }
 
+    /// <summary>
+    /// Monthly spend ceiling for Upkilo's own platform assistant, in USD. Configurable so the cap
+    /// can be raised without a deploy; the default is deliberately modest because the endpoint it
+    /// protects is anonymous.
+    /// </summary>
+    private decimal PlatformMonthlyBudget =>
+        _configuration.GetValue<decimal?>("Ai:PlatformMonthlyBudget") ?? 25.00m;
+
+    /// <summary>
+    /// Reserve-then-release against a calendar-month Redis counter, mirroring the per-tenant path.
+    /// Keyed by month rather than by billing period because there is no subscription to take a
+    /// period from.
+    /// </summary>
+    private async Task<bool> ReservePlatformQuotaAsync(decimal estimatedCost)
+    {
+        var budget = PlatformMonthlyBudget;
+        if (budget <= 0m) return false;
+
+        var redisKey = $"ai:usage:platform:{DateTime.UtcNow:yyyy-MM}";
+        var redisDb = _redis.GetDatabase();
+
+        var newUsage = (decimal)await redisDb.StringIncrementAsync(redisKey, (double)estimatedCost);
+
+        if (newUsage > budget)
+        {
+            // Give the reservation back, exactly as the tenant path does, so a rejected turn does
+            // not permanently consume budget it never spent.
+            await redisDb.StringIncrementAsync(redisKey, -(double)estimatedCost);
+            _logger.LogWarning(
+                "Platform support AI budget exhausted: {Usage} of {Budget} this month.", newUsage, budget);
+            return false;
+        }
+
+        return true;
+    }
+
     public async Task<bool> CheckQuotaAsync(Guid tenantId)
     {
+        // Same reasoning as ReserveQuotaAsync: the platform assistant has no subscription, so the
+        // generic path would report "no quota" for an identity that is in fact within budget.
+        if (tenantId == UpkiloPlatform.TenantId)
+        {
+            var redisKey = $"ai:usage:platform:{DateTime.UtcNow:yyyy-MM}";
+            var usageValue = await _redis.GetDatabase().StringGetAsync(redisKey);
+            var used = usageValue.HasValue && decimal.TryParse(usageValue.ToString(), out var u) ? u : 0m;
+            return used < PlatformMonthlyBudget;
+        }
+
         using (var scope = _scopeFactory.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -625,6 +698,17 @@ public class AzureOpenAIService : IAIService
 
     private async Task<bool> ReserveQuotaAsync(Guid tenantId, decimal estimatedCost)
     {
+        // Upkilo's own marketing-site assistant has no Subscription row and never will - the
+        // visitor using it is not a customer yet. The generic path below rejects a missing
+        // subscription outright, so without this branch the public support bot fails EVERY
+        // request with "AI quota exceeded" and only ever emits its fallback message.
+        //
+        // It is still capped, just against a configured ceiling rather than a plan, because this
+        // endpoint is anonymous and internet-reachable: once the month's spend is gone the bot
+        // stops answering instead of billing Upkilo indefinitely.
+        if (tenantId == UpkiloPlatform.TenantId)
+            return await ReservePlatformQuotaAsync(estimatedCost);
+
         using (var scope = _scopeFactory.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -736,9 +820,42 @@ public class AzureOpenAIService : IAIService
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             dbContext.Set<AIUsageLog>().Add(log);
 
+            // The platform assistant reconciles against its own month-keyed counter. Without this
+            // it would keep the ESTIMATE forever - and the estimate assumes a full-length
+            // completion - so the budget would bite several times earlier than the configured
+            // ceiling actually says.
+            if (tenantId == UpkiloPlatform.TenantId)
+            {
+                var platformKey = $"ai:usage:platform:{DateTime.UtcNow:yyyy-MM}";
+                var platformDb = _redis.GetDatabase();
+
+                var platformAdjustment = cost - estimatedCost;
+                if (platformAdjustment != 0)
+                    await platformDb.StringIncrementAsync(platformKey, (double)platformAdjustment);
+
+                await platformDb.KeyExpireAsync(platformKey, TimeSpan.FromDays(32));
+                await dbContext.SaveChangesAsync();
+                return;
+            }
+
             // Update Redis usage counter atomically
             var subscription = await dbContext.Set<Subscription>().AsNoTracking()
                 .FirstOrDefaultAsync(s => s.TenantId == tenantId);
+
+            // Metered AI overage to Stripe.
+            //
+            // This existed only in AiService, which is registered nowhere, so it had never once
+            // run - PricingPlan.StripeAiUsagePriceId was configurable by admins and read by
+            // nothing. Note what it is and is not: the protection against a tenant running up
+            // Upkilo's Azure bill is ReserveQuotaAsync, which already blocks them at
+            // AiMonthlyBudget on every call. This reports the spend so it can be BILLED rather
+            // than merely capped.
+            //
+            // Off unless Billing:ReportAiUsage is explicitly true, because switching it on starts
+            // charging real money to every tenant whose plan has an AI usage price configured.
+            // Only successful, non-zero, non-cached usage is reported.
+            if (success && cost > 0 && _configuration.GetValue<bool>("Billing:ReportAiUsage"))
+                await ReportUsageToStripeAsync(scope, dbContext, tenantId, cost);
 
             if (subscription != null && cost > 0)
             {
@@ -757,6 +874,48 @@ public class AzureOpenAIService : IAIService
             }
 
             await dbContext.SaveChangesAsync();
+        }
+    }
+
+    /// <summary>
+    /// Reports one turn's AI cost to Stripe as metered usage, when the tenant's plan carries an
+    /// AI usage price. Ported from the unregistered AiService, which is the only place it ever
+    /// existed - see the call site for why it is gated.
+    ///
+    /// ISubscriptionService is resolved from the scope rather than injected, matching how this
+    /// class already takes its DbContext. A constructor dependency would also change every
+    /// existing construction of this service for a path most calls never take.
+    ///
+    /// Failures here are logged and swallowed: a billing-reporting outage must not turn a
+    /// successful AI answer into an error for the user. The AIUsageLog row is still written, so
+    /// the usage is recoverable and can be re-reported.
+    /// </summary>
+    private async Task ReportUsageToStripeAsync(
+        IServiceScope scope, AppDbContext dbContext, Guid tenantId, decimal cost)
+    {
+        try
+        {
+            var aiPriceId = await dbContext.Set<Subscription>()
+                .AsNoTracking()
+                .Where(s => s.TenantId == tenantId && s.Status == SubscriptionStatus.Active)
+                .Select(s => s.PricingPlan!.StripeAiUsagePriceId)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(aiPriceId)) return;
+
+            // Stripe meters integer quantities, so cost is reported in cents. Sub-cent turns
+            // round to zero and are skipped rather than billed as one cent each.
+            var cents = (long)(cost * 100);
+            if (cents <= 0) return;
+
+            var subscriptions = scope.ServiceProvider.GetRequiredService<ISubscriptionService>();
+            await subscriptions.ReportUsageAsync(tenantId, aiPriceId, cents);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to report AI usage to Stripe for tenant {TenantId} ({Cost} USD). "
+                + "The AIUsageLog row is still written.", tenantId, cost);
         }
     }
 

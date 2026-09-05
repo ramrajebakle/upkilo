@@ -7,7 +7,14 @@ namespace Upkilo.Core.Interfaces;
 public interface IChatbotService
 {
     Task<ChatResponseDto> ProcessMessageAsync(ChatRequestDto request);
-    Task<bool> TrainKnowledgeBaseAsync(Guid tenantId, string category, string question, string answer);
+    /// <summary>
+    /// Adds a knowledge base entry and returns the persisted row.
+    ///
+    /// Returns the entity rather than a bool because the caller needs the server-assigned id: the
+    /// admin page appends the result straight into its list, and a bare "true" left it rendering a
+    /// blank card with an undefined React key that vanished on the next refresh.
+    /// </summary>
+    Task<AIKnowledgeBase> TrainKnowledgeBaseAsync(Guid tenantId, string category, string question, string answer);
     Task<List<AIConversation>> GetConversationsAsync(Guid tenantId);
     Task<List<AIMessage>> GetHistoryAsync(Guid tenantId, Guid conversationId);
     Task<List<AIKnowledgeBase>> GetTrainingDataAsync(Guid tenantId);

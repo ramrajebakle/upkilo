@@ -167,6 +167,22 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0
             }));
 
+    // Anonymous Upkilo support chat on the marketing site. Every call spends Upkilo's own AI
+    // budget rather than a customer's, so this is the primary brake on someone deciding to burn
+    // it. Tighter than "receptionist": a genuine prospect asks a handful of questions, and there
+    // is no booking flow here that needs rapid back-and-forth.
+    options.AddPolicy("support", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new SlidingWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 6,    // 6 messages per minute per IP
+                SegmentsPerWindow = 2,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
     // C3/OWASP A07: strict auth-endpoint limit — 10 attempts per 15 min per IP
     // Blocks brute-force credential stuffing on login, password-reset, and verify-2fa.
     options.AddPolicy("auth", httpContext =>
@@ -431,6 +447,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ILocationService, Upkilo.Infrastructure.Services.LocationService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IChatbotContextBuilder, Upkilo.Infrastructure.Services.ChatbotContextBuilder>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IChatbotService, Upkilo.Infrastructure.Services.ChatbotService>();
+builder.Services.AddScoped<Upkilo.Core.Interfaces.IPlatformSupportService, Upkilo.Infrastructure.Services.PlatformSupportService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IAdCampaignService, Upkilo.Infrastructure.Services.AdCampaignService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IAttendanceService, Upkilo.Infrastructure.Services.AttendanceService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IFinancialProjectionService, Upkilo.Infrastructure.Services.FinancialProjectionService>();

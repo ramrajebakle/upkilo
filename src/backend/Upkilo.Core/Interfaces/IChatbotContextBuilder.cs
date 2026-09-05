@@ -63,4 +63,14 @@ public interface IChatbotContextBuilder
     /// filtered on the supplied tenantId explicitly, never on ambient state.
     /// </summary>
     Task<ChatbotContext> BuildAsync(Guid tenantId, ChatAudience audience, CancellationToken ct = default);
+
+    /// <summary>
+    /// Upkilo's published plan catalogue on its own, for the anonymous marketing-site assistant.
+    ///
+    /// Takes no tenant id, and that is the point: a method that cannot name a tenant cannot read
+    /// one's rows. Everything it returns is already public on the pricing page, so there is
+    /// nothing here a visitor could not read anyway. Entitlements are excluded - those are a
+    /// property of a specific customer's subscription, and this caller has no customer.
+    /// </summary>
+    Task<string> BuildPublicPlatformFactsAsync(CancellationToken ct = default);
 }

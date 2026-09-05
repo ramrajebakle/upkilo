@@ -160,11 +160,13 @@ public class ChatbotContextBuilder : IChatbotContextBuilder
     /// drifting from the catalogue the day a plan changed, and the assistant would confidently
     /// describe a product that no longer exists.
     /// </summary>
-    private async Task<string> BuildPlatformFactsAsync(Guid tenantId, CancellationToken ct)
+    /// <summary>
+    /// The published plan catalogue, formatted for a prompt. Shared by the tenant-facing and
+    /// anonymous assistants so a plan rename cannot leave the two describing different products.
+    /// Contains no tenant-specific data whatsoever, which is what makes it safe to serve anonymously.
+    /// </summary>
+    private async Task<string> BuildPlanCatalogueAsync(CancellationToken ct)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("Upkilo is the software platform this business runs on.");
-
         // Monthly price comes from the PlanPrice rows, which is where it actually lives. A plan
         // with no monthly price configured is listed without one rather than with a zero - a
         // wrong price is worse than an absent one.
@@ -174,7 +176,6 @@ public class ChatbotContextBuilder : IChatbotContextBuilder
             .Select(p => new
             {
                 p.Name,
-                p.Description,
                 Monthly = p.Prices
                     .Where(pr => pr.Cycle == BillingCycle.Monthly)
                     .Select(pr => (decimal?)pr.Amount)
@@ -186,16 +187,47 @@ public class ChatbotContextBuilder : IChatbotContextBuilder
             })
             .ToListAsync(ct);
 
-        if (plans.Count > 0)
+        if (plans.Count == 0) return string.Empty;
+
+        var sb = new StringBuilder();
+        sb.AppendLine("Upkilo subscription plans:");
+        foreach (var p in plans.OrderBy(p => p.Monthly ?? decimal.MaxValue))
+        {
+            sb.AppendLine(p.Monthly.HasValue
+                ? $"- {p.Name}: {p.Monthly} {p.Currency} per month"
+                : $"- {p.Name} (contact Upkilo for pricing)");
+        }
+
+        return sb.ToString().TrimEnd();
+    }
+
+    public async Task<string> BuildPublicPlatformFactsAsync(CancellationToken ct = default)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("Upkilo is a software platform for appointment-based service businesses");
+        sb.AppendLine("- salons, spas, clinics and similar. It provides online booking, a client");
+        sb.AppendLine("record, payments, marketing automation and an AI assistant.");
+
+        var catalogue = await BuildPlanCatalogueAsync(ct);
+        if (!string.IsNullOrWhiteSpace(catalogue))
         {
             sb.AppendLine();
-            sb.AppendLine("Upkilo subscription plans:");
-            foreach (var p in plans.OrderBy(p => p.Monthly ?? decimal.MaxValue))
-            {
-                sb.AppendLine(p.Monthly.HasValue
-                    ? $"- {p.Name}: {p.Monthly} {p.Currency} per month"
-                    : $"- {p.Name} (contact Upkilo for pricing)");
-            }
+            sb.AppendLine(catalogue);
+        }
+
+        return sb.ToString().TrimEnd();
+    }
+
+    private async Task<string> BuildPlatformFactsAsync(Guid tenantId, CancellationToken ct)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("Upkilo is the software platform this business runs on.");
+
+        var catalogue = await BuildPlanCatalogueAsync(ct);
+        if (!string.IsNullOrWhiteSpace(catalogue))
+        {
+            sb.AppendLine();
+            sb.AppendLine(catalogue);
         }
 
         // What THIS tenant is actually entitled to, so "can I use X" is answered from the same

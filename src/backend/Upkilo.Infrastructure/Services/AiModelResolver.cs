@@ -50,6 +50,13 @@ public class AiModelResolver : IAiModelResolver
 
     public async Task<string> ResolveAsync(Guid tenantId)
     {
+        // Upkilo's own marketing-site assistant has no Tenants row and never will. Without this
+        // it would fall through to the not-found branch below and log a warning on every single
+        // request - turning a normal condition into recurring noise that buries the real
+        // misconfiguration that branch exists to report. The economy model is the right choice
+        // for it regardless: short factual answers about the product, on Upkilo's own budget.
+        if (tenantId == UpkiloPlatform.TenantId) return EconomyModel;
+
         var tenant = await _db.Tenants
             .AsNoTracking()
             .Select(t => new { t.Id, t.SubscriptionTier, t.Settings })

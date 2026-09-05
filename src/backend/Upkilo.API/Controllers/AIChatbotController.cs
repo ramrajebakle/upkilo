@@ -46,12 +46,26 @@ public class AIChatbotController : ControllerBase
     [HttpPost("message")]
     public async Task<IActionResult> ProcessMessage([FromBody] ChatRequestDto request)
     {
-        // Both are overwritten from the authenticated principal rather than trusted from the
+        if (string.IsNullOrWhiteSpace(request.Message) || request.Message.Length > 1000)
+            return BadRequest(new { error = "Message must be 1-1000 characters." });
+
+        // All three are overwritten from the authenticated principal rather than trusted from the
         // body. TenantId already was; Audience must be too, or a caller could simply post
         // Audience = TenantStaff from the public widget and pull Upkilo platform knowledge into
         // a customer-facing conversation.
         request.TenantId = GetTenantId();
         request.Audience = ChatAudience.TenantStaff;
+
+        // ExternalId was taken straight from the body, and conversation lookup is
+        // (TenantId, ExternalId, Channel) - so one staff member could post a colleague's
+        // ExternalId and resume THEIR conversation. Since history is replayed into the prompt,
+        // that read the colleague's transcript back out. Binding it to the authenticated user id
+        // makes each user's conversation reachable only by that user.
+        var userId = _tenantProvider.GetUserId()
+            ?? throw new UnauthorizedAccessException("User context not available");
+
+        request.ExternalId = $"staff:{userId}";
+        request.Channel = ConversationChannel.WebChat;
 
         var response = await _chatbotService.ProcessMessageAsync(request);
         return Ok(response);
@@ -63,8 +77,29 @@ public class AIChatbotController : ControllerBase
     [HttpPost("train")]
     public async Task<IActionResult> Train([FromBody] TrainRequest request)
     {
-        var success = await _chatbotService.TrainKnowledgeBaseAsync(GetTenantId(), request.Category, request.Question, request.Answer);
-        return Ok(new { success });
+        // Validated here because these two strings are copied verbatim into the system prompt as
+        // the highest-ranked source of truth. Unbounded input is therefore a cost and a
+        // context-window problem, not just a database one, and an empty pair would add a "Q:\nA:"
+        // block that teaches the model nothing.
+        if (string.IsNullOrWhiteSpace(request.Question) || string.IsNullOrWhiteSpace(request.Answer))
+            return BadRequest(new { error = "Question and answer are both required." });
+
+        if (request.Question.Length > 500 || request.Answer.Length > 2000)
+            return BadRequest(new { error = "Question must be under 500 characters and answer under 2000." });
+
+        var entry = await _chatbotService.TrainKnowledgeBaseAsync(
+            GetTenantId(), request.Category, request.Question, request.Answer);
+
+        // The persisted row, so the caller can render it without a refetch. Shaped explicitly
+        // rather than returning the entity, which would serialise TenantId and the soft-delete
+        // bookkeeping to the browser for no reason.
+        return Ok(new
+        {
+            id = entry.Id,
+            category = entry.Category,
+            question = entry.Question,
+            answer = entry.Answer
+        });
     }
 
     /// <summary>
@@ -168,7 +203,17 @@ public class AIChatbotController : ControllerBase
     public async Task<IActionResult> GetKnowledgeBase()
     {
         var entries = await _chatbotService.GetTrainingDataAsync(GetTenantId());
-        return Ok(entries);
+
+        // Projected to the same four fields the "train" response returns, so the admin page can
+        // append a new entry to this list without the two shapes disagreeing. It also keeps
+        // TenantId and the soft-delete bookkeeping out of the browser.
+        return Ok(entries.Select(e => new
+        {
+            id = e.Id,
+            category = e.Category,
+            question = e.Question,
+            answer = e.Answer
+        }));
     }
 
     /// <summary>

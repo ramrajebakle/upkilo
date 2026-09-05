@@ -35,6 +35,8 @@ export default function ChatbotAdminPage() {
     });
     const [kbItems, setKbItems] = useState<any[]>([]);
     const [newKb, setNewKb] = useState({ category: 'General', question: '', answer: '' });
+    const [saving, setSaving] = useState(false);
+    const [addingKb, setAddingKb] = useState(false);
     const [stats, setStats] = useState({
         totalConversations: 0,
         resolutionRate: 0,
@@ -53,8 +55,11 @@ export default function ChatbotAdminPage() {
                 api.chatbot.getKnowledgeBase(),
                 api.chatbot.getStats().catch(() => ({ data: null })),
             ]);
-            setSettings(settingsRes.data);
-            setKbItems(kbRes.data);
+            // Merged into the existing defaults rather than replacing them. A response missing a
+            // field would otherwise set it to undefined and flip that input from controlled to
+            // uncontrolled, which React warns about and which loses the user's next keystroke.
+            if (settingsRes.data) setSettings((prev: any) => ({ ...prev, ...settingsRes.data }));
+            setKbItems(Array.isArray(kbRes.data) ? kbRes.data : []);
             if (statsRes.data) {
                 setStats({
                     totalConversations: statsRes.data.totalConversations ?? statsRes.data.totalChats ?? 0,
@@ -81,15 +86,46 @@ export default function ChatbotAdminPage() {
         }
     };
 
+    // Persists the persona form. This button previously fired a success toast and saved nothing,
+    // so every edit to the bot name, welcome message and handoff email was silently discarded —
+    // the user was told it worked and it had not.
+    const handleSaveSettings = async () => {
+        setSaving(true);
+        try {
+            const res = await api.chatbot.updateSettings(settings);
+            // Adopt the server's copy: it trims and truncates, so echoing it back keeps the form
+            // showing what was actually stored rather than what was typed.
+            if (res.data) setSettings(res.data);
+            success('Settings saved');
+        } catch (err: any) {
+            error(err?.response?.data?.error ?? 'Failed to save settings');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleAddKb = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!newKb.question.trim() || !newKb.answer.trim()) return;
+
+        setAddingKb(true);
         try {
             const res = await api.chatbot.addKnowledgeBase(newKb);
-            setKbItems([...kbItems, res.data]);
+            // The server returns the persisted row. It used to return { success: true }, which
+            // was appended verbatim — rendering a blank card with an undefined React key that
+            // disappeared on the next refresh. Guard anyway: without an id there is nothing
+            // renderable or deletable, so refetch rather than append something broken.
+            if (res.data?.id) {
+                setKbItems((prev) => [...prev, res.data]);
+            } else {
+                await fetchData();
+            }
             setNewKb({ category: 'General', question: '', answer: '' });
             success('Knowledge base updated');
-        } catch (err) {
-            error('Failed to add KB entry');
+        } catch (err: any) {
+            error(err?.response?.data?.error ?? 'Failed to add KB entry');
+        } finally {
+            setAddingKb(false);
         }
     };
 
@@ -195,8 +231,8 @@ export default function ChatbotAdminPage() {
                                 onChange={(e) => setSettings({ ...settings, handoffEmail: e.target.value })}
                             />
                         </div>
-                        <Button className="w-full" onClick={() => success('Settings saved')}>
-                            Save Configuration
+                        <Button className="w-full" onClick={handleSaveSettings} disabled={saving}>
+                            {saving ? 'Saving…' : 'Save Configuration'}
                         </Button>
                     </div>
                 </Card>
@@ -240,9 +276,9 @@ export default function ChatbotAdminPage() {
                                 required
                             />
                         </div>
-                        <Button type="submit" variant="secondary" className="w-full md:w-auto">
+                        <Button type="submit" variant="secondary" className="w-full md:w-auto" disabled={addingKb}>
                             <Plus className="h-4 w-4 mr-2" />
-                            Add to Knowledge Base
+                            {addingKb ? 'Adding…' : 'Add to Knowledge Base'}
                         </Button>
                     </form>
 
@@ -250,6 +286,12 @@ export default function ChatbotAdminPage() {
                     <div className="space-y-4">
                         <h3 className="font-semibold text-sm text-foreground-secondary uppercase tracking-wider">Trained Responses</h3>
                         <div className="grid gap-4">
+                            {kbItems.length === 0 && (
+                                <p className="text-sm text-foreground-secondary py-6 text-center">
+                                    No trained responses yet. Add one above and the assistant will use it
+                                    as the authoritative answer to that question.
+                                </p>
+                            )}
                             {kbItems.map((item) => (
                                 <div key={item.id} className="group flex items-start gap-4 p-4 bg-card border border-border-subtle rounded-xl hover:shadow-md transition-all">
                                     <div className="flex-1">
@@ -259,11 +301,20 @@ export default function ChatbotAdminPage() {
                                         </div>
                                         <p className="text-sm text-foreground-secondary leading-relaxed italic">"{item.answer}"</p>
                                     </div>
+                                    {/* Was opacity-0 until hover, which made it unreachable on any
+                                        touch device and invisible to a keyboard user even while
+                                        focused. It is now always visible on small screens, and on
+                                        pointer devices it still fades in on hover but also appears
+                                        whenever it takes focus. */}
                                     <button
+                                        type="button"
                                         onClick={() => handleDeleteKb(item.id)}
-                                        className="opacity-0 group-hover:opacity-100 p-2 text-foreground-muted hover:text-red-500 transition-all"
+                                        aria-label={`Delete knowledge base entry: ${item.question}`}
+                                        className="p-2 text-foreground-muted hover:text-red-500 transition-all rounded
+                                                   sm:opacity-0 group-hover:opacity-100 focus-visible:opacity-100
+                                                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                                     >
-                                        <Trash2 className="h-4 w-4" />
+                                        <Trash2 className="h-4 w-4" aria-hidden="true" />
                                     </button>
                                 </div>
                             ))}
