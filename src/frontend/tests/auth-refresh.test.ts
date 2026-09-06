@@ -116,6 +116,50 @@ describe('token refresh — transient failure', () => {
   });
 });
 
+describe('session error — only terminal failures reach the client', () => {
+  const session = authConfig.callbacks!.session! as unknown as (a: {
+    session: Record<string, unknown>;
+    token: Record<string, unknown>;
+  }) => Record<string, unknown>;
+
+  const blank = () => ({ user: {} as Record<string, unknown> });
+
+  it('does NOT report an error for a transient failure', async () => {
+    // THE deployment bug. A deploy restarts the API; anyone needing a refresh in that window
+    // gets a network or 5xx failure. AuthBridge signs out on session.error, so publishing a
+    // retryable failure here logged every such user out over a blip that lasted seconds.
+    fetchMock.mockResolvedValue(respond(503));
+    const token = await jwt({ token: expiredToken() });
+
+    const result = session({ session: blank(), token });
+
+    expect(token.error).toBe('RefreshAccessTokenError');   // still recorded server-side
+    expect(token.refreshRejected).toBeFalsy();             // and still retryable
+    expect(result.error).toBeUndefined();                  // but NOT terminal for the client
+  });
+
+  it('does NOT report an error for a network failure', async () => {
+    fetchMock.mockRejectedValue(new TypeError('fetch failed'));
+    const token = await jwt({ token: expiredToken() });
+
+    expect(session({ session: blank(), token }).error).toBeUndefined();
+  });
+
+  it('DOES report an error once the backend refuses the token', async () => {
+    // A 401 is final, so the user genuinely must sign in again — that path must keep working.
+    fetchMock.mockResolvedValue(respond(401));
+    const token = await jwt({ token: expiredToken() });
+
+    expect(session({ session: blank(), token }).error).toBe('RefreshAccessTokenError');
+  });
+
+  it('reports no error for a healthy session', () => {
+    const token = { accessToken: 'fresh', accessTokenExpires: Date.now() + 3_600_000 };
+
+    expect(session({ session: blank(), token }).error).toBeUndefined();
+  });
+});
+
 describe('token refresh — healthy session', () => {
   it('reuses a still-valid access token without calling the backend', async () => {
     const token = {

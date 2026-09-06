@@ -254,7 +254,21 @@ export const authConfig: NextAuthConfig = {
         session.user.accessToken = token.accessToken as string | undefined;
         session.user.id = token.sub as string;
       }
-      session.error = token.error as "RefreshAccessTokenError" | undefined;
+      // Surfaced ONLY when the refresh token was actually refused (401/403). AuthBridge treats
+      // this field as terminal and signs the user out, so anything transient must not reach it.
+      //
+      // This is why every deployment logged everyone out. A deploy restarts the API, and any
+      // user whose access token happened to need refreshing during that window got a network or
+      // 5xx failure. refreshAccessToken correctly records that as retryable — it does NOT set
+      // refreshRejected — but this line published the error regardless, AuthBridge saw it and
+      // ended the session. A few seconds later the API was healthy and the refresh token was
+      // still perfectly valid; the user had been signed out over a blip.
+      //
+      // Leaving it undefined for a transient failure keeps the session intact. The jwt callback
+      // retries on the next session read and recovers on its own once the API is back.
+      session.error = (token as AppToken).refreshRejected
+        ? "RefreshAccessTokenError"
+        : undefined;
       return session;
     },
   },
