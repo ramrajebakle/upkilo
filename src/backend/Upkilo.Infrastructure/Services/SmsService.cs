@@ -27,9 +27,32 @@ public class SmsService : ISmsService
 
         _accountSid = _secretProvider.GetSecret("Twilio:AccountSid") ?? configuration["Twilio:AccountSid"] ?? string.Empty;
         _authToken = _secretProvider.GetSecret("Twilio:AuthToken") ?? configuration["Twilio:AuthToken"] ?? string.Empty;
-        _fromNumber = _secretProvider.GetSecret("Twilio:FromNumber") ?? configuration["Twilio:FromNumber"] ?? string.Empty;
 
-        _isEnabled = !string.IsNullOrEmpty(_accountSid) && !string.IsNullOrEmpty(_authToken);
+        // Reads Twilio:PhoneNumber, which is the key that actually exists.
+        //
+        // This read Twilio:FromNumber, and that key was defined NOWHERE - not in appsettings.json,
+        // not in deploy.yml, not in .env.example, not in App Service config. The only occurrence
+        // in the repository was the line reading it. So _fromNumber was the empty string in every
+        // environment, always.
+        //
+        // Twilio:FromNumber is still honoured first so any environment that did set it keeps
+        // working, but the fallback is the key the rest of the system uses.
+        _fromNumber = _secretProvider.GetSecret("Twilio:FromNumber")
+                      ?? configuration["Twilio:FromNumber"]
+                      ?? _secretProvider.GetSecret("Twilio:PhoneNumber")
+                      ?? configuration["Twilio:PhoneNumber"]
+                      ?? string.Empty;
+
+        // The sending number is part of being configured.
+        //
+        // It was excluded, so with credentials present but no number the service reported itself
+        // ENABLED and then called Twilio with from: "". Every send failed at the API, one message
+        // at a time, instead of the service saying plainly that it was not set up. That is the
+        // worse of the two failure modes: WhatsApp, which does check its number, at least refuses
+        // honestly and says why.
+        _isEnabled = !string.IsNullOrEmpty(_accountSid)
+                     && !string.IsNullOrEmpty(_authToken)
+                     && !string.IsNullOrEmpty(_fromNumber);
 
         if (_isEnabled)
         {
@@ -41,7 +64,14 @@ public class SmsService : ISmsService
     {
         if (!_isEnabled)
         {
-            _logger.LogWarning("SMS Service is disabled. Missing Twilio credentials.");
+            // Names the missing piece. "Missing Twilio credentials" sent whoever read it to check
+            // the account SID and auth token, which in production were both present — the actual
+            // gap was the sending number.
+            var missing = string.IsNullOrEmpty(_accountSid) || string.IsNullOrEmpty(_authToken)
+                ? "Twilio:AccountSid / Twilio:AuthToken"
+                : "Twilio:PhoneNumber (sending number)";
+
+            _logger.LogWarning("SMS Service is disabled. Not configured: {Missing}.", missing);
             return new SmsResult(false, null, "SMS Service is disabled");
         }
 

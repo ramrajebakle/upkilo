@@ -534,6 +534,7 @@ jobs:
                 Twilio__AccountSid="${{ secrets.STAGING_TWILIO_ACCOUNT_SID }}" \
                 Twilio__AuthToken="${{ secrets.STAGING_TWILIO_AUTH_TOKEN }}" \
                 Twilio__PhoneNumber="${{ secrets.STAGING_TWILIO_PHONE_NUMBER }}" \
+                Twilio__WhatsAppFromNumber="${{ secrets.STAGING_TWILIO_WHATSAPP_FROM_NUMBER }}" \
                 AzureOpenAI__Endpoint="${{ secrets.AZURE_OPENAI_ENDPOINT }}" \
                 AzureOpenAI__ApiKey="${{ secrets.AZURE_OPENAI_API_KEY }}" \
                 Azure__Storage__ConnectionString="${{ secrets.AZURE_STAGING_STORAGE_CONNECTION_STRING }}" \
@@ -1007,6 +1008,7 @@ jobs:
                 Twilio__AccountSid="${{ secrets.TWILIO_ACCOUNT_SID }}" \
                 Twilio__AuthToken="${{ secrets.TWILIO_AUTH_TOKEN }}" \
                 Twilio__PhoneNumber="${{ secrets.TWILIO_PHONE_NUMBER }}" \
+                Twilio__WhatsAppFromNumber="${{ secrets.TWILIO_WHATSAPP_FROM_NUMBER }}" \
                 AzureOpenAI__Endpoint="${{ secrets.AZURE_OPENAI_ENDPOINT }}" \
                 AzureOpenAI__ApiKey="${{ secrets.AZURE_OPENAI_API_KEY }}" \
                 AzureContentSafety__Endpoint="${{ secrets.AZURE_CONTENT_SAFETY_ENDPOINT }}" \
