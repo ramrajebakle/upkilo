@@ -21,6 +21,13 @@ type AppToken = {
   refreshToken?: string;
   accessTokenExpires?: number; // epoch ms
   error?: "RefreshAccessTokenError";
+  /**
+   * Set when the backend REFUSED the refresh token (401/403), as opposed to the request
+   * merely failing. A refusal is final — the same token will be refused again — so the jwt
+   * callback stops retrying. A transient failure leaves this unset and stays retryable, so a
+   * backend blip does not sign everyone out.
+   */
+  refreshRejected?: boolean;
   sub?: string;
   [key: string]: unknown;
 };
@@ -91,13 +98,29 @@ function jwtExpiryMs(jwt?: string): number {
 // The backend accepts the refresh token in the request body (or cookie).
 async function refreshAccessToken(token: AppToken): Promise<AppToken> {
   try {
-    if (!token.refreshToken) throw new Error("no refresh token");
+    if (!token.refreshToken) {
+      // Nothing to exchange, and nothing will change on a later attempt.
+      return { ...token, error: "RefreshAccessTokenError", refreshRejected: true };
+    }
     const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken: token.refreshToken }),
     });
-    if (!res.ok) throw new Error(`refresh failed: ${res.status}`);
+
+    if (!res.ok) {
+      // 401/403 means the backend has judged this refresh token invalid, expired or revoked.
+      // Repeating the identical request cannot change that answer, so it is marked permanent
+      // and never retried. Production logged six of these in 1.4 seconds from one browser:
+      //   SECURITY: AUTH_FAILURE [401] on /api/v1/auth/refresh by User=anonymous
+      // Every session read retried a request that had already been definitively refused.
+      //
+      // Any other status (5xx, gateway, network) is left retryable — a backend blip should
+      // not sign a user out.
+      const rejected = res.status === 401 || res.status === 403;
+      return { ...token, error: "RefreshAccessTokenError", refreshRejected: rejected };
+    }
+
     const data = await res.json();
     if (!data?.token) throw new Error("refresh returned no token");
     return {
@@ -106,9 +129,11 @@ async function refreshAccessToken(token: AppToken): Promise<AppToken> {
       refreshToken: data.refreshToken ?? token.refreshToken,
       accessTokenExpires: jwtExpiryMs(data.token),
       error: undefined,
+      refreshRejected: undefined,
     };
   } catch {
-    // Fail closed — surface the error so the client can force a re-login.
+    // Network or parse failure — transient by assumption, so retryable. Fail closed on the
+    // session either way, so nothing is authorised with a token we could not renew.
     return { ...token, error: "RefreshAccessTokenError" };
   }
 }
@@ -211,6 +236,12 @@ export const authConfig: NextAuthConfig = {
       if (exp && Date.now() < exp - 60_000) {
         return token;
       }
+
+      // The backend has already refused this refresh token. Retrying cannot succeed, and this
+      // callback runs on EVERY session read — so without this guard each read fired another
+      // request that was certain to 401, which is what produced the burst in the server log.
+      // The error stays on the token, so the client still sees it and signs out once.
+      if ((token as AppToken).refreshRejected) return token;
 
       // Expired (or no expiry recorded) — attempt a refresh.
       return (await refreshAccessToken(token as AppToken)) as typeof token;
