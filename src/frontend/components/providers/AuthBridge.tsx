@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { apiClient } from "@/lib/api";
 
@@ -17,6 +17,19 @@ import { apiClient } from "@/lib/api";
 export function AuthBridge() {
   const { data: session, status } = useSession();
 
+  // Signing out is a one-way trip, so it must fire at most once per mount.
+  //
+  // Without this guard it looped until the browser ran out of sockets:
+  //   POST /api/auth/signout net::ERR_INSUFFICIENT_RESOURCES
+  //   Uncaught (in promise) TypeError: Failed to fetch
+  //
+  // useSession hands back a NEW session object on every poll and revalidation, and this effect
+  // depends on `session`, so it re-runs constantly. While the refresh error is set — and it stays
+  // set precisely when the network is failing, which is when signOut itself starts failing too —
+  // every one of those re-runs fired another signOut. The failure was self-sustaining: the worse
+  // the network got, the more requests it made.
+  const signOutStarted = useRef(false);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -25,7 +38,16 @@ export function AuthBridge() {
       localStorage.removeItem("token");
       localStorage.removeItem("tenantId");
       delete apiClient.defaults.headers.common["Authorization"];
-      void signOut({ callbackUrl: "/en/login" });
+
+      if (!signOutStarted.current) {
+        signOutStarted.current = true;
+        // Redirect explicitly rather than trusting callbackUrl: if the signOut request itself
+        // fails, the user would otherwise sit on a dead page with a session that can never
+        // recover, which is exactly the state that fed the loop.
+        void signOut({ callbackUrl: "/en/login" }).catch(() => {
+          window.location.href = "/en/login";
+        });
+      }
       return;
     }
 
