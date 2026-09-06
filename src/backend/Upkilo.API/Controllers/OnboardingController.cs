@@ -18,6 +18,12 @@ namespace Upkilo.API.Controllers;
 [Authorize]
 public class OnboardingController : ControllerBase
 {
+    /// <summary>
+    /// Must track the default assigned by Tenant.PrimaryColor. A tenant still carrying this exact
+    /// value has not touched their branding.
+    /// </summary>
+    private const string DefaultPrimaryColor = "#06B6D4";
+
     private readonly AppDbContext _context;
     private readonly ITenantProvider _tenantProvider;
     private readonly ILogger<OnboardingController> _logger;
@@ -58,6 +64,7 @@ public class OnboardingController : ControllerBase
         var hasStaff = await _context.StaffMembers.AnyAsync(s => s.TenantId == tenantId);
         var hasBookings = await _context.Bookings.AnyAsync(b => b.TenantId == tenantId);
         var hasClients = await _context.Clients.AnyAsync(c => c.TenantId == tenantId);
+        var hasWorkingHours = await _context.StaffWorkingHours.AnyAsync(w => w.TenantId == tenantId);
         var hasUsedAi = await _context.AIUsageLogs.AnyAsync(a => a.TenantId == tenantId);
         DateTime? firstAiUsedAt = hasUsedAi
             ? await _context.AIUsageLogs
@@ -66,7 +73,16 @@ public class OnboardingController : ControllerBase
             : null;
 
         // Update auto-detected steps
-        if (!progress.BusinessProfileCompleted && tenant?.BusinessType != null)
+        //
+        // This used to test tenant.BusinessType, which nothing in the product ever writes —
+        // SettingsController.UpdateBusinessSettings puts the submitted business type into
+        // tenant.Industry, and reads it back as `Industry ?? BusinessType`. So saving the business
+        // profile did not complete the step, and because the checklist UI gates each step on the
+        // one before it, step 1 failing left all nine permanently locked. Reading the same
+        // `Industry ?? BusinessType` pair the settings screen does keeps detection and persistence
+        // on the same field. BusinessType stays in the check for tenants seeded before the split.
+        if (!progress.BusinessProfileCompleted &&
+            !string.IsNullOrWhiteSpace(tenant?.Industry ?? tenant?.BusinessType))
         {
             progress.BusinessProfileCompleted = true;
             progress.BusinessProfileCompletedAt = DateTime.UtcNow;
@@ -92,7 +108,37 @@ public class OnboardingController : ControllerBase
             progress.ClientsImportedAt = DateTime.UtcNow;
         }
 
-        await _context.SaveChangesAsync();
+        // The three steps below had no detection at all and no caller for the manual
+        // /complete endpoint either — api.onboarding.completeStep is defined in the frontend
+        // client and invoked from nowhere. So working_hours, booking_page and payment_setup
+        // could not be completed by any means, and the checklist could never reach 100%.
+        if (!progress.WorkingHoursCompleted && hasWorkingHours)
+        {
+            progress.WorkingHoursCompleted = true;
+            progress.WorkingHoursCompletedAt = DateTime.UtcNow;
+        }
+        // Branding counts as customised once a logo is uploaded or the colour moves off the
+        // stock default declared on Tenant.PrimaryColor.
+        if (!progress.BookingPageCustomized &&
+            (!string.IsNullOrWhiteSpace(tenant?.LogoUrl) ||
+             (tenant != null && !string.Equals(tenant.PrimaryColor, DefaultPrimaryColor, StringComparison.OrdinalIgnoreCase))))
+        {
+            progress.BookingPageCustomized = true;
+            progress.BookingPageCustomizedAt = DateTime.UtcNow;
+        }
+        // StripeConnectId is set by PaymentService when the Connect onboarding returns, which is
+        // the point at which the tenant can actually take money.
+        if (!progress.PaymentSetupCompleted && !string.IsNullOrWhiteSpace(tenant?.StripeConnectId))
+        {
+            progress.PaymentSetupCompleted = true;
+            progress.PaymentSetupCompletedAt = DateTime.UtcNow;
+        }
+
+        // Guarded because this is a GET. Registration now creates the progress row, and every
+        // block above is a no-op once its step is done, so the steady state for this endpoint is
+        // "nothing changed" — it was issuing a write on every poll of the dashboard checklist.
+        if (_context.ChangeTracker.HasChanges())
+            await _context.SaveChangesAsync();
 
         var steps = new[]
         {
@@ -101,10 +147,12 @@ public class OnboardingController : ControllerBase
                   order = 1, completed = progress.BusinessProfileCompleted,
                   completedAt = progress.BusinessProfileCompletedAt, route = "/settings/business" },
 
+            // /settings/scheduling does not exist and never did — the page that actually writes
+            // working hours is /staff/schedule, which calls PUT /schedule/staff/{id}/working-hours.
             new { id = "working_hours", title = "Set Working Hours",
                   description = "Define your business hours and staff availability.",
                   order = 2, completed = progress.WorkingHoursCompleted,
-                  completedAt = progress.WorkingHoursCompletedAt, route = "/settings/scheduling" },
+                  completedAt = progress.WorkingHoursCompletedAt, route = "/staff/schedule" },
 
             new { id = "add_services", title = "Add Your Services",
                   description = "Create the services you offer with pricing and duration.",
@@ -116,10 +164,12 @@ public class OnboardingController : ControllerBase
                   order = 4, completed = progress.StaffAdded,
                   completedAt = progress.StaffAddedAt, route = "/staff" },
 
+            // Was /settings/booking-page, which does not exist. Branding is where the logo and
+            // primary colour are actually edited.
             new { id = "booking_page", title = "Customize Booking Page",
                   description = "Personalize your public booking page with your brand colors and logo.",
                   order = 5, completed = progress.BookingPageCustomized,
-                  completedAt = progress.BookingPageCustomizedAt, route = "/settings/booking-page" },
+                  completedAt = progress.BookingPageCustomizedAt, route = "/settings/branding" },
 
             new { id = "payment_setup", title = "Connect Payment Method",
                   description = "Set up Stripe to accept online payments.",
@@ -194,14 +244,14 @@ public class OnboardingController : ControllerBase
         return Ok(new { stepId, completedAt = now, message = $"Step '{stepId}' completed" });
     }
 
-    /// <summary>
-    /// Skip an onboarding step
-    /// </summary>
-    [HttpPost("checklist/{stepId}/skip")]
-    public IActionResult SkipStep(string stepId)
-    {
-        return Ok(new { stepId, skippedAt = DateTime.UtcNow, message = $"Step '{stepId}' skipped" });
-    }
+    // The per-step "skip" endpoint was removed. It never persisted anything —
+    // TenantOnboardingProgress has no skipped flag — so it returned 200 for work it had not
+    // done, and it had no caller in this repo or the frontend client.
+    //
+    // Nor is it wanted now: every step auto-detects from real data, so a skip flag would have to
+    // fight that detection (skip "add staff", then hire someone, and the checklist has to
+    // arbitrate). The escape hatch people actually want already exists and works — POST /dismiss
+    // hides the whole checklist.
 
     /// <summary>
     /// Get sample data templates

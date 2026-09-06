@@ -274,6 +274,319 @@ public class AuthServiceTests : IDisposable
         context.Tenants.Should().Contain(t => t.Name == "New Co");
     }
 
+    /// <summary>
+    /// Seeds the pricing catalogue signup resolves against. PricingSeeder does this at startup in
+    /// production; the test DB starts empty.
+    ///
+    /// Growth matters here specifically: it is the default trial plan (Trial:PlanName), and if it
+    /// is absent ResolveTrialPlanAsync falls back to Free — which silently turns a "did the trial
+    /// grant Growth?" assertion into a "did it grant Free?" assertion that passes for the wrong
+    /// reason.
+    /// </summary>
+    private async Task<(PricingPlan Free, PricingPlan Starter, PricingPlan Growth)> SeedPricingPlansAsync()
+    {
+        var context = _dbFactory.CreateContext();
+        var free = new PricingPlan { Id = Guid.NewGuid(), Name = "Free", Description = "Free plan", IsActive = true, TrialDays = 14 };
+        var starter = new PricingPlan { Id = Guid.NewGuid(), Name = "Starter", Description = "Starter plan", IsActive = true, TrialDays = 14 };
+        var growth = new PricingPlan { Id = Guid.NewGuid(), Name = "Growth", Description = "Growth plan", IsActive = true, TrialDays = 14 };
+        context.PricingPlans.AddRange(free, starter, growth);
+        await context.SaveChangesAsync();
+        return (free, starter, growth);
+    }
+
+    /// <summary>
+    /// Tenant.SubscriptionTier and Tenant.PricingPlanId are the columns AiModelResolver,
+    /// JobQuotaService and TenantRateLimitMiddleware actually gate on. Registration used to
+    /// leave both at their entity defaults — SubscriptionTier defaults to Starter — so the tenant
+    /// was gated against a plan nobody had chosen.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_SetsTenantPlanColumnsToFreeUntilVerified()
+    {
+        var plans = await SeedPricingPlansAsync();
+        var request = new RegisterRequest("plancols@example.com", "StrongP@ss1!", "Plan", "Cols", "Plan Co", null);
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var tenant = await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Name == "Plan Co");
+        tenant.SubscriptionTier.Should().Be(SubscriptionTier.Free);
+        tenant.PricingPlanId.Should().Be(plans.Free.Id);
+    }
+
+    /// <summary>
+    /// Pulls the one-time token out of the verification email the mock captured, which is the only
+    /// place it exists in plaintext — the DB stores a hash.
+    /// </summary>
+    private string CapturedVerificationToken()
+    {
+        var body = _emailService.Invocations
+            .Where(i => i.Method.Name == nameof(IEmailService.SendSecurityEmailAsync))
+            .Select(i => i.Arguments[2]?.ToString() ?? string.Empty)
+            .LastOrDefault(b => b.Contains("verify-email?token="));
+
+        body.Should().NotBeNull("a verification email should have been sent");
+        return System.Text.RegularExpressions.Regex.Match(body!, @"verify-email\?token=([^&""]+)").Groups[1].Value;
+    }
+
+    /// <summary>
+    /// The reverse trial: every signup starts on the top plan for TrialDays, then lands on Free.
+    /// All of this machinery pre-existed — TrialEndsAt, SubscriptionStatus.Trialing,
+    /// PricingPlan.TrialDays, UpsellTriggerService's trial_ending trigger — and was completely
+    /// inert because nothing ever set TrialEndsAt.
+    /// </summary>
+    /// <summary>
+    /// The trial is the expensive grant — top plan plus an AI budget — so it is gated on a
+    /// provably real address. Granting it at signup makes unlimited free Growth trials a matter of
+    /// typing a different throwaway address.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_DoesNotStartTheTrialBeforeVerification()
+    {
+        var plans = await SeedPricingPlansAsync();
+        var request = new RegisterRequest("trial@example.com", "StrongP@ss1!", "Tri", "Al", "Trial Co", null);
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var context = _dbFactory.CreateContext();
+        var tenant = await context.Tenants.FirstAsync(t => t.Name == "Trial Co");
+        var subscription = await context.Subscriptions.FirstAsync(s => s.TenantId == tenant.Id);
+
+        subscription.Status.Should().Be(SubscriptionStatus.Active);
+        subscription.PricingPlanId.Should().Be(plans.Free.Id);
+        tenant.TrialEndsAt.Should().BeNull();
+    }
+
+    /// <summary>
+    /// Verifying is what earns the trial — a carrot rather than a toll. Login is deliberately NOT
+    /// gated, so an email that lands in spam never strands anyone.
+    /// </summary>
+    [Fact]
+    public async Task VerifyEmailAsync_StartsTheTrialOnTheTopPlan()
+    {
+        var plans = await SeedPricingPlansAsync();
+        var request = new RegisterRequest("verifytrial@example.com", "StrongP@ss1!", "Ver", "Ify", "Verify Co", null);
+        (await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent")).Success.Should().BeTrue();
+
+        var (ok, message) = await _sut.VerifyEmailAsync(CapturedVerificationToken());
+
+        ok.Should().BeTrue(because: message);
+        message.Should().Contain("trial has started");
+
+        var context = _dbFactory.CreateContext();
+        var tenant = await context.Tenants.FirstAsync(t => t.Name == "Verify Co");
+        var subscription = await context.Subscriptions.FirstAsync(s => s.TenantId == tenant.Id);
+
+        subscription.Status.Should().Be(SubscriptionStatus.Trialing);
+        subscription.PricingPlanId.Should().Be(plans.Growth.Id);
+        tenant.SubscriptionTier.Should().Be(SubscriptionTier.Growth);
+        tenant.TrialEndsAt.Should().NotBeNull();
+        tenant.TrialEndsAt!.Value.Should().BeCloseTo(DateTime.UtcNow.AddDays(14), TimeSpan.FromMinutes(5));
+    }
+
+    /// <summary>
+    /// TrialEndsAt survives expiry as the record that a trial happened, and it doubles as the
+    /// guard stopping a second one being farmed by re-verifying.
+    /// </summary>
+    [Fact]
+    public async Task VerifyEmailAsync_CannotStartASecondTrial()
+    {
+        await SeedPricingPlansAsync();
+        var request = new RegisterRequest("twice@example.com", "StrongP@ss1!", "Twi", "Ce", "Twice Co", null);
+        (await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent")).Success.Should().BeTrue();
+
+        (await _sut.VerifyEmailAsync(CapturedVerificationToken())).Success.Should().BeTrue();
+
+        var firstEnd = (await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Name == "Twice Co")).TrialEndsAt;
+        firstEnd.Should().NotBeNull();
+
+        // Issue and redeem a fresh token for the same user.
+        var user = await _dbFactory.CreateContext().Users.FirstAsync(u => u.Email == "twice@example.com");
+        await _sut.SendEmailVerificationAsync(user.Id);
+        await _sut.VerifyEmailAsync(CapturedVerificationToken());
+
+        var after = await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Name == "Twice Co");
+        after.TrialEndsAt.Should().Be(firstEnd);
+    }
+
+    /// <summary>
+    /// BillingController carries a class-level [Authorize(Roles = "Owner")] and the Stripe Connect
+    /// endpoints are Owner-only too. Signup assigned Admin, and no signup path anywhere ever
+    /// created an Owner — so the founder of every self-service tenant could not open billing,
+    /// could not connect Stripe, and could not create a checkout session to pay us.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_MakesTheFounderTheOwner()
+    {
+        await SeedPricingPlansAsync();
+        var request = new RegisterRequest("founder@example.com", "StrongP@ss1!", "Found", "Er", "Founder Co", null);
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var user = await _dbFactory.CreateContext().Users.FirstAsync(u => u.Email == "founder@example.com");
+        user.Role.Should().Be(UserRole.Owner);
+    }
+
+    /// <summary>
+    /// OnboardingDripJob skips any tenant with no Tenant.Email, and CreateStripeCustomerAsync
+    /// sends it to Stripe. Registration only ever set User.Email, so both were operating on null.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_SetsTenantEmail()
+    {
+        await SeedPricingPlansAsync();
+        var request = new RegisterRequest("TenantMail@Example.com", "StrongP@ss1!", "Tenant", "Mail", "Mail Co", null);
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var tenant = await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Name == "Mail Co");
+        tenant.Email.Should().Be("tenantmail@example.com");
+    }
+
+    /// <summary>
+    /// The progress row used to be created lazily by GET /onboarding/checklist, so its CreatedAt
+    /// meant "first opened the dashboard" rather than "signed up" — and a tenant who never came
+    /// back had no row at all, which is precisely who the 7-day drip is meant to reach.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_CreatesOnboardingProgressRow()
+    {
+        await SeedPricingPlansAsync();
+        var request = new RegisterRequest("progress@example.com", "StrongP@ss1!", "Prog", "Ress", "Progress Co", null);
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var context = _dbFactory.CreateContext();
+        var tenant = await context.Tenants.FirstAsync(t => t.Name == "Progress Co");
+        var user = await context.Users.FirstAsync(u => u.Email == "progress@example.com");
+
+        var progress = await context.Set<TenantOnboardingProgress>()
+            .SingleAsync(p => p.TenantId == tenant.Id);
+        progress.UserId.Should().Be(user.Id);
+    }
+
+    /// <summary>
+    /// The slug is the public booking URL (/book/{slug}). It was built with
+    /// companyName.ToLower().Replace(" ", "-"), which handles spaces and nothing else — so an
+    /// ampersand, a dot or a slash went straight into the route.
+    /// </summary>
+    [Theory]
+    [InlineData("Café & Co. / Ltd")]
+    [InlineData("  Acme  ")]
+    [InlineData("北京")]
+    [InlineData("!!!")]
+    public async Task RegisterAsync_ProducesUrlSafeSlug(string companyName)
+    {
+        await SeedPricingPlansAsync();
+        var email = $"slug{Math.Abs(companyName.GetHashCode())}@example.com";
+        var request = new RegisterRequest(email, "StrongP@ss1!", "Slug", "Test", companyName, null);
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var user = await _dbFactory.CreateContext().Users.FirstAsync(u => u.Email == email);
+        var tenant = await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Id == user.TenantId);
+
+        tenant.Slug.Should().MatchRegex("^[a-z0-9]+(-[a-z0-9]+)*$");
+        tenant.Slug.Should().NotStartWith("-").And.NotEndWith("-");
+    }
+
+    /// <summary>
+    /// `companyName ?? firstName` does not catch the empty string, so an API caller omitting a
+    /// company name got a tenant literally named "" and a slug of just the random suffix.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_BlankCompanyName_FallsBackToAPersonalOrgName()
+    {
+        await SeedPricingPlansAsync();
+        var request = new RegisterRequest("blankco@example.com", "StrongP@ss1!", "Jane", "Doe", "   ", null);
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var user = await _dbFactory.CreateContext().Users.FirstAsync(u => u.Email == "blankco@example.com");
+        var tenant = await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Id == user.TenantId);
+
+        tenant.Name.Should().NotBeNullOrWhiteSpace();
+        tenant.Name.Should().Contain("Jane");
+    }
+
+    /// <summary>
+    /// Marketing pricing pages link to /register?plan=starter — a plan NAME, which a Guid PlanId
+    /// could never resolve, so the intent was discarded at the last step of the funnel.
+    ///
+    /// Under the reverse trial that name no longer selects the subscription — everyone trials the
+    /// top plan — so it is recorded as intent, for the upgrade CTA to pre-select later.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_RecordsTheRequestedPlanAsIntentAndStillTrialsTheTopPlan()
+    {
+        var plans = await SeedPricingPlansAsync();
+        var request = new RegisterRequest("byname@example.com", "StrongP@ss1!", "By", "Name", "Byname Co", null, "starter");
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var tenant = await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Name == "Byname Co");
+
+        tenant.PricingPlanId.Should().Be(plans.Free.Id);
+        tenant.Metadata.Should().ContainKey("intended_plan");
+        tenant.Metadata["intended_plan"].ToString().Should().Be("Starter");
+    }
+
+    /// <summary>
+    /// An unrecognised plan name must not fail the signup, and must not be recorded as intent —
+    /// the trial proceeds normally.
+    /// </summary>
+    [Fact]
+    public async Task RegisterAsync_UnknownPlanName_IsIgnoredAndTrialStillStarts()
+    {
+        var plans = await SeedPricingPlansAsync();
+        var request = new RegisterRequest("badplan@example.com", "StrongP@ss1!", "Bad", "Plan", "Badplan Co", null, "enterprise-plus");
+
+        var result = await _sut.RegisterAsync(request, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var tenant = await _dbFactory.CreateContext().Tenants.FirstAsync(t => t.Name == "Badplan Co");
+        tenant.PricingPlanId.Should().Be(plans.Free.Id);
+        tenant.Metadata.Should().NotContainKey("intended_plan");
+    }
+
+    /// <summary>
+    /// Subscription.AiMonthlyBudget defaults to 0 and the entity documents "&lt;=0 means no
+    /// access". Password signup sets $5; social signup never did, so Google/Apple signups were
+    /// locked out of AI from the first login.
+    /// </summary>
+    [Fact]
+    public async Task SocialLoginAsync_NewUser_ProvisionsSameAsPasswordSignup()
+    {
+        var plans = await SeedPricingPlansAsync();
+
+        var result = await _sut.SocialLoginAsync("parity@example.com", "Par", "Ity", "Google", null, "127.0.0.1", "TestAgent");
+        result.Success.Should().BeTrue(because: result.Message);
+
+        var context = _dbFactory.CreateContext();
+        var user = await context.Users.FirstAsync(u => u.Email == "parity@example.com");
+        var tenant = await context.Tenants.FirstAsync(t => t.Id == user.TenantId);
+        var subscription = await context.Subscriptions.FirstAsync(s => s.TenantId == tenant.Id);
+
+        subscription.AiMonthlyBudget.Should().BeGreaterThan(0m);
+        // A Google signup and an email signup must get the same product, trial included.
+        subscription.PricingPlanId.Should().Be(plans.Growth.Id);
+        subscription.Status.Should().Be(SubscriptionStatus.Trialing);
+        tenant.Email.Should().Be("parity@example.com");
+        tenant.PricingPlanId.Should().Be(plans.Growth.Id);
+        tenant.SubscriptionTier.Should().Be(SubscriptionTier.Growth);
+        tenant.TrialEndsAt.Should().NotBeNull();
+        tenant.Slug.Should().MatchRegex("^[a-z0-9]+(-[a-z0-9]+)*$");
+        (await context.Set<TenantOnboardingProgress>().CountAsync(p => p.TenantId == tenant.Id))
+            .Should().Be(1);
+    }
+
     [Fact]
     public async Task RegisterAsync_ValidationFailure_ReturnsFailure()
     {
@@ -299,6 +612,12 @@ public class AuthServiceTests : IDisposable
     [Fact]
     public async Task SocialLoginAsync_NewUser_CreatesTenantAndUserAndReturnsSuccess()
     {
+        // Arrange
+        // Social signup now throws on a missing Free plan rather than writing a subscription with
+        // a null PricingPlanId, matching RegisterAsync. PricingSeeder guarantees the plan in
+        // production; seed it here as the other provisioning tests do.
+        await SeedPricingPlansAsync();
+
         // Act
         var result = await _sut.SocialLoginAsync("social@example.com", "Social", "User", "Google", "http://avatar", "127.0.0.1", "TestAgent");
 

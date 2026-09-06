@@ -22,6 +22,7 @@ import { NotificationCenter } from '@/components/NotificationCenter';
 import { GlobalSearch } from '@/components/GlobalSearch';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
+import { TrialBanner } from '@/components/billing/TrialBanner';
 import { ProductTour } from '@/components/onboarding/ProductTour';
 import { useTranslations } from 'next-intl';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
@@ -609,6 +610,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </header>
 
                     <main id="main-content" tabIndex={-1} className="p-4 lg:p-8 min-h-[calc(100vh-4rem)] focus:outline-none">
+                        {/* Above the setup checklist: the trial deadline is time-bound and the
+                            checklist is not, so it gets first read. Renders nothing at all when
+                            the tenant is not on a trial. */}
+                        <TrialBanner />
                         <OnboardingWizard />
                         <ProductTour />
                         {children}

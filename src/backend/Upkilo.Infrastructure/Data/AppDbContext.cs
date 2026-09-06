@@ -1109,6 +1109,15 @@ public class AppDbContext : DbContext
             .HasIndex(t => t.Token).IsUnique()
             .HasDatabaseName("IX_EmailVerificationTokens_Token");
 
+        // Onboarding progress is one row per tenant, but nothing enforced that. GET
+        // /onboarding/checklist did get-or-create through FirstOrDefaultAsync, so two concurrent
+        // first page loads each saw no row and each inserted one — after which progress was read
+        // back from whichever row the query happened to return, and completed steps appeared to
+        // reset. Registration now creates the row up front; this makes a second one impossible.
+        modelBuilder.Entity<TenantOnboardingProgress>()
+            .HasIndex(p => p.TenantId).IsUnique()
+            .HasDatabaseName("IX_OnboardingProgress_TenantId");
+
         // Users: cross-tenant email lookup (login, forgot-password by email only, not scoped to tenant).
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)

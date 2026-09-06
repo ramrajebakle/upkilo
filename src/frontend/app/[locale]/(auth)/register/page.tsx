@@ -1,31 +1,68 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import { useRouter, Link } from "@/navigation";
-import { UserPlus, Sparkles, Building2, ShieldCheck } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { UserPlus, Sparkles, Building2, ShieldCheck, Check, X } from "lucide-react";
 
-function getPasswordStrength(pw: string): { score: 0 | 1 | 2 | 3 | 4; label: string; color: string } {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[0-9]/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  const levels = [
-    { label: '', color: 'bg-gray-200' },
-    { label: 'Weak', color: 'bg-red-500' },
-    { label: 'Fair', color: 'bg-amber-500' },
-    { label: 'Good', color: 'bg-blue-500' },
-    { label: 'Strong', color: 'bg-emerald-500' },
-  ];
-  return { score: score as 0|1|2|3|4, ...levels[score] };
+/**
+ * Mirrors RegisterRequestValidator on the server, rule for rule.
+ *
+ * It used to score length, uppercase, digit and symbol — but not lowercase, which the server
+ * requires. So "PASSWORD1!" was rated "Strong" in green and then rejected on submit, which is a
+ * poor thing to do to someone on their first screen. The unmet rules are now listed rather than
+ * summarised into a single bar, so a rejection is never a surprise.
+ */
+const PASSWORD_RULES: { id: string; label: string; test: (pw: string) => boolean }[] = [
+  { id: "length", label: "At least 8 characters", test: (pw) => pw.length >= 8 },
+  { id: "upper", label: "One uppercase letter", test: (pw) => /[A-Z]/.test(pw) },
+  { id: "lower", label: "One lowercase letter", test: (pw) => /[a-z]/.test(pw) },
+  { id: "number", label: "One number", test: (pw) => /[0-9]/.test(pw) },
+  { id: "special", label: "One special character", test: (pw) => /[^a-zA-Z0-9]/.test(pw) },
+];
+
+const STRENGTH_LEVELS = [
+  { label: "", color: "bg-gray-200" },
+  { label: "Very weak", color: "bg-red-500" },
+  { label: "Weak", color: "bg-red-500" },
+  { label: "Fair", color: "bg-amber-500" },
+  { label: "Good", color: "bg-blue-500" },
+  { label: "Strong", color: "bg-emerald-500" },
+];
+
+function getPasswordStrength(pw: string) {
+  const passed = PASSWORD_RULES.filter((r) => r.test(pw));
+  return {
+    score: passed.length,
+    total: PASSWORD_RULES.length,
+    meetsServerRules: passed.length === PASSWORD_RULES.length,
+    ...STRENGTH_LEVELS[passed.length],
+  };
 }
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+
+/**
+ * Attribution keys the server accepts (AuthService.AllowedAttributionKeys). The marketing site
+ * links here with these already set — /register?plan=starter&locale=en-AU from the country
+ * pages, ?vertical=medical-spa from the vertical pages, and a full utm_* chain from the
+ * Powered-by-Upkilo widget — but this page read no query parameters whatsoever, so all of it was
+ * dropped at the final step of the funnel.
+ */
+const ATTRIBUTION_KEYS = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_content",
+  "utm_term",
+  "vertical",
+] as const;
+
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { api } from "@/lib/api";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -35,6 +72,24 @@ export default function RegisterPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Plan name, not id: the pricing pages link with ?plan=starter. The server resolves the name
+  // case-insensitively and falls back to Free if it does not recognise it.
+  const planName = searchParams?.get("plan") ?? undefined;
+
+  const attribution = useMemo(() => {
+    const collected: Record<string, string> = {};
+    for (const key of ATTRIBUTION_KEYS) {
+      const value = searchParams?.get(key);
+      if (value) collected[key] = value;
+    }
+    if (typeof document !== "undefined" && document.referrer) {
+      collected.referrer = document.referrer;
+    }
+    return Object.keys(collected).length > 0 ? collected : undefined;
+  }, [searchParams]);
+
+  const strength = getPasswordStrength(formData.password);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +101,9 @@ export default function RegisterPage() {
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        companyName: formData.company // Note: DB schema maps it to companyName
+        companyName: formData.company, // Note: DB schema maps it to companyName
+        planName,
+        attribution,
       });
       // Redirect to login with next=/onboarding so after sign-in the user goes through setup
       const message = response.data?.message || "Account created! Sign in to get started.";
@@ -176,27 +233,44 @@ export default function RegisterPage() {
                   className="shadow-sm"
                   aria-describedby="password-strength"
                 />
-                {formData.password.length > 0 && (() => {
-                  const strength = getPasswordStrength(formData.password);
-                  return (
-                    <div id="password-strength" className="mt-2" aria-live="polite">
-                      <div className="flex gap-1 mb-1">
-                        {[1, 2, 3, 4].map((i) => (
-                          <div
-                            key={i}
-                            className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= strength.score ? strength.color : 'bg-gray-200'}`}
-                          />
-                        ))}
-                      </div>
-                      {strength.label && (
-                        <p className={`text-xs font-medium ${strength.score >= 3 ? 'text-success-fg' : strength.score === 2 ? 'text-blue-600' : 'text-warning-fg'}`}>
-                          <ShieldCheck className="inline w-3 h-3 mr-1" aria-hidden="true" />
-                          {strength.label}
-                        </p>
-                      )}
+                {formData.password.length > 0 && (
+                  <div id="password-strength" className="mt-2" aria-live="polite">
+                    <div className="flex gap-1 mb-1.5">
+                      {PASSWORD_RULES.map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i < strength.score ? strength.color : 'bg-gray-200'}`}
+                        />
+                      ))}
                     </div>
-                  );
-                })()}
+                    {strength.label && (
+                      <p className={`text-xs font-medium mb-1.5 ${strength.meetsServerRules ? 'text-success-fg' : strength.score >= 3 ? 'text-blue-600' : 'text-warning-fg'}`}>
+                        <ShieldCheck className="inline w-3 h-3 mr-1" aria-hidden="true" />
+                        {strength.label}
+                      </p>
+                    )}
+                    {/* Every rule the server enforces, shown individually. A single bar could
+                        read "Strong" while a required rule was still unmet. */}
+                    {!strength.meetsServerRules && (
+                      <ul className="space-y-0.5 list-none p-0 m-0">
+                        {PASSWORD_RULES.map((rule) => {
+                          const passed = rule.test(formData.password);
+                          return (
+                            <li
+                              key={rule.id}
+                              className={`flex items-center gap-1.5 text-xs ${passed ? 'text-success-fg' : 'text-muted-foreground'}`}
+                            >
+                              {passed
+                                ? <Check className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
+                                : <X className="w-3 h-3 flex-shrink-0" aria-hidden="true" />}
+                              <span>{rule.label}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
               
               <div className="pt-2">
@@ -240,5 +314,18 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * useSearchParams opts the subtree into client-side rendering, so Next requires a Suspense
+ * boundary around it or the whole route falls back to dynamic rendering at build time.
+ * Same pattern as the verify-email page.
+ */
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <RegisterForm />
+    </Suspense>
   );
 }

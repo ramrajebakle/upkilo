@@ -59,12 +59,22 @@ type Stat = {
   shadow: string;
 };
 
+/**
+ * Coerces a possibly-absent numeric field to 0.
+ *
+ * Every stat below indexes straight into the API payload, so a response missing any one of these
+ * six fields threw inside Intl formatting and took the WHOLE dashboard to its error boundary —
+ * "Something went wrong" in place of the page, over one absent number. A partial payload should
+ * cost you that tile's value, not the screen.
+ */
+const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+
 function buildStats(d: DashboardData, conversion: number): Stat[] {
   return [
     {
       label: "Today's Revenue",
-      value: currency.format(d.todayRevenue),
-      delta: d.revenueChange,
+      value: currency.format(num(d.todayRevenue)),
+      delta: num(d.revenueChange),
       deltaLabel: "vs yesterday",
       icon: DollarSign,
       gradient: "from-emerald-500 to-emerald-700",
@@ -72,7 +82,7 @@ function buildStats(d: DashboardData, conversion: number): Stat[] {
     },
     {
       label: "Active Clients",
-      value: compactNumber.format(d.activeClients),
+      value: compactNumber.format(num(d.activeClients)),
       delta: 0,
       deltaLabel: "total",
       icon: Users,
@@ -81,9 +91,9 @@ function buildStats(d: DashboardData, conversion: number): Stat[] {
     },
     {
       label: "Upcoming Today",
-      value: d.upcomingToday.toString(),
-      delta: d.bookingsChange,
-      deltaLabel: `${d.pendingBookings} pending`,
+      value: num(d.upcomingToday).toString(),
+      delta: num(d.bookingsChange),
+      deltaLabel: `${num(d.pendingBookings)} pending`,
       icon: Calendar,
       gradient: "from-primary-500 to-primary-700",
       shadow: "shadow-primary-500/25",

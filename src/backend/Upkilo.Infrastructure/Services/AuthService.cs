@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Upkilo.Core.Entities;
@@ -278,10 +279,23 @@ public class AuthService : IAuthService
         user.UpdatedAt = DateTime.UtcNow;
         verificationToken.UsedAt = DateTime.UtcNow;
 
+        // Verification is what earns the trial. Registration puts the tenant on Free precisely so
+        // that the expensive plan is gated behind a provably real address — otherwise unlimited
+        // Growth trials cost nothing more than a throwaway inbox.
+        var trialStarted = false;
+        var tenant = await _context.Tenants
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(t => t.Id == user.TenantId);
+
+        if (tenant != null)
+            trialStarted = await TryStartTrialAsync(tenant);
+
         await _context.SaveChangesAsync();
         _logger.LogInformation("Email verified for user: {UserId}", user.Id);
 
-        return (true, "Email has been verified successfully");
+        return trialStarted
+            ? (true, "Email verified — your free trial has started.")
+            : (true, "Email has been verified successfully");
     }
 
     public (bool IsValid, string[] Errors) ValidatePasswordStrength(string password)
@@ -529,13 +543,27 @@ public class AuthService : IAuthService
         // Read from config so the limit can differ per environment without code changes.
         // Production default: 5 attempts/hour. Development default: 50.
         var maxAttempts = _configuration.GetValue<int>("Auth:RegistrationMaxAttemptsPerHour", 10);
-        if (!string.IsNullOrEmpty(regCountStr) && int.TryParse(regCountStr, out var count) && count >= maxAttempts)
+        var attemptCount = int.TryParse(regCountStr, out var parsedCount) ? parsedCount : 0;
+        if (attemptCount >= maxAttempts)
         {
             _logger.LogWarning("Registration rate limit exceeded for IP: {Ip}", ipAddress);
             _siemLoggingService.LogSecurityEvent("RegistrationRateLimitExceeded", $"IP: {ipAddress}", SecurityEventSeverity.Medium);
             _metrics.RecordRegistrationAttempt("rate_limited");
             return new AuthResult { Success = false, Message = "Too many registration attempts. Please try again later." };
         }
+
+        // Counted HERE, not on the success path where this used to live. An attempt is an attempt:
+        // the limit exists to stop bot floods, and a flood is overwhelmingly failed attempts —
+        // malformed payloads, weak passwords, and the duplicate-email fast path, every one of
+        // which returned before ever reaching the old increment. The counter therefore only ever
+        // saw completed registrations, which is the one case that is not abuse.
+        //
+        // Still read-then-write, so two simultaneous requests from one IP can share a slot. That
+        // is a rounding error against a per-hour budget, and closing it properly means reaching
+        // past IDistributedCache to a raw Redis INCR — not worth the coupling here. The ASP.NET
+        // "auth" rate limiter on the endpoint is the tighter, per-second guard.
+        await _cache.SetStringAsync(rateLimitKey, (attemptCount + 1).ToString(),
+            new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1) });
 
         // 2. FluentValidation
         var validationResult = await _registerValidator.ValidateAsync(request);
@@ -585,14 +613,31 @@ public class AuthService : IAuthService
             try
             {
                 // 5. Create Tenant & User
+                //
+                // `companyName ?? firstName` does not catch the empty string, and CompanyName is
+                // only length-checked by the validator. An API caller omitting it therefore got a
+                // tenant literally named "" and a slug that was nothing but the random suffix.
+                var orgName = string.IsNullOrWhiteSpace(companyName)
+                    ? $"{firstName.Trim()}'s Organization"
+                    : companyName.Trim();
+
                 var tenant = new Tenant
                 {
                     Id = Guid.NewGuid(),
-                    Name = companyName ?? $"{firstName}'s Organization",
-                    Slug = (companyName ?? firstName).ToLower().Replace(" ", "-") + "-" + Guid.NewGuid().ToString("N")[..4],
+                    Name = orgName,
+                    Slug = await GenerateUniqueSlugAsync(orgName),
+                    // OnboardingDripJob skips any tenant with no Email, and CreateStripeCustomerAsync
+                    // sends this field to Stripe. Registration only ever set User.Email, so the drip
+                    // silently skipped every tenant it was written for.
+                    Email = email.ToLowerInvariant(),
                     Status = TenantStatus.Active,
                     CreatedAt = DateTime.UtcNow
                 };
+
+                var attribution = SanitizeAttribution(request.Attribution);
+                if (attribution.Count > 0)
+                    tenant.Metadata["attribution"] = attribution;
+
                 _context.Tenants.Add(tenant);
 
                 var user = new User
@@ -603,19 +648,51 @@ public class AuthService : IAuthService
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                     FirstName = firstName,
                     LastName = lastName,
-                    Role = UserRole.Admin,
+                    // Owner, not Admin. This person just created the tenant — they own it, and
+                    // Admin is the role for people they later invite to help run it.
+                    //
+                    // It was Admin, and no signup path anywhere ever produced an Owner (only
+                    // AgencyController and the dev seeder did), which locked every self-service
+                    // founder out of their own account: BillingController is [Authorize(Roles =
+                    // "Owner")] in its entirety, so they could not view plans, open the billing
+                    // portal or create a checkout session — they could not pay us. The same
+                    // applies to the Stripe Connect endpoints on PaymentsController, which is the
+                    // "Connect Payment Method" onboarding step, and to RolePermissionService,
+                    // where Owner is the role granted "*".
+                    Role = UserRole.Owner,
                     Status = UserStatus.Active,
+                    // NOTE: EmailVerified is recorded but NOT enforced anywhere. LoginAsync does
+                    // not consult it, no middleware or policy consults it, and the account is
+                    // issued a session immediately below — so an unverified user has full tenant
+                    // admin access, and the verification link only flips this flag. That is a
+                    // deliberate low-friction signup, not an oversight, but it is worth being
+                    // explicit about: if verification is ever meant to gate access, the check
+                    // belongs in LoginAsync and needs a resend path in the UI first, or every
+                    // existing unverified account is locked out on deploy.
                     EmailVerified = false,
                     CreatedAt = DateTime.UtcNow
                 };
                 _context.Users.Add(user);
 
-                // 6. Default Subscription (Trial)
-                var pricingPlan = planId.HasValue
-                    ? await _context.PricingPlans.FindAsync(planId.Value)
-                    : await _context.PricingPlans.FirstOrDefaultAsync(p => p.Name == "Free");
+                // 6. Start on Free. The trial is granted by VerifyEmailAsync, not here.
+                //
+                // The trial is the expensive thing — the top plan plus an AI budget for 14 days —
+                // so it is the thing that has to be earned by proving the address is real.
+                // Granting it at signup makes unlimited free Growth trials a matter of typing a
+                // different throwaway address, and the only barrier is a per-IP registration cap.
+                //
+                // Login is deliberately NOT gated on verification. Gating login would strand
+                // anyone whose email landed in spam: tokens expire after 48h and the resend
+                // endpoint requires a session, so they could neither log in nor request a new
+                // link. It would also lock out every already-unverified account on deploy.
+                //
+                // Verifying is therefore a carrot, not a toll: sign in and look around
+                // immediately, verify to start the trial. It also means the 14 days begin when
+                // the person is actually engaged rather than burning down from a signup they
+                // walked away from.
+                var freePlan = await _context.PricingPlans.FirstOrDefaultAsync(p => p.Name == "Free");
 
-                if (pricingPlan == null)
+                if (freePlan == null)
                 {
                     _logger.LogCritical("No Free pricing plan found in PricingPlans table. Run the seeder before registering users.");
                     throw new InvalidOperationException("Platform is not correctly configured: Free plan is missing. Please contact support.");
@@ -626,18 +703,50 @@ public class AuthService : IAuthService
                     {
                         Id = Guid.NewGuid(),
                         TenantId = tenant.Id,
-                        PricingPlanId = pricingPlan.Id,
+                        PricingPlanId = freePlan.Id,
                         Status = SubscriptionStatus.Active,
                         StartDate = DateTime.UtcNow,
-                        EndDate = DateTime.UtcNow.AddDays(14), // Default 14-day trial
+                        // Free does not expire. StartTrial rewrites this when the trial begins.
+                        EndDate = DateTime.UtcNow.AddYears(100),
                         // R4 fix: set a $5 default AI budget so new tenants aren't silently blocked
-                        // from AI on first login. SyncWithStripeAsync will override this with the
-                        // plan-derived value once Stripe is connected.
+                        // from AI on first login. Subscription.AiMonthlyBudget defaults to 0, and
+                        // the entity documents "<=0 means no access" — so leaving it unset is a
+                        // lockout, not a default. A later plan change resyncs it through
+                        // SubscriptionService.
                         AiMonthlyBudget = 5.00m,
                         CreatedAt = DateTime.UtcNow
                     };
                     _context.Subscriptions.Add(subscription);
                 }
+
+                // Tenant.SubscriptionTier and Tenant.PricingPlanId are a denormalised cache of the
+                // subscription's plan, and they are what AiModelResolver, JobQuotaService and
+                // TenantRateLimitMiddleware actually gate on. Registration used to leave both at
+                // their entity defaults — and SubscriptionTier defaults to Starter — so every new
+                // tenant was rate-limited, quota'd and model-resolved against the wrong plan.
+                // SubscriptionService.SyncTenantPlanColumnsAsync keeps these in step on every later
+                // plan change; this is the one path that creates them.
+                tenant.PricingPlanId = freePlan.Id;
+                tenant.SubscriptionTier = SubscriptionTierMap.FromPlanName(freePlan.Name);
+
+                // The plan the visitor arrived asking for (/register?plan=starter) is recorded as
+                // intent, not granted. The billing screen uses it to pre-select what they were
+                // originally interested in, so the upgrade CTA lands on the plan that brought them
+                // here rather than a generic pricing table.
+                var intendedPlan = await ResolvePricingPlanAsync(planId, request.PlanName, fallbackToFree: false);
+                if (intendedPlan != null && intendedPlan.Id != freePlan.Id)
+                    tenant.Metadata["intended_plan"] = intendedPlan.Name;
+
+                // Created here rather than lazily by GET /onboarding/checklist. Created lazily, the
+                // row's CreatedAt meant "first opened the dashboard" instead of "signed up", and a
+                // tenant who never came back had no row at all — which is exactly the tenant the
+                // 7-day drip exists to reach. Doing it in the transaction also removes the
+                // get-or-create race between two concurrent first page loads.
+                _context.Set<TenantOnboardingProgress>().Add(new TenantOnboardingProgress
+                {
+                    TenantId = tenant.Id,
+                    UserId = user.Id
+                });
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -645,17 +754,11 @@ public class AuthService : IAuthService
                 _logger.LogInformation("New user registered: {Email} for Tenant: {TenantId}", email, tenant.Id);
                 _siemLoggingService.LogSecurityEvent("UserRegistered", $"Email: {email}, Tenant: {tenant.Id}", SecurityEventSeverity.Low);
 
-                // 7. Background: Stripe Customer Creation
-                try
-                {
-                    await _subscriptionService.SyncWithStripeAsync(tenant.Id);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Stripe customer creation failed for {Email}", email);
-                }
-
-
+                // No Stripe call here. This used to invoke SyncWithStripeAsync, which returns at its
+                // first line unless the tenant already has a StripeCustomerId — and registration has
+                // never created one, so it could not do anything. A free signup does not need a
+                // Stripe customer either: CreateSubscriptionAsync creates one lazily the moment the
+                // tenant actually subscribes.
 
                 // 9. Initial Session
                 var sessionId = Guid.NewGuid();
@@ -695,10 +798,8 @@ public class AuthService : IAuthService
                 // Record success metric
                 _metrics.RecordRegistrationAttempt("success");
 
-                // Update rate limit count
-                var currentCount = regCountStr == null ? 0 : int.Parse(regCountStr);
-                await _cache.SetStringAsync(rateLimitKey, (currentCount + 1).ToString(),
-                    new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1) });
+                // The rate-limit counter is incremented at the top of this method, before any
+                // early return, so that failed attempts count too.
 
                 return new AuthResult
                 {
@@ -993,13 +1094,199 @@ public class AuthService : IAuthService
         return true;
     }
 
-    private string GenerateSlug(string name)
+    /// <summary>
+    /// Builds the tenant's public booking slug — this string becomes the /book/{slug} URL, so
+    /// anything that is not URL-safe here becomes a broken route later.
+    ///
+    /// Three things this handles that the previous version did not:
+    ///   - Trimming HYPHENS, not just whitespace. "Acme " collapsed to "acme-", and the random
+    ///     suffix was then appended to give "acme--a1b2".
+    ///   - A name that strips to nothing. "北京" and "!!!" contain no [a-z0-9] at all, so the
+    ///     result was a slug consisting solely of the suffix, with a leading hyphen.
+    ///   - Latin accents, which are transliterated rather than deleted, so "Café" stays "cafe"
+    ///     instead of becoming "caf".
+    ///
+    /// The registration path used to bypass this helper entirely with an inline
+    /// ToLower().Replace(" ", "-"), which handled spaces and nothing else — an ampersand, a dot
+    /// or a slash from the company name went straight into the slug.
+    /// </summary>
+    private static string Slugify(string name)
     {
-        string slug = name.ToLower();
+        // FormD splits accented characters into base letter + combining mark, so dropping the
+        // marks leaves the ASCII letter behind instead of dropping the whole character.
+        var decomposed = (name ?? string.Empty).Normalize(NormalizationForm.FormD);
+        var stripped = new string(decomposed
+            .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+            .ToArray());
+
+        var slug = stripped.ToLowerInvariant();
         slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
-        slug = Regex.Replace(slug, @"\s+", "-").Trim();
-        slug += "-" + Guid.NewGuid().ToString().Substring(0, 4);
-        return slug;
+        slug = Regex.Replace(slug, @"[\s-]+", "-").Trim('-');
+
+        return string.IsNullOrEmpty(slug) ? "tenant" : slug;
+    }
+
+    /// <summary>
+    /// Keys the signup form is allowed to attribute a registration with. Anything else is
+    /// dropped — this data arrives as query parameters on a public page, so it is attacker-
+    /// controlled, and it lands in a jsonb column that is read back into admin screens.
+    /// </summary>
+    private static readonly HashSet<string> AllowedAttributionKeys = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "vertical", "referrer"
+    };
+
+    private const int MaxAttributionValueLength = 200;
+
+    private static Dictionary<string, string> SanitizeAttribution(Dictionary<string, string>? raw)
+    {
+        var clean = new Dictionary<string, string>();
+        if (raw == null) return clean;
+
+        foreach (var (key, value) in raw)
+        {
+            if (!AllowedAttributionKeys.Contains(key)) continue;
+            if (string.IsNullOrWhiteSpace(value)) continue;
+
+            var trimmed = value.Trim();
+            clean[key.ToLowerInvariant()] = trimmed.Length > MaxAttributionValueLength
+                ? trimmed[..MaxAttributionValueLength]
+                : trimmed;
+        }
+
+        return clean;
+    }
+
+    /// <summary>
+    /// Resolves the plan a signup should land on: explicit id first, then a case-insensitive
+    /// name, then Free.
+    ///
+    /// The name arm exists because the marketing pricing pages link to /register?plan=starter.
+    /// That is a plan NAME, and the only plan field on the request was a Guid, so those links
+    /// could never do anything but land on Free. An unrecognised name falls back to Free rather
+    /// than failing the signup — same "guess downward" rule as SubscriptionTierMap, and a
+    /// mistyped marketing link should not cost a registration.
+    /// </summary>
+    private async Task<PricingPlan?> ResolvePricingPlanAsync(Guid? planId, string? planName, bool fallbackToFree = true)
+    {
+        if (planId.HasValue)
+        {
+            var byId = await _context.PricingPlans.FindAsync(planId.Value);
+            if (byId != null) return byId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(planName))
+        {
+            var normalized = planName.Trim();
+            var byName = await _context.PricingPlans
+                .FirstOrDefaultAsync(p => p.IsActive && p.Name.ToLower() == normalized.ToLower());
+            if (byName != null) return byName;
+
+            _logger.LogInformation("Signup requested unknown plan '{PlanName}'", planName);
+        }
+
+        return fallbackToFree
+            ? await _context.PricingPlans.FirstOrDefaultAsync(p => p.Name == "Free")
+            : null;
+    }
+
+    /// <summary>
+    /// Moves a tenant onto the trial plan. Called when the email address is proven — at
+    /// verification for a password signup, immediately for a social signup where the provider has
+    /// already verified it.
+    ///
+    /// Idempotent by way of TrialEndsAt: once a tenant has ever had a trial the field stays set
+    /// (TrialExpiryJob deliberately preserves it as the record that a trial happened), so
+    /// re-verifying, verifying a second user, or a replayed link cannot farm another one.
+    ///
+    /// Does not call SaveChanges — the caller owns the transaction.
+    /// </summary>
+    private async Task<bool> TryStartTrialAsync(Tenant tenant)
+    {
+        if (tenant.TrialEndsAt != null)
+            return false; // already had one
+
+        var trialPlan = await ResolveTrialPlanAsync();
+        if (trialPlan == null)
+        {
+            _logger.LogError("Cannot start trial for tenant {TenantId}: no trial plan resolved", tenant.Id);
+            return false;
+        }
+
+        var trialDays = trialPlan.TrialDays > 0 ? trialPlan.TrialDays : 14;
+        var trialEndsAt = DateTime.UtcNow.AddDays(trialDays);
+
+        var subscription = await _context.Set<Subscription>()
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(s => s.TenantId == tenant.Id && !s.IsDeleted);
+
+        if (subscription == null)
+        {
+            _logger.LogError("Cannot start trial for tenant {TenantId}: no subscription row", tenant.Id);
+            return false;
+        }
+
+        subscription.PricingPlanId = trialPlan.Id;
+        // Trialing, not Active: EntitlementService.IsServiceEntitled admits Trialing so this
+        // grants full access, and it is what TrialExpiryJob keys off to end the trial.
+        subscription.Status = SubscriptionStatus.Trialing;
+        subscription.EndDate = trialEndsAt;
+        subscription.UpdatedAt = DateTime.UtcNow;
+
+        tenant.PricingPlanId = trialPlan.Id;
+        tenant.SubscriptionTier = SubscriptionTierMap.FromPlanName(trialPlan.Name);
+        tenant.TrialEndsAt = trialEndsAt;
+        tenant.UpdatedAt = DateTime.UtcNow;
+
+        _logger.LogInformation(
+            "Trial started for tenant {TenantId} on {PlanName} until {TrialEndsAt}",
+            tenant.Id, trialPlan.Name, trialEndsAt);
+
+        return true;
+    }
+
+    /// <summary>
+    /// The plan every new signup trials. Configurable via Trial:PlanName so the trial tier can be
+    /// changed without a deploy — a pricing decision, not a code one.
+    ///
+    /// Falls back to Free if the configured plan is missing, because handing out a trial the
+    /// catalogue cannot describe is worse than starting someone on Free: the expiry job would find
+    /// nothing to downgrade them to and the billing screen would render an unknown plan.
+    /// </summary>
+    private async Task<PricingPlan?> ResolveTrialPlanAsync()
+    {
+        var configured = _configuration["Trial:PlanName"] ?? "Growth";
+
+        var plan = await _context.PricingPlans
+            .FirstOrDefaultAsync(p => p.IsActive && p.Name.ToLower() == configured.ToLower());
+
+        if (plan != null) return plan;
+
+        _logger.LogError(
+            "Configured trial plan '{PlanName}' not found or inactive; new signups will start on Free",
+            configured);
+
+        return await _context.PricingPlans.FirstOrDefaultAsync(p => p.Name == "Free");
+    }
+
+    /// <summary>
+    /// Slugify plus a collision check. Tenants.Slug carries a unique index, so a duplicate is a
+    /// failed registration rather than a silent overwrite — cheap to avoid, expensive to hit.
+    /// </summary>
+    private async Task<string> GenerateUniqueSlugAsync(string name)
+    {
+        var stem = Slugify(name);
+
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            var candidate = $"{stem}-{Guid.NewGuid():N}"[..Math.Min(stem.Length + 9, 96)];
+            if (!await _context.Tenants.IgnoreQueryFilters().AnyAsync(t => t.Slug == candidate))
+                return candidate;
+        }
+
+        // Five collisions on an 8-hex suffix is not luck running out, it is something wrong.
+        // A full Guid cannot realistically collide, so the registration still completes.
+        return $"{stem}-{Guid.NewGuid():N}";
     }
 
     public async Task<dynamic?> GetCurrentUserAsync(Guid userId)
@@ -1316,11 +1603,18 @@ public class AuthService : IAuthService
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                // This block deliberately mirrors RegisterAsync step 5-6. The two provisioning
+                // paths had already drifted apart once: this one shipped without the $5 AI budget,
+                // without the tenant plan columns, and without a Tenant.Email — so a Google signup
+                // was locked out of AI (AiMonthlyBudget defaults to 0, and "<=0 means no access"),
+                // gated as Starter, and invisible to the onboarding drip.
+                var orgName = $"{firstName.Trim()}'s Organization";
                 var tenant = new Tenant
                 {
                     Id = Guid.NewGuid(),
-                    Name = $"{firstName}'s Organization",
-                    Slug = GenerateSlug(firstName),
+                    Name = orgName,
+                    Slug = await GenerateUniqueSlugAsync(orgName),
+                    Email = email.ToLowerInvariant(),
                     Status = TenantStatus.Active,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -1330,12 +1624,14 @@ public class AuthService : IAuthService
                 {
                     Id = Guid.NewGuid(),
                     TenantId = tenant.Id,
-                    Email = email,
+                    Email = email.ToLowerInvariant(),
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()), // Random password for social users
                     FirstName = firstName,
                     LastName = lastName,
                     AvatarUrl = avatarUrl,
-                    Role = UserRole.Admin,
+                    // Owner for the same reason as RegisterAsync — see the note there. A social
+                    // signup creates a tenant too, so it creates that tenant's owner.
+                    Role = UserRole.Owner,
                     Status = UserStatus.Active,
                     EmailVerified = true, // Social logins have verified emails
                     EmailVerifiedAt = DateTime.UtcNow,
@@ -1344,17 +1640,42 @@ public class AuthService : IAuthService
                 };
                 _context.Users.Add(user);
 
-                // Default Free subscription
-                var freePricingPlan = await _context.PricingPlans.FirstOrDefaultAsync(p => p.Name == "Free");
+                // Same provisioning as RegisterAsync: a Free subscription first, then the trial is
+                // granted on top. Throws on a missing plan rather than writing a subscription with
+                // a null PricingPlanId, which the `?.Id` this replaces did.
+                var freePlan = await _context.PricingPlans.FirstOrDefaultAsync(p => p.Name == "Free");
+                if (freePlan == null)
+                {
+                    _logger.LogCritical("No Free pricing plan found in PricingPlans table. Run the seeder before registering users.");
+                    throw new InvalidOperationException("Platform is not correctly configured: Free plan is missing. Please contact support.");
+                }
+
                 _context.Subscriptions.Add(new Subscription
                 {
                     Id = Guid.NewGuid(),
                     TenantId = tenant.Id,
-                    PricingPlanId = freePricingPlan?.Id,
+                    PricingPlanId = freePlan.Id,
                     Status = SubscriptionStatus.Active,
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddDays(14),
+                    EndDate = DateTime.UtcNow.AddYears(100),
+                    AiMonthlyBudget = 5.00m,
                     CreatedAt = DateTime.UtcNow
+                });
+
+                tenant.PricingPlanId = freePlan.Id;
+                tenant.SubscriptionTier = SubscriptionTierMap.FromPlanName(freePlan.Name);
+
+                // The trial starts here rather than at a verification step, because there isn't
+                // one: the identity provider has already proven the address, which is the whole
+                // reason a password signup has to wait. Requiring a second, redundant verification
+                // would penalise the higher-trust signup path.
+                await _context.SaveChangesAsync();
+                await TryStartTrialAsync(tenant);
+
+                _context.Set<TenantOnboardingProgress>().Add(new TenantOnboardingProgress
+                {
+                    TenantId = tenant.Id,
+                    UserId = user.Id
                 });
 
                 await _context.SaveChangesAsync();
@@ -1362,8 +1683,8 @@ public class AuthService : IAuthService
 
                 _logger.LogInformation("Social signup complete: {Provider} {Email} => Tenant {TenantId}", provider, email, tenant.Id);
 
-                try { await _subscriptionService.SyncWithStripeAsync(tenant.Id); }
-                catch (Exception ex) { _logger.LogError(ex, "Stripe sync failed for social signup {Email}", email); }
+                // No SyncWithStripeAsync call — same reason as RegisterAsync: it returns at its
+                // first line without a StripeCustomerId, which a fresh tenant never has.
             }
             catch (Exception ex)
             {
