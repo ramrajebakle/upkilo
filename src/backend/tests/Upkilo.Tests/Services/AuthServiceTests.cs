@@ -11,6 +11,7 @@ using Upkilo.Core.DTOs;
 using Upkilo.Infrastructure.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Upkilo.Tests.Services;
@@ -22,6 +23,7 @@ public class AuthServiceTests : IDisposable
     private readonly Mock<IEmailService> _emailService;
     private readonly Mock<ITwoFactorService> _twoFactorService;
     private readonly Mock<IValidator<RegisterRequest>> _registerValidator;
+    private readonly Mock<ILogger<AuthService>> _logger;
 
     public AuthServiceTests()
     {
@@ -48,7 +50,7 @@ public class AuthServiceTests : IDisposable
             })
             .Build();
 
-        var logger = new Mock<ILogger<AuthService>>();
+        _logger = new Mock<ILogger<AuthService>>();
         var cache = new Mock<IDistributedCache>();
         cache.Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((byte[]?)null);
@@ -68,7 +70,7 @@ public class AuthServiceTests : IDisposable
             siemLogger.Object,
             cache.Object,
             metrics.Object,
-            logger.Object,
+            _logger.Object,
             _registerValidator.Object,
             connectionSelector.Object,
             httpContextAccessor.Object);
@@ -346,5 +348,115 @@ public class AuthServiceTests : IDisposable
         // Assert
         result.Success.Should().BeFalse();
         result.Message.Should().Contain("Invalid refresh token");
+    }
+
+    // ---- Token reuse detection ----
+    //
+    // Presenting a revoked refresh token revokes every remaining session for that user, on the
+    // assumption the token was stolen. That response is correct and unchanged.
+    //
+    // What was wrong is that it repeated. Production logged 396 of these in one five-minute
+    // burst — a client replaying a single revoked token — and each one reloaded the user's
+    // sessions and called SaveChanges. After the first there was nothing left to revoke, so
+    // every later write achieved nothing while still costing a query and a transaction, turning
+    // an unauthenticated endpoint into cheap write amplification for anyone holding one dead
+    // token. It also buried the one warning that mattered under 396 identical copies.
+
+    /// <summary>Mirrors AuthService.HashToken, which stores the SHA-256 of the raw token.</summary>
+    private static string HashTokenForTest(string token)
+    {
+        using var sha256 = System.Security.Cryptography.SHA256.Create();
+        return Convert.ToBase64String(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(token)));
+    }
+
+    /// <summary>Seeds a user with one revoked session plus <paramref name="activeCount"/> live ones.</summary>
+    private async Task<Guid> SeedRevokedSessionAsync(string rawToken, int activeCount)
+    {
+        var db = _dbFactory.CreateContext();
+        var userId = Guid.NewGuid();
+
+        db.Users.Add(new User
+        {
+            Id = userId,
+            Email = $"{userId:N}@example.com",
+            FirstName = "Re",
+            LastName = "Use",
+            PasswordHash = "x",
+            Role = UserRole.Owner,
+        });
+
+        db.UserSessions.Add(new UserSession
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            RefreshToken = HashTokenForTest(rawToken),
+            IsRevoked = true,
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+        });
+
+        for (var i = 0; i < activeCount; i++)
+        {
+            db.UserSessions.Add(new UserSession
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                RefreshToken = HashTokenForTest($"other-{userId}-{i}"),
+                IsRevoked = false,
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+            });
+        }
+
+        await db.SaveChangesAsync();
+        return userId;
+    }
+
+    [Fact]
+    public async Task RefreshTokenAsync_RevokedTokenReuse_RevokesEveryRemainingSession()
+    {
+        // The security response itself must not change.
+        var token = $"reused-{Guid.NewGuid()}";
+        var userId = await SeedRevokedSessionAsync(token, activeCount: 3);
+
+        var result = await _sut.RefreshTokenAsync(token, "127.0.0.1", "TestAgent");
+
+        result.Success.Should().BeFalse();
+        result.Message.Should().Contain("compromised");
+
+        var stillActive = await _dbFactory.CreateContext().UserSessions
+            .CountAsync(s => s.UserId == userId && !s.IsRevoked);
+        stillActive.Should().Be(0, "a stolen token must lock the account down");
+    }
+
+    [Fact]
+    public async Task RefreshTokenAsync_ReplayingTheSameDeadToken_StopsDoingTheWorkAgain()
+    {
+        var token = $"reused-{Guid.NewGuid()}";
+        var userId = await SeedRevokedSessionAsync(token, activeCount: 2);
+
+        // First hit locks the account down.
+        await _sut.RefreshTokenAsync(token, "127.0.0.1", "TestAgent");
+
+        // Nine replays, as the retry loop produced. Each must still be refused.
+        for (var i = 0; i < 9; i++)
+        {
+            var replay = await _sut.RefreshTokenAsync(token, "127.0.0.1", "TestAgent");
+            replay.Success.Should().BeFalse("a dead token is refused every time");
+        }
+
+        (await _dbFactory.CreateContext().UserSessions
+            .CountAsync(s => s.UserId == userId && !s.IsRevoked))
+            .Should().Be(0, "the account stays locked down across every replay");
+
+        // The alarm fires once, for the hit that actually revoked something. Production logged
+        // 396 identical warnings in five minutes, which buried the one that mattered.
+        _logger.Verify(
+            l => l.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("reuse detected")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once,
+            "replays of a token already handled are not new compromises");
     }
 }

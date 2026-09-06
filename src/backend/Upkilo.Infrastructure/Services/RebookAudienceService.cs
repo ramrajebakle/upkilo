@@ -85,25 +85,49 @@ public class RebookAudienceService
         // window guaranteed to contain every due booking: nothing is due sooner than one day
         // after the visit, and MaxOverdue bounds the other end.
         var query = _context.Bookings
-            .Include(b => b.Service)
-            .Include(b => b.Client)
             .Where(b => !pausedTenantIds.Contains(b.TenantId))
             .Where(b => b.Status == BookingStatus.Completed)
             .Where(b => b.RebookReminderSentAt == null)
+            .Where(b => b.ClientId != null)
             .Where(b => b.ServiceId != null && b.Service!.RebookAfterDays != null)
             .Where(b => b.StartTime >= earliest && b.StartTime <= now.AddDays(-1));
 
         if (tenantId.HasValue)
             query = query.Where(b => b.TenantId == tenantId.Value);
 
+        // Projected to the twelve fields actually used, instead of Include-ing whole entities.
+        //
+        // This was .Include(b => b.Service).Include(b => b.Client) followed by ToListAsync, which
+        // materialises EVERY column of Bookings, Services and Clients. Production logged it at
+        // 1893ms, the slowest query on the platform, while the code below reads nine values from
+        // it. The cost was transfer and materialisation, not database CPU — the server sits at
+        // ~15% CPU with its burst credits untouched, so no amount of extra hardware would have
+        // helped.
+        //
+        // FullName is composed here rather than in the projection: it is a computed property on
+        // Client, not a mapped column, so EF cannot translate it.
         var window = await query
             .OrderBy(b => b.StartTime)
             .Take(limit)
+            .Select(b => new DueRow(
+                b.Id,
+                b.TenantId,
+                b.ClientId!.Value,
+                b.ServiceId!.Value,
+                b.StartTime,
+                b.Client!.FirstName,
+                b.Client.LastName,
+                b.Client.MarketingConsent,
+                b.Client.SmsConsent,
+                b.Client.Email,
+                b.Client.Phone,
+                b.Service!.Name,
+                b.Service.RebookAfterDays))
             .ToListAsync(ct);
 
         var due = window
-            .Where(b => b.Service?.RebookAfterDays is int days && b.StartTime.AddDays(days) <= now)
-            .OrderByDescending(b => b.StartTime)
+            .Where(r => r.RebookAfterDays is int days && r.StartTime.AddDays(days) <= now)
+            .OrderByDescending(r => r.StartTime)
             .ToList();
 
         var results = new List<RebookCandidate>();
@@ -112,33 +136,32 @@ public class RebookAudienceService
         // long-standing client would produce one message per historic visit of the same service.
         var seen = new HashSet<(Guid clientId, Guid serviceId)>();
 
-        foreach (var booking in due)
+        foreach (var row in due)
         {
-            var client = booking.Client;
-            var service = booking.Service;
-            if (client == null || service == null || booking.ServiceId == null) continue;
-
-            if (!seen.Add((client.Id, booking.ServiceId.Value))) continue;
+            if (!seen.Add((row.ClientId, row.ServiceId))) continue;
 
             var hasLaterBooking = await _context.Bookings.AnyAsync(b =>
-                b.TenantId == booking.TenantId &&
-                b.ClientId == client.Id &&
-                b.ServiceId == booking.ServiceId &&
-                b.StartTime > booking.StartTime &&
+                b.TenantId == row.TenantId &&
+                b.ClientId == row.ClientId &&
+                b.ServiceId == row.ServiceId &&
+                b.StartTime > row.StartTime &&
                 b.Status != BookingStatus.Cancelled, ct);
 
-            var (eligibility, channel) = Assess(client, hasLaterBooking);
+            var (eligibility, channel) = Assess(
+                row.MarketingConsent, row.SmsConsent, row.Email, row.Phone, hasLaterBooking);
+
+            var fullName = $"{row.FirstName} {row.LastName}".Trim();
 
             results.Add(new RebookCandidate(
-                booking.Id,
-                booking.TenantId,
-                client.Id,
-                string.IsNullOrWhiteSpace(client.FullName) ? "(unnamed client)" : client.FullName,
-                booking.ServiceId.Value,
-                service.Name,
-                booking.StartTime,
-                (int)(now - booking.StartTime).TotalDays,
-                service.RebookAfterDays ?? 0,
+                row.BookingId,
+                row.TenantId,
+                row.ClientId,
+                string.IsNullOrWhiteSpace(fullName) ? "(unnamed client)" : fullName,
+                row.ServiceId,
+                row.ServiceName,
+                row.StartTime,
+                (int)(now - row.StartTime).TotalDays,
+                row.RebookAfterDays ?? 0,
                 eligibility,
                 channel));
         }
@@ -155,17 +178,45 @@ public class RebookAudienceService
     /// and the less intrusive one — and only one channel is ever used, so the same nudge does not
     /// arrive twice.
     /// </summary>
-    public static (RebookEligibility, string?) Assess(Client client, bool hasLaterBooking)
+    public static (RebookEligibility, string?) Assess(Client client, bool hasLaterBooking) =>
+        Assess(client.MarketingConsent, client.SmsConsent, client.Email, client.Phone, hasLaterBooking);
+
+    /// <summary>
+    /// The same decision expressed over the four fields it actually reads, so the caller can work
+    /// from a projection instead of loading a whole Client row to inspect two booleans and two
+    /// strings. The Client overload above is kept and delegates here, so the rule lives in one
+    /// place and existing callers are unaffected.
+    /// </summary>
+    public static (RebookEligibility, string?) Assess(
+        bool marketingConsent, bool smsConsent, string? email, string? phone, bool hasLaterBooking)
     {
         if (hasLaterBooking) return (RebookEligibility.AlreadyRebooked, null);
 
-        var emailAllowed = client.MarketingConsent;
-        var smsAllowed = client.SmsConsent;
-        if (!emailAllowed && !smsAllowed) return (RebookEligibility.NoConsent, null);
+        if (!marketingConsent && !smsConsent) return (RebookEligibility.NoConsent, null);
 
-        if (emailAllowed && !string.IsNullOrWhiteSpace(client.Email)) return (RebookEligibility.Ready, "email");
-        if (smsAllowed && !string.IsNullOrWhiteSpace(client.Phone)) return (RebookEligibility.Ready, "sms");
+        if (marketingConsent && !string.IsNullOrWhiteSpace(email)) return (RebookEligibility.Ready, "email");
+        if (smsConsent && !string.IsNullOrWhiteSpace(phone)) return (RebookEligibility.Ready, "sms");
 
         return (RebookEligibility.NoContactDetails, null);
     }
+
+    /// <summary>
+    /// The columns one due-booking row actually needs. Deliberately narrow: the query that fills
+    /// it was the platform's slowest at 1893ms because it materialised whole Booking, Service and
+    /// Client entities to read these twelve values.
+    /// </summary>
+    private sealed record DueRow(
+        Guid BookingId,
+        Guid TenantId,
+        Guid ClientId,
+        Guid ServiceId,
+        DateTime StartTime,
+        string? FirstName,
+        string? LastName,
+        bool MarketingConsent,
+        bool SmsConsent,
+        string? Email,
+        string? Phone,
+        string ServiceName,
+        int? RebookAfterDays);
 }

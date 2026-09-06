@@ -735,10 +735,40 @@ public class AuthService : IAuthService
         {
             // TOKEN REUSE DETECTION - If a revoked token is used, someone might have stolen it.
             // Revoke all other active sessions for this user as a precaution.
-            _logger.LogWarning("Revoked refresh token reuse detected for User: {UserId}. Revoking all sessions.", session.UserId);
-            var allSessions = await _context.UserSessions.Where(s => s.UserId == session.UserId && !s.IsRevoked).ToListAsync();
-            foreach (var s in allSessions) s.IsRevoked = true;
-            await _context.SaveChangesAsync();
+            //
+            // The response is deliberately unchanged: any still-active session is revoked and the
+            // caller is refused. What changed is that repeating the SAME dead token no longer
+            // repeats the work. Production saw 396 of these in one five-minute burst — one per
+            // retry from a client that was replaying a single revoked token — and every one
+            // reloaded the user's sessions and called SaveChanges. After the first, there was
+            // nothing left to revoke, so those writes achieved nothing while still costing a
+            // query and a transaction each. That turns an unauthenticated endpoint into cheap
+            // write amplification for anyone holding one dead token.
+            var activeSessions = await _context.UserSessions
+                .Where(s => s.UserId == session.UserId && !s.IsRevoked)
+                .ToListAsync();
+
+            if (activeSessions.Count > 0)
+            {
+                foreach (var s in activeSessions) s.IsRevoked = true;
+                await _context.SaveChangesAsync();
+
+                // Warn only when this reuse actually revoked something, i.e. the first hit. The
+                // burst logged 396 identical warnings, which buried the one that mattered rather
+                // than surfacing it.
+                _logger.LogWarning(
+                    "Revoked refresh token reuse detected for User: {UserId}. Revoked {Count} active session(s).",
+                    session.UserId, activeSessions.Count);
+            }
+            else
+            {
+                // Already locked down by an earlier hit. Still refused, but this is a replay of a
+                // handled event rather than a new compromise, so it does not raise the alarm again.
+                _logger.LogDebug(
+                    "Revoked refresh token presented again for User: {UserId}; no active sessions remained.",
+                    session.UserId);
+            }
+
             return new AuthResult { Success = false, Message = "Security alert: Session compromised" };
         }
 

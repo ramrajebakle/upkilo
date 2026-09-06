@@ -22,6 +22,13 @@ public class WhatsAppService : IWhatsAppService
     private readonly string _fromNumber;
     private readonly bool _isEnabled;
 
+    /// <summary>
+    /// Process-wide, so the "not configured" warning is emitted once rather than on every
+    /// construction of this scoped service. Racing threads may both pass the check on startup and
+    /// log twice; that is harmless and not worth a lock for a one-off startup warning.
+    /// </summary>
+    private static bool _unconfiguredLogged;
+
     public WhatsAppService(
         IConfiguration configuration,
         ILogger<WhatsAppService> logger,
@@ -44,9 +51,25 @@ public class WhatsAppService : IWhatsAppService
             TwilioClient.Init(accountSid, authToken);
             _logger.LogInformation("Twilio WhatsApp service initialized");
         }
-        else
+        else if (!_unconfiguredLogged)
         {
-            _logger.LogWarning("Twilio WhatsApp service not configured - WhatsApp sending is disabled");
+            // Once per process, not once per construction.
+            //
+            // This is a scoped service, so it is built again for every request and every
+            // background job that touches it. Production logged the identical warning 117 times
+            // in a day, which is noise that buries real warnings rather than information anyone
+            // acts on — the fact does not change between constructions.
+            //
+            // Named the specific key, because Twilio:WhatsAppFromNumber is NOT the same setting
+            // as Twilio:PhoneNumber used for SMS. Account SID and auth token are both present in
+            // production; the WhatsApp sender is the missing piece, and a WhatsApp-enabled Twilio
+            // sender has to be provisioned in the Twilio console before there is a value to set.
+            _unconfiguredLogged = true;
+            _logger.LogWarning(
+                "Twilio WhatsApp service not configured - WhatsApp sending is disabled. "
+                + "Missing Twilio:WhatsAppFromNumber (a WhatsApp-enabled sender, distinct from "
+                + "Twilio:PhoneNumber). Affects campaign sends, workflow WhatsApp actions and "
+                + "AI replies to inbound WhatsApp.");
         }
     }
 

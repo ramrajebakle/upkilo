@@ -13,6 +13,20 @@ import {
 // Shared in-flight refresh promise — prevents N concurrent 401s each triggering an independent refresh
 let _refreshPromise: Promise<void> | null = null;
 
+/**
+ * The session endpoint could not be reached, as opposed to answering "not signed in".
+ *
+ * The distinction decides whether a 401 ends the session. Without it, any moment the frontend
+ * was unreachable looked identical to being logged out — and deploys here take the site down for
+ * 30-60s, so every release bounced active users to /login.
+ */
+class TransientAuthError extends Error {
+  constructor() {
+    super('auth session endpoint unreachable');
+    this.name = 'TransientAuthError';
+  }
+}
+
 // ── Circuit breaker — opens after 5 consecutive 5xx failures, auto-resets after 30s ──────────────
 let _cbFailures = 0;
 let _cbOpen = false;
@@ -154,13 +168,30 @@ apiClient.interceptors.response.use(
       if (!_refreshPromise) {
         _refreshPromise = (async () => {
           const { getSession } = await import('next-auth/react');
-          const session = await getSession();
-          const newToken = session?.user?.accessToken;
+
+          // Reaching the session endpoint and being told "no session" are different answers, and
+          // conflating them logged people out on every release. Deploys here are direct — the B1
+          // tier has no slots, so there is 30-60s of downtime per release (see deploy.yml) — and
+          // during it this call simply cannot complete. Treating that as "unauthenticated" sent
+          // every active user to /login over a restart.
+          let session: Awaited<ReturnType<typeof getSession>>;
+          try {
+            session = await getSession();
+          } catch {
+            throw new TransientAuthError();
+          }
+
+          // A null session is equally ambiguous while the frontend is restarting, so it is also
+          // treated as transient. A genuinely signed-out user is caught by AuthBridge, which owns
+          // that decision and only acts once the backend has actually refused the refresh token.
+          if (!session) throw new TransientAuthError();
+
+          const newToken = session.user?.accessToken;
           if (newToken && typeof window !== 'undefined') {
             localStorage.setItem('token', newToken);
             apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
           } else {
-            // Session could not produce a valid token — treat as unauthenticated.
+            // Session answered and carries no token — genuinely unauthenticated.
             throw new Error('session refresh failed');
           }
         })().finally(() => { _refreshPromise = null; });
@@ -174,7 +205,15 @@ apiClient.interceptors.response.use(
         }
         cbRecordSuccess();
         return apiClient(originalRequest);
-      } catch {
+      } catch (refreshError) {
+        // A transient failure must not end the session. The request fails and the caller can
+        // retry; the token stays put so the app recovers on its own once the deploy finishes.
+        if (refreshError instanceof TransientAuthError) {
+          return Promise.reject(
+            new Error('Could not reach the server. Please try again in a moment.')
+          );
+        }
+
         // Refresh failed — clear local tokens and redirect to login
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
