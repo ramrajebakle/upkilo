@@ -1009,6 +1009,8 @@ jobs:
                 Twilio__PhoneNumber="${{ secrets.TWILIO_PHONE_NUMBER }}" \
                 AzureOpenAI__Endpoint="${{ secrets.AZURE_OPENAI_ENDPOINT }}" \
                 AzureOpenAI__ApiKey="${{ secrets.AZURE_OPENAI_API_KEY }}" \
+                AzureContentSafety__Endpoint="${{ secrets.AZURE_CONTENT_SAFETY_ENDPOINT }}" \
+                AzureContentSafety__ApiKey="${{ secrets.AZURE_CONTENT_SAFETY_API_KEY }}" \
                 Azure__Storage__ConnectionString="${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" \
                 VAPID__PublicKey="${{ secrets.VAPID_PUBLIC_KEY }}" \
                 VAPID__PrivateKey="${{ secrets.VAPID_PRIVATE_KEY }}" \
