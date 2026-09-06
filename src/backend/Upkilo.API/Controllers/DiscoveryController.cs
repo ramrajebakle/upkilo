@@ -52,12 +52,9 @@ public class DiscoveryController : ControllerBase
                         EF.Functions.ILike(t.City, $"%{city.Replace("-", " ")}%"))
             .AsQueryable();
 
-        if (categoryKeywords.Any())
+        if (categoryKeywords.Count > 0)
         {
-            query = query.Where(t =>
-                categoryKeywords.Any(kw =>
-                    EF.Functions.ILike(t.BusinessType ?? "", $"%{kw}%") ||
-                    EF.Functions.ILike(t.Industry ?? "", $"%{kw}%")));
+            query = query.Where(MatchesAnyKeyword(categoryKeywords));
         }
 
         var total = await query.CountAsync();
@@ -209,9 +206,17 @@ public class DiscoveryController : ControllerBase
 
         var categoryKeywords = CategoryToKeywords(category);
 
+        // Keyword filter is applied to Tenants BEFORE the join rather than to the joined shape.
+        // The predicate is an Expression<Func<Tenant, bool>>, which cannot be written against the
+        // anonymous join result — and filtering first is also the cheaper plan, since it shrinks
+        // the left side before Postgres joins Locations to it.
+        var tenants = _context.Tenants.Where(t => t.IsActive && !t.IsDeleted);
+
+        if (categoryKeywords.Count > 0)
+            tenants = tenants.Where(MatchesAnyKeyword(categoryKeywords));
+
         // Join through Location for geo coords
-        var query = _context.Tenants
-            .Where(t => t.IsActive && !t.IsDeleted)
+        var query = tenants
             .Join(
                 _context.Locations.Where(l => l.IsActive && l.Latitude.HasValue && l.Longitude.HasValue),
                 t => t.Id,
@@ -221,12 +226,6 @@ public class DiscoveryController : ControllerBase
                 x.Location.City != null &&
                 EF.Functions.ILike(x.Location.City, $"%{city.Replace("-", " ")}%"))
             .AsQueryable();
-
-        if (categoryKeywords.Any())
-            query = query.Where(x =>
-                categoryKeywords.Any(kw =>
-                    EF.Functions.ILike(x.Tenant.BusinessType ?? "", $"%{kw}%") ||
-                    EF.Functions.ILike(x.Tenant.Industry ?? "", $"%{kw}%")));
 
         var raw = await query
             .Select(x => new
@@ -475,6 +474,65 @@ public class DiscoveryController : ControllerBase
             DateTime.UtcNow.ToString("O"));
 
         return Ok(new { tracked = true });
+    }
+
+    /// <summary>
+    /// An OR-chain of ILIKE tests over BusinessType and Industry, built as an expression tree.
+    ///
+    /// Replaces `categoryKeywords.Any(kw => EF.Functions.ILike(col, $"%{kw}%"))`, which EF Core
+    /// cannot translate: the collection is client-side and the pattern is constructed per element
+    /// inside the lambda. It threw at query time, so every request to these two public SEO
+    /// endpoints returned a 500 —
+    ///
+    ///   System.InvalidOperationException: The LINQ expression '__categoryKeywords_2.Any(...)'
+    ///   could not be translated.
+    ///
+    /// 50 of them in a day in production. The endpoints are [AllowAnonymous] and back
+    /// upkilo.com/book/[category]/[city], so the failure was visible to the public and to
+    /// crawlers, on pages that exist to be indexed.
+    ///
+    /// Building the disjunction over a single parameter keeps it fully server-side: it composes
+    /// to `WHERE (bt ILIKE %a% OR ind ILIKE %a% OR bt ILIKE %b% ...)`. Keyword sets come from
+    /// CategoryToKeywords below and are at most a handful of literals, so the chain stays small.
+    /// </summary>
+    private static System.Linq.Expressions.Expression<Func<Tenant, bool>> MatchesAnyKeyword(
+        IReadOnlyList<string> keywords)
+    {
+        var tenant = System.Linq.Expressions.Expression.Parameter(typeof(Tenant), "t");
+
+        var ilike = typeof(NpgsqlDbFunctionsExtensions).GetMethod(
+            nameof(NpgsqlDbFunctionsExtensions.ILike),
+            new[] { typeof(DbFunctions), typeof(string), typeof(string) })
+            ?? throw new InvalidOperationException("Npgsql ILike(DbFunctions, string, string) not found.");
+
+        var functions = System.Linq.Expressions.Expression.Constant(EF.Functions);
+        var empty = System.Linq.Expressions.Expression.Constant(string.Empty, typeof(string));
+
+        System.Linq.Expressions.Expression? body = null;
+
+        foreach (var keyword in keywords)
+        {
+            var pattern = System.Linq.Expressions.Expression.Constant($"%{keyword}%", typeof(string));
+
+            foreach (var column in new[] { nameof(Tenant.BusinessType), nameof(Tenant.Industry) })
+            {
+                // Coalesce mirrors the original `?? ""`, so a null column is a non-match rather
+                // than a null that would swallow the whole OR in SQL's three-valued logic.
+                var value = System.Linq.Expressions.Expression.Coalesce(
+                    System.Linq.Expressions.Expression.Property(tenant, column), empty);
+
+                var test = System.Linq.Expressions.Expression.Call(ilike, functions, value, pattern);
+                body = body is null
+                    ? test
+                    : System.Linq.Expressions.Expression.OrElse(body, test);
+            }
+        }
+
+        // No keywords means the caller should not have applied this filter at all; false is the
+        // honest answer rather than matching everything.
+        body ??= System.Linq.Expressions.Expression.Constant(false);
+
+        return System.Linq.Expressions.Expression.Lambda<Func<Tenant, bool>>(body, tenant);
     }
 
     private static List<string> CategoryToKeywords(string categorySlug) => categorySlug switch

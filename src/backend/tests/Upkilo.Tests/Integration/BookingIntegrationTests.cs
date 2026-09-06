@@ -77,8 +77,23 @@ public sealed class PostgresFixture : IAsyncLifetime
     }
 }
 
+/// <summary>
+/// Shares the single PostgresFixture across every integration test class.
+///
+/// IClassFixture would give each class its own container, which is the per-test cost this
+/// fixture exists to remove, just at a coarser grain. A collection fixture is created once for
+/// all of them. xUnit also runs a collection's classes sequentially, which suits a shared
+/// database.
+/// </summary>
+[CollectionDefinition(Name)]
+public class PostgresCollection : ICollectionFixture<PostgresFixture>
+{
+    public const string Name = "postgres";
+}
+
 [Trait("Category", "Integration")]
-public class BookingIntegrationTests : IClassFixture<PostgresFixture>, IAsyncDisposable
+[Collection(PostgresCollection.Name)]
+public class BookingIntegrationTests : IAsyncDisposable
 {
     private readonly AppDbContext _context;
     private readonly PostgresFixture _fixture;
