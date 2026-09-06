@@ -631,7 +631,45 @@ public class AzureOpenAIService : IAIService
         var redisKey = $"ai:usage:platform:{DateTime.UtcNow:yyyy-MM}";
         var redisDb = _redis.GetDatabase();
 
+        // Reseed the counter from the durable log whenever Redis has lost it.
+        //
+        // Without this the cap is only as good as one cache key. StringIncrementAsync creates that
+        // key with no TTL, Redis here runs --maxmemory-policy allkeys-lru, and a flush or a restart
+        // without persistence loses it outright. Any of those reset the month's spend to zero and
+        // hand an anonymous, internet-reachable endpoint another full budget.
+        //
+        // AIUsageLogs already records every call durably, so it is the authority; Redis is only a
+        // fast counter in front of it. The query runs solely when the key is absent - once per
+        // month in the normal case, or after cache loss.
+        if (!await redisDb.KeyExistsAsync(redisKey))
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var startOfMonth = new DateTime(
+                DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            var alreadySpent = await dbContext.Set<AIUsageLog>()
+                .Where(l => l.TenantId == UpkiloPlatform.TenantId && l.CreatedAt >= startOfMonth)
+                .SumAsync(l => l.Cost);
+
+            if (alreadySpent > 0m)
+            {
+                // NotExists so a concurrent caller that already seeded the key is not clobbered.
+                await redisDb.StringSetAsync(
+                    redisKey, (double)alreadySpent, when: StackExchange.Redis.When.NotExists);
+
+                _logger.LogInformation(
+                    "Platform AI counter reseeded from AIUsageLogs: {Spent} already spent this month.",
+                    alreadySpent);
+            }
+        }
+
         var newUsage = (decimal)await redisDb.StringIncrementAsync(redisKey, (double)estimatedCost);
+
+        // Bound the key's lifetime here rather than only after a successful call. A generation that
+        // fails never reaches LogUsageAsync, so the key could otherwise live forever with no TTL.
+        await redisDb.KeyExpireAsync(redisKey, TimeSpan.FromDays(32));
 
         if (newUsage > budget)
         {

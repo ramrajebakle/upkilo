@@ -20,8 +20,26 @@ namespace Upkilo.Tests.Integration;
 /// These tests require Docker — they are skipped automatically when Docker is unavailable.
 /// In CI (ubuntu-latest), Docker is always present.
 /// </summary>
-[Trait("Category", "Integration")]
-public class BookingIntegrationTests : IAsyncLifetime
+/// <summary>
+/// One PostgreSQL container shared by every test in the class.
+///
+/// xUnit builds a NEW instance of a test class for each [Fact], so an IAsyncLifetime on the class
+/// itself ran per test: 11 tests meant 11 container starts and 11 migration passes. In CI that was
+/// 13m46s of the Backend job's 21m34s — roughly 75 seconds of setup per test to run assertions
+/// taking ~190ms. A class fixture is created once, so the container starts once and the 45
+/// migrations apply once.
+///
+/// Sharing the database is safe HERE specifically because these tests are isolated by data rather
+/// than by database: every test mints its own tenant with Guid.NewGuid() and every query is scoped
+/// by that TenantId, so no test can observe another's rows. That is a property of these tests, not
+/// a general licence — a test that asserted on an unscoped total would need its own database back.
+///
+/// EnableDynamicJson is required and load-bearing: Tenant.Settings is a Dictionary&lt;string, object&gt;
+/// mapped to JSONB, and Npgsql 8 refuses to write that without the opt-in. Building the data source
+/// here rather than passing a raw connection string also removes the dependency on Program.cs
+/// having set the process-global mapper first, which was previously a parallel-scheduling race.
+/// </summary>
+public sealed class PostgresFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
         .WithImage("postgres:16-alpine")
@@ -31,52 +49,49 @@ public class BookingIntegrationTests : IAsyncLifetime
         .WithCleanUp(true)
         .Build();
 
-    private AppDbContext _context = null!;
     private NpgsqlDataSource _dataSource = null!;
 
-    /// <summary>
-    /// Builds options over a data source with EnableDynamicJson, mirroring Program.cs.
-    ///
-    /// Tenant.Settings is a Dictionary&lt;string, object&gt; mapped to JSONB, and Npgsql 8 refuses to
-    /// write that without dynamic JSON enabled:
-    ///   "Type 'Dictionary`2' required dynamic JSON serialization, which requires an explicit
-    ///    opt-in; call 'EnableDynamicJson'"
-    ///
-    /// These tests previously passed a raw connection string to UseNpgsql, which builds a data
-    /// source WITHOUT that opt-in. They only passed because Program.cs also calls the
-    /// process-global NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson(), so any test that
-    /// booted the API through WebApplicationFactory happened to configure the whole process
-    /// first. xUnit runs collections in parallel, so whether that happened before the first
-    /// Tenant save here was a race — which is exactly how this passed on one branch and failed
-    /// on the merge commit with identical code.
-    ///
-    /// Owning the data source removes the dependency on any other test having run.
-    /// </summary>
-    private DbContextOptions<AppDbContext> BuildOptions()
-    {
-        var builder = new NpgsqlDataSourceBuilder(_postgres.GetConnectionString());
-        builder.EnableDynamicJson();
-        _dataSource ??= builder.Build();
-
-        return new DbContextOptionsBuilder<AppDbContext>()
-            .UseNpgsql(_dataSource)
-            .Options;
-    }
+    public DbContextOptions<AppDbContext> Options { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
         await _postgres.StartAsync();
 
-        _context = new AppDbContext(BuildOptions());
-        await _context.Database.MigrateAsync();
+        var builder = new NpgsqlDataSourceBuilder(_postgres.GetConnectionString());
+        builder.EnableDynamicJson();
+        _dataSource = builder.Build();
+
+        Options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(_dataSource)
+            .Options;
+
+        // Applied once for the whole class rather than once per test.
+        await using var migrationContext = new AppDbContext(Options);
+        await migrationContext.Database.MigrateAsync();
     }
 
     public async Task DisposeAsync()
     {
-        await _context.DisposeAsync();
-        if (_dataSource != null) await _dataSource.DisposeAsync();
+        await _dataSource.DisposeAsync();
         await _postgres.DisposeAsync();
     }
+}
+
+[Trait("Category", "Integration")]
+public class BookingIntegrationTests : IClassFixture<PostgresFixture>, IAsyncDisposable
+{
+    private readonly AppDbContext _context;
+    private readonly PostgresFixture _fixture;
+
+    // A fresh DbContext per test even though the database is shared: it costs nothing and keeps
+    // one test's change tracker from leaking entities into the next.
+    public BookingIntegrationTests(PostgresFixture fixture)
+    {
+        _fixture = fixture;
+        _context = new AppDbContext(fixture.Options);
+    }
+
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     // ─── Booking Creation ──────────────────────────────────────────────────────
 
@@ -348,9 +363,9 @@ public class BookingIntegrationTests : IAsyncLifetime
         _context.Services.Add(svc);
         await _context.SaveChangesAsync();
 
-        // Simulate concurrent bookings with separate contexts, over the same dynamic-JSON data
-        // source — a raw connection string here would reintroduce the same latent failure.
-        var opts = BuildOptions();
+        // Simulate concurrent bookings with separate contexts, over the fixture's dynamic-JSON
+        // data source — a raw connection string here would reintroduce the same latent failure.
+        var opts = _fixture.Options;
 
         await Task.WhenAll(
             Task.Run(async () =>
