@@ -216,6 +216,15 @@ public class AppDbContext : DbContext
     // Missing entity registrations — ImportJob and SetupProgress were defined in Core.Entities
     // but not registered here, causing InvalidOperationException in SetupWizardService and ImportService.
     public DbSet<ImportJob> ImportJobs => Set<ImportJob>();
+
+    // ORPHANED. SetupWizardService — its only reader and writer — has been removed as a duplicate
+    // of OnboardingController/TenantOnboardingProgress, which is the onboarding progress the UI
+    // actually uses. Nothing reads or writes this any more.
+    //
+    // The DbSet and its table are kept rather than dropped: deleting a table is irreversible and
+    // this one may hold rows from before the duplication was noticed. Drop it deliberately, with
+    // a backup, once you are satisfied nothing external reads it — not as a side effect of
+    // deleting the service.
     public DbSet<SetupProgress> SetupProgresses => Set<SetupProgress>();
 
     // Final — SMS A2P 10DLC, WhatsApp, Tips, Waitlist

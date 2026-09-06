@@ -456,7 +456,10 @@ builder.Services.AddScoped<Upkilo.Core.Interfaces.IMembershipService, Upkilo.Inf
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IPaymentService, Upkilo.Infrastructure.Services.PaymentService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ICartService, Upkilo.Infrastructure.Services.CartService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ISessionService, Upkilo.Infrastructure.Services.SessionService>();
-builder.Services.AddScoped<Upkilo.Core.Interfaces.ISetupWizardService, Upkilo.Infrastructure.Services.SetupWizardService>();
+// ISetupWizardService/SetupWizardController removed: a second, parallel onboarding-progress
+// system with no frontend caller, duplicating OnboardingController + TenantOnboardingProgress
+// (which is the one the UI actually uses). Its SetupProgress table is left in place — see the
+// note on AppDbContext.SetupProgresses.
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IPayoutService, Upkilo.Infrastructure.Services.PayoutService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ICommissionService, Upkilo.Infrastructure.Services.CommissionService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ITaxService, Upkilo.Infrastructure.Services.TaxService>();
