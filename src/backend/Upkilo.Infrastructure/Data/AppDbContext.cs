@@ -216,6 +216,15 @@ public class AppDbContext : DbContext
     // Missing entity registrations — ImportJob and SetupProgress were defined in Core.Entities
     // but not registered here, causing InvalidOperationException in SetupWizardService and ImportService.
     public DbSet<ImportJob> ImportJobs => Set<ImportJob>();
+
+    // ORPHANED. SetupWizardService — its only reader and writer — has been removed as a duplicate
+    // of OnboardingController/TenantOnboardingProgress, which is the onboarding progress the UI
+    // actually uses. Nothing reads or writes this any more.
+    //
+    // The DbSet and its table are kept rather than dropped: deleting a table is irreversible and
+    // this one may hold rows from before the duplication was noticed. Drop it deliberately, with
+    // a backup, once you are satisfied nothing external reads it — not as a side effect of
+    // deleting the service.
     public DbSet<SetupProgress> SetupProgresses => Set<SetupProgress>();
 
     // Final — SMS A2P 10DLC, WhatsApp, Tips, Waitlist
@@ -1108,6 +1117,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<EmailVerificationToken>()
             .HasIndex(t => t.Token).IsUnique()
             .HasDatabaseName("IX_EmailVerificationTokens_Token");
+
+        // Onboarding progress is one row per tenant, but nothing enforced that. GET
+        // /onboarding/checklist did get-or-create through FirstOrDefaultAsync, so two concurrent
+        // first page loads each saw no row and each inserted one — after which progress was read
+        // back from whichever row the query happened to return, and completed steps appeared to
+        // reset. Registration now creates the row up front; this makes a second one impossible.
+        modelBuilder.Entity<TenantOnboardingProgress>()
+            .HasIndex(p => p.TenantId).IsUnique()
+            .HasDatabaseName("IX_OnboardingProgress_TenantId");
 
         // Users: cross-tenant email lookup (login, forgot-password by email only, not scoped to tenant).
         modelBuilder.Entity<User>()

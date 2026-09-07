@@ -456,7 +456,10 @@ builder.Services.AddScoped<Upkilo.Core.Interfaces.IMembershipService, Upkilo.Inf
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IPaymentService, Upkilo.Infrastructure.Services.PaymentService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ICartService, Upkilo.Infrastructure.Services.CartService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ISessionService, Upkilo.Infrastructure.Services.SessionService>();
-builder.Services.AddScoped<Upkilo.Core.Interfaces.ISetupWizardService, Upkilo.Infrastructure.Services.SetupWizardService>();
+// ISetupWizardService/SetupWizardController removed: a second, parallel onboarding-progress
+// system with no frontend caller, duplicating OnboardingController + TenantOnboardingProgress
+// (which is the one the UI actually uses). Its SetupProgress table is left in place — see the
+// note on AppDbContext.SetupProgresses.
 builder.Services.AddScoped<Upkilo.Core.Interfaces.IPayoutService, Upkilo.Infrastructure.Services.PayoutService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ICommissionService, Upkilo.Infrastructure.Services.CommissionService>();
 builder.Services.AddScoped<Upkilo.Core.Interfaces.ITaxService, Upkilo.Infrastructure.Services.TaxService>();
@@ -780,6 +783,13 @@ builder.Services.AddScoped<Upkilo.Infrastructure.Jobs.DataWarehouseSyncJob>();
 
 builder.Services.AddScoped<Upkilo.Infrastructure.Services.ClientRetentionService>();
 builder.Services.AddHostedService<Upkilo.Infrastructure.Services.OnboardingDripJob>();
+
+// Trial lifecycle. Signup grants the top plan for PricingPlan.TrialDays; these two end it.
+// TrialReminderJob warns at 7/3/1 days remaining, TrialExpiryJob downgrades to Free on expiry.
+// Without the expiry job the trial grant never ends — which was the pre-existing state, since
+// nothing set Tenant.TrialEndsAt and nothing read SubscriptionStatus.Trialing.
+builder.Services.AddHostedService<Upkilo.Infrastructure.Services.TrialReminderJob>();
+builder.Services.AddHostedService<Upkilo.Infrastructure.Services.TrialExpiryJob>();
 // Nightly retention nudge: clients whose last visit is older than the service's own
 // RebookAfterDays interval. Consent-gated — see the notes on the job itself.
 builder.Services.AddHostedService<Upkilo.Infrastructure.Services.RebookReminderJob>();

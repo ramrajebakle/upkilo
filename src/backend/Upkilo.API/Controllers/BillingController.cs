@@ -52,6 +52,74 @@ public class BillingController : ControllerBase
     }
 
     /// <summary>
+    /// Trial state for the in-app countdown banner.
+    ///
+    /// Purpose-built rather than reusing GET /subscription (which returns the raw entity and
+    /// carries no tenant-level trial data) or /upsell-triggers (which returns prose, not a
+    /// countdown — a banner should not be parsing "ends in 3 days" out of a sentence).
+    /// </summary>
+    [HttpGet("trial-status")]
+    public async Task<IActionResult> GetTrialStatus()
+    {
+        var tenantId = _tenantProvider.GetTenantId();
+        if (tenantId == null) return Unauthorized();
+
+        var tenant = await _context.Tenants
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == tenantId);
+
+        if (tenant == null) return Ok(new { isTrialing = false, hasExpired = false });
+
+        // A tenant with no TrialEndsAt has not started one. For a password signup that is the
+        // normal state until the address is verified — the trial is what verification earns — so
+        // the banner needs to prompt for that rather than showing nothing at all.
+        if (tenant.TrialEndsAt == null)
+        {
+            var userId = _tenantProvider.GetUserId();
+            var verified = userId != null && await _context.Users
+                .AsNoTracking()
+                .Where(u => u.Id == userId.Value)
+                .Select(u => u.EmailVerified)
+                .FirstOrDefaultAsync();
+
+            return Ok(new
+            {
+                isTrialing = false,
+                hasExpired = false,
+                needsVerification = !verified,
+                trialDays = _configuration.GetValue<int>("Trial:Days", 14),
+                trialPlanName = _configuration["Trial:PlanName"] ?? "Growth"
+            });
+        }
+
+        var subscription = await _context.Set<Upkilo.Core.Entities.Subscription>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.TenantId == tenantId);
+
+        // Status is what says whether the trial is live, not the date. A tenant who upgraded
+        // mid-trial keeps a TrialEndsAt in the future but is Active, and must not be shown a
+        // countdown telling them they are about to lose access they have paid for.
+        var isTrialing = subscription?.Status == Upkilo.Core.Entities.SubscriptionStatus.Trialing;
+        var daysLeft = (int)Math.Ceiling((tenant.TrialEndsAt.Value - DateTime.UtcNow).TotalDays);
+
+        tenant.Metadata.TryGetValue("intended_plan", out var intendedPlan);
+
+        return Ok(new
+        {
+            isTrialing,
+            // True only once the trial has actually been ended by TrialExpiryJob. Between the
+            // expiry timestamp and the job's next hourly pass the tenant still has their trial
+            // features, and the banner should not claim otherwise.
+            hasExpired = !isTrialing && tenant.TrialEndsAt < DateTime.UtcNow,
+            planName = tenant.SubscriptionTier.ToString(),
+            trialEndsAt = tenant.TrialEndsAt,
+            daysLeft = isTrialing ? Math.Max(0, daysLeft) : 0,
+            intendedPlan = intendedPlan?.ToString(),
+            upgradeUrl = "/settings/billing?upgrade=true"
+        });
+    }
+
+    /// <summary>
     /// Currencies the platform supports. Public, and cached hard — this is a static catalogue.
     ///
     /// Exists so clients populate currency pickers from the same registry the server validates

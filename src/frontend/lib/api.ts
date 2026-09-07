@@ -262,7 +262,19 @@ export const api = {
   auth: {
     login: (email: string, password: string) =>
       apiClient.post('/api/v1/auth/login', { email, password }),
-    register: (data: { email: string; password: string; firstName: string; lastName: string; companyName?: string; planId?: string }) =>
+    // planName carries the marketing links' ?plan=starter (a NAME — planId is a Guid and could
+    // never resolve one); attribution carries the utm_*/vertical query parameters. Both were
+    // being dropped by the register form before reaching this call.
+    register: (data: {
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      companyName?: string;
+      planId?: string;
+      planName?: string;
+      attribution?: Record<string, string>;
+    }) =>
       apiClient.post('/api/v1/auth/register', data),
     logout: (refreshToken: string) => apiClient.post('/api/v1/auth/logout', { refreshToken }),
     me: () => apiClient.get('/api/v1/auth/me'),
@@ -685,6 +697,12 @@ export const api = {
 
   // Billing & Subscriptions (New)
   billing: {
+    /**
+     * Trial countdown for the in-app banner. Like the rest of BillingController this is
+     * Owner-only, which is why signup now creates an Owner rather than an Admin — previously
+     * the account founder was 403'd out of their own billing, checkout included.
+     */
+    getTrialStatus: () => apiClient.get('/api/v1/billing/trial-status'),
     getSubscription: () => apiClient.get('/api/v1/billing/subscription'),
     getPlans: () => apiClient.get('/api/v1/billing/plans'),
     createCheckout: (data: { planId: string; isAnnual: boolean; promoCode?: string }) =>

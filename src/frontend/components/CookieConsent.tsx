@@ -145,6 +145,40 @@ export function CookieConsent() {
         }
     }, [visible]);
 
+    // Reserve the banner's height at the bottom of the document while it is showing.
+    //
+    // It is position:fixed at bottom:0 with z-index 9999, so without this it sits ON TOP of
+    // whatever the page ends with and silently swallows clicks there. On /register at a laptop
+    // viewport that is the "Start 14-Day Free Trial" button — the primary conversion action in
+    // the product — and a real browser refuses the click with "subtree intercepts pointer
+    // events". Measured rather than hardcoded because the banner wraps to two and three lines on
+    // narrow screens, and grows again when the preferences panel expands.
+    useEffect(() => {
+        if (typeof document === 'undefined') return;
+
+        if (!visible) {
+            document.body.style.removeProperty('padding-bottom');
+            return;
+        }
+
+        const apply = () => {
+            const height = bannerRef.current?.offsetHeight ?? 0;
+            if (height > 0) document.body.style.paddingBottom = `${height}px`;
+        };
+
+        apply();
+
+        const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(apply) : null;
+        if (observer && bannerRef.current) observer.observe(bannerRef.current);
+        window.addEventListener('resize', apply);
+
+        return () => {
+            observer?.disconnect();
+            window.removeEventListener('resize', apply);
+            document.body.style.removeProperty('padding-bottom');
+        };
+    }, [visible, showPreferences]);
+
     // Trap focus inside banner while it is open
     const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
         if (e.key === 'Escape') {

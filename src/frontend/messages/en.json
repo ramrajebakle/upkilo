@@ -328,6 +328,13 @@
     "hide": "Hide setup",
     "keep": "Keep",
     "hideAria": "Hide setup checklist",
+    "pageHeading": "Let's get you set up",
+    "skipForNow": "Skip for now →",
+    "goToDashboard": "Go to dashboard",
+    "completeAnyTime": "You can complete these steps any time from the dashboard.",
+    "loadFailedTitle": "We couldn't load your setup checklist",
+    "loadFailedBody": "Your account is fine — this is a temporary problem fetching your progress.",
+    "retry": "Try again",
     "steps": {
       "business_profile": {
         "title": "Set Up Business Profile",
